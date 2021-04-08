@@ -1,9 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html lang="en">
 
-<head>
-	<title>VAPIL Introduction and Getting Started Guide</title>
-</head>
+<head />
 
 <body>
 <h1>VAPIL Introduction and Getting Started Guide</h1>

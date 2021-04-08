@@ -1,0 +1,24 @@
+target/
+*.class
+*.ear
+*.logs
+*.iml
+test.properties
+dependency-reduced-pom.xml
+src/test/resources/test.properties
+
+# Mac Files
+.DS_Store
+
+#IntelliJ
+.idea/
+
+#Eclipse
+.eclipse
+.settings/
+.project/
+.settings
+.project
+
+# Log file
+*.log

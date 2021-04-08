@@ -1,0 +1,220 @@
+/*---------------------------------------------------------------------
+ *	Copyright (c) 2021 Veeva Systems Inc.  All Rights Reserved.
+ *	This code is based on pre-existing content developed and
+ *	owned by Veeva Systems Inc. and may only be used in connection
+ *	with the deliverable with which it was provided to Customer.
+ *---------------------------------------------------------------------
+ */
+
+package com.veeva.vault.vapil.api.request;
+
+import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
+import com.veeva.vault.vapil.api.model.response.SandboxEntitlementResponse;
+import com.veeva.vault.vapil.api.model.response.SandboxResponse;
+import com.veeva.vault.vapil.connector.HttpRequestConnector;
+import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
+
+/**
+ * Sandbox Vaults
+ *
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.1/#sandbox-vaults">https://developer.veevavault.com/api/21.1/#sandbox-vaults</a>
+ */
+public class SandboxRequest extends VaultRequest {
+
+	private static final String URL_SANDBOX_ENTITLEMENTS = "/objects/sandbox_entitlements";
+	private static final String URL_SANDBOX_ENTITLEMENTS_SET = "/objects/sandbox/entitlements/set";
+	private static final String URL_SANDBOX = "/objects/sandbox";
+	private static final String URL_SANDBOX_DETAILS = "/objects/sandbox/{vault_id}";
+	private static final String URL_DELETE_SANDBOX = "/objects/sandbox/{name}";
+
+	private static final String SANDBOX_ADD_REQUESTER = "add_requster";
+	private static final String SANDBOX_ALLOWANCE = "allowance";
+	private static final String SANDBOX_DOMAIN = "domain";
+	private static final String SANDBOX_GRANT = "grant";
+	private static final String SANDBOX_NAME = "name";
+	private static final String SANDBOX_RELEASE = "release";
+	private static final String SANDBOX_TEMPORARY_ALLOWANCE = "temporary_allowance";
+	private static final String SANDBOX_TYPE = "type";
+
+	private Boolean addRequester;
+	private ReleaseType release;
+
+	/**
+	 * <b>Retrieve Sandboxes</b>
+	 * <p>
+	 * Retrieve information about the sandbox vaults for the authenticated vault.
+	 *
+	 * @return SandboxResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/objects/sandbox</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-sandboxes' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-sandboxes</a>
+	 */
+	public SandboxResponse retrieveSandboxes() {
+		String url = vaultClient.getAPIEndpoint(URL_SANDBOX);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		SandboxResponse sandboxResponse = send(HttpMethod.GET, request, SandboxResponse.class);
+		return sandboxResponse;
+	}
+
+	/**
+	 * <b>Retrieve Sandbox Details by ID</b>
+	 * <p>
+	 * Retrieve information about the sandbox for the given vault ID.
+	 *
+	 * @param vaultId vault id
+	 * @return SandboxResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/objects/sandbox/{vault_id}</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-sandbox-details-by-id' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-sandbox-details-by-id</a>
+	 */
+	public SandboxResponse retrieveSandboxsDetailsById(int vaultId) {
+		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_DETAILS).replace("{vault_id}", String.valueOf(vaultId));
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		SandboxResponse response = send(HttpMethod.GET, request, SandboxResponse.class);
+		return response;
+	}
+
+	/**
+	 * <b>Retrieve Sandbox Entitlements</b>
+	 * <p>
+	 * Retrieve the total number of available and number of in-use sandbox vaults for the authenticated vault.
+	 *
+	 * @return SandboxEntitlementResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/objects/sandbox_entitlements</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-sandbox-entitlements</a>
+	 */
+	public SandboxEntitlementResponse retrieveSandboxEntitlements() {
+		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_ENTITLEMENTS);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		SandboxEntitlementResponse response = send(HttpMethod.GET, request, SandboxEntitlementResponse.class);
+		return response;
+	}
+
+	/**
+	 * <b>Set Sandbox Entitlements</b>
+	 * <p>
+	 * Set new sandbox entitlements, including granting and revoking allowances, for the given sandbox name.
+	 *
+	 * @param name               The name of the sandbox vault, which appears on the My Vaults page
+	 * @param type               The type of sandbox. At this time, the only available type is config.
+	 * @param allowance          The number of entitlements to grant or revoke.
+	 * @param grant              Allowed values true and false. True grants allowances and false revokes them.
+	 * @param temporaryAllowance The number of temporary sandbox allowances to grant or revoke.
+	 * @return SandboxResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/objects/sandbox/entitlements/set</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#set-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/21.1/#set-sandbox-entitlements</a>
+	 */
+	public SandboxResponse setSandboxEntitlements(String name,
+												  String type,
+												  int allowance,
+												  boolean grant,
+												  int temporaryAllowance) {
+		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_ENTITLEMENTS_SET);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		request.addBodyParam(SANDBOX_NAME, name);
+		request.addBodyParam(SANDBOX_TYPE, type);
+		request.addBodyParam(SANDBOX_ALLOWANCE, allowance);
+		request.addBodyParam(SANDBOX_GRANT, grant);
+		request.addBodyParam(SANDBOX_TEMPORARY_ALLOWANCE, temporaryAllowance);
+
+		SandboxResponse response = send(HttpMethod.POST, request, SandboxResponse.class);
+		return response;
+	}
+
+	/**
+	 * Create a new sandbox for the currently authenticated vault. Providing a name which already exists will refresh the existing sandbox vault.
+	 *
+	 * @param type   The type of sandbox, such as config.
+	 * @param domain The domain to use for the new sandbox.
+	 * @param name   The name of the sandbox vault, which appears on the My Vaults page.
+	 * @return JobCreateResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/objects/sandbox</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#create-or-refresh-sandbox' target='_blank'>https://developer.veevavault.com/api/21.1/#create-or-refresh-sandbox</a>
+	 */
+	public JobCreateResponse createOrRefreshSandbox(String type, String domain, String name) {
+		String url = vaultClient.getAPIEndpoint(URL_SANDBOX);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		request.addBodyParam(SANDBOX_TYPE, type);
+		request.addBodyParam(SANDBOX_DOMAIN, domain);
+		request.addBodyParam(SANDBOX_NAME, name);
+
+		if (this.addRequester != null) {
+			request.addBodyParam(SANDBOX_ADD_REQUESTER, addRequester);
+		}
+		if (this.release != null) {
+			request.addBodyParam(SANDBOX_RELEASE, release);
+		}
+
+		JobCreateResponse response = send(HttpMethod.POST, request, JobCreateResponse.class);
+		return response;
+	}
+
+	/**
+	 * Delete a sandbox vault. Note that you cannot delete a sandbox which was created or refreshed within the last 24 hours.
+	 *
+	 * @param name The name of the sandbox vault to delete. This is the name which appears on the My Vaults page.
+	 * @return VaultResponse
+	 * @vapil.api <pre>
+	 * DELETE /api/{version}/objects/sandbox/{name}</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#delete-sandbox' target='_blank'>https://developer.veevavault.com/api/21.1/#delete-sandbox</a>
+	 */
+	public VaultResponse deleteSandbox(String name) {
+		String url = vaultClient.getAPIEndpoint(URL_DELETE_SANDBOX).replace("{name}", name);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		VaultResponse response = send(HttpMethod.DELETE, request, VaultResponse.class);
+		return response;
+	}
+
+	/**
+	 * Set the AddRequester for createOrRefreshSandbox
+	 *
+	 * @param addRequester addRequester
+	 * @return SandboxRequest
+	 */
+	public SandboxRequest setAddRequester(Boolean addRequester) {
+		this.addRequester = addRequester;
+		return this;
+	}
+
+	/**
+	 * Set the release type for createOrRefreshSandbox
+	 *
+	 * @param release release
+	 * @return SandboxRequest
+	 */
+	public SandboxRequest setRelease(ReleaseType release) {
+		this.release = release;
+		return this;
+	}
+
+	/**
+	 * The type of release. This can be general, limited, or prerelease.
+	 */
+	public enum ReleaseType {
+		GENERAL("general"),
+		LIMITED("limited"),
+		PRERELEASE("prerelease");
+
+		String value;
+
+		ReleaseType(String value) {
+			if (value != null) {
+				this.value = value.toUpperCase().trim();
+			}
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+}

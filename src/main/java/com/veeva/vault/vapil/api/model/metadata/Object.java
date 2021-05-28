@@ -188,6 +188,15 @@ public class Object extends VaultModel {
 		this.set("object_class", objectClass);
 	}
 
+	@JsonProperty("object_types")
+	public List<ObjectType> getObjectTypes() {
+		return (List) get("object_types");
+	}
+
+	public void setObjectTypes(List<ObjectType> objectTypes) {
+		this.set("object_types", objectTypes);
+	}
+
 	@JsonProperty("order")
 	public Integer getOrder() {
 		return getInteger("order");
@@ -341,6 +350,53 @@ public class Object extends VaultModel {
 
 		public void setPrefix(String prefix) {
 			this.set("prefix", prefix);
+		}
+
+		@JsonProperty("url")
+		public String getUrl() {
+			return getString("url");
+		}
+
+		public void setUrl(String url) {
+			this.set("url", url);
+		}
+	}
+
+	public static class ObjectType extends VaultModel {
+		@JsonProperty("label")
+		public String getLabel() {
+			return getString("label");
+		}
+
+		public void setLabel(String label) {
+			this.set("label", label);
+		}
+
+		@JsonProperty("label_plural")
+		public String getLabelPlural() {
+			return getString("label_plural");
+		}
+
+		public void setLabelPlural(String labelPlural) {
+			this.set("label_plural", labelPlural);
+		}
+
+		@JsonProperty("name")
+		public String getName() {
+			return getString("name");
+		}
+
+		public void setName(String name) {
+			this.set("name", name);
+		}
+
+		@JsonProperty("status")
+		public List<String> getStatus() {
+			return (List) get("status");
+		}
+
+		public void setStatus(List<String> status) {
+			this.set("status", status);
 		}
 
 		@JsonProperty("url")

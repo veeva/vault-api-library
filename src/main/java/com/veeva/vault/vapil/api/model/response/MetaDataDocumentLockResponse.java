@@ -19,7 +19,7 @@ public class MetaDataDocumentLockResponse extends VaultResponse {
 
 	@JsonProperty("properties")
 	public List<DocumentLock> getProperties() {
-		return (List<DocumentLock>) this.get("propertiesp");
+		return (List<DocumentLock>) this.get("properties");
 	}
 
 	public void setProperties(List<DocumentLock> properties) {

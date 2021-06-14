@@ -25,7 +25,7 @@ public class BinderTemplateMetadataResponse extends VaultResponse {
 		return (List<Template>) get("data");
 	}
 
-	public void setData(List<Template> templateMetadata) {
-		this.set("data", templateMetadata);
+	public void setData(List<Template> data) {
+		this.set("data", data);
 	}
 }

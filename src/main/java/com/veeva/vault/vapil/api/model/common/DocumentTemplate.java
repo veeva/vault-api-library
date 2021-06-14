@@ -94,8 +94,8 @@ public class DocumentTemplate extends VaultModel {
 		return getString("new_name");
 	}
 
-	public void setNewName(String name) {
-		set("new_name", name);
+	public void setNewName(String newName) {
+		set("new_name", newName);
 	}
 
 	@JsonProperty("label__v")
@@ -139,8 +139,8 @@ public class DocumentTemplate extends VaultModel {
 		return getInteger("template_doc_id__v");
 	}
 
-	public void setTemplateDocId(Integer id) {
-		this.set("template_doc_id__v", id);
+	public void setTemplateDocId(Integer templateDocId) {
+		this.set("template_doc_id__v", templateDocId);
 	}
 
 	@JsonProperty("template_doc_selected_by__v")
@@ -148,8 +148,8 @@ public class DocumentTemplate extends VaultModel {
 		return getInteger("template_doc_selected_by__v");
 	}
 
-	public void setTemplateDocSelectedBy(Integer selectedBy) {
-		this.set("template_doc_selected_by__v", selectedBy);
+	public void setTemplateDocSelectedBy(Integer templateDocSelectedBy) {
+		this.set("template_doc_selected_by__v", templateDocSelectedBy);
 	}
 
 	@JsonProperty("type__v")

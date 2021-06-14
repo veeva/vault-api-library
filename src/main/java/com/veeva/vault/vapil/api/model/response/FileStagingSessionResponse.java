@@ -38,8 +38,8 @@ public class FileStagingSessionResponse extends VaultResponse {
 			return getString("expiration_date");
 		}
 
-		public void setExpirationDate(String expiry) {
-			this.set("expiration_date", expiry);
+		public void setExpirationDate(String expirationDate) {
+			this.set("expiration_date", expirationDate);
 		}
 
 		@JsonProperty("id")

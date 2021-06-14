@@ -34,11 +34,17 @@ public class QueryRequest extends VaultRequest {
 	 */
 	public static final String HTTP_HEADER_VAULT_DESCRIBE_QUERY = "X-VaultAPI-DescribeQuery";
 
+	/**
+	 * <b>X-VaultAPI-RecordProperties</b> If present, the response includes the record properties object.
+	 */
+	public static final String HTTP_HEADER_VAULT_RECORD_PROPERTIES = "X-VaultAPI-RecordProperties";
+
 	// API Endpoints
 	private static final String URL_QUERY = "/query";
 
 	// API Request parameters
 	private Boolean queryDescribe = false;
+	private RecordPropertyType recordPropertyType = null;
 
 	private QueryRequest() {
 	}
@@ -123,6 +129,9 @@ public class QueryRequest extends VaultRequest {
 		if (queryDescribe != null && queryDescribe)
 			request.addHeaderParam(HTTP_HEADER_VAULT_DESCRIBE_QUERY, Boolean.toString(queryDescribe));
 
+		if (recordPropertyType != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_RECORD_PROPERTIES, recordPropertyType.getValue());
+
 		return send(HttpMethod.POST, request, QueryResponse.class);
 	}
 
@@ -158,6 +167,32 @@ public class QueryRequest extends VaultRequest {
 
 	/*
 	 *
+	 * Enums
+	 *
+	 */
+
+	/**
+	 * Download option for Document Token
+	 */
+	public enum RecordPropertyType {
+		ALL("all"),
+		HIDDEN("hidden"),
+		REDACTED("redacted"),
+		WEBLINK("weblink");
+
+		private String value;
+
+		RecordPropertyType(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	/*
+	 *
 	 * Request parameter setters
 	 *
 	 */
@@ -186,6 +221,29 @@ public class QueryRequest extends VaultRequest {
 	 */
 	public QueryRequest setDescribeQuery(Boolean queryDescribe) {
 		this.queryDescribe = queryDescribe;
+		return this;
+	}
+
+	/**
+	 * <b>X-VaultAPI-RecordProperties</b>
+	 * <p>
+	 * If present, the response includes the record properties object.
+	 * Possible values are all, hidden, redacted, and weblink.
+	 * If omitted, the record properties object is not included in the response.
+	 *
+	 * @param recordPropertyType record property type
+	 * @return The Request
+	 * @vapil.response <i>Example results of record properties</i>
+	 * <pre>
+	 * if (response.getRecordProperties() != null) {
+	 *   for (RecordProperty recordProperty : response.getRecordProperties()) {
+	 *     System.out.println("\tId = " + recordProperty.getId());
+	 *     System.out.println("\tHidden = " + String.join(",", recordProperty.getFieldProperties().get("hidden")));
+	 *   }
+	 * }</pre>
+	 */
+	public QueryRequest setRecordProperties(RecordPropertyType recordPropertyType) {
+		this.recordPropertyType = recordPropertyType;
 		return this;
 	}
 }

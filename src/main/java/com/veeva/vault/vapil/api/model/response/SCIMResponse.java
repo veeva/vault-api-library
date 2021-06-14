@@ -82,7 +82,7 @@ public class SCIMResponse extends VaultResponse {
 
 	@JsonProperty("documentationUri")
 	public String getDocumentationUri() {
-		return this.getString("xx");
+		return this.getString("documentationUri");
 	}
 
 	public void setDocumentationUri(String documentationUri) {
@@ -154,7 +154,7 @@ public class SCIMResponse extends VaultResponse {
 
 	@JsonProperty("patch")
 	public Patch getPatch() {
-		return (Patch) this.get("xx");
+		return (Patch) this.get("patch");
 	}
 
 	public void setPatch(Patch patch) {

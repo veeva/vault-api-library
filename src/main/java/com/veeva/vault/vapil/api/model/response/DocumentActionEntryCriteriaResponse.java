@@ -65,7 +65,7 @@ public class DocumentActionEntryCriteriaResponse extends VaultResponse {
 
 		@JsonProperty("objectTypeReferenced")
 		public ObjectTypeReferenced getObjectTypeReferenced() {
-			return (ObjectTypeReferenced) this.get("ObjectTypeReferenced");
+			return (ObjectTypeReferenced) this.get("objectTypeReferenced");
 		}
 
 		@JsonProperty("objectTypeReferenced")

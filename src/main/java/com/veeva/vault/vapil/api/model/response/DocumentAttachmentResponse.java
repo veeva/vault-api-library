@@ -25,8 +25,8 @@ public class DocumentAttachmentResponse extends VaultResponse {
 	}
 
 	@JsonProperty("data")
-	public void setData(List<DocumentAttachment> documentAttachments) {
-		this.set("data", documentAttachments);
+	public void setData(List<DocumentAttachment> data) {
+		this.set("data", data);
 	}
 
 	@JsonIgnore

@@ -23,8 +23,8 @@ public class DocumentLifecycleRoleAssignmentRulesResponse extends VaultResponse 
 		return (List<VaultResponse>) this.get("data");
 	}
 
-	public void setData(List<VaultResponse> responses) {
-		this.set("data", responses);
+	public void setData(List<VaultResponse> data) {
+		this.set("data", data);
 	}
 
 	@JsonIgnore

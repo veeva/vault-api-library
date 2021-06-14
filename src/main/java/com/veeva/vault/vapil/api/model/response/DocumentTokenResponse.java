@@ -44,11 +44,11 @@ public class DocumentTokenResponse extends VaultResponse {
 
 		@JsonProperty("token__v")
 		public String getToken() {
-			return this.getString("token");
+			return this.getString("token__v");
 		}
 
 		public void setToken(String token) {
-			this.set("token", token);
+			this.set("token__v", token);
 		}
 
 		@JsonProperty("errorType")

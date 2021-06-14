@@ -21,7 +21,7 @@ public class JobStatusResponse extends VaultResponse {
 		return (Job) this.get("data");
 	}
 
-	public void setData(Job job) {
-		this.set("data", job);
+	public void setData(Job data) {
+		this.set("data", data);
 	}
 }

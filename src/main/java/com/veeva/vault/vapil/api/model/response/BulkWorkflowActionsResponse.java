@@ -27,8 +27,8 @@ public class BulkWorkflowActionsResponse extends VaultResponse {
 	}
 
 	@JsonProperty("data")
-	public void setData(List<ActionItem> actionItems) {
-		this.set("data", actionItems);
+	public void setData(List<ActionItem> data) {
+		this.set("data", data);
 	}
 
 	public static class ActionItem extends VaultModel {

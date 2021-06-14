@@ -44,4 +44,19 @@ public class QueryRequestTest {
 		Assertions.assertNotNull(resp);
 		Assertions.assertTrue(resp.isSuccessful());
 	}
+
+	@Test
+	public void TestRecordProperties(VaultClient vaultClient) {
+		String query = "select id, username__sys from user__sys";
+		QueryResponse resp = vaultClient.newRequest(QueryRequest.class)
+				.setRecordProperties(QueryRequest.RecordPropertyType.ALL)
+				.query(query);
+
+		Assertions.assertNotNull(resp);
+		Assertions.assertTrue(resp.isSuccessful());
+		Assertions.assertNotNull(resp.getRecordProperties());
+		Assertions.assertNotNull(resp.getRecordProperties().get(0).getId());
+		Assertions.assertNotNull(resp.getRecordProperties().get(0).getFieldAdditionalData());
+		Assertions.assertNotNull(resp.getRecordProperties().get(0).getFieldProperties());
+	}
 }

@@ -19,8 +19,8 @@ public class BulkWorkflowJobStartResponse extends VaultResponse {
 	}
 
 	@JsonProperty("data")
-	public void setData(Job job) {
-		this.set("data", job);
+	public void setData(Job data) {
+		this.set("data", data);
 	}
 
 	public static class Job extends VaultModel {

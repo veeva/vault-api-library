@@ -138,7 +138,7 @@ public class ObjectWorkflowResponse extends VaultResponse {
 
 		@JsonProperty("offset")
 		public Integer getOffset() {
-			return this.getInteger("id");
+			return this.getInteger("offset");
 		}
 
 		public void setOffset(Integer offset) {

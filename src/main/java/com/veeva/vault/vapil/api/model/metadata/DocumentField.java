@@ -178,7 +178,7 @@ public class DocumentField extends VaultModel {
 
 	@JsonProperty("shared")
 	public Boolean getShared() {
-		return this.getBoolean("shard");
+		return this.getBoolean("shared");
 	}
 
 	public void setShared(Boolean shared) {
@@ -228,7 +228,7 @@ public class DocumentField extends VaultModel {
 		}
 
 		public void setType(String type) {
-			this.set("definedIn", type);
+			this.set("type", type);
 		}
 	}
 }

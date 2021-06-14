@@ -9,13 +9,12 @@ package com.veeva.vault.vapil.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
 public class FileStagingItemResponse extends VaultResponse {
 
 	@JsonProperty("data")
 	public FileStagingItem getData() {
-		return (FileStagingItem) this.get("FileStagingItem");
+		return (FileStagingItem) this.get("data");
 	}
 
 	public void setData(FileStagingItem data) {
@@ -65,8 +64,8 @@ public class FileStagingItemResponse extends VaultResponse {
 			return getString("file_content_md5");
 		}
 
-		public void setFileContentMD5(String url) {
-			this.set("file_content_md5", url);
+		public void setFileContentMD5(String fileContentMd5) {
+			this.set("file_content_md5", fileContentMd5);
 		}
 	}
 }

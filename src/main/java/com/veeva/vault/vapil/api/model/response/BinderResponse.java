@@ -22,7 +22,7 @@ public class BinderResponse extends VaultResponse {
 
 	@JsonProperty("binder")
 	public Binder getBinder() {
-		return (Binder) this.get("document");
+		return (Binder) this.get("binder");
 	}
 
 	public void setBinder(Binder binder) {

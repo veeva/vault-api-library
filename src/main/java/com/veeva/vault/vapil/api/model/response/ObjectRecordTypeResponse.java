@@ -144,7 +144,7 @@ public class ObjectRecordTypeResponse extends VaultResponse {
 			}
 
 			public void setRequired(Boolean required) {
-				this.set("name", required);
+				this.set("required", required);
 			}
 
 			@JsonProperty("source")

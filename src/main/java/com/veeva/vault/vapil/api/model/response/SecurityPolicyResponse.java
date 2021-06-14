@@ -34,7 +34,7 @@ public class SecurityPolicyResponse extends VaultResponse {
 
 		@JsonProperty("policy_security_settings__v")
 		public PolicySecuritySettings getPolicySecuritySettings() {
-			return (PolicySecuritySettings) this.get("policy_details__v");
+			return (PolicySecuritySettings) this.get("policy_security_settings__v");
 		}
 
 		public void setPolicySecuritySettings(SecurityPolicy policySecuritySettings) {
@@ -57,8 +57,8 @@ public class SecurityPolicyResponse extends VaultResponse {
 				return this.getBoolean("is_active__v");
 			}
 
-			public void setIsActive(String name) {
-				this.set("is_active__v", name);
+			public void setIsActive(String isActive) {
+				this.set("is_active__v", isActive);
 			}
 
 			@JsonProperty("label__v")
@@ -141,8 +141,8 @@ public class SecurityPolicyResponse extends VaultResponse {
 				return this.getBoolean("passwords_require_uppercase_letter__v");
 			}
 
-			public void setPasswordsRequireUpperCaseLetter(String passwordsRequireUpperCaseLetter) {
-				this.set("passwords_require_uppercase_letter__v", passwordsRequireUpperCaseLetter);
+			public void setPasswordsRequireUpperCaseLetter(String passwordsRequireUppercaseLetter) {
+				this.set("passwords_require_uppercase_letter__v", passwordsRequireUppercaseLetter);
 			}
 
 			@JsonProperty("passwords_require_nonalpha_char__v")

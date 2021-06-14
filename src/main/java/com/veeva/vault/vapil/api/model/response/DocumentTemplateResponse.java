@@ -31,6 +31,6 @@ public class DocumentTemplateResponse extends VaultResponse {
 	}
 
 	public void setName(String name) {
-		this.set("name", name);
+		this.set("name__v", name);
 	}
 }

@@ -111,7 +111,7 @@ public class ObjectWorkflowTaskActionDetailsResponse extends VaultResponse {
 
 		@JsonProperty("reason")
 		public String getReason() {
-			return this.getString("verdict");
+			return this.getString("reason");
 		}
 
 		public void setReason(String reason) {
@@ -147,7 +147,7 @@ public class ObjectWorkflowTaskActionDetailsResponse extends VaultResponse {
 
 		@JsonProperty("verdicts")
 		public List<Verdict> getVerdicts() {
-			return (List<Verdict>) this.get("verdict");
+			return (List<Verdict>) this.get("verdicts");
 		}
 
 		public void setVerdicts(List<Verdict> verdicts) {

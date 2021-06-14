@@ -23,8 +23,8 @@ public class DocumentExportResponse extends VaultResponse {
 	}
 
 	@JsonProperty("data")
-	public void setData(List<ExportedDocument> exportedDocuments) {
-		this.set("data", exportedDocuments);
+	public void setData(List<ExportedDocument> data) {
+		this.set("data", data);
 	}
 
 	public static class ExportedDocument extends VaultResponse {

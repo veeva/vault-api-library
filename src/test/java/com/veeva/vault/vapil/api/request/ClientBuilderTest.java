@@ -44,7 +44,7 @@ public class ClientBuilderTest {
 				testProperties.getClientIdProgram());
 
 		VaultClient vaultClient = VaultClientBuilder
-				.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
+				.newClientBuilder(VaultClient.AuthenticationType.BASIC)
 				.withVaultClientId(vaultClientId)
 				.withVaultDNS(testProperties.getVaultDNS())
 				.withVaultUsername(testProperties.getVaultUsername())

@@ -33,7 +33,7 @@ public class DocumentActionInitiateResponse extends VaultResponse {
 	}
 
 	@JsonProperty("workflow_id__v")
-	public void setWorkFlowId(Integer workFlowId) {
-		this.set("workflow_id__v", workFlowId);
+	public void setWorkFlowId(Integer workflowId) {
+		this.set("workflow_id__v", workflowId);
 	}
 }

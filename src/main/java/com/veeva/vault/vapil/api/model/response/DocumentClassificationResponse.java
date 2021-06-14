@@ -61,7 +61,7 @@ public class DocumentClassificationResponse extends VaultResponse {
 
 	@JsonProperty("properties")
 	public List<DocumentField> getProperties() {
-		return (List<DocumentField>) this.get("label");
+		return (List<DocumentField>) this.get("properties");
 	}
 
 	@JsonProperty("properties")

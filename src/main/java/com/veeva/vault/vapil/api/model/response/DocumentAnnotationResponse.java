@@ -24,8 +24,8 @@ public class DocumentAnnotationResponse extends VaultResponse {
 	}
 
 	@JsonProperty("anchorDataList")
-	public void setAnchorDataList(List<AnchorData> anchorData) {
-		this.set("anchorDataList", anchorData);
+	public void setAnchorDataList(List<AnchorData> anchorDataList) {
+		this.set("anchorDataList", anchorDataList);
 	}
 
 	@JsonProperty("failures")

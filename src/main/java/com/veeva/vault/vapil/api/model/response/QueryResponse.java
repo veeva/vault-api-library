@@ -8,6 +8,7 @@
 package com.veeva.vault.vapil.api.model.response;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,6 +40,15 @@ public class QueryResponse extends VaultResponse {
 		this.set("queryDescribe", queryDescribe);
 	}
 
+	@JsonProperty("record_properties")
+	public List<RecordProperty> getRecordProperties() {
+		return (List<RecordProperty>) this.get("record_properties");
+	}
+
+	public void setRecordProperties(List<RecordProperty> recordProperties) {
+		this.set("record_properties", recordProperties);
+	}
+
 	@JsonProperty("responseDetails")
 	public ResponseDetails getResponseDetails() {
 		return (ResponseDetails) this.get("responseDetails");
@@ -54,8 +64,8 @@ public class QueryResponse extends VaultResponse {
 			return (QueryObject) this.get("object");
 		}
 
-		public void setQueryObject(QueryObject queryObject) {
-			this.set("object", queryObject);
+		public void setQueryObject(QueryObject object) {
+			this.set("object", object);
 		}
 
 		public static class QueryObject extends VaultModel {
@@ -91,7 +101,7 @@ public class QueryResponse extends VaultResponse {
 
 		@JsonProperty("fields")
 		public List<ObjectField> getFields() {
-			return (List<ObjectField>) this.get("name");
+			return (List<ObjectField>) this.get("fields");
 		}
 
 		public void setFields(List<ObjectField> fields) {
@@ -115,6 +125,39 @@ public class QueryResponse extends VaultResponse {
 				e.printStackTrace();
 				return null;
 			}
+		}
+	}
+
+	public static class RecordProperty extends VaultModel {
+
+		@JsonProperty("field_additional_data")
+		public FieldAdditionalData getFieldAdditionalData() {
+			return (FieldAdditionalData)this.get("field_additional_data");
+		}
+
+		public void setFieldAdditionalData(FieldAdditionalData fieldAdditionalData) {
+			this.set("field_additional_data", fieldAdditionalData);
+		}
+
+		@JsonProperty("field_properties")
+		public Map<String, List<String>> getFieldProperties() {
+			return (Map<String, List<String>>)this.get("field_properties");
+		}
+
+		public void setFieldProperties(Map<String, List<String>> fieldProperties) {
+			this.set("field_properties", fieldProperties);
+		}
+
+		@JsonProperty("id")
+		public String getId() {
+			return this.getString("id");
+		}
+
+		public void setId(String id) {
+			this.set("id", id);
+		}
+
+		public static class FieldAdditionalData extends VaultModel {
 		}
 	}
 

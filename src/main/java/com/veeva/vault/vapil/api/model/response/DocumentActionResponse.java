@@ -27,8 +27,8 @@ public class DocumentActionResponse extends VaultResponse {
 	}
 
 	@JsonProperty("lifecycle_actions__v")
-	public void setLifecycleActions(List<LifecycleAction> lifeCycleActions) {
-		this.set("lifecycle_actions__v", lifeCycleActions);
+	public void setLifecycleActions(List<LifecycleAction> lifecycleActions) {
+		this.set("lifecycle_actions__v", lifecycleActions);
 	}
 
 	public static class LifecycleAction extends VaultModel {

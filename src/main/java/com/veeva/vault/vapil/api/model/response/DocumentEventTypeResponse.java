@@ -81,7 +81,7 @@ public class DocumentEventTypeResponse extends VaultResponse {
 
 			@JsonProperty("name")
 			public void setName(String name) {
-				this.set("label", name);
+				this.set("name", name);
 			}
 
 			@JsonProperty("value")

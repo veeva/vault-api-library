@@ -76,8 +76,8 @@ public class FileStagingItemBulkResponse extends VaultResponse {
 			return getString("modified_date");
 		}
 
-		public void setModifiedDate(String date) {
-			this.set("modified_date", date);
+		public void setModifiedDate(String modifiedDate) {
+			this.set("modified_date", modifiedDate);
 		}
 	}
 

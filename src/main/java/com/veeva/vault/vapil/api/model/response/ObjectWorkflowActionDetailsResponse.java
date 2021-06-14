@@ -127,7 +127,7 @@ public class ObjectWorkflowActionDetailsResponse extends VaultResponse {
 		}
 
 		public void setRequired(Boolean required) {
-			this.set("name", required);
+			this.set("required", required);
 		}
 	}
 

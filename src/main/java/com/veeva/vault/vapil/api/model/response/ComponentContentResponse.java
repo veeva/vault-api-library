@@ -27,8 +27,8 @@ public class ComponentContentResponse extends VaultResponse {
 	}
 
 	@JsonProperty("data")
-	public void setData(List<ComponentContent> componentContent) {
-		this.set("data", componentContent);
+	public void setData(List<ComponentContent> data) {
+		this.set("data", data);
 	}
 
 	@JsonProperty("links")

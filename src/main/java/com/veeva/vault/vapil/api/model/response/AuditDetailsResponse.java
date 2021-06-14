@@ -52,8 +52,8 @@ public class AuditDetailsResponse extends VaultResponse {
 			return (DetailsObject) this.get("object");
 		}
 
-		public void setDetailsObject(DetailsObject detailsObject) {
-			this.set("object", detailsObject);
+		public void setDetailsObject(DetailsObject object) {
+			this.set("object", object);
 		}
 
 		@JsonProperty("offset")

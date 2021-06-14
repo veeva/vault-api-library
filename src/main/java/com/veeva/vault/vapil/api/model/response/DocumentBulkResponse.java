@@ -22,8 +22,8 @@ public class DocumentBulkResponse extends VaultResponse {
 	}
 
 	@JsonProperty("data")
-	public void setData(List<DocumentResponse> documentResponses) {
-		this.set("data", documentResponses);
+	public void setData(List<DocumentResponse> data) {
+		this.set("data", data);
 	}
 
 	@Override

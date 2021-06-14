@@ -55,8 +55,8 @@ public class DocumentRelationshipMetadataResponse extends VaultResponse {
 			return (RelationshipObject) this.get("object");
 		}
 
-		public void setRelationshipObject(RelationshipObject relationshipObject) {
-			this.set("object", relationshipObject);
+		public void setRelationshipObject(RelationshipObject object) {
+			this.set("object", object);
 		}
 
 		@JsonProperty("relationship_label")

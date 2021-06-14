@@ -61,7 +61,7 @@ public class ObjectRecordRoleResponse extends VaultResponse {
 
 		@JsonProperty("users")
 		public List<Integer> getUsers() {
-			return (List<Integer>) this.get("user");
+			return (List<Integer>) this.get("users");
 		}
 
 		public void setUsers(List<Integer> users) {

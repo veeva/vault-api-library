@@ -82,7 +82,7 @@ public class DocumentRoleRetrieveResponse extends VaultResponse {
 
 		@JsonProperty("availableGroups")
 		public List<Long> getAvailableGroups() {
-			return (List<Long>) this.get("defaultGroups");
+			return (List<Long>) this.get("availableGroups");
 		}
 
 		public void setAvailableGroups(List<Long> availableGroups) {
@@ -91,7 +91,7 @@ public class DocumentRoleRetrieveResponse extends VaultResponse {
 
 		@JsonProperty("defaultUsers")
 		public List<Long> getDefaultUsers() {
-			return (List<Long>) this.get("defaultGroups");
+			return (List<Long>) this.get("defaultUsers");
 		}
 
 		public void setDefaultUsers(List<Long> defaultUsers) {

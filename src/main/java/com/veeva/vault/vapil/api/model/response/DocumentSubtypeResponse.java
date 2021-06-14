@@ -43,7 +43,7 @@ public class DocumentSubtypeResponse extends DocumentClassificationResponse {
 
 		@JsonProperty("value")
 		public String getValue() {
-			return this.getString("label");
+			return this.getString("value");
 		}
 
 		public void setValue(String value) {

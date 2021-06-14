@@ -23,7 +23,7 @@ public class BinderTemplateResponse extends VaultResponse {
 		return (List<BinderTemplate>) get("data");
 	}
 
-	public void setData(List<BinderTemplate> templates) {
-		this.set("data", templates);
+	public void setData(List<BinderTemplate> data) {
+		this.set("data", data);
 	}
 }

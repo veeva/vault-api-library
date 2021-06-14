@@ -1,7 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html lang="en">
 
-<head />
+<head>
+	<title>VAPIL Introduction and Getting Started Guide</title>
+</head>
 
 <body>
 <h1>VAPIL Introduction and Getting Started Guide</h1>
@@ -26,7 +28,7 @@ VAPIL provides full API endpoint coverage for Vault integrations.
 	<li>Expose API requests/responses in clearly defined Java classes, getters, setters, and methods</li>
 </ul>
 <b>Dedication to documentation, available in <a
-		href="https://veeva.github.io/vault-api-library/javadoc/21.1.2/index.html" target="_blank">Javadoc</a></b>
+		href="https://veeva.github.io/vault-api-library/javadoc/21.1.3/index.html" target="_blank">Javadoc</a></b>
 <ul>
 	<li>Easily find API endpoints from Vault help webpage in the source or Javadoc</li>
 	<li>One-to-one alignment between VAPIL methods and the Vault API endpoint/documentation</li>
@@ -71,7 +73,7 @@ Source code is available on GitHub: <a
      &lt;dependency&gt;
           &lt;groupId&gt;com.veeva.vault&lt;/groupId&gt;
           &lt;artifactId&gt;vapil&lt;/artifactId&gt;
-          &lt;version&gt;21.1.2&lt;/version&gt;
+          &lt;version&gt;21.1.3&lt;/version&gt;
      &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre>
 	</li>
@@ -140,21 +142,21 @@ doc.setType("General");
 doc.setTitle("Test Upload VAPIL");
 doc.set("custom_field__c", "value");
 
-DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
+DocumentResponse documentResponse = vaultClient.newRequest(DocumentRequest.class)
 	.setInputPath(filePath)
 	.createSingleDocument(doc);
 </pre>
 
 <b>Bulk Create Multiple Documents from CSV File</b>
 <pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
-DocumentBulkResponse response = vaultClient.newRequest(DocumentRequest.class)
+DocumentBulkResponse documentResponse = vaultClient.newRequest(DocumentRequest.class)
 	.setInputPath(csvFilePath)
 	.createMultipleDocuments();
 </pre>
 
 <b>Bulk Update Object Records (Input CSV, JSON Response)</b>
 <pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
-ObjectRecordResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
+ObjectRecordBulkResponse objectResponse = vaultClient.newRequest(ObjectRecordRequest.class)
 	.setContentTypeCsv()
 	.setInputPath(localPath)
 	.updateObjectRecords("product__v");
@@ -162,13 +164,13 @@ ObjectRecordResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 
 <b>Retrieve the Audit Trail for Documents in past 30 days</b>
 <pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
-DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
+DocumentAuditResponse auditResponse = vaultClient.newRequest(LogRequest.class)
 		.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
 		.setEndDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
 		.setLimit(4)
 		.retrieveAuditDetails(LogRequest.AuditTrailType.DOCUMENT);
 
-AuditDetailsResponse.ResponseDetails details = resp.getResponseDetails();
+AuditDetailsResponse.ResponseDetails details = auditResponse.getResponseDetails();
 System.out.println("Offset = " + details.getOffset());
 System.out.println("Limit = " + details.getLimit());
 System.out.println("Size = " + details.getSize());
@@ -178,7 +180,7 @@ System.out.println("Object/Label = " + details.getDetailsObject().getLabel());
 System.out.println("Object/Url = " + details.getDetailsObject().getUrl());
 
 System.out.println("Items ****");
-for (DocumentAuditResponse.DocumentAudit audit : resp.getData()) {
+for (DocumentAuditResponse.DocumentAudit audit : auditResponse.getData()) {
 	System.out.println("\n**** Data Item **** ");
 	System.out.println("id = " + audit.getId());
 	System.out.println("timestamp = " + audit.getTimestamp());

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>VAPIL Introduction and Getting Started Guide</title>
+	
 </head>
 
 <body>

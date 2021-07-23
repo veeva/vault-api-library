@@ -60,11 +60,11 @@ public class FileStagingItemResponse extends VaultResponse {
 		}
 
 		@JsonProperty("file_content_md5")
-		public String getFileContentMD5() {
+		public String getFileContentMd5() {
 			return getString("file_content_md5");
 		}
 
-		public void setFileContentMD5(String fileContentMd5) {
+		public void setFileContentMd5(String fileContentMd5) {
 			this.set("file_content_md5", fileContentMd5);
 		}
 	}

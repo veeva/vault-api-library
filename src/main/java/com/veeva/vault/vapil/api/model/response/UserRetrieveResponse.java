@@ -34,7 +34,7 @@ public class UserRetrieveResponse extends VaultResponse {
 			return (User) this.get("user");
 		}
 
-		public void setUsers(User user) {
+		public void setUser(User user) {
 			this.set("user", user);
 		}
 	}

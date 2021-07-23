@@ -52,11 +52,11 @@ public class QueueResponse extends VaultResponse {
 		}
 
 		@JsonProperty("messages_in_queue")
-		public Integer getMessageInQueue() {
+		public Integer getMessagesInQueue() {
 			return this.getInteger("messages_in_queue");
 		}
 
-		public void setMessageInQueue(Integer messagesInQueue) {
+		public void setMessagesInQueue(Integer messagesInQueue) {
 			this.set("messages_in_queue", messagesInQueue);
 		}
 

@@ -23,7 +23,7 @@ public class MetaDataObjectFieldResponse extends VaultResponse {
 		return (ObjectField) this.get("field");
 	}
 
-	public void setDocument(ObjectField field) {
+	public void setField(ObjectField field) {
 		this.set("field", field);
 	}
 }

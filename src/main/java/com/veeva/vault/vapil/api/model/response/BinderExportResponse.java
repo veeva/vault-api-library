@@ -58,7 +58,7 @@ public class BinderExportResponse extends VaultResponse {
 		return this.getInteger("minor_version_number__v");
 	}
 
-	public void setMinorVersionNumberV(Integer minorVersionNumber) {
+	public void setMinorVersionNumber(Integer minorVersionNumber) {
 		this.set("minor_version_number__v", minorVersionNumber);
 	}
 

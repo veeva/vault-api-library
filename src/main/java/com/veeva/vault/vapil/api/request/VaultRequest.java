@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Class for performing HTTP requests to the Vault API. This class
@@ -284,8 +285,12 @@ public abstract class VaultRequest {
 		((VaultResponse) obj).setHeaders(response.getHeaders());
 
 		if (((VaultResponse) obj).hasErrors() && vaultClient.isLogApiErrorsEnabled()) {
-			for (APIResponseError error : ((VaultResponse) obj).getErrors()) {
-				log.error("Vault Exception " + error.getType() + " " + error.getMessage());
+			//this only logs errors at the top level. any record level errors are not logged
+			List<APIResponseError> errors = ((VaultResponse) obj).getErrors();
+			if (errors != null) {
+				for (APIResponseError error : ((VaultResponse) obj).getErrors()) {
+					log.error("Vault Exception " + error.getType() + " " + error.getMessage());
+				}
 			}
 		}
 

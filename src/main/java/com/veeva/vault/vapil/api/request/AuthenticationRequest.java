@@ -329,7 +329,7 @@ public class AuthenticationRequest extends VaultRequest {
 				Integer authenticatedVaultId = response.getVaultId();
 				String responseUrl = null;
 
-				for (AuthenticationResponse.Vault vault : response.getVaults()) {
+				for (AuthenticationResponse.Vault vault : response.getVaultIds()) {
 					if (authenticatedVaultId.equals(vault.getId())) {
 						responseUrl = vault.getUrl() + "/" + VaultClient.VAULT_API_VERSION;
 						if (userSuppliedApiEndpoint.startsWith(responseUrl)) {

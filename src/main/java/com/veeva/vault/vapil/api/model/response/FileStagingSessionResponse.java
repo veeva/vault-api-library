@@ -43,11 +43,11 @@ public class FileStagingSessionResponse extends VaultResponse {
 		}
 
 		@JsonProperty("id")
-		public String getID() {
+		public String getId() {
 			return getString("id");
 		}
 
-		public void setID(String id) {
+		public void setId(String id) {
 			this.set("id", id);
 		}
 

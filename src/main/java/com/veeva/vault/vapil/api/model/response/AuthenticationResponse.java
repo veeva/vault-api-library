@@ -48,7 +48,7 @@ public class AuthenticationResponse extends VaultResponse {
 	}
 
 	@JsonProperty("vaultIds")
-	public List<Vault> getVaults() {
+	public List<Vault> getVaultIds() {
 		return (List<Vault>) this.get("vaultIds");
 	}
 

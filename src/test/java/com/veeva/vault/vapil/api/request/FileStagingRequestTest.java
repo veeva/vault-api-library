@@ -110,8 +110,8 @@ public class FileStagingRequestTest {
 
 		FileStagingSessionResponse resp = fileStagingRequest.createResumableUploadSession("/Test/verteobiotech.pdf", 14789842);
 		Assertions.assertTrue(resp.isSuccessful());
-		Assertions.assertNotNull(resp.getData().getID());
-		System.out.println(resp.getData().getID());
+		Assertions.assertNotNull(resp.getData().getId());
+		System.out.println(resp.getData().getId());
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class FileStagingRequestTest {
 
 		FileStagingSessionResponse resp = fileStagingRequest.getUploadSessionDetails("caa075c08839bcbaab736cb6bd737969");
 		Assertions.assertTrue(resp.isSuccessful());
-		Assertions.assertNotNull(resp.getData().getID());
+		Assertions.assertNotNull(resp.getData().getId());
 	}
 
 	@Test

@@ -138,7 +138,7 @@ public class ObjectWorkflowActionDetailsResponse extends VaultResponse {
 			return getString("document_id__v");
 		}
 
-		public void setDocumentIdV(String documentId) {
+		public void setDocumentId(String documentId) {
 			this.set("document_id__v", documentId);
 		}
 	}

@@ -8,6 +8,7 @@
  */
 package com.veeva.vault.vapil.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
 import com.veeva.vault.vapil.api.model.common.SCIMAttribute;
@@ -224,18 +225,20 @@ public class SCIMResponse extends VaultResponse {
 		this.set("totalResults", totalResults);
 	}
 
-
+	@JsonIgnore
 	public boolean hasAuthenticationSchemeErrors() {
 		if (super.hasErrors() || getAuthenticationSchemes() == null || getAuthenticationSchemes().size() == 0)
 			return true;
 		return false;
 	}
 
+	@JsonIgnore
 	public boolean hasResourceErrors() {
 		if (super.hasErrors() || getResources() == null || getResources().size() == 0) return true;
 		return false;
 	}
 
+	@JsonIgnore
 	public boolean hasAttributeErrors() {
 		if (super.hasErrors() || getAttributes() == null || getAttributes().size() == 0) return true;
 		return false;
@@ -379,11 +382,13 @@ public class SCIMResponse extends VaultResponse {
 			this.set("userName", userName);
 		}
 
+		@JsonIgnore
 		public boolean hasAttributeErrors() {
 			if (getAttributes() == null || getAttributes().size() == 0) return true;
 			return false;
 		}
 
+		@JsonIgnore
 		public boolean hasSchemaErrors() {
 			if (getSchemas() == null || getSchemas().size() == 0) return true;
 			return false;

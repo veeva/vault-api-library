@@ -88,7 +88,7 @@ public class ObjectRecordTypeResponse extends VaultResponse {
 		}
 
 		@JsonProperty("type_actions")
-		public List<ObjectRecordTypeAction> getActions() {
+		public List<ObjectRecordTypeAction> getTypeActions() {
 			return (List<ObjectRecordTypeAction>) this.get("type_actions");
 		}
 
@@ -97,12 +97,12 @@ public class ObjectRecordTypeResponse extends VaultResponse {
 		}
 
 		@JsonProperty("type_fields")
-		public List<ObjectRecordTypeField> getFields() {
+		public List<ObjectRecordTypeField> getTypeFields() {
 			return (List<ObjectRecordTypeField>) this.get("type_fields");
 		}
 
 		@JsonProperty("type_fields")
-		public void setFields(List<ObjectRecordTypeField> typeFields) {
+		public void setTypeFields(List<ObjectRecordTypeField> typeFields) {
 			this.set("type_fields", typeFields);
 		}
 

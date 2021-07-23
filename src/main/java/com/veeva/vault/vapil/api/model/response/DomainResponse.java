@@ -92,7 +92,7 @@ public class DomainResponse extends VaultResponse {
 			}
 
 			@JsonProperty("vault_application__v")
-			public String getVaultApplicatin() {
+			public String getVaultApplication() {
 				return this.getString("vault_application__v");
 			}
 

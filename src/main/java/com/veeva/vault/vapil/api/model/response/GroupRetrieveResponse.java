@@ -38,7 +38,7 @@ public class GroupRetrieveResponse extends VaultResponse {
 			return (Group) this.get("group");
 		}
 
-		public void setGroups(Group group) {
+		public void setGroup(Group group) {
 			this.set("group", group);
 		}
 	}

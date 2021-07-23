@@ -113,12 +113,12 @@ public class DocumentEventSubtypeResponse extends VaultResponse {
 		}
 
 		@JsonProperty("values")
-		public List<Value> getUsedIn() {
+		public List<Value> getValues() {
 			return (List<Value>) this.get("values");
 		}
 
 		@JsonProperty("values")
-		public void setUsedIn(List<Value> values) {
+		public void setValues(List<Value> values) {
 			this.set("values", values);
 		}
 

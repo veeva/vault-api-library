@@ -10,10 +10,9 @@ package com.veeva.vault.vapil.api.model.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
 import com.veeva.vault.vapil.api.model.common.ObjectRecord;
-import com.veeva.vault.vapil.api.model.metadata.Object;
+import com.veeva.vault.vapil.api.model.metadata.VaultObject;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Model for the following API calls responses for the Object Record CRUD
@@ -54,11 +53,11 @@ public class ObjectRecordCollectionResponse extends VaultResponse {
 		}
 
 		@JsonProperty("object")
-		public Object getObject() {
-			return (Object) this.get("object");
+		public VaultObject getObject() {
+			return (VaultObject) this.get("object");
 		}
 
-		public void setObject(Object object) {
+		public void setObject(VaultObject object) {
 			this.set("object", object);
 		}
 

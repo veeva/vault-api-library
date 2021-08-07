@@ -50,6 +50,15 @@ public class DocumentField extends VaultModel {
 		this.set("editable", editable);
 	}
 
+	@JsonProperty("facetable")
+	public Boolean getFacetable() {
+		return this.getBoolean("facetable");
+	}
+
+	public void setFacetable(Boolean facetable) {
+		this.set("facetable", facetable);
+	}
+
 	@JsonProperty("helpContent")
 	public String getHelpContent() {
 		return this.getString("helpContent");

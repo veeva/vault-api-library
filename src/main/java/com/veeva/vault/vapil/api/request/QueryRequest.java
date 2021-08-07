@@ -24,7 +24,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * See {@link #query(String)} for example request and response methods, including reading of the resulting
  * data and handling of the X-VaultAPI-DescribeQuery parameter.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.1/#vault-query-language-vql">https://developer.veevavault.com/api/21.1/#vault-query-language-vql</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#vault-query-language-vql">https://developer.veevavault.com/api/21.2/#vault-query-language-vql</a>
  */
 public class QueryRequest extends VaultRequest {
 	private static Logger log = Logger.getLogger(QueryRequest.class);
@@ -113,7 +113,7 @@ public class QueryRequest extends VaultRequest {
 	 *   System.out.println("Object Name = " + response.getQueryDescribe().getQueryObject().getName());
 	 *   System.out.println("Object Label = " + response.getQueryDescribe().getQueryObject().getLabel());
 	 *
-	 *   for (ObjectField field : resp.getQueryDescribe().getFields()) {
+	 *   for (VaultObjectField field : resp.getQueryDescribe().getFields()) {
 	 *     System.out.println("\tField Name = " + field.getName());
 	 *     System.out.println("\tField Label = " + field.getLabel());
 	 *   }
@@ -213,7 +213,7 @@ public class QueryRequest extends VaultRequest {
 	 *   System.out.println("Object Name = " + response.getQueryDescribe().getQueryObject().getName());
 	 *   System.out.println("Object Label = " + response.getQueryDescribe().getQueryObject().getLabel());
 	 *
-	 *   for (ObjectField field : response.getQueryDescribe().getFields()) {
+	 *   for (VaultObjectField field : response.getQueryDescribe().getFields()) {
 	 *     System.out.println("\tField Name = " + field.getName());
 	 *     System.out.println("\tField Label = " + field.getLabel());
 	 *   }

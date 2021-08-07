@@ -27,7 +27,7 @@ import java.util.Map;
  * Note that the VaultClient automatically performs Authentication requests
  * to establish the Vault session.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.1/#authentication">https://developer.veevavault.com/api/21.1/#authentication</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#authentication">https://developer.veevavault.com/api/21.2/#authentication</a>
  */
 public class AuthenticationRequest extends VaultRequest {
 	private static Logger log = Logger.getLogger(AuthenticationRequest.class);
@@ -61,7 +61,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return ApiVersionResponse
 	 * @vapil.api <pre>
 	 * GET /api</pre>
-	 * @vapil.vaultlink (Undocumented Endpoint)
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-api-versions' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-api-versions</a>
 	 */
 	public ApiVersionResponse retrieveApiVersions() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_API));
@@ -76,7 +76,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/auth</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.1/#user-name-and-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.2/#user-name-and-password</a>
 	 */
 	public AuthenticationResponse login(String userName, String userPassword) {
 		return login(userName, userPassword, null);
@@ -92,7 +92,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/auth</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.1/#user-name-and-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.2/#user-name-and-password</a>
 	 */
 	public AuthenticationResponse login(String username, String password, String vaultDNS) {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_AUTH));
@@ -123,7 +123,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * POST login.veevavault.com/auth/oauth/session/{oath_oidc_profile_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#oauth-2-0-openid-connect' target='_blank'>https://developer.veevavault.com/api/21.1/#oauth-2-0-openid-connect</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#oauth-2-0-openid-connect' target='_blank'>https://developer.veevavault.com/api/21.2/#oauth-2-0-openid-connect</a>
 	 */
 	public AuthenticationResponse loginOAuth(String oauthOidcProfileId, String accessToken, String vaultDNS) {
 		String url = URL_OAUTH;
@@ -242,7 +242,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return UserRetrieveResponse Vault returns an array of size 1
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/me</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#validate-session-user' target='_blank'>https://developer.veevavault.com/api/21.1/#validate-session-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#validate-session-user' target='_blank'>https://developer.veevavault.com/api/21.2/#validate-session-user</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(AuthenticationRequest.class).validateSessionUser();</pre>
 	 * @vapil.response <pre>

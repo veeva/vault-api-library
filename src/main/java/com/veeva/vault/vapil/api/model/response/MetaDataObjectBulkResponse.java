@@ -8,8 +8,7 @@
 package com.veeva.vault.vapil.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.veeva.vault.vapil.api.model.metadata.Object;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
+import com.veeva.vault.vapil.api.model.metadata.VaultObject;
 
 import java.util.List;
 
@@ -21,11 +20,11 @@ import java.util.List;
 public class MetaDataObjectBulkResponse extends VaultResponse {
 
 	@JsonProperty("objects")
-	public List<Object> getObjects() {
-		return (List<Object>) this.get("objects");
+	public List<VaultObject> getObjects() {
+		return (List<VaultObject>) this.get("objects");
 	}
 
-	public void setObjects(List<Object> objects) {
+	public void setObjects(List<VaultObject> objects) {
 		this.set("objects", objects);
 	}
 }

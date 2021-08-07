@@ -18,15 +18,18 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Sandbox Vaults
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.1/#sandbox-vaults">https://developer.veevavault.com/api/21.1/#sandbox-vaults</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#sandbox-vaults">https://developer.veevavault.com/api/21.2/#sandbox-vaults</a>
  */
 public class SandboxRequest extends VaultRequest {
+
 
 	private static final String URL_SANDBOX_ENTITLEMENTS = "/objects/sandbox_entitlements";
 	private static final String URL_SANDBOX_ENTITLEMENTS_SET = "/objects/sandbox/entitlements/set";
 	private static final String URL_SANDBOX = "/objects/sandbox";
 	private static final String URL_SANDBOX_DETAILS = "/objects/sandbox/{vault_id}";
 	private static final String URL_DELETE_SANDBOX = "/objects/sandbox/{name}";
+	private static final String URL_PRODUCTION_BUILD = "/api/{version}/objects/sandbox/actions/buildproduction";
+	private static final String URL_PRODUCTION_PROMOTE = "/api/{version}/objects/sandbox/actions/promoteproduction";
 
 	private static final String SANDBOX_ADD_REQUESTER = "add_requster";
 	private static final String SANDBOX_ALLOWANCE = "allowance";
@@ -34,8 +37,10 @@ public class SandboxRequest extends VaultRequest {
 	private static final String SANDBOX_GRANT = "grant";
 	private static final String SANDBOX_NAME = "name";
 	private static final String SANDBOX_RELEASE = "release";
+	private static final String SANDBOX_SOURCE = "source";
 	private static final String SANDBOX_TEMPORARY_ALLOWANCE = "temporary_allowance";
 	private static final String SANDBOX_TYPE = "type";
+
 
 	private Boolean addRequester;
 	private ReleaseType release;
@@ -48,7 +53,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-sandboxes' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-sandboxes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-sandboxes' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-sandboxes</a>
 	 */
 	public SandboxResponse retrieveSandboxes() {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX);
@@ -67,9 +72,9 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox/{vault_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-sandbox-details-by-id' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-sandbox-details-by-id</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-sandbox-details-by-id' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-sandbox-details-by-id</a>
 	 */
-	public SandboxResponse retrieveSandboxsDetailsById(int vaultId) {
+	public SandboxResponse retrieveSandboxDetailsById(int vaultId) {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_DETAILS).replace("{vault_id}", String.valueOf(vaultId));
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
@@ -85,7 +90,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxEntitlementResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox_entitlements</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-sandbox-entitlements</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-sandbox-entitlements</a>
 	 */
 	public SandboxEntitlementResponse retrieveSandboxEntitlements() {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_ENTITLEMENTS);
@@ -108,7 +113,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/entitlements/set</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#set-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/21.1/#set-sandbox-entitlements</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#set-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/21.2/#set-sandbox-entitlements</a>
 	 */
 	public SandboxResponse setSandboxEntitlements(String name,
 												  String type,
@@ -137,7 +142,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#create-or-refresh-sandbox' target='_blank'>https://developer.veevavault.com/api/21.1/#create-or-refresh-sandbox</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#create-or-refresh-sandbox' target='_blank'>https://developer.veevavault.com/api/21.2/#create-or-refresh-sandbox</a>
 	 */
 	public JobCreateResponse createOrRefreshSandbox(String type, String domain, String name) {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX);
@@ -158,6 +163,7 @@ public class SandboxRequest extends VaultRequest {
 		return response;
 	}
 
+
 	/**
 	 * Delete a sandbox vault. Note that you cannot delete a sandbox which was created or refreshed within the last 24 hours.
 	 *
@@ -165,7 +171,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/sandbox/{name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#delete-sandbox' target='_blank'>https://developer.veevavault.com/api/21.1/#delete-sandbox</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#delete-sandbox' target='_blank'>https://developer.veevavault.com/api/21.2/#delete-sandbox</a>
 	 */
 	public VaultResponse deleteSandbox(String name) {
 		String url = vaultClient.getAPIEndpoint(URL_DELETE_SANDBOX).replace("{name}", name);
@@ -174,6 +180,42 @@ public class SandboxRequest extends VaultRequest {
 		VaultResponse response = send(HttpMethod.DELETE, request, VaultResponse.class);
 		return response;
 	}
+
+
+	/**
+	 * Given a built pre-production vault, promote it to a production vault. This is analogous to the Promote action in the Vault UI.
+	 *
+	 * @param source he name of the source vault to build. This can be the current pre-production vault or a sandbox vault.
+	 * @return JobCreateResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/objects/sandbox/actions/buildproduction</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#build-production-vault' target='_blank'>https://developer.veevavault.com/api/21.2/#build-production-vault</a>
+	 */
+	public JobCreateResponse buildProductionVault(String source) {
+		String url = vaultClient.getAPIEndpoint(URL_PRODUCTION_BUILD);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		request.addBodyParam(SANDBOX_SOURCE, source);
+		return send(HttpMethod.POST, request, JobCreateResponse.class);
+	}
+
+	/**
+	 * Given a pre-production vault, build a production vault. This is analogous to the Build action in the Vault UI. After building your vault, you can promote it to production.
+	 *
+	 * You can build or rebuild the source vault for a given pre-production vault no more than three times in a 24 hour period.
+	 *
+	 * @param name The name of the pre-production vault to promote.
+	 * @return VaultResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/objects/sandbox/actions/promoteproduction</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#build-production-vault' target='_blank'>https://developer.veevavault.com/api/21.2/#build-production-vault</a>
+	 */
+	public VaultResponse promoteToProduction(String name) {
+		String url = vaultClient.getAPIEndpoint(URL_PRODUCTION_PROMOTE);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		request.addBodyParam(SANDBOX_NAME, name);
+		return send(HttpMethod.POST, request, VaultResponse.class);
+	}
+
 
 	/**
 	 * Set the AddRequester for createOrRefreshSandbox

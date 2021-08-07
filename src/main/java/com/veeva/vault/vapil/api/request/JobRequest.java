@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 /**
  * Job - Retrieve Job Status Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.1/#jobs">https://developer.veevavault.com/api/21.1/#jobs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#jobs">https://developer.veevavault.com/api/21.2/#jobs</a>
  */
 public class JobRequest extends VaultRequest {
 
@@ -54,7 +54,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobHistoryResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-job-histories</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-histories</a>
 	 * @vapil.request <pre>
 	 * JobHistoryResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobHistories();</pre>
 	 * @vapil.response <pre>
@@ -100,7 +100,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobMonitorResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/monitors</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-job-monitors</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-monitors</a>
 	 * @vapil.request <pre>
 	 * JobMonitorResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobMonitors();</pre>
 	 * @vapil.response <pre>
@@ -151,7 +151,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobStatusResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-job-status' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-job-status</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-status' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-status</a>
 	 * @vapil.request <pre>
 	 * JobStatusResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobStatus(jobId);</pre>
 	 * @vapil.response <pre>
@@ -183,7 +183,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobTaskResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-job-tasks' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-job-tasks</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-tasks' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-tasks</a>
 	 * @vapil.request <pre>
 	 * JobTaskResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobTasks(jobId);</pre>
 	 * @vapil.response <pre>
@@ -225,7 +225,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/jobs/start_now/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#start-job' target='_blank'>https://developer.veevavault.com/api/21.1/#start-job</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#start-job' target='_blank'>https://developer.veevavault.com/api/21.2/#start-job</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse response = vaultClient.newRequest(JobRequest.class).startJob(jobId);</pre>
 	 * @vapil.response <pre>

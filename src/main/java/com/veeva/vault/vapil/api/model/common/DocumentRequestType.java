@@ -7,13 +7,13 @@
  */
 package com.veeva.vault.vapil.api.model.common;
 
-import com.veeva.vault.vapil.api.request.DocumentLifecycleWorkflowRequest;
+import com.veeva.vault.vapil.api.request.DocumentLifecycleRequest;
 import com.veeva.vault.vapil.api.request.DocumentRoleRequest;
 
 /**
  * Documents or Binders request type for document requests
  *
- * @see DocumentLifecycleWorkflowRequest
+ * @see DocumentLifecycleRequest
  * @see DocumentRoleRequest
  */
 public enum DocumentRequestType {

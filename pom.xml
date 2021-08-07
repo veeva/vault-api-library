@@ -5,7 +5,7 @@
 
 	<groupId>com.veeva.vault</groupId>
 	<artifactId>vapil</artifactId>
-	<version>21.1.4</version>
+	<version>21.2.0</version>
 
 	<packaging>jar</packaging>
 
@@ -120,6 +120,12 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20200518</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>5.2.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

@@ -53,6 +53,7 @@ public class MdlResponse extends VaultResponse {
 			}
 		}
 
+		@JsonIgnore
 		public String getValue() {
 			return value;
 		}

@@ -12,6 +12,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.client.VaultClientBuilder;
 import com.veeva.vault.vapil.api.client.VaultClientId;
 import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
+import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -80,40 +81,6 @@ public class AuthenticationRequestTest {
 				.build();
 
 		AuthenticationResponse response = vaultClient.getAuthenticationResponse();
-		Assertions.assertTrue(response.isSuccessful());
-	}
-		
-	@Test
-	public void testClientId() {
-		TestProperties prop = new TestProperties();
-		VaultClient vaultClient = VaultClientBuilder
-				.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-				.withVaultDNS(prop.getVaultDNS())
-				.withVaultUsername(prop.getVaultUsername())
-				.withVaultPassword(prop.getVaultPassword())
-				.withVaultClientId(vaultClientId)
-				.build();
-
-		AuthenticationResponse response = vaultClient.getAuthenticationResponse();
-		Assertions.assertNotNull(response.getResponseStatus());
-		Assertions.assertTrue(response.isSuccessful());
-	}
-
-	@Test
-	public void testOAuth() {
-
-		TestProperties prop = new TestProperties();
-
-		VaultClient vaultClient = VaultClientBuilder
-				.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-				.withVaultDNS(prop.getVaultDNS())
-				.withIdpUsername(prop.getIdpUserName())
-				.withIdpPassword(prop.getIdpUserPwd())
-				.withVaultClientId(vaultClientId)
-				.build();
-
-		AuthenticationResponse response = vaultClient.getAuthenticationResponse();
-		Assertions.assertNotNull(response.getResponseStatus());
 		Assertions.assertTrue(response.isSuccessful());
 	}
 }

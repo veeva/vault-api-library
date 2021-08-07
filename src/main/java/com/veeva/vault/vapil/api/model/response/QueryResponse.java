@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.veeva.vault.vapil.api.model.metadata.ObjectField;
+import com.veeva.vault.vapil.api.model.metadata.VaultObjectField;
 import com.veeva.vault.vapil.api.model.VaultModel;
 
 /**
@@ -100,11 +100,11 @@ public class QueryResponse extends VaultResponse {
 
 
 		@JsonProperty("fields")
-		public List<ObjectField> getFields() {
-			return (List<ObjectField>) this.get("fields");
+		public List<VaultObjectField> getFields() {
+			return (List<VaultObjectField>) this.get("fields");
 		}
 
-		public void setFields(List<ObjectField> fields) {
+		public void setFields(List<VaultObjectField> fields) {
 			this.set("fields", fields);
 		}
 	}
@@ -222,6 +222,7 @@ public class QueryResponse extends VaultResponse {
 		 *
 		 * @return true if a next page exists
 		 */
+		@JsonIgnore
 		public boolean hasNextPage() {
 			return getNextPage() != null && !getNextPage().isEmpty();
 		}
@@ -231,6 +232,7 @@ public class QueryResponse extends VaultResponse {
 		 *
 		 * @return true if a previous page exists
 		 */
+		@JsonIgnore
 		public boolean hasPreviousPage() {
 			return getPreviousPage() != null && !getPreviousPage().isEmpty();
 		}

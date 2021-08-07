@@ -33,7 +33,7 @@ public abstract class AbstractVaultClientParameterResolver  implements Parameter
             String sessionId = getCurrentSessionId();
             if (sessionId != null) {
                 vaultClient = VaultClientBuilder
-                        .newClientBuilder(VaultClient.AuthenticationType.BASIC)
+                        .newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
                         .withVaultDNS(prop.getVaultDNS())
                         .withVaultSessionId(sessionId)
                         .withVaultClientId(vaultClientId)

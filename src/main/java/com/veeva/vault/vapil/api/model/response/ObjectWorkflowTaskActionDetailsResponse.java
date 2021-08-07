@@ -82,6 +82,15 @@ public class ObjectWorkflowTaskActionDetailsResponse extends VaultResponse {
 
 	public static class Control extends VaultModel {
 
+		@JsonProperty("capacity")
+		public String getCapacity() {
+			return this.getString("capacity");
+		}
+
+		public void setCapacity(String capacity) {
+			this.set("capacity", capacity);
+		}
+
 		@JsonProperty("instructions")
 		public String getInstructions() {
 			return this.getString("instructions");
@@ -155,6 +164,15 @@ public class ObjectWorkflowTaskActionDetailsResponse extends VaultResponse {
 		}
 
 		public static class Verdict extends VaultModel {
+
+			@JsonProperty("esignature")
+			public Boolean getEsignature() {
+				return this.getBoolean("esignature");
+			}
+
+			public void setEsignature(Boolean esignature) {
+				this.set("esignature", esignature);
+			}
 
 			@JsonProperty("label")
 			public String getLabel() {

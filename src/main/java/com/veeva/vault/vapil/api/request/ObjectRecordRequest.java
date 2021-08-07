@@ -49,7 +49,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * 			.setInputPath(inputPath)
  * 			.createObjectRecords(objectName);</pre>
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.1/#vault-objects">https://developer.veevavault.com/api/21.1/#vault-objects</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#vault-objects">https://developer.veevavault.com/api/21.2/#vault-objects</a>
  * <p>
  * <i>The following endpoints are covered in other classes for ease of use</i>
  * <ul>
@@ -127,7 +127,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordCollectionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-object-record' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-object-record' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 					.retrieveObjectRecordCollection(objectName);</pre>
@@ -159,7 +159,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-object-record' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-object-record' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 					.retrieveObjectRecord(objectName, id);</pre>
@@ -215,7 +215,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#create-object-records' target='_blank'>https://developer.veevavault.com/api/21.1/#create-object-records</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#create-object-records' target='_blank'>https://developer.veevavault.com/api/21.2/#create-object-records</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Source - CSV file, Response - JSON</i>
 	 * ObjectRecordBulkResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
@@ -290,7 +290,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/vobjects/{object_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#update-object-records' target='_blank'>https://developer.veevavault.com/api/21.1/#update-object-records</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#update-object-records' target='_blank'>https://developer.veevavault.com/api/21.2/#update-object-records</a>
 	 * @vapil.request See {@link #createObjectRecords(String)} for example requests (replace "createObjectRecords" with "updateObjectRecords")
 	 * @vapil.response See {@link #createObjectRecords(String)} for example responses (replace "createObjectRecords" with "updateObjectRecords")
 	 */
@@ -308,7 +308,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/vobjects/{object_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#delete-object-records' target='_blank'>https://developer.veevavault.com/api/21.1/#delete-object-records</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#delete-object-records' target='_blank'>https://developer.veevavault.com/api/21.2/#delete-object-records</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Source - CSV file, Response - JSON</i>
 	 * ObjectRecordBulkResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
@@ -388,7 +388,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/{object_record_id}/actions/cascadedelete</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#cascade-delete-object-record' target='_blank'>https://developer.veevavault.com/api/21.1/#cascade-delete-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#cascade-delete-object-record' target='_blank'>https://developer.veevavault.com/api/21.2/#cascade-delete-object-record</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.cascadeDeleteObjectRecord(objectName, id);</pre>
@@ -427,7 +427,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return The VaultResponse in CSV byte array
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/cascadedelete/results/{object_name}/{job_status}/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#get-results-of-cascade-delete-job' target='_blank'>https://developer.veevavault.com/api/21.1/#get-results-of-cascade-delete-job</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#get-results-of-cascade-delete-job' target='_blank'>https://developer.veevavault.com/api/21.2/#get-results-of-cascade-delete-job</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.getResultsOfCascadeDeleteJob(objectName, "success", jobId);</pre>
@@ -456,7 +456,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return Describes of all object types
 	 * @vapil.api <pre>
 	 * GET /api/{version}/configuration/Objecttype</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-details-from-all-object-types' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-details-from-all-object-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-details-from-all-object-types' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-details-from-all-object-types</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordTypeResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.retrieveDetailsFromAllObjectTypes();</pre>
@@ -495,7 +495,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return Describe of the single object, which will be the first element in the array
 	 * @vapil.api <pre>
 	 * GET /api/{version}/configuration/Objecttype.{object_name}.{object_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-details-from-a-specific-object' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-details-from-a-specific-object</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-details-from-a-specific-object' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-details-from-a-specific-object</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordTypeResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.retrieveDetailsFromASpecificObject(objectName, objectType);</pre>
@@ -524,7 +524,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/actions/changetype</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#change-object-type' target='_blank'>https://developer.veevavault.com/api/21.1/#change-object-type</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#change-object-type' target='_blank'>https://developer.veevavault.com/api/21.2/#change-object-type</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 					.setContentTypeCsv()
@@ -549,7 +549,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordRoleResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{id}/roles</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-object-record-roles' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-object-record-roles</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-object-record-roles' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-object-record-roles</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordRoleResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.retrieveObjectRecordRoles(objectName, id);</pre>
@@ -584,7 +584,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordRoleResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{id}/roles{/role_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-object-record-roles' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-object-record-roles</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-object-record-roles' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-object-record-roles</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordRoleResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.retrieveObjectRecordRole(objectName, id, roleName);</pre>
@@ -620,7 +620,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordRoleChangeResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/roles</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#assign-users-amp-groups-to-roles-on-object-records' target='_blank'>https://developer.veevavault.com/api/21.1/#assign-users-amp-groups-to-roles-on-object-records</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#assign-users-amp-groups-to-roles-on-object-records' target='_blank'>https://developer.veevavault.com/api/21.2/#assign-users-amp-groups-to-roles-on-object-records</a>
 	 * @vapil.response <pre>
 	 * <i>Example 1 - CSV</i>
 	 * ObjectRecordRoleChangeResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
@@ -649,7 +649,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return ObjectRecordRoleChangeResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/vobjects/{object_name}/roles</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#remove-users-amp-groups-from-roles-on-object-records' target='_blank'>https://developer.veevavault.com/api/21.1/#remove-users-amp-groups-from-roles-on-object-records</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#remove-users-amp-groups-from-roles-on-object-records' target='_blank'>https://developer.veevavault.com/api/21.2/#remove-users-amp-groups-from-roles-on-object-records</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - CSV</i>
 	 * ObjectRecordRoleChangeResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
@@ -720,7 +720,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return JobCreateResponse, with the job id of the created response
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/{object_record_ID}/actions/deepcopy</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#deep-copy-object-record' target='_blank'>https://developer.veevavault.com/api/21.1/#deep-copy-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#deep-copy-object-record' target='_blank'>https://developer.veevavault.com/api/21.2/#deep-copy-object-record</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.deepCopyObjectRecord(objectName, objectRecordId);</pre>
@@ -785,7 +785,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return VaultResponse, with content retrieve via "getBinaryContent" method
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/deepcopy/results/{object_name}/{job_status}/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#get-results-of-deep-copy-job' target='_blank'>https://developer.veevavault.com/api/21.1/#get-results-of-deep-copy-job</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#get-results-of-deep-copy-job' target='_blank'>https://developer.veevavault.com/api/21.2/#get-results-of-deep-copy-job</a>
 	 * @vapil.request <pre>
 	 * See {@link #deepCopyObjectRecord(String, String)}</pre>
 	 */
@@ -825,7 +825,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return The recycle bin for deleted records, which can be retrieved via the "getDeleteRecords" method in the response
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/deletions/vobjects/{object_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-deleted-object-record-id' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-deleted-object-record-id</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-deleted-object-record-id' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-deleted-object-record-id</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordDeletedResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
 	 * 				.setStartDateDeleted(startDate)
@@ -874,7 +874,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return VaultResponse - get raw string (no response model)
 	 * @vapil.api <pre>
 	 * GET /api/{version}/limits</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#retrieve-limits-on-objects' target='_blank'>https://developer.veevavault.com/api/21.1/#retrieve-limits-on-objects</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-limits-on-objects' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-limits-on-objects</a>
 	 */
 	public VaultResponse retrieveLimitsOnObjects() {
 		String url = vaultClient.getAPIEndpoint(URL_OBJ_LIMITS);
@@ -894,7 +894,7 @@ public class ObjectRecordRequest extends VaultRequest {
 	 * @return JobCreateResponse, with the job id of the created response
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/vobjects/{object_name}/actions/updatecorporatecurrency</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.1/#update-corporate-currency-fields' target='_blank'>https://developer.veevavault.com/api/21.1/#update-corporate-currency-fields</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#update-corporate-currency-fields' target='_blank'>https://developer.veevavault.com/api/21.2/#update-corporate-currency-fields</a>
 	 */
 	public JobCreateResponse updateCorporateCurrencyFields(String objectName) {
 		String url = vaultClient.getAPIEndpoint(URL_OBJ_CURRENCY);

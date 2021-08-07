@@ -4,6 +4,7 @@ import com.veeva.vault.vapil.TestProperties;
 import com.veeva.vault.vapil.api.client.VaultClientBuilder;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.client.VaultClientId;
+import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,13 +24,13 @@ public class ClientBuilderTest {
 
 		VaultClient vaultClient = VaultClientBuilder
 				.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
-					.withVaultClientId(vaultClientId)
-					.withVaultDNS(testProperties.getVaultDNS())
-					.withVaultSessionId(testProperties.getSessionId())
-					.withValidation(true)
-					.withApiErrorLogging(true)
-					.withHttpTimeout(60)
-					.build();
+				.withVaultClientId(vaultClientId)
+				.withVaultDNS(testProperties.getVaultDNS())
+				.withVaultSessionId(testProperties.getSessionId())
+				.withValidation(true)
+				.withApiErrorLogging(true)
+				.withHttpTimeout(60)
+				.build();
 		Assertions.assertTrue(true, vaultClient.getAuthenticationResponse().getResponseStatus());
 	}
 
@@ -94,15 +95,16 @@ public class ClientBuilderTest {
 
 		VaultClient vaultClient = VaultClientBuilder
 				.newClientBuilder(VaultClient.AuthenticationType.OAUTH_DISCOVERY)
-					.withVaultClientId(vaultClientId) //required
-					.withVaultDNS(testProperties.getVaultDNS())
-					.withVaultOauthProfileId(testProperties.getVaultOAuthProfileId()) //required
-					.withVaultOauthClientId(testProperties.getVaultOAuthClientId()) //required
-					.withIdpPassword(testProperties.getIdpUserPwd()) //required
-					.withValidation(true) //default = true
-					.withApiErrorLogging(true) //default = true
-					.withHttpTimeout(60) //default = 60
-					.build();
+				.withVaultClientId(vaultClientId) //required
+				.withVaultDNS(testProperties.getVaultDNS())
+				.withVaultUsername(testProperties.getVaultUsername())
+				.withVaultOauthProfileId(testProperties.getVaultOAuthProfileId()) //required
+				.withVaultOauthClientId(testProperties.getVaultOAuthClientId()) //required
+				.withIdpPassword(testProperties.getIdpUserPwd()) //required
+				.withValidation(true) //default = true
+				.withApiErrorLogging(true) //default = true
+				.withHttpTimeout(60) //default = 60
+				.build();
 
 		Assertions.assertTrue(true, vaultClient.getAuthenticationResponse().getResponseStatus());
 	}
@@ -119,16 +121,16 @@ public class ClientBuilderTest {
 
 		VaultClient vaultClient = VaultClientBuilder
 				.newClientBuilder(VaultClient.AuthenticationType.OAUTH_DISCOVERY)
-					.withVaultClientId(vaultClientId) //required
-					.withVaultDNS(testProperties.getVaultDNS())
-					.withVaultOauthProfileId(testProperties.getVaultOAuthProfileId()) //required
-					.withVaultOauthClientId(testProperties.getVaultOAuthClientId()) //required
-					.withIdpUsername(testProperties.getIdpUserName()) //required
-					.withIdpPassword(testProperties.getIdpUserPwd()) //required
-					.withValidation(true) //default = true
-					.withApiErrorLogging(true) //default = true
-					.withHttpTimeout(60) //default = 60
-					.build();
+				.withVaultClientId(vaultClientId) //required
+				.withVaultDNS(testProperties.getVaultDNS())
+				.withVaultOauthProfileId(testProperties.getVaultOAuthProfileId()) //required
+				.withVaultOauthClientId(testProperties.getVaultOAuthClientId()) //required
+				.withIdpUsername(testProperties.getIdpUserName()) //required
+				.withIdpPassword(testProperties.getIdpUserPwd()) //required
+				.withValidation(true) //default = true
+				.withApiErrorLogging(true) //default = true
+				.withHttpTimeout(60) //default = 60
+				.build();
 
 		Assertions.assertTrue(true, vaultClient.getAuthenticationResponse().getResponseStatus());
 	}

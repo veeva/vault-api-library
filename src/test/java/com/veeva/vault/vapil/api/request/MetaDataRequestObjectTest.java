@@ -8,8 +8,8 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.metadata.Object;
-import com.veeva.vault.vapil.api.model.metadata.ObjectField;
+import com.veeva.vault.vapil.api.model.metadata.VaultObject;
+import com.veeva.vault.vapil.api.model.metadata.VaultObjectField;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectBulkResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectFieldResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectResponse;
@@ -37,7 +37,7 @@ public class MetaDataRequestObjectTest {
 				.retrieveObjectMetadata("user__sys");
 		Assertions.assertTrue(response.isSuccessful());
 
-		Object objectMetaData = response.getObject();
+		VaultObject objectMetaData = response.getObject();
 		Assertions.assertNotNull(objectMetaData);
 		Assertions.assertNotNull(objectMetaData.getName());
 
@@ -47,7 +47,7 @@ public class MetaDataRequestObjectTest {
 		}
 		
 		if (objectMetaData.getRelationships() != null) {
-			for (Object.Relationship relationship : objectMetaData.getRelationships()) {
+			for (VaultObject.Relationship relationship : objectMetaData.getRelationships()) {
 				Assertions.assertNotNull(relationship.getRelationshipName());
 				Assertions.assertNotNull(relationship.getField());
 			}
@@ -64,7 +64,7 @@ public class MetaDataRequestObjectTest {
 				.retrieveObjectFieldMetaData("user__sys", "preferred_currency__sys");
 		Assertions.assertTrue(response.isSuccessful());
 
-		ObjectField fieldMetaData = response.getField();
+		VaultObjectField fieldMetaData = response.getField();
 		Assertions.assertNotNull(fieldMetaData);
 		
 		if (fieldMetaData.getObjectReference() != null) {

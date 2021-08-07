@@ -50,7 +50,7 @@ public class EDLRequestTest {
         Assertions.assertNotEquals(0, resp.size());
     }
 
-    //@Test
+    @Test
     public void testCreatePlaceholderFromEDLItem(VaultClient vaultClient, List<String> edlItemIds) {
         System.out.println("****** Test Create Placeholder From EDL Item Start ******");
 
@@ -83,7 +83,7 @@ public class EDLRequestTest {
         System.out.println("****** Test Retrieve EDL Root Node Complete ******");
     }
 
-    //@Test
+    @Test
     public void testRetrieveEDLNodeChildren(VaultClient vaultClient, String parentNodeId) {
         System.out.println("\n****** Test Retrieve EDL Node Children Start ******");
         List<EDLResponse.EDLNode> resp = vaultClient.newRequest(EDLRequest.class)
@@ -93,7 +93,7 @@ public class EDLRequestTest {
         System.out.println("****** Test Retrieve EDL Node Children Complete ******");
     }
 
-    //@Test
+    @Test
     public void testUpdateNodeOrderJson(VaultClient vaultClient, String parentNodeId, String inputFilePath) {
         System.out.println("\n****** Test Update EDL Node Order JSON Start ******");
         VaultResponse resp = vaultClient.newRequest(EDLRequest.class)
@@ -105,7 +105,7 @@ public class EDLRequestTest {
         System.out.println("****** Test Update EDL Node Order JSON Complete ******");
     }
 
-    //@Test
+    @Test
     public void testUpdateNodeOrderCSV(VaultClient vaultClient, String parentNodeId, String inputFilePath) {
         System.out.println("\n****** Test Update EDL Node Order CSV Start ******");
         VaultResponse resp = vaultClient.newRequest(EDLRequest.class)
@@ -115,5 +115,29 @@ public class EDLRequestTest {
 
         System.out.println(resp.getResponse());
         System.out.println("****** Test Update EDL Node Order CSV Complete ******");
+    }
+
+    @Test
+    public void testAddEdlMatchedDocuments(VaultClient vaultClient, String inputFilePath) {
+        System.out.println("\n****** Test Add EDL Matched Document Start******");
+        VaultResponse resp = vaultClient.newRequest(EDLRequest.class)
+                .setContentTypeJson()
+                .setInputPath(inputFilePath)
+                .addEdlMatchedDocuments();
+
+        System.out.println(resp.getResponse());
+        System.out.println("****** Test Add EDL Matched Document Complete ******");
+    }
+
+    @Test
+    public void testRemoveEdlMatchedDocuments(VaultClient vaultClient, String inputFilePath) {
+        System.out.println("\n****** Test Remove EDL Matched Document Start******");
+        VaultResponse resp = vaultClient.newRequest(EDLRequest.class)
+                .setContentTypeJson()
+                .setInputPath(inputFilePath)
+                .removeEdlMatchedDocuments();
+
+        System.out.println(resp.getResponse());
+        System.out.println("****** Test Remove EDL Matched Document Complete ******");
     }
 }

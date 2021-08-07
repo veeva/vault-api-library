@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
 import com.veeva.vault.vapil.api.model.response.SandboxEntitlementResponse;
 import com.veeva.vault.vapil.api.model.response.SandboxResponse;
+import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,5 +42,20 @@ public class SandboxRequestTest {
                 .createOrRefreshSandbox("demo","sameerm.com","ExampleSBX");
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getJobId());
+	}
+
+	@Test
+	public void testBuildProduction(VaultClient vaultClient) {
+		JobCreateResponse response = vaultClient.newRequest(SandboxRequest.class)
+				.buildProductionVault("12345");
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getJobId());
+	}
+
+	@Test
+	public void testPromoteToProduction(VaultClient vaultClient) {
+		VaultResponse response = vaultClient.newRequest(SandboxRequest.class)
+				.promoteToProduction("Test Vault");
+		Assertions.assertTrue(response.isSuccessful());
 	}
 }

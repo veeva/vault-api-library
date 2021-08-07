@@ -9,6 +9,7 @@ package com.veeva.vault.vapil.api.model.response;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
@@ -120,6 +121,7 @@ public class ObjectRecordDeletedResponse extends VaultResponse {
 		 *
 		 * @return true if a next page exists
 		 */
+		@JsonIgnore
 		public boolean hasNextPage() {
 			return getNextPage() != null && !getNextPage().isEmpty();
 		}
@@ -129,6 +131,7 @@ public class ObjectRecordDeletedResponse extends VaultResponse {
 		 *
 		 * @return true if a previous page exists
 		 */
+		@JsonIgnore
 		public boolean hasPreviousPage() {
 			return getPreviousPage() != null && !getPreviousPage().isEmpty();
 		}

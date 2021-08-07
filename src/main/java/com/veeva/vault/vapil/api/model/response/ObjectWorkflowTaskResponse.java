@@ -10,9 +10,8 @@ package com.veeva.vault.vapil.api.model.response;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.veeva.vault.vapil.api.model.metadata.Object;
+import com.veeva.vault.vapil.api.model.metadata.VaultObject;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
 /**
  * Model for the following API calls responses for the Object WorkflowTask
@@ -140,16 +139,25 @@ public class ObjectWorkflowTaskResponse extends VaultResponse {
 		public void setWorkflow(String workflow) {
 			this.set("workflow__v", workflow);
 		}
+
+		@JsonProperty("workflow_class__sys")
+		public String getWorkflowClass() {
+			return this.getString("workflow_class__sys");
+		}
+
+		public void setWorkflowClass(String workflowClass) {
+			this.set("workflow_class__sys", workflowClass);
+		}
 	}
 
 	public static class ResponseDetails extends VaultModel {
 
 		@JsonProperty("object")
-		public Object.ObjectReference getObject() {
-			return (Object.ObjectReference) this.get("object");
+		public VaultObject.ObjectReference getObject() {
+			return (VaultObject.ObjectReference) this.get("object");
 		}
 
-		public void setObject(Object.ObjectReference object) {
+		public void setObject(VaultObject.ObjectReference object) {
 			this.set("object", object);
 		}
 

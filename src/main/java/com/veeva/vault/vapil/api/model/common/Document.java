@@ -7,7 +7,6 @@
  */
 package com.veeva.vault.vapil.api.model.common;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.*;
@@ -339,23 +338,6 @@ public class Document extends VaultModel {
 
 	public void setPages(Integer pages) {
 		this.set("pages__v", pages);
-	}
-
-	@JsonProperty("product__v")
-	public String getProduct() {
-		return this.getString("product__v");
-	}
-
-	public void setProduct(Object product) {
-		if (product != null && product instanceof String) {
-			this.set("product__v", Arrays.asList(product.toString().split(",")));
-		} else
-			this.set("product__v", product);
-	}
-
-	@JsonIgnore
-	public List<String> getProducts() {
-		return this.getListString("product__v");
 	}
 
 	@JsonProperty("size__v")

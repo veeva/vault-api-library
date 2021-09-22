@@ -43,6 +43,33 @@ public class FileStagingRequestTest {
 	}
 
 	@Test
+	public void testListItemsByPage(VaultClient vaultClient) {
+		FileStagingItemBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.setLimit(2)
+				.setRecursive(true)
+				.listItemsAtAPath("/");
+		Assertions.assertTrue(resp.isSuccessful());
+		Assertions.assertNotNull(resp.getData());
+		Assertions.assertNotEquals(0, resp.getData().size());
+		System.out.println(resp.getResponse());
+
+		while (resp != null
+				&& resp.isSuccessful()
+				&& resp.getResponseDetails() != null
+				&& resp.getResponseDetails().getNextPage() != null) {
+
+			String nextPage = resp.getResponseDetails().getNextPage();
+			resp = vaultClient.newRequest(FileStagingRequest.class)
+					.listItemsByPage(nextPage);
+
+			Assertions.assertTrue(resp.isSuccessful());
+			Assertions.assertNotNull(resp.getData());
+			Assertions.assertNotEquals(0, resp.getData().size());
+			System.out.println(resp.getResponse());
+		}
+	}
+
+	@Test
 	public void testGetItemContentBinary(VaultClient vaultClient) {
 		VaultResponse resp = vaultClient.newRequest(FileStagingRequest.class)
 				.getItemContent("/Test/upload.txt");

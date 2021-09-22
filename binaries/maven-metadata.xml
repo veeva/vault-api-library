@@ -3,10 +3,10 @@
   <groupId>com.veeva.vault</groupId>
   <artifactId>vapil</artifactId>
   <versioning>
-    <release>21.2.1</release>
+    <release>21.2.2</release>
     <versions>
-      <version>21.2.1</version>
+      <version>21.2.2</version>
     </versions>
-    <lastUpdated>20210914172945</lastUpdated>
+    <lastUpdated>20210922125530</lastUpdated>
   </versioning>
 </metadata>

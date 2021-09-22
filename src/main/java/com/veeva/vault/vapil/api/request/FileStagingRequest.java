@@ -107,6 +107,27 @@ public class FileStagingRequest extends VaultRequest {
 		return send(HttpMethod.GET, request, FileStagingItemBulkResponse.class);
 	}
 
+	/**
+	 * <b>List Items By Page</b>
+	 * <p>
+	 * Return a list of files and folders for the specified page url.
+	 *
+	 * @param pageUrl, full path to the page (including https://{vaultDNS}/api/{version}/)
+	 * @return FileStagingItemBulkResponse
+	 * @vapil.api <pre> GET /api/{version}/services/file_staging/items/{item} </pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#list-items-at-a-path' target='_blank'>https://developer.veevavault.com/api/21.2/#list-items-at-a-path</a>
+	 * @vapil.request <pre>FileStagingItemBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class).listItemsByPage(pageUrl);</pre>
+	 * @vapil.response <pre>
+	 *     for(FileStagingItem fileStagingItem : resp.getData()) {
+	 *         System.out.println(fileStagingItem);
+	 *     }
+	 * </pre>
+	 */
+	public FileStagingItemBulkResponse listItemsByPage(String pageUrl) {
+		HttpRequestConnector request = new HttpRequestConnector(pageUrl);
+		return send(HttpMethod.GET, request, FileStagingItemBulkResponse.class);
+	}
+
 	/*
 	 *
 	 * Get Item Content

@@ -65,10 +65,18 @@ public class DocumentRequestTest {
 	@Test
 	public void testGetDocumentDeletions(VaultClient vaultClient) {
 		DocumentDeletionResponse response = vaultClient.newRequest(DocumentRequest.class)
-				.setOffset(3)
+				.setLimit(1)
 				.retrieveDeletedDocumentIds();
+
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getResponseDetails().getSize());
+
+		if (response.isPaginated()) {
+			DocumentDeletionResponse paginatedResponse = vaultClient.newRequest(DocumentRequest.class)
+					.retrieveDeletedDocumentIdsByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
+			Assertions.assertNotNull(paginatedResponse.getResponseDetails().getSize());
+		}
 	}
 
 	@Test

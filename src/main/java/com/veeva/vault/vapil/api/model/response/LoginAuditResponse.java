@@ -30,7 +30,7 @@ public class LoginAuditResponse extends AuditDetailsResponse {
 		this.set("data", data);
 	}
 
-	public static class LoginAuditData extends VaultModel {
+	public static class LoginAuditData extends Audit {
 
 		@JsonProperty("browser")
 		public String getBrowser() {
@@ -39,15 +39,6 @@ public class LoginAuditResponse extends AuditDetailsResponse {
 
 		public void setBrowser(String browser) {
 			this.set("browser", browser);
-		}
-
-		@JsonProperty("id")
-		public String getId() {
-			return this.getString("id");
-		}
-
-		public void setId(String id) {
-			this.set("id", id);
 		}
 
 		@JsonProperty("platform")
@@ -77,15 +68,6 @@ public class LoginAuditResponse extends AuditDetailsResponse {
 			this.set("status", status);
 		}
 
-		@JsonProperty("timestamp")
-		public String getTimestamp() {
-			return this.getString("timestamp");
-		}
-
-		public void setTimestamp(String timestamp) {
-			this.set("timestamp", timestamp);
-		}
-
 		@JsonProperty("type")
 		public String getType() {
 			return this.getString("type");
@@ -93,15 +75,6 @@ public class LoginAuditResponse extends AuditDetailsResponse {
 
 		public void setType(String type) {
 			this.set("type", type);
-		}
-
-		@JsonProperty("user_name")
-		public String getUserName() {
-			return this.getString("user_name");
-		}
-
-		public void setUserName(String userName) {
-			this.set("user_name", userName);
 		}
 
 		@JsonProperty("vault_id")

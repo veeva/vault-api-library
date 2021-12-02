@@ -7,6 +7,7 @@
  */
 package com.veeva.vault.vapil.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
 
@@ -21,6 +22,14 @@ public class FileStagingSessionBulkResponse extends VaultResponse {
 
 	public void setData(List<FileStagingSession> data) {
 		this.set("data", data);
+	}
+
+	@JsonIgnore
+	public boolean isPaginated() {
+		if (getResponseDetails() != null && getResponseDetails().getNextPage() != null) {
+			return true;
+		}
+		return false;
 	}
 
 	@JsonProperty("responseDetails")

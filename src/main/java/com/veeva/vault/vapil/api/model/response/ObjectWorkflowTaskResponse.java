@@ -161,24 +161,6 @@ public class ObjectWorkflowTaskResponse extends VaultResponse {
 			this.set("object", object);
 		}
 
-		@JsonProperty("offset")
-		public Integer getOffset() {
-			return this.getInteger("offset");
-		}
-
-		public void setOffset(Integer offset) {
-			this.set("offset", offset);
-		}
-
-		@JsonProperty("page_size")
-		public Integer getPageSize() {
-			return this.getInteger("page_size");
-		}
-
-		public void setPageSize(Integer pageSize) {
-			this.set("page_size", pageSize);
-		}
-
 		@JsonProperty("total")
 		public Integer getTotal() {
 			return this.getInteger("total");

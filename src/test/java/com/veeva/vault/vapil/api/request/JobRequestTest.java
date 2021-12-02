@@ -25,20 +25,32 @@ public class JobRequestTest {
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getJobs());
 		Assertions.assertNotEquals(0, response.getJobs().size());
-		System.out.println(response.getResponse());
+
+		if (response.isPaginated()) {
+			JobHistoryResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
+					.retrieveJobHistoriesByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
+		}
 	}
 
 	@Test
 	public void testRetrieveJobMonitors(VaultClient vaultClient) {
-		JobMonitorResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobMonitors();
+		JobMonitorResponse response = vaultClient.newRequest(JobRequest.class)
+				.setLimit(1)
+				.retrieveJobMonitors();
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getJobs());
 		Assertions.assertNotEquals(0, response.getJobs().size());
-		System.out.println(response.getResponse());
+
+		if (response.isPaginated()) {
+			JobMonitorResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
+					.retrieveJobMonitorsByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
+		}
 	}
 
 	@Test
-	public void testRetrieveJobStats(VaultClient vaultClient) {
+	public void testRetrieveJobStatus(VaultClient vaultClient) {
 		JobStatusResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobStatus(1);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getData());
@@ -52,6 +64,11 @@ public class JobRequestTest {
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getTasks());
 		Assertions.assertNotEquals(0, response.getTasks().size());
-		System.out.println(response.getResponse());
+
+		if (response.isPaginated()) {
+			JobTaskResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
+					.retrieveJobTasksByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
+		}
 	}
 }

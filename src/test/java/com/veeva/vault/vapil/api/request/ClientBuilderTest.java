@@ -1,9 +1,7 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.TestProperties;
-import com.veeva.vault.vapil.api.client.VaultClientBuilder;
-import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.client.VaultClientId;
+import com.veeva.vault.vapil.api.client.*;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -75,6 +73,7 @@ public class ClientBuilderTest {
 				.withVaultOauthProfileId(testProperties.getVaultOAuthProfileId()) //required
 				.withVaultOauthClientId(testProperties.getVaultOAuthClientId()) //required
 				.withIdpOauthAccessToken(testProperties.getIdpOauthAccessToken()) //required
+				.withIdpOauthScope(testProperties.getIdpOauthScope()) //default = openid
 				.withValidation(true) //default = true
 				.withApiErrorLogging(true) //default = true
 				.withHttpTimeout(60) //default = 60
@@ -101,6 +100,7 @@ public class ClientBuilderTest {
 				.withVaultOauthProfileId(testProperties.getVaultOAuthProfileId()) //required
 				.withVaultOauthClientId(testProperties.getVaultOAuthClientId()) //required
 				.withIdpPassword(testProperties.getIdpUserPwd()) //required
+				.withIdpOauthScope(testProperties.getIdpOauthScope()) //default = openid
 				.withValidation(true) //default = true
 				.withApiErrorLogging(true) //default = true
 				.withHttpTimeout(60) //default = 60
@@ -122,11 +122,13 @@ public class ClientBuilderTest {
 		VaultClient vaultClient = VaultClientBuilder
 				.newClientBuilder(VaultClient.AuthenticationType.OAUTH_DISCOVERY)
 				.withVaultClientId(vaultClientId) //required
-				.withVaultDNS(testProperties.getVaultDNS())
+				.withVaultDNS(testProperties.getVaultDNS()) //required
+				.withVaultUsername(testProperties.getVaultUsername()) //required
 				.withVaultOauthProfileId(testProperties.getVaultOAuthProfileId()) //required
 				.withVaultOauthClientId(testProperties.getVaultOAuthClientId()) //required
 				.withIdpUsername(testProperties.getIdpUserName()) //required
 				.withIdpPassword(testProperties.getIdpUserPwd()) //required
+				.withIdpOauthScope(testProperties.getIdpOauthScope()) //default = openid
 				.withValidation(true) //default = true
 				.withApiErrorLogging(true) //default = true
 				.withHttpTimeout(60) //default = 60

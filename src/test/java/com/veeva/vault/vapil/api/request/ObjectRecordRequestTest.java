@@ -223,8 +223,12 @@ public class ObjectRecordRequestTest {
 		ObjectRecordDeletedResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
 				.retrieveDeletedObjectRecordId(objectName);
 
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getData());
+		if (response.isPaginated()) {
+			ObjectRecordDeletedResponse paginatedResponse = vaultClient.newRequest(ObjectRecordRequest.class)
+					.retrieveDeletedObjectRecordIdByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
+			Assertions.assertNotNull(paginatedResponse.getResponseDetails().getSize());
+		}
 	}
 	
 	@Test
@@ -238,6 +242,19 @@ public class ObjectRecordRequestTest {
 
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getJobId());
+	}
+
+	@Test
+	public void testRetrieveObjectCollection(VaultClient vaultClient) {
+
+		ObjectRecordCollectionResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
+				.retrieveObjectRecordCollection("vapil_test_import_validate__c");
+
+		if (response.isPaginated()) {
+			ObjectRecordCollectionResponse paginatedResponse = vaultClient.newRequest(ObjectRecordRequest.class)
+					.retrieveObjectRecordCollectionByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
+		}
 	}
 }
 

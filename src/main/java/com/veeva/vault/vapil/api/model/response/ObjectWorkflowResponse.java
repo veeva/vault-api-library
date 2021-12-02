@@ -9,6 +9,7 @@ package com.veeva.vault.vapil.api.model.response;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.metadata.VaultObject;
 import com.veeva.vault.vapil.api.model.VaultModel;
@@ -133,24 +134,6 @@ public class ObjectWorkflowResponse extends VaultResponse {
 
 		public void setObject(VaultObject.ObjectReference object) {
 			this.set("object", object);
-		}
-
-		@JsonProperty("offset")
-		public Integer getOffset() {
-			return this.getInteger("offset");
-		}
-
-		public void setOffset(Integer offset) {
-			this.set("offset", offset);
-		}
-
-		@JsonProperty("page_size")
-		public Integer getPageSize() {
-			return this.getInteger("page_size");
-		}
-
-		public void setPageSize(Integer pageSize) {
-			this.set("page_size", pageSize);
 		}
 
 		@JsonProperty("total")

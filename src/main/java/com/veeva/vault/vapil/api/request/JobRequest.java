@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 /**
  * Job - Retrieve Job Status Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#jobs">https://developer.veevavault.com/api/21.2/#jobs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.3/#jobs">https://developer.veevavault.com/api/21.3/#jobs</a>
  */
 public class JobRequest extends VaultRequest {
 
@@ -29,8 +29,8 @@ public class JobRequest extends VaultRequest {
 
 	// API Request Parameters
 	private ZonedDateTime endDate;
-	private String limit;
-	private String offset;
+	private Integer limit;
+	private Integer offset;
 	private String status;
 	private ZonedDateTime startDate;
 
@@ -54,7 +54,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobHistoryResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-histories</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-job-histories</a>
 	 * @vapil.request <pre>
 	 * JobHistoryResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobHistories();</pre>
 	 * @vapil.response <pre>
@@ -91,6 +91,27 @@ public class JobRequest extends VaultRequest {
 	}
 
 	/**
+	 * Retrieve Job Histories
+	 * <p>
+	 * Retrieve a history of all completed jobs using the previous_page or next_page parameter of a previous request
+	 *
+	 * @param pageUrl The URL from the previous_page or next_page parameter
+	 * @return JobHistoryResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-job-histories</a>
+	 * @vapil.request <pre>
+	 * JobHistoryResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
+	 * 		.retrieveJobHistoriesByPage(response.getResponseDetails().getNextPage());</pre>
+	 * @vapil.response <pre>System.out.println(paginatedResponse.getResponseStatus())</pre>;
+	 */
+	public JobHistoryResponse retrieveJobHistoriesByPage(String pageUrl) {
+		String url = vaultClient.getPaginationEndpoint(pageUrl);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		return send(HttpMethod.GET, request, JobHistoryResponse.class);
+	}
+
+	/**
 	 * Retrieve Job Monitors
 	 * <p>
 	 * Retrieve monitors for jobs which have not yet completed in the authenticated vault.
@@ -100,14 +121,12 @@ public class JobRequest extends VaultRequest {
 	 * @return JobMonitorResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/monitors</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-monitors</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-job-monitors</a>
 	 * @vapil.request <pre>
 	 * JobMonitorResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobMonitors();</pre>
 	 * @vapil.response <pre>
 	 * System.out.println("Status = " + response.getResponseStatus());
-	 * if (response.isSuccessful()) {
-	 *   System.out.println("Url = " + response.getUrl());
-	 * }</pre>
+	 * </pre>
 	 */
 	public JobMonitorResponse retrieveJobMonitors() {
 		String url = vaultClient.getAPIEndpoint(URL_JOB_MONITORS);
@@ -137,6 +156,27 @@ public class JobRequest extends VaultRequest {
 	}
 
 	/**
+	 * Retrieve Job Monitors (By Page)
+	 * <p>
+	 * Retrieve monitors for jobs using the previous_page or next_page parameter of a previous request
+	 *
+	 * @param pageUrl The URL from the previous_page or next_page parameter
+	 * @return JobMonitorResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/services/jobs/monitors</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-job-monitors</a>
+	 * @vapil.request <pre>
+	 * JobMonitorResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
+	 * 		.retrieveJobMonitorsByPage(response.getResponseDetails().getNextPage());</pre>
+	 * @vapil.response <pre>System.out.println(paginatedResponse.getResponseStatus())</pre>;
+	 */
+	public JobMonitorResponse retrieveJobMonitorsByPage(String pageUrl) {
+		String url = vaultClient.getPaginationEndpoint(pageUrl);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		return send(HttpMethod.GET, request, JobMonitorResponse.class);
+	}
+
+	/**
 	 * Retrieve Job Status
 	 * <p>
 	 * After submitting a request, you can query your vault to determine the status of the request.
@@ -151,7 +191,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobStatusResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-status' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-status</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-job-status' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-job-status</a>
 	 * @vapil.request <pre>
 	 * JobStatusResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobStatus(jobId);</pre>
 	 * @vapil.response <pre>
@@ -177,13 +217,13 @@ public class JobRequest extends VaultRequest {
 	/**
 	 * Retrieve Job Tasks
 	 * <p>
-	 * Retrieve the tasks associated with an SDK job.
+	 * Retrieve the tasks associated with an SDK job
 	 *
 	 * @param jobId job id
 	 * @return JobTaskResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-job-tasks' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-job-tasks</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-job-tasks' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-job-tasks</a>
 	 * @vapil.request <pre>
 	 * JobTaskResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobTasks(jobId);</pre>
 	 * @vapil.response <pre>
@@ -210,6 +250,26 @@ public class JobRequest extends VaultRequest {
 		return send(HttpMethod.GET, request, JobTaskResponse.class);
 	}
 
+	/**
+	 * Retrieve Job Tasks (By Page)
+	 * <p>
+	 * Retrieve the tasks associated with an SDK job using the previous_page or next_page parameter of a previous request
+	 *
+	 * @param pageUrl The URL from the previous_page or next_page parameter
+	 * @return JobTaskResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-job-tasks' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-job-tasks</a>
+	 * @vapil.request <pre>
+	 * JobTaskResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
+	 * 		.retrieveJobTasksByPage(response.getResponseDetails().getNextPage());</pre>
+	 * @vapil.response <pre>System.out.println(paginatedResponse.getResponseStatus())</pre>;
+	 */
+	public JobTaskResponse retrieveJobTasksByPage(String pageUrl) {
+		String url = vaultClient.getPaginationEndpoint(pageUrl);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		return send(HttpMethod.GET, request, JobTaskResponse.class);
+	}
 
 	/**
 	 * Start Job
@@ -225,7 +285,7 @@ public class JobRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/jobs/start_now/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#start-job' target='_blank'>https://developer.veevavault.com/api/21.2/#start-job</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#start-job' target='_blank'>https://developer.veevavault.com/api/21.3/#start-job</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse response = vaultClient.newRequest(JobRequest.class).startJob(jobId);</pre>
 	 * @vapil.response <pre>
@@ -271,7 +331,7 @@ public class JobRequest extends VaultRequest {
 	 * @param limit the size of the result set in the page
 	 * @return JobRequest
 	 */
-	public JobRequest setLimit(String limit) {
+	public JobRequest setLimit(Integer limit) {
 		this.limit = limit;
 		return this;
 	}
@@ -285,7 +345,7 @@ public class JobRequest extends VaultRequest {
 	 * @param offset page offset
 	 * @return JobRequest
 	 */
-	public JobRequest setOffset(String offset) {
+	public JobRequest setOffset(Integer offset) {
 		this.offset = offset;
 		return this;
 	}

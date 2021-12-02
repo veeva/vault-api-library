@@ -83,4 +83,11 @@ public class AuthenticationRequestTest {
 		AuthenticationResponse response = vaultClient.getAuthenticationResponse();
 		Assertions.assertTrue(response.isSuccessful());
 	}
+
+	@Test
+	public void testKeepAlive(VaultClient vaultClient) {
+		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+						.sessionKeepAlive();
+		Assertions.assertTrue(response.isSuccessful());
+	}
 }

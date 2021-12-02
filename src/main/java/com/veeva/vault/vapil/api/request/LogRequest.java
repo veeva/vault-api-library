@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * The Audit APIs retrieve information about audits and audit types
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#logs">https://developer.veevavault.com/api/21.2/#logs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.3/#logs">https://developer.veevavault.com/api/21.3/#logs</a>
  */
 public class LogRequest extends VaultRequest {
 	// API Endpoints
@@ -79,7 +79,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-audit-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-audit-types</a>
 	 * @vapil.request <pre>
 	 * AuditTypesResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditTypes();</pre>
@@ -105,7 +105,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-audit-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-audit-metadata</a>
 	 * @vapil.request <pre>
 	 * AuditMetadataResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);</pre>
@@ -149,7 +149,7 @@ public class LogRequest extends VaultRequest {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-audit-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-audit-details</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
@@ -298,188 +298,8 @@ public class LogRequest extends VaultRequest {
 	 * System.out.println("Job ID = " + resp.getJobId());
 	 * System.out.println("Url = " + resp.getUrl());
 	 * </pre>
-	 * @see LogRequest#retrieveAuditDetailsAllPages(AuditTrailType)
 	 */
 	public <T> T retrieveAuditDetails(AuditTrailType auditTrailType) {
-		return retrieveAuditDetails(auditTrailType, false);
-	}
-
-	/**
-	 * <b>Retrieve Audit Details</b>
-	 * <p>
-	 * Retrieve all pages of audit details for a specific audit type. This request supports parameters to narrow the results to a specified date and time within the past 30 days.
-	 *
-	 * @param <T>            Response Type class
-	 * @param auditTrailType The name of the specified audit type (The AuditTrailType enum values translate to document_audit_trail, object_audit_trail, etc.).
-	 * @return Returns one of the following:<br>
-	 * SystemAuditResponse when auditTrailType is system_audit_trail<br>
-	 * LoginAuditResponse when auditTrailType is login_audit_trail<br>
-	 * ObjectAuditResponse when auditTrailType is object_audit_trail<br>
-	 * DomainAuditResponse when auditTrailType is domain_audit_trail<br>
-	 * DocumentAuditResponse when auditTrailType is document_audit_response
-	 * JobCreateResponse when format result is CSV
-	 * @vapil.api <pre>
-	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-audit-details</a>
-	 * @vapil.request <pre>
-	 * <i>Example 1 - DocumentAuditResponse</i>
-	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
-	 * 				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
-	 * 				.setEndDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
-	 * 				.setLimit(4)
-	 * 				.retrieveAuditDetailsAllPages(LogRequest.AuditTrailType.DOCUMENT);</pre>
-	 * @vapil.response <pre>
-	 * <i>Example 1 - DocumentAuditResponse</i>
-	 * AuditDetailsResponse.ResponseDetails details = resp.getResponseDetails();
-	 * System.out.println("Offset = " + details.getOffset());
-	 * System.out.println("Limit = " + details.getLimit());
-	 * System.out.println("Size = " + details.getSize());
-	 * System.out.println("Total = " + details.getTotal());
-	 * System.out.println("Object/Name = " + details.getDetailsObject().getName());
-	 * System.out.println("Object/Label = " + details.getDetailsObject().getLabel());
-	 * System.out.println("Object/Url = " + details.getDetailsObject().getUrl());
-	 *
-	 * System.out.println("Items ****");
-	 * for (DocumentAuditData data : resp.getData()) {
-	 *   System.out.println("\n**** Data Item **** ");
-	 *   System.out.println("id = " + data.getId());
-	 *   System.out.println("timestamp = " + data.getTimestamp());
-	 *   System.out.println("UserName = " + data.getUserName());
-	 *   System.out.println("Full Name = " + data.getFullName());
-	 *   System.out.println("Action = " + data.getAction());
-	 *   System.out.println("Item = " + data.getItem());
-	 *   System.out.println("Field Name = " + data.getFieldName());
-	 *   System.out.println("Workflow Name = " + data.getWorkflowName());
-	 *   System.out.println("Task Name = " + data.getTaskName());
-	 *   System.out.println("Signature Meaning = " + data.getSignatureMeaning());
-	 *   System.out.println("View License = " + data.getViewLicense());
-	 *   System.out.println("Job Instance ID = " + data.getJobInstanceId());
-	 *   System.out.println("Doc ID = " + data.getDocId());
-	 *   System.out.println("Version = " + data.getVersion());
-	 *   System.out.println("Document Url = " + data.getDocumentUrl());
-	 *   System.out.println("Event Description = " + data.getEventDescription());
-	 * }
-	 * </pre>
-	 * @vapil.request <pre>
-	 * <i>Example 3 - DomainAuditResponse</i>
-	 * DomainAuditResponse resp = vaultClient.newRequest(LogRequest.class)
-	 * 				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
-	 * 				.retrieveAuditDetailsAllPages(LogRequest.AuditTrailType.DOMAIN);</pre>
-	 * @vapil.response <pre>
-	 * <i>Example 2 - DomainAuditResponse</i>
-	 * AuditDetailsResponse.ResponseDetails details = resp.getResponseDetails();
-	 * System.out.println("Offset = " + details.getOffset());
-	 * System.out.println("Limit = " + details.getLimit());
-	 * System.out.println("Size = " + details.getSize());
-	 * System.out.println("Total = " + details.getTotal());
-	 * System.out.println("Object/Name = " + details.getDetailsObject().getName());
-	 * System.out.println("Object/Label = " + details.getDetailsObject().getLabel());
-	 * System.out.println("Object/Url = " + details.getDetailsObject().getUrl());
-	 *
-	 * System.out.println("Items ****");
-	 * for (DomainAuditData data : resp.getData()) {
-	 *   System.out.println("\n**** Data Item **** ");
-	 *   System.out.println("id = " + data.getId());
-	 *   System.out.println("timestamp = " + data.getTimestamp());
-	 *   System.out.println("UserId = " + data.getUserId());
-	 *   System.out.println("UserName = " + data.getUserName());
-	 *   System.out.println("Full Name = " + data.getFullName());
-	 *   System.out.println("Action = " + data.getAction());
-	 *   System.out.println("Type = " + data.getType());
-	 *   System.out.println("Item = " + data.getItem());
-	 *   System.out.println("FieldName = " + data.getFieldName());
-	 *   System.out.println("NewValue = " + data.getNewValue());
-	 *   System.out.println("EventDescription = " + data.getEventDescription());
-	 * }
-	 * </pre>
-	 * @vapil.request <pre>
-	 * <i>Example 3 - LoginAuditResponse</i>
-	 * LoginAuditResponse resp = vaultClient.newRequest(LogRequest.class)
-	 * 				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
-	 * 				.retrieveAuditDetailsAllPages(LogRequest.AuditTrailType.LOGIN);</pre>
-	 * @vapil.response <pre>
-	 * <i>Example 3 - LoginAuditResponse</i>
-	 * AuditDetailsResponse.ResponseDetails details = resp.getResponseDetails();
-	 * System.out.println("Offset = " + details.getOffset());
-	 * System.out.println("Limit = " + details.getLimit());
-	 * System.out.println("Size = " + details.getSize());
-	 * System.out.println("Total = " + details.getTotal());
-	 * System.out.println("Object/Name = " + details.getDetailsObject().getName());
-	 * System.out.println("Object/Label = " + details.getDetailsObject().getLabel());
-	 * System.out.println("Object/Url = " + details.getDetailsObject().getUrl());
-	 *
-	 * System.out.println("Items ****");
-	 * for (LoginAuditData data : resp.getData()) {
-	 *   System.out.println("\n**** Data Item **** ");
-	 *   System.out.println("id = " + data.getId());
-	 *   System.out.println("timestamp = " + data.getTimestamp());
-	 *   System.out.println("UserName = " + data.getUserName());
-	 *   System.out.println("Source IP = " + data.getSourceIp());
-	 *   System.out.println("Type = " + data.getType());
-	 *   System.out.println("Status = " + data.getStatus());
-	 *   System.out.println("Browser = " + data.getBrowser());
-	 *   System.out.println("Platform = " + data.getPlatform());
-	 *   System.out.println("Vault ID = " + data.getVaultId());
-	 * }
-	 * </pre>
-	 * @vapil.request <pre>
-	 * <i>Example 4 - ObjectAuditResponse</i>
-	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
-	 * 				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
-	 * 				.retrieveAuditDetailsAllPages(LogRequest.AuditTrailType.OBJECT);</pre>
-	 * @vapil.response <pre>
-	 * <i>Example 4 - ObjectAuditResponse</i>
-	 * AuditDetailsResponse.ResponseDetails details = resp.getResponseDetails();
-	 * System.out.println("Offset = " + details.getOffset());
-	 * System.out.println("Limit = " + details.getLimit());
-	 * System.out.println("Size = " + details.getSize());
-	 * System.out.println("Total = " + details.getTotal());
-	 * System.out.println("Object/Name = " + details.getDetailsObject().getName());
-	 * System.out.println("Object/Label = " + details.getDetailsObject().getLabel());
-	 * System.out.println("Object/Url = " + details.getDetailsObject().getUrl());
-	 *
-	 * System.out.println("Items ****");
-	 * for (ObjectAuditData data : resp.getData()) {
-	 *   System.out.println("\n**** Data Item **** ");
-	 *   System.out.println("id = " + data.getId());
-	 *   System.out.println("timestamp = " + data.getTimestamp());
-	 *   System.out.println("UserName = " + data.getUserName());
-	 *   System.out.println("Full Name = " + data.getFullName());
-	 *   System.out.println("Action = " + data.getAction());
-	 *   System.out.println("Item = " + data.getItem());
-	 *   System.out.println("Record ID = " + data.getRecordId());
-	 *   System.out.println("Object Label = " + data.getObjectLabel());
-	 *   System.out.println("Workflow Name = " + data.getWorkflowName());
-	 *   System.out.println("Task Name = " + data.getTaskName());
-	 *   System.out.println("Verdict = " + data.getVerdict());
-	 *   System.out.println("Reason = " + data.getReason());
-	 *   System.out.println("Capacity = " + data.getCapacity());
-	 *   System.out.println("Event Description = " + data.getEventDescription());
-	 * }
-	 * </pre>
-	 */
-	public <T> T retrieveAuditDetailsAllPages(AuditTrailType auditTrailType) {
-		return retrieveAuditDetails(auditTrailType, true);
-	}
-
-
-	/**
-	 * <b>Retrieve Audit Details</b>
-	 * <p>
-	 * Retrieve audit details for a specific audit type. This request supports parameters to narrow the results to a specified date and time within the past 30 days.
-	 *
-	 * @param <T>              Response Type class
-	 * @param auditTrailType   The name of the specified audit type (The AuditTrailType enum values translate to document_audit_trail, object_audit_trail, etc.).
-	 * @param retrieveAllPages indicates whether to retrieve all pages
-	 * @return Returns one of the following:<br>
-	 * SystemAuditResponse when auditTrailType is system_audit_trail<br>
-	 * LoginAuditResponse when auditTrailType is login_audit_trail<br>
-	 * ObjectAuditResponse when auditTrailType is object_audit_trail<br>
-	 * DomainAuditResponse when auditTrailType is domain_audit_trail<br>
-	 * DocumentAuditResponse when auditTrailType is document_audit_response
-	 * JobCreateResponse when format result is CSV
-	 */
-	private <T> T retrieveAuditDetails(AuditTrailType auditTrailType, boolean retrieveAllPages) {
 		String url = vaultClient.getAPIEndpoint(URL_AUDIT_DETAILS)
 				.replace("{audit_trail_type}", auditTrailType.getValue());
 
@@ -505,140 +325,20 @@ public class LogRequest extends VaultRequest {
 			return send(HttpMethod.GET, request, (Class<T>) JobCreateResponse.class);
 		}
 
-		Class<T> responseModel = (Class<T>) AuditDetailsResponse.class;
-
-		switch (auditTrailType) {
-			case DOCUMENT:
-				responseModel = (Class<T>) DocumentAuditResponse.class;
-				break;
-			case DOMAIN:
-				responseModel = (Class<T>) DomainAuditResponse.class;
-				break;
-			case LOGIN:
-				responseModel = (Class<T>) LoginAuditResponse.class;
-				break;
-			case OBJECT:
-				responseModel = (Class<T>) ObjectAuditResponse.class;
-				break;
-			case SYSTEM:
-				responseModel = (Class<T>) SystemAuditResponse.class;
-				break;
-		}
-
 		//get the first page
-		T response = send(HttpMethod.GET, request, responseModel);
-		;
-
-		//if retrieveAll AND has additional pages
-		if (retrieveAllPages && response != null
-				&& ((AuditDetailsResponse) response).getResponseDetails() != null
-				&& ((AuditDetailsResponse) response).getResponseDetails().hasNextPage()) {
-			String nextPage = ((AuditDetailsResponse) response).getResponseDetails().getNextPage();
-			switch (auditTrailType) {
-				case DOCUMENT:
-					DocumentAuditResponse documentAuditResponse = (DocumentAuditResponse) response;
-					List<DocumentAuditResponse.DocumentAudit> documentAuditData = documentAuditResponse.getData();
-					while (nextPage != null) {
-						DocumentAuditResponse nextPageResponse = retrieveAuditDetailsOffset(auditTrailType, nextPage);
-						nextPage = null;
-						if (nextPageResponse != null) {
-							if (nextPageResponse != null && nextPageResponse.getResponseDetails() != null) {
-								documentAuditData.addAll(nextPageResponse.getData());
-							}
-							nextPage = nextPageResponse.getResponseDetails().getNextPage();
-
-							documentAuditResponse.getResponseDetails().setSize(documentAuditData.size());
-							documentAuditResponse.getResponseDetails().setLimit(documentAuditData.size());
-							documentAuditResponse.getResponseDetails().setNextPage(null);
-						}
-					}
-					break;
-				case DOMAIN:
-					DomainAuditResponse domainAuditResponse = (DomainAuditResponse) response;
-					List<DomainAuditResponse.DomainAuditData> domainAuditData = domainAuditResponse.getData();
-					while (nextPage != null) {
-						DomainAuditResponse nextPageResponse = retrieveAuditDetailsOffset(auditTrailType, nextPage);
-						nextPage = null;
-						if (nextPageResponse != null) {
-							if (nextPageResponse != null && nextPageResponse.getResponseDetails() != null) {
-								domainAuditData.addAll(nextPageResponse.getData());
-							}
-							nextPage = nextPageResponse.getResponseDetails().getNextPage();
-
-							domainAuditResponse.getResponseDetails().setSize(domainAuditData.size());
-							domainAuditResponse.getResponseDetails().setLimit(domainAuditData.size());
-							domainAuditResponse.getResponseDetails().setNextPage(null);
-						}
-					}
-					break;
-				case LOGIN:
-					LoginAuditResponse loginAuditResponse = (LoginAuditResponse) response;
-					List<LoginAuditResponse.LoginAuditData> loginAuditData = loginAuditResponse.getData();
-					while (nextPage != null) {
-						LoginAuditResponse nextPageResponse = retrieveAuditDetailsOffset(auditTrailType, nextPage);
-						nextPage = null;
-						if (nextPageResponse != null) {
-							if (nextPageResponse != null && nextPageResponse.getResponseDetails() != null) {
-								loginAuditData.addAll(nextPageResponse.getData());
-							}
-							nextPage = nextPageResponse.getResponseDetails().getNextPage();
-
-							loginAuditResponse.getResponseDetails().setSize(loginAuditData.size());
-							loginAuditResponse.getResponseDetails().setLimit(loginAuditData.size());
-							loginAuditResponse.getResponseDetails().setNextPage(null);
-						}
-					}
-					break;
-				case OBJECT:
-					ObjectAuditResponse objectAuditResponse = (ObjectAuditResponse) response;
-					List<ObjectAuditResponse.ObjectAuditData> objectAuditData = objectAuditResponse.getData();
-					while (nextPage != null) {
-						ObjectAuditResponse nextPageResponse = retrieveAuditDetailsOffset(auditTrailType, nextPage);
-						nextPage = null;
-						if (nextPageResponse != null) {
-							if (nextPageResponse != null && nextPageResponse.getResponseDetails() != null) {
-								objectAuditData.addAll(nextPageResponse.getData());
-							}
-							nextPage = nextPageResponse.getResponseDetails().getNextPage();
-
-							objectAuditResponse.getResponseDetails().setSize(objectAuditData.size());
-							objectAuditResponse.getResponseDetails().setLimit(objectAuditData.size());
-							objectAuditResponse.getResponseDetails().setNextPage(null);
-						}
-					}
-					break;
-				case SYSTEM:
-					SystemAuditResponse systemAuditResponse = (SystemAuditResponse) response;
-					List<SystemAuditResponse.SystemAuditData> systemAuditData = systemAuditResponse.getData();
-					while (nextPage != null) {
-						SystemAuditResponse nextPageResponse = retrieveAuditDetailsOffset(auditTrailType, nextPage);
-						nextPage = null;
-						if (nextPageResponse != null) {
-							if (nextPageResponse != null && nextPageResponse.getResponseDetails() != null) {
-								systemAuditData.addAll(nextPageResponse.getData());
-							}
-							nextPage = nextPageResponse.getResponseDetails().getNextPage();
-
-							systemAuditResponse.getResponseDetails().setSize(systemAuditData.size());
-							systemAuditResponse.getResponseDetails().setLimit(systemAuditData.size());
-							systemAuditResponse.getResponseDetails().setNextPage(null);
-						}
-					}
-					break;
-			}
-		}
+		T response = send(HttpMethod.GET, request, auditTrailType.getResponseModel());
 
 		return response;
 	}
 
 	/**
-	 * <b>Retrieve Audit Details</b>
+	 * <b>Retrieve Audit Details (By Page)</b>
 	 * <p>
 	 * Retrieve next or previous page of an existing audit details request
 	 *
 	 * @param <T>            Response Type class
 	 * @param auditTrailType type of audit trail
-	 * @param offsetURL      The offset URL from the previous_page or next_page parameter
+	 * @param pageUrl        The URL from the previous_page or next_page parameter
 	 * @return Returns one of the following:<br>
 	 * SystemAuditResponse when auditTrailType is system_audit_trail<br>
 	 * LoginAuditResponse when auditTrailType is login_audit_trail<br>
@@ -648,33 +348,10 @@ public class LogRequest extends VaultRequest {
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}?offset={val}&amp;limit={val}&amp;uuid={val}</pre>
 	 */
-	public <T> T retrieveAuditDetailsOffset(AuditTrailType auditTrailType, String offsetURL) {
-		String url = vaultClient.getAPIEndpoint("", false);
-		url = url.replace("/api/", offsetURL);
-
-		Class<T> responseModel = (Class<T>) AuditDetailsResponse.class;
-
-		switch (auditTrailType) {
-			case DOCUMENT:
-				responseModel = (Class<T>) DocumentAuditResponse.class;
-				break;
-			case DOMAIN:
-				responseModel = (Class<T>) DomainAuditResponse.class;
-				break;
-			case LOGIN:
-				responseModel = (Class<T>) LoginAuditResponse.class;
-				break;
-			case OBJECT:
-				responseModel = (Class<T>) ObjectAuditResponse.class;
-				break;
-			case SYSTEM:
-				responseModel = (Class<T>) SystemAuditResponse.class;
-				break;
-		}
-
+	public <T> T retrieveAuditDetailsByPage(AuditTrailType auditTrailType, String pageUrl) {
+		String url = vaultClient.getPaginationEndpoint(pageUrl);
 		HttpRequestConnector request = new HttpRequestConnector(url);
-
-		return send(HttpMethod.GET, request, responseModel);
+		return send(HttpMethod.GET, request, auditTrailType.getResponseModel());
 	}
 
 	/**
@@ -686,7 +363,7 @@ public class LogRequest extends VaultRequest {
 	 * @return DocumentAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-complete-audit-history-for-a-single-document</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -761,7 +438,7 @@ public class LogRequest extends VaultRequest {
 	 * @return ObjectAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-complete-audit-history-for-a-single-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
@@ -840,7 +517,7 @@ public class LogRequest extends VaultRequest {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/api_usage?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-daily-api-usage</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-daily-api-usage</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -912,6 +589,22 @@ public class LogRequest extends VaultRequest {
 
 		public String getValue() {
 			return type;
+		}
+
+		private <T> T getResponseModel() {
+			switch (this) {
+				case DOCUMENT:
+					return (T) DocumentAuditResponse.class;
+				case DOMAIN:
+					return (T) DomainAuditResponse.class;
+				case LOGIN:
+					return (T) LoginAuditResponse.class;
+				case OBJECT:
+					return (T) ObjectAuditResponse.class;
+				case SYSTEM:
+					return (T) SystemAuditResponse.class;
+			}
+			return null;
 		}
 	}
 

@@ -31,6 +31,20 @@ public class QueryResponse extends VaultResponse {
 		this.set("data", data);
 	}
 
+	@JsonIgnore
+	public boolean isPaginated() {
+		if (getResponseDetails() != null) {
+			if (getResponseDetails().getPreviousPage() != null || getResponseDetails().getNextPage() != null) {
+				return true;
+			}
+
+			if (getResponseDetails().getSize() != getResponseDetails().getTotal()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@JsonProperty("queryDescribe")
 	public QueryDescribe getQueryDescribe() {
 		return (QueryDescribe) this.get("queryDescribe");

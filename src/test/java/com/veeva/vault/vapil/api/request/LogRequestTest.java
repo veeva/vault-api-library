@@ -39,8 +39,9 @@ public class LogRequestTest {
 				.retrieveAuditTypes();
 
 		Assertions.assertTrue(response.isSuccessful());
-		for (AuditTrail a : response.getAuditTrails()) {
-			Assertions.assertNotNull(a.getName());
+		for (AuditTrail auditTrail : response.getAuditTrails()) {
+			Assertions.assertNotNull(auditTrail.getName());
+			System.out.println(auditTrail.getName());
 		}
 	}
 
@@ -76,6 +77,7 @@ public class LogRequestTest {
 			Assertions.assertNotNull(documentAuditData.getId());
 			Assertions.assertNotNull(documentAuditData.getTimestamp());
 		}
+
 	}
 
 	@Test
@@ -109,7 +111,7 @@ public class LogRequestTest {
 		for (LoginAuditData data : response.getData()) {
 			Assertions.assertNotNull(data.getId());
 			Assertions.assertNotNull(data.getTimestamp());
-			Assertions.assertNotNull(data.getVaultId());
+			Assertions.assertNotNull(data.getUserName());
 		}
 	}
 
@@ -130,24 +132,12 @@ public class LogRequestTest {
 			Assertions.assertNotNull(data.getTimestamp());
 			Assertions.assertNotNull(data.getRecordId());
 		}
-	}
 
-	@Test
-	public void testRetrieveObjectAuditDetailsAllPages(VaultClient vaultClient) {
-		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20))
-				.setLimit(10)
-				.retrieveAuditDetailsAllPages(LogRequest.AuditTrailType.OBJECT);
-
-		Assertions.assertTrue(response.isSuccessful());
-		AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
-		Assertions.assertNotNull(details.getDetailsObject().getName());
-		Assertions.assertNotNull(details.getDetailsObject().getUrl());
-
-		for (ObjectAuditData data : response.getData()) {
-			Assertions.assertNotNull(data.getId());
-			Assertions.assertNotNull(data.getTimestamp());
-			Assertions.assertNotNull(data.getRecordId());
+		if (response.isPaginated()) {
+			ObjectAuditResponse paginatedResponse = vaultClient.newRequest(LogRequest.class)
+					.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.OBJECT,
+							response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
 		}
 	}
 
@@ -186,7 +176,7 @@ public class LogRequestTest {
 
 		// Test paging
 		if (details.hasNextPage()) {
-			response = request.retrieveAuditDetailsOffset(LogRequest.AuditTrailType.SYSTEM, details.getNextPage());
+			response = request.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.SYSTEM, details.getNextPage());
 			details = response.getResponseDetails();
 			Assertions.assertNotNull(details.getNextPage());
 			Assertions.assertNotNull(details.getPreviousPage());
@@ -194,7 +184,7 @@ public class LogRequestTest {
 		}
 
 		if (details.hasPreviousPage()) {
-			response = request.retrieveAuditDetailsOffset(LogRequest.AuditTrailType.SYSTEM, details.getPreviousPage());
+			response = request.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.SYSTEM, details.getPreviousPage());
 			details = response.getResponseDetails();
 			Assertions.assertNotNull(details.getNextPage());
 			Assertions.assertNotNull(details.getTotal());
@@ -279,13 +269,13 @@ public class LogRequestTest {
 		Assertions.assertTrue(response.isSuccessful());
 	}
 
-
+	@Test
 	public void testRetrieveSingleObjectAuditDetails(VaultClient vaultClient) {
 
 		// Omit start and end dates to use the defaults (see the API guide)
 		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setFormatResult(LogRequest.FormatResultType.JSON)
-				.retrieveObjectAuditTrail("product__v", "00P000000000601");
+				.retrieveObjectAuditTrail("user__sys", "2051303");
 
 		Assertions.assertTrue(response.isSuccessful());
 		if (response.isSuccessful()) {
@@ -315,10 +305,12 @@ public class LogRequestTest {
 				System.out.println("Reason = " + data.getReason());
 				System.out.println("Capacity = " + data.getCapacity());
 				System.out.println("Event Description = " + data.getEventDescription());
+				System.out.println("On Behalf Of = " + data.getOnBehalfOf());
 			}
 		}
 	}
 
+	@Test
 	public void testRetrieveSingleObjectAuditDetailsAsCsv(VaultClient vaultClient) {
 		System.out.println("\n****** Retrieve Single Object Audit Details As CSV ******");
 

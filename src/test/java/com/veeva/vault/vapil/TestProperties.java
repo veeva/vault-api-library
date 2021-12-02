@@ -83,6 +83,9 @@ public class TestProperties {
 	public String getIdpOauthAccessToken() {
 		return properties.getProperty("vault.oauthAccessToken");
 	}
+	public String getIdpOauthScope() {
+		return properties.getProperty("idp.scope");
+	}
 	public String getSessionId() {
 		return properties.getProperty("vault.sessionid");
 	}

@@ -7,6 +7,7 @@
  */
 package com.veeva.vault.vapil.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
 
@@ -16,6 +17,20 @@ import java.util.List;
  * Response model for the API Job Task response
  */
 public class JobTaskResponse extends VaultResponse {
+
+	@JsonIgnore
+	public boolean isPaginated() {
+		if (getResponseDetails() != null) {
+			if (getResponseDetails().getPreviousPage() != null || getResponseDetails().getNextPage() != null) {
+				return true;
+			}
+
+			if (getResponseDetails().getOffset() != 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@JsonProperty("responseDetails")
 	public ResponseDetails getResponseDetails() {
@@ -112,6 +127,26 @@ public class JobTaskResponse extends VaultResponse {
 		@JsonProperty("total")
 		public void setTotal(Integer total) {
 			this.set("total", total);
+		}
+
+		/**
+		 * Determine if a next page exists for pagination
+		 *
+		 * @return true if a next page exists
+		 */
+		@JsonIgnore
+		public boolean hasNextPage() {
+			return getNextPage() != null && !getNextPage().isEmpty();
+		}
+
+		/**
+		 * Determine if a previous page exists for pagination
+		 *
+		 * @return true if a previous page exists
+		 */
+		@JsonIgnore
+		public boolean hasPreviousPage() {
+			return getPreviousPage() != null && !getPreviousPage().isEmpty();
 		}
 	}
 }

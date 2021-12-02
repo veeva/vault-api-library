@@ -35,37 +35,30 @@ public class FileStagingRequestTest {
 
 	@Test
 	public void testListItemsAtAPath(VaultClient vaultClient) {
-		FileStagingItemBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class).listItemsAtAPath("/");
-		Assertions.assertTrue(resp.isSuccessful());
-		Assertions.assertNotNull(resp.getData());
-		Assertions.assertNotEquals(0, resp.getData().size());
-		System.out.println(resp.getResponse());
+		FileStagingItemBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+				.listItemsAtAPath("/");
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+		Assertions.assertNotEquals(0, response.getData().size());
+		System.out.println(response.getResponse());
+
 	}
 
 	@Test
 	public void testListItemsByPage(VaultClient vaultClient) {
-		FileStagingItemBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+		FileStagingItemBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
 				.setLimit(2)
 				.setRecursive(true)
 				.listItemsAtAPath("/");
-		Assertions.assertTrue(resp.isSuccessful());
-		Assertions.assertNotNull(resp.getData());
-		Assertions.assertNotEquals(0, resp.getData().size());
-		System.out.println(resp.getResponse());
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+		Assertions.assertNotEquals(0, response.getData().size());
+		System.out.println(response.getResponse());
 
-		while (resp != null
-				&& resp.isSuccessful()
-				&& resp.getResponseDetails() != null
-				&& resp.getResponseDetails().getNextPage() != null) {
-
-			String nextPage = resp.getResponseDetails().getNextPage();
-			resp = vaultClient.newRequest(FileStagingRequest.class)
-					.listItemsByPage(nextPage);
-
-			Assertions.assertTrue(resp.isSuccessful());
-			Assertions.assertNotNull(resp.getData());
-			Assertions.assertNotEquals(0, resp.getData().size());
-			System.out.println(resp.getResponse());
+		if (response.isPaginated()) {
+			FileStagingItemBulkResponse paginatedResponse = vaultClient.newRequest(FileStagingRequest.class)
+					.listItemsAtPathByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
 		}
 	}
 
@@ -168,11 +161,18 @@ public class FileStagingRequestTest {
 
 	@Test
 	public void testListUploadSessions(VaultClient vaultClient) {
-		FileStagingSessionBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class).listUploadSessions();
-		Assertions.assertTrue(resp.isSuccessful());
-		Assertions.assertNotEquals(0, resp.getData().size());
-		for(FileStagingSessionBulkResponse.FileStagingSession fileStagingSession : resp.getData()) {
+		FileStagingSessionBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+				.listUploadSessions();
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotEquals(0, response.getData().size());
+		for(FileStagingSessionBulkResponse.FileStagingSession fileStagingSession : response.getData()) {
 			System.out.println(fileStagingSession.getName());
+		}
+
+		if (response.isPaginated()) {
+			FileStagingSessionBulkResponse paginatedResponse = vaultClient.newRequest(FileStagingRequest.class)
+					.listUploadSessionsByPage(response.getResponseDetails().getNextPage());
+			Assertions.assertTrue(paginatedResponse.isSuccessful());
 		}
 	}
 

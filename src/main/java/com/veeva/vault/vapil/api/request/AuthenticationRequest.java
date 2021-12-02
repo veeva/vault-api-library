@@ -14,9 +14,7 @@ import org.apache.log4j.Logger;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +25,7 @@ import java.util.Map;
  * Note that the VaultClient automatically performs Authentication requests
  * to establish the Vault session.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#authentication">https://developer.veevavault.com/api/21.2/#authentication</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.3/#authentication">https://developer.veevavault.com/api/21.3/#authentication</a>
  */
 public class AuthenticationRequest extends VaultRequest {
 	private static Logger log = Logger.getLogger(AuthenticationRequest.class);
@@ -35,6 +33,7 @@ public class AuthenticationRequest extends VaultRequest {
 	// API Endpoints
 	private static final String URL_API = "";
 	private static final String URL_AUTH = "/auth";
+	private static final String URL_KEEP_ALIVE = "/keep-alive";
 	private static final String URL_VALIDATE_SESSION_USER = "/objects/users/me";
 
 	/**
@@ -48,6 +47,7 @@ public class AuthenticationRequest extends VaultRequest {
 	private static final String URL_OAUTH = "https://login.veevavault.com/auth/oauth/session/{oath_oidc_profile_id}";
 
 	// API Request Parameters
+	private String idpOAuthScope = "openid";
 	private String idpUserName;
 	private String vaultOAuthClientId;
 	private boolean validateDNS = true;
@@ -61,7 +61,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return ApiVersionResponse
 	 * @vapil.api <pre>
 	 * GET /api</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-api-versions' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-api-versions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-api-versions' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-api-versions</a>
 	 */
 	public ApiVersionResponse retrieveApiVersions() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_API));
@@ -76,7 +76,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/auth</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.2/#user-name-and-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.3/#user-name-and-password</a>
 	 */
 	public AuthenticationResponse login(String userName, String userPassword) {
 		return login(userName, userPassword, null);
@@ -92,7 +92,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/auth</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.2/#user-name-and-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/21.3/#user-name-and-password</a>
 	 */
 	public AuthenticationResponse login(String username, String password, String vaultDNS) {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_AUTH));
@@ -123,7 +123,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * POST login.veevavault.com/auth/oauth/session/{oath_oidc_profile_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#oauth-2-0-openid-connect' target='_blank'>https://developer.veevavault.com/api/21.2/#oauth-2-0-openid-connect</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#oauth-2-0-openid-connect' target='_blank'>https://developer.veevavault.com/api/21.3/#oauth-2-0-openid-connect</a>
 	 */
 	public AuthenticationResponse loginOAuth(String oauthOidcProfileId, String accessToken, String vaultDNS) {
 		String url = URL_OAUTH;
@@ -171,16 +171,6 @@ public class AuthenticationRequest extends VaultRequest {
 
 						String tokenEndpoint = authProfile.getAsMetadata().getTokenEndpoint();
 
-						Map<String, String> formData = new HashMap<>();
-
-						//special case for Azure
-						// -replace v2.0 with non version specific
-						// -add a resource parameter
-						if (tokenEndpoint.toLowerCase().contains("microsoftonline.com")) {
-							tokenEndpoint = tokenEndpoint.replace("/v2.0", "");
-							formData.put("resource", "https://login.veevavault.com");
-						}
-
 						//if a idp username was supplied, use that instead of the Vault username
 						String tokenUserName = idpUserName;
 						if (tokenUserName == null) {
@@ -188,12 +178,11 @@ public class AuthenticationRequest extends VaultRequest {
 						}
 
 						//get the access token
-						String accessToken = getOAuthAccessToken(
+						String accessToken = getOauthAccessToken(
 								tokenEndpoint,
 								tokenUserName,
 								password,
-								authProfile.getAsClientId(),
-								formData
+								authProfile.getAsClientId()
 						);
 
 						authenticationResponse = loginOAuth(authProfile.getId(), accessToken, vaultDNS);
@@ -218,18 +207,36 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @param username The user name for authentication
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
-	 * GET login.veevavault.com/auth/discovery</pre>
+	 * POST login.veevavault.com/auth/discovery</pre>
 	 */
 	public DiscoveryResponse authenticationTypeDiscovery(String username) {
 		HttpRequestConnector request = new HttpRequestConnector(URL_DISCOVERY);
 
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 
-		request.addQueryParam("username", username);
+		request.addBodyParam("username", username);
 		if (vaultOAuthClientId != null)
-			request.addQueryParam("client_id", vaultOAuthClientId);
+			request.addBodyParam("client_id", vaultOAuthClientId);
 
-		return send(HttpMethod.GET, request, DiscoveryResponse.class);
+		return send(HttpMethod.POST, request, DiscoveryResponse.class);
+	}
+
+	/**
+	 * Session Keep Alive
+	 * <p>
+	 * Developers are now able to keep a Vault API Session alive with a light-weight endpoint that returns SUCCESS
+	 * when a valid Session Id is supplied. If an invalid Session Id is supplied, Vault returns INVALID_SESSION_ID.
+	 * Vault always enforces a 48-hour maximum session duration even when used with the Session Keep Alive.
+	 * </p>
+	 *
+	 * @return VaultResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/keep-alive</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#session-keep-alive' target='_blank'>https://developer.veevavault.com/api/21.3/#session-keep-alive</a>
+	 */
+	public VaultResponse sessionKeepAlive() {
+		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_KEEP_ALIVE));
+		return send(HttpMethod.POST, request, VaultResponse.class);
 	}
 
 	/**
@@ -242,7 +249,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return UserRetrieveResponse Vault returns an array of size 1
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/me</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#validate-session-user' target='_blank'>https://developer.veevavault.com/api/21.2/#validate-session-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#validate-session-user' target='_blank'>https://developer.veevavault.com/api/21.3/#validate-session-user</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(AuthenticationRequest.class).validateSessionUser();</pre>
 	 * @vapil.response <pre>
@@ -262,51 +269,25 @@ public class AuthenticationRequest extends VaultRequest {
 
 	/*
 	 *
-	 * Request parameter setters
-	 *
-	 */
-
-	/**
-	 * Set the Header Accept to return CSV
-	 *
-	 * @param vaultOAuthClientId Client Id for the Vault App
-	 * @return The Request
-	 */
-	public AuthenticationRequest setVaultOAuthClientId(String vaultOAuthClientId) {
-		this.vaultOAuthClientId = vaultOAuthClientId;
-		return this;
-	}
-
-	public AuthenticationRequest setIdpUserName(String idpUserName) {
-		this.idpUserName = idpUserName;
-		return this;
-	}
-
-	/*
-	 *
 	 * Private methods
 	 *
 	 */
 
-	private String getOAuthAccessToken(String tokenEndpoint,
+	private String getOauthAccessToken(String tokenEndpoint,
 									   String username,
 									   String password,
-									   String asClientId,
-									   Map<String, String> formData) {
+									   String asClientId) {
 
 		try {
 			HttpRequestConnector request = new HttpRequestConnector(tokenEndpoint);
 			request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 			request.addBodyParam("grant_type", "password");
-			request.addBodyParam("scope", "openid");
 			request.addBodyParam("username", username);
 			request.addBodyParam("password", password);
 			request.addBodyParam("client_id", asClientId);
 
-			if (formData != null) {
-				for (Map.Entry<String, String> entry : formData.entrySet()) {
-					request.addBodyParam(entry.getKey(), entry.getValue());
-				}
+			if (idpOAuthScope != null) {
+				request.addBodyParam("scope", idpOAuthScope);
 			}
 
 			HttpResponseConnector response = request.sendPost();
@@ -357,6 +338,38 @@ public class AuthenticationRequest extends VaultRequest {
 		return response;
 	}
 
+	/*
+	 *
+	 * Request parameter setters
+	 *
+	 */
+
+	/**
+	 * Set the Header Accept to return CSV
+	 *
+	 * @param vaultOAuthClientId Client Id for the Vault App
+	 * @return The Request
+	 */
+	public AuthenticationRequest setVaultOAuthClientId(String vaultOAuthClientId) {
+		this.vaultOAuthClientId = vaultOAuthClientId;
+		return this;
+	}
+
+	public AuthenticationRequest setIdpUserName(String idpUserName) {
+		this.idpUserName = idpUserName;
+		return this;
+	}
+
+	/**
+	 * Sets the scope body param for an OAuth Access Token Call
+	 *
+	 * @param idpOAuthScope OAuth "scope" body param. Default = "openid"
+	 * @return The request
+	 */
+	public AuthenticationRequest setIdpOAuthScope(String idpOAuthScope) {
+		this.idpOAuthScope = idpOAuthScope;
+		return this;
+	}
 
 	/**
 	 * Validate Vault DNS after successful login

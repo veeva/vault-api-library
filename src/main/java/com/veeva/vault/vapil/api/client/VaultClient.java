@@ -35,7 +35,7 @@ public class VaultClient {
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v21.2";
+	public static final String VAULT_API_VERSION = "v21.3";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter
@@ -206,6 +206,26 @@ public class VaultClient {
 	 */
 	public String getLoginEndpoint(String endpoint) {
 		return URL_LOGIN + endpoint;
+	}
+
+	/**
+	 * Get a fully formed API URL consisting of the Vault DNS,
+	 * API version, and the API endpoint.
+	 *
+	 * @param pageUrl The URL from the previous_page or next_page parameter
+	 * @return URL for the API endpoint in form https://myvault.com/api/{version}/objects/documents
+	 */
+	public String getPaginationEndpoint(String pageUrl) {
+		if (pageUrl.startsWith("https://" + vaultDNS))
+			return pageUrl;
+
+		if (pageUrl.startsWith("/api/" + VAULT_API_VERSION))
+			return getAPIEndpoint(pageUrl.substring(VAULT_API_VERSION.length() + 5), true);
+
+		if (pageUrl.startsWith("/api/"))
+			return getAPIEndpoint(pageUrl.substring(5), false);
+
+		return getAPIEndpoint(pageUrl, true);
 	}
 
 	/**

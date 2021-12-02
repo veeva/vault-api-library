@@ -7,9 +7,9 @@
  */
 package com.veeva.vault.vapil.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
 /**
  * Model for the following API calls responses:
@@ -17,6 +17,68 @@ import com.veeva.vault.vapil.api.model.response.VaultResponse;
  * GET /api/{version}/audittrail/{audit_trail_type}
  */
 public class AuditDetailsResponse extends VaultResponse {
+
+	public static class Audit extends VaultModel {
+
+		@JsonProperty("full_name")
+		public String getFullName() {
+			return this.getString("full_name");
+		}
+
+		public void setFullName(String fullName) {
+			this.set("full_name", fullName);
+		}
+
+		@JsonProperty("id")
+		public String getId() {
+			return this.getString("id");
+		}
+
+		public void setId(String id) {
+			this.set("id", id);
+		}
+
+		@JsonProperty("on_behalf_of")
+		public String getOnBehalfOf() {
+			return this.getString("on_behalf_of");
+		}
+
+		public void setOnBehalfOf(String onBehalfOf) {
+			this.set("on_behalf_of", onBehalfOf);
+		}
+
+		@JsonProperty("timestamp")
+		public String getTimestamp() {
+			return this.getString("timestamp");
+		}
+
+		public void setTimestamp(String timestamp) {
+			this.set("timestamp", timestamp);
+		}
+
+		@JsonProperty("user_name")
+		public String getUserName() {
+			return this.getString("user_name");
+		}
+
+		public void setUserName(String userName) {
+			this.set("user_name", userName);
+		}
+	}
+
+	@JsonIgnore
+	public boolean isPaginated() {
+		if (getResponseDetails() != null) {
+			if (getResponseDetails().getPreviousPage() != null || getResponseDetails().getNextPage() != null) {
+				return true;
+			}
+
+			if (getResponseDetails().getSize() != getResponseDetails().getTotal()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@JsonProperty("responseDetails")
 	public ResponseDetails getResponseDetails() {
@@ -127,12 +189,9 @@ public class AuditDetailsResponse extends VaultResponse {
 		 *
 		 * @return true if a next page exists
 		 */
+		@JsonIgnore
 		public boolean hasNextPage() {
-			String nextPage = getNextPage();
-			if (nextPage != null && !nextPage.isEmpty())
-				return true;
-			else
-				return false;
+			return getNextPage() != null && !getNextPage().isEmpty();
 		}
 
 		/**
@@ -140,12 +199,9 @@ public class AuditDetailsResponse extends VaultResponse {
 		 *
 		 * @return true if a previous page exists
 		 */
+		@JsonIgnore
 		public boolean hasPreviousPage() {
-			String previousPage = getPreviousPage();
-			if (previousPage != null && !previousPage.isEmpty())
-				return true;
-			else
-				return false;
+			return getPreviousPage() != null && !getPreviousPage().isEmpty();
 		}
 	}
 }

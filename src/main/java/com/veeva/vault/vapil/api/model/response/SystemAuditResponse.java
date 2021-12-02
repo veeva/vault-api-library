@@ -30,7 +30,7 @@ public class SystemAuditResponse extends AuditDetailsResponse {
 		this.set("data", data);
 	}
 
-	public static class SystemAuditData extends VaultModel {
+	public static class SystemAuditData extends Audit {
 
 		@JsonProperty("action")
 		public String getAction() {
@@ -59,24 +59,6 @@ public class SystemAuditResponse extends AuditDetailsResponse {
 			this.set("field_name", fieldName);
 		}
 
-		@JsonProperty("full_name")
-		public String getFullName() {
-			return this.getString("full_name");
-		}
-
-		public void setFullName(String fullName) {
-			this.set("full_name", fullName);
-		}
-
-		@JsonProperty("id")
-		public String getId() {
-			return this.getString("id");
-		}
-
-		public void setId(String id) {
-			this.set("id", id);
-		}
-
 		@JsonProperty("new_value")
 		public String getNewValue() {
 			return this.getString("new_value");
@@ -95,15 +77,6 @@ public class SystemAuditResponse extends AuditDetailsResponse {
 			this.set("old_value", oldValue);
 		}
 
-		@JsonProperty("timestamp")
-		public String getTimestamp() {
-			return this.getString("timestamp");
-		}
-
-		public void setTimestamp(String timestamp) {
-			this.set("timestamp", timestamp);
-		}
-
 		@JsonProperty("user_id")
 		public String getUserId() {
 			return this.getString("user_id");
@@ -111,15 +84,6 @@ public class SystemAuditResponse extends AuditDetailsResponse {
 
 		public void setUserId(String userId) {
 			this.set("user_id", userId);
-		}
-
-		@JsonProperty("user_name")
-		public String getUserName() {
-			return this.getString("user_name");
-		}
-
-		public void setUserName(String userName) {
-			this.set("user_name", userName);
 		}
 	}
 }

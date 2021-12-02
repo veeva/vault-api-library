@@ -7,6 +7,7 @@
  */
 package com.veeva.vault.vapil.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
 import com.veeva.vault.vapil.api.model.common.ObjectRecord;
@@ -29,6 +30,16 @@ public class ObjectRecordCollectionResponse extends VaultResponse {
 
 	public void setData(List<ObjectRecord> data) {
 		this.set("data", data);
+	}
+
+	@JsonIgnore
+	public boolean isPaginated() {
+		if (getResponseDetails() != null) {
+			if (getResponseDetails().getPreviousPage() != null || getResponseDetails().getNextPage() != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@JsonProperty("responseDetails")
@@ -88,6 +99,36 @@ public class ObjectRecordCollectionResponse extends VaultResponse {
 
 		public void setUrl(String url) {
 			this.set("url", url);
+		}
+
+		@JsonProperty("next_page")
+		public String getNextPage() { return this.getString("next_page"); }
+
+		public void setNextPage(String nextPage) { this.set("next_page", nextPage);}
+
+		@JsonProperty("previous_page")
+		public String getPreviousPage() { return this.getString("previous_page"); }
+
+		public void setPreviousPage(String previousPage) { this.set("previous_page", previousPage); }
+
+		/**
+		 * Determine if a next page exists for pagination
+		 *
+		 * @return true if a next page exists
+		 */
+		@JsonIgnore
+		public boolean hasNextPage() {
+			return getNextPage() != null && !getNextPage().isEmpty();
+		}
+
+		/**
+		 * Determine if a previous page exists for pagination
+		 *
+		 * @return true if a previous page exists
+		 */
+		@JsonIgnore
+		public boolean hasPreviousPage() {
+			return getPreviousPage() != null && !getPreviousPage().isEmpty();
 		}
 	}
 }

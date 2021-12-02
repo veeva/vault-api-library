@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
+import java.util.HashMap;
+
 @Tag("MetadataRequestComponent")
 @ExtendWith(VaultClientParameterResolver.class)
 public class MetaDataRequestComponentTest {
@@ -58,6 +60,118 @@ public class MetaDataRequestComponentTest {
 				.executeMDLScript();
 		System.out.println(response.getResponseStatus());
 		System.out.println("Test Complete...");
+	}
+
+	@Test
+	public void testAsyncMdlExecution(VaultClient vaultClient) {
+		String mdl = "ALTER Object hvo_test_object__c (MODIFY Field test_field__c (max_length(1000)));";
+		System.out.println(mdl);
+		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(mdl)
+				.executeMDLScriptAsynchronously();
+
+		Assertions.assertTrue(response.isSuccessful());
+	}
+
+	@Test
+	public void testSuccessfulAsynchMdlExecution(VaultClient vaultClient) {
+		String mdl = "ALTER Object hvo_test_object__c (MODIFY Field test_field__c (max_length(1000)));";
+		System.out.println(mdl);
+		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(mdl)
+				.executeMDLScriptAsynchronously();
+
+		try {
+			Thread.sleep(5000);
+			MdlResponse jobResultResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.retrieveAsynchronousMDLScriptResults(response.getJobId().toString());
+
+			System.out.println(jobResultResponse.getResponseStatus());
+			Assertions.assertTrue(jobResultResponse.isSuccessful());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Assertions.assertTrue(false);
+		}
+	}
+
+	@Test
+	public void testFailureAsynchMdlExecution(VaultClient vaultClient) {
+		String mdl = "ALTER Object hvo_test_object__c (MODIFY Field test_field__c (max_length(1000000000)));";
+		System.out.println(mdl);
+		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(mdl)
+				.executeMDLScriptAsynchronously();
+
+		try {
+			Thread.sleep(5000);
+			MdlResponse jobResultResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.retrieveAsynchronousMDLScriptResults(response.getJobId().toString());
+
+			System.out.println(jobResultResponse.getResponseStatus());
+			Assertions.assertFalse(jobResultResponse.isSuccessful());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Assertions.assertTrue(false);
+		}
+	}
+
+	@Test
+	public void testCancelHvoDeployment(VaultClient vaultClient) {
+		String mdl = "ALTER Object hvo_test_object__c(\n" +
+				"    ADD Field test_picklist__c(\n" +
+				"      label('Test Picklist'),\n" +
+				"      type('Picklist'),\n" +
+				"      active(true),\n" +
+				"      required(false),\n" +
+				"      unique(false),\n" +
+				"      help_content(),\n" +
+				"      list_column(false),\n" +
+				"      order(11),\n" +
+				"      multi_value(false),\n" +
+				"      picklist('Picklist.test_picklist__c'),\n" +
+				"      no_copy(false),\n" +
+				"      lookup_relationship_name(),\n" +
+				"      lookup_source_field()\n" +
+				"    ),\n" +
+				"    ADD Field vapil_object__c(\n" +
+				"      label('Vapil Object'),\n" +
+				"      type('Object'),\n" +
+				"      active(true),\n" +
+				"      required(false),\n" +
+				"      unique(false),\n" +
+				"      help_content(),\n" +
+				"      list_column(false),\n" +
+				"      create_object_inline(false),\n" +
+				"      order(9),\n" +
+				"      object('vapil_test_import_validate__c'),\n" +
+				"      relationship_type('reference'),\n" +
+				"      relationship_outbound_name('vapil_object__cr'),\n" +
+				"      relationship_inbound_name('hvo_test_objects__cr'),\n" +
+				"      relationship_inbound_label('Test Objects'),\n" +
+				"      relationship_deletion('block'),\n" +
+				"      relationship_criteria(),\n" +
+				"      no_copy(false),\n" +
+				"      lookup_relationship_name(),\n" +
+				"      lookup_source_field(),\n" +
+				"      secure_relationship(false)\n" +
+				"    )\n" +
+				");";
+		System.out.println(mdl);
+		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(mdl)
+				.executeMDLScriptAsynchronously();
+		System.out.println(response.getResponse());
+
+		try {
+			Thread.sleep(1000);
+			VaultResponse cancelResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.cancelHvoDeployment("hvo_test_object__c");
+
+			Assertions.assertTrue(cancelResponse.isSuccessful());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Assertions.assertTrue(false);
+		}
 	}
 
 	@Test

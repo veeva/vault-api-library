@@ -18,6 +18,7 @@ public class VaultClientBuilder {
 
 	private VaultClient.AuthenticationType authenticationType;
 	private String idpOauthAccessToken;
+	private String idpOauthScope = "openid";
 	private String idpUsername;
 	private String idpPassword;
 	private boolean logApiErrors = true;
@@ -109,14 +110,12 @@ public class VaultClientBuilder {
 					log.error("IDP OAuth Access Token is required");
 					throw new IllegalArgumentException("IDP OAuth Access Token is required");
 				}
-				if (vaultOauthClientId == null || vaultOauthClientId.isEmpty()) {
-
-				}
-
+				authRequest.setIdpOAuthScope(idpOauthScope); //always pass on oauth scope
 				if (vaultOauthClientId != null && !vaultOauthClientId.isEmpty()) {
 					authRequest.setVaultOAuthClientId(vaultOauthClientId);
 				}
 				authResponse = authRequest.loginOAuth(vaultOauthProfileId, idpOauthAccessToken, vaultDNS);
+
 				vaultClient.setAuthenticationResponse(authResponse);
 				break;
 
@@ -129,7 +128,7 @@ public class VaultClientBuilder {
 					log.error("IDP password is required");
 					throw new IllegalArgumentException("IDP password is required");
 				}
-
+				authRequest.setIdpOAuthScope(idpOauthScope); //always pass on oauth scope
 				if (idpUsername != null && !idpPassword.isEmpty()) {
 					authRequest.setIdpUserName(idpUsername);
 				}
@@ -201,6 +200,19 @@ public class VaultClientBuilder {
 	 */
 	public VaultClientBuilder withIdpOauthAccessToken(String idpOauthAccessToken) {
 		this.idpOauthAccessToken = idpOauthAccessToken;
+		return this;
+	}
+
+	/**
+	 * Initialize with an Idp Oauth Access Token.
+	 * <p>&nbsp;</p>
+	 * Optional for OAuth with Token. Default = "openid"
+	 *
+	 * @param idpOauthScope Idp Oauth Scope
+	 * @return {@link VaultClientBuilder}
+	 */
+	public VaultClientBuilder withIdpOauthScope(String idpOauthScope) {
+		this.idpOauthScope = idpOauthScope;
 		return this;
 	}
 

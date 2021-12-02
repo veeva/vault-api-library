@@ -7,6 +7,7 @@
  */
 package com.veeva.vault.vapil.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
@@ -26,6 +27,20 @@ public class DocumentDeletionResponse extends VaultResponse {
 	@JsonProperty("data")
 	public void setData(List<DeleteDocument> data) {
 		this.set("data", data);
+	}
+
+	@JsonIgnore
+	public boolean isPaginated() {
+		if (getResponseDetails() != null) {
+			if (getResponseDetails().getPreviousPage() != null || getResponseDetails().getNextPage() != null) {
+				return true;
+			}
+
+			if (getResponseDetails().getSize() != getResponseDetails().getTotal()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@JsonProperty("responseDetails")
@@ -132,6 +147,15 @@ public class DocumentDeletionResponse extends VaultResponse {
 			this.set("limit", limit);
 		}
 
+		@JsonProperty("next_page")
+		public String getNextPage() {
+			return this.getString("next_page");
+		}
+
+		public void setNextPage(String nextPage) {
+			this.set("next_page", nextPage);
+		}
+
 		@JsonProperty("offset")
 		public Integer getOffset() {
 			return this.getInteger("offset");
@@ -140,6 +164,15 @@ public class DocumentDeletionResponse extends VaultResponse {
 		@JsonProperty("offset")
 		public void setOffset(Integer offset) {
 			this.set("offset", offset);
+		}
+
+		@JsonProperty("previous_page")
+		public String getPreviousPage() {
+			return this.getString("previous_page");
+		}
+
+		public void setPreviousPage(String previousPage) {
+			this.set("previous_page", previousPage);
 		}
 
 		@JsonProperty("size")
@@ -160,6 +193,26 @@ public class DocumentDeletionResponse extends VaultResponse {
 		@JsonProperty("total")
 		public void setTotal(Integer total) {
 			this.set("total", total);
+		}
+
+		/**
+		 * Determine if a next page exists for pagination
+		 *
+		 * @return true if a next page exists
+		 */
+		@JsonIgnore
+		public boolean hasNextPage() {
+			return getNextPage() != null && !getNextPage().isEmpty();
+		}
+
+		/**
+		 * Determine if a previous page exists for pagination
+		 *
+		 * @return true if a previous page exists
+		 */
+		@JsonIgnore
+		public boolean hasPreviousPage() {
+			return getPreviousPage() != null && !getPreviousPage().isEmpty();
 		}
 	}
 }

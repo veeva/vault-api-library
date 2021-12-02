@@ -30,6 +30,20 @@ public class ObjectRecordDeletedResponse extends VaultResponse {
 		this.set("data", data);
 	}
 
+	@JsonIgnore
+	public boolean isPaginated() {
+		if (getResponseDetails() != null) {
+			if (getResponseDetails().getPreviousPage() != null || getResponseDetails().getNextPage() != null) {
+				return true;
+			}
+
+			if (getResponseDetails().getSize() != getResponseDetails().getTotal()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@JsonProperty("responseDetails")
 	public ResponseDetails getResponseDetails() {
 		return (ResponseDetails) this.get("responseDetails");

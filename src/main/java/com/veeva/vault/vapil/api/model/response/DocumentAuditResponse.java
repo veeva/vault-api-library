@@ -30,7 +30,7 @@ public class DocumentAuditResponse extends AuditDetailsResponse {
 		this.set("data", data);
 	}
 
-	public static class DocumentAudit extends VaultModel {
+	public static class DocumentAudit extends Audit {
 
 		@JsonProperty("action")
 		public String getAction() {
@@ -75,24 +75,6 @@ public class DocumentAuditResponse extends AuditDetailsResponse {
 
 		public void setFieldName(String fieldName) {
 			this.set("field_name", fieldName);
-		}
-
-		@JsonProperty("full_name")
-		public String getFullName() {
-			return this.getString("full_name");
-		}
-
-		public void setFullName(String fullName) {
-			this.set("full_name", fullName);
-		}
-
-		@JsonProperty("id")
-		public String getId() {
-			return this.getString("id");
-		}
-
-		public void setId(String id) {
-			this.set("id", id);
 		}
 
 		@JsonProperty("item")
@@ -147,24 +129,6 @@ public class DocumentAuditResponse extends AuditDetailsResponse {
 
 		public void setTaskName(String taskName) {
 			this.set("task_name", taskName);
-		}
-
-		@JsonProperty("timestamp")
-		public String getTimestamp() {
-			return this.getString("timestamp");
-		}
-
-		public void setTimestamp(String timestamp) {
-			this.set("timestamp", timestamp);
-		}
-
-		@JsonProperty("user_name")
-		public String getUserName() {
-			return this.getString("user_name");
-		}
-
-		public void setUserName(String userName) {
-			this.set("user_name", userName);
 		}
 
 		@JsonProperty("version")

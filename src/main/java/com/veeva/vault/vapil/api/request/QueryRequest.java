@@ -18,13 +18,13 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * <p>
  * Available query methods:
  * <ul>
- * <li>{@link #query(String)} - query with pagination, use {@link #getQueryPage(String)} for pagination of the results
+ * <li>{@link #query(String)} - query with pagination, use {@link #queryByPage(String)} for pagination of the results
  * </ul>
  * <p>
  * See {@link #query(String)} for example request and response methods, including reading of the resulting
  * data and handling of the X-VaultAPI-DescribeQuery parameter.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.2/#vault-query-language-vql">https://developer.veevavault.com/api/21.2/#vault-query-language-vql</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.3/#vault-query-language-vql">https://developer.veevavault.com/api/21.3/#vault-query-language-vql</a>
  */
 public class QueryRequest extends VaultRequest {
 	private static Logger log = Logger.getLogger(QueryRequest.class);
@@ -54,7 +54,7 @@ public class QueryRequest extends VaultRequest {
 	 * <p>
 	 * Perform a Vault query request. Subsequent queries and pagination
 	 * are needed to retrieve the full result set if the total records returned exceed the "pagesize"
-	 * parameter in the response. See {@link #getQueryPage(String)}.
+	 * parameter in the response. See {@link #queryByPage(String)}.
 	 * <p>
 	 * Returned records can be retrieved via the "getData" method in the response.
 	 *
@@ -153,15 +153,15 @@ public class QueryRequest extends VaultRequest {
 	 * @vapil.request <pre>
 	 * QueryResponse response = vaultClient.newRequest(QueryRequest.class).query(query);
 	 * // Get the first pageoffset (assuming correct response and an pageoffset exists)
-	 * resp = vaultClient.newRequest(QueryRequest.class).getQueryPage(response.getResponseDetails().getNextPage());</pre>
+	 * QueryResponse paginatedResponse = = vaultClient.newRequest(QueryRequest.class)
+	 * 		.queryByPage(response.getResponseDetails().getNextPage());
+	 * 	</pre>
+	 * @vapil.response <pre>System.out.println(paginatedResponse.getResponseStatus())</pre>;
 	 */
-	public QueryResponse getQueryPage(String pageUrl) {
+	public QueryResponse queryByPage(String pageUrl) {
 		// Manipulate the URL for passing in the exact URL from next_page or previous_page
-		String url = vaultClient.getAPIEndpoint(URL_QUERY) + "/";
-		url = url.replace("/api/" + VaultClient.VAULT_API_VERSION + "/query/", pageUrl);
-
+		String url = vaultClient.getPaginationEndpoint(pageUrl);
 		HttpRequestConnector request = new HttpRequestConnector(url);
-
 		return send(HttpMethod.GET, request, QueryResponse.class);
 	}
 

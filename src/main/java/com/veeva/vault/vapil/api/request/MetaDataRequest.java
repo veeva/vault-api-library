@@ -7,6 +7,7 @@
  */
 package com.veeva.vault.vapil.api.request;
 
+import com.veeva.vault.vapil.api.model.common.Job;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
@@ -29,9 +30,9 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * Additional properties are parsed in developers reading of JSON/POJO properties.
  *
  * @vapil.apicoverage <ul>
- * <li><a href="https://developer.veevavault.com/api/21.2/retrieve-component-type-metadata">https://developer.veevavault.com/api/21.2/retrieve-component-type-metadata</a></li>
- * <li><a href="https://developer.veevavault.com/api/21.2/#retrieve-object-metadata">https://developer.veevavault.com/api/21.2/#retrieve-object-metadata</a></li>
- * <li><a href="https://developer.veevavault.com/api/21.2/#retrieve-object-field-metadata">https://developer.veevavault.com/api/21.2/#retrieve-object-field-metadata</a></li>
+ * <li><a href="https://developer.veevavault.com/api/21.3/retrieve-component-type-metadata">https://developer.veevavault.com/api/21.3/retrieve-component-type-metadata</a></li>
+ * <li><a href="https://developer.veevavault.com/api/21.3/#retrieve-object-metadata">https://developer.veevavault.com/api/21.3/#retrieve-object-metadata</a></li>
+ * <li><a href="https://developer.veevavault.com/api/21.3/#retrieve-object-field-metadata">https://developer.veevavault.com/api/21.3/#retrieve-object-field-metadata</a></li>
  * </ul>
  */
 public class MetaDataRequest extends VaultRequest {
@@ -40,9 +41,11 @@ public class MetaDataRequest extends VaultRequest {
 	private static final String URL_COMPONENT_TYPE = "/metadata/components/{component_type}";
 	private static final String URL_CONFIGURATION_COMPONENT_TYPE = "/configuration/{component_type}";
 	private static final String URL_MDL_COMPONENT_RECORD = "/mdl/components/{component_type}.{record_name}";
-	private static final String URL_MDL_CONTENT_FILES = "/mdl/components/{component_type}.{record_name}/files";
-	private static final String URL_MDL_EXECUTE = "/mdl/execute";
-	private static final String URL_MDL_EXECUTE_ASYNC = "/mdl/execute_asyc";
+	private static final String URL_MDL_CONTENT_FILES = "mdl/components/{component_type}.{record_name}/files";
+	private static final String URL_MDL_EXECUTE = "mdl/execute";
+	private static final String URL_MDL_EXECUTE_ASYNC = "mdl/execute_async";
+	private static final String URL_MDL_EXECUTE_ASYNC_CANCEL_DEPLOYMENT = "/metadata/vobjects/{object_name}/actions/canceldeployment";
+	private static final String URL_MDL_EXECUTE_ASYNC_JOB_STATUS = "mdl/execute_async/{job_id}/results";
 	private static final String URL_MDL_UPLOAD_CONTENT_FILE = "/api/mdl/files";
 	private static final String URL_CONFIGURATION_COMPONENT_RECORD = "/configuration/{component_type}.{record_name}";
 	private static final String URL_OBJECTS = "/metadata/vobjects";
@@ -75,7 +78,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/mdl/execute</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#execute-mdl-script' target='_blank'>https://developer.veevavault.com/api/21.2/#execute-mdl-script</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#execute-mdl-script' target='_blank'>https://developer.veevavault.com/api/21.3/#execute-mdl-script</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.setRequestString(mdl)
@@ -115,7 +118,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/mdl/execute_asyc</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#execute-mdl-script-asynchronously' target='_blank'>https://developer.veevavault.com/api/21.2/#execute-mdl-script-asynchronously</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#execute-mdl-script-asynchronously' target='_blank'>https://developer.veevavault.com/api/21.3/#execute-mdl-script-asynchronously</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.setRequestString(mdl)
@@ -126,7 +129,6 @@ public class MetaDataRequest extends VaultRequest {
 		String url = vaultClient.getAPIEndpoint(URL_MDL_EXECUTE_ASYNC, false);
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, headerAccept);
 
 		if (inputPath != null && !inputPath.isEmpty())
@@ -136,6 +138,56 @@ public class MetaDataRequest extends VaultRequest {
 			request.addRawString(HttpRequestConnector.HTTP_CONTENT_TYPE_PLAINTEXT, requestString);
 
 		return send(HttpMethod.POST, request, JobCreateResponse.class);
+	}
+
+	/**
+	 * <b>Retrieve Asynchronous MDL Script Results</b>
+	 * <p>
+	 *After submitting a request to deploy an MDL script asynchronously, you can query Vault to determine the results of the request.
+	 *
+	 * @param jobId id of the job executing the MDL script
+	 * @return MdlResponse
+	 * @vapil.api <pre>GET /api/mdl/execute_async/{job_id}/results</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-asynchronous-mdl-script-results' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-asynchronous-mdl-script-results</a>
+	 * @vapil.request <pre>
+	 * MdlResponse resp = vaultClient.newRequest(MetaDataRequest.class)
+	 *				.getAsynchronousMDLJobResults(jobId);</pre>
+	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());</pre>
+	 *
+	 */
+	public MdlResponse retrieveAsynchronousMDLScriptResults(String jobId) {
+		String url = vaultClient.getAPIEndpoint(URL_MDL_EXECUTE_ASYNC_JOB_STATUS, false)
+				.replace("{job_id}", jobId);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, headerAccept);
+
+		return send(HttpMethod.GET, request, MdlResponse.class);
+	}
+
+	/**
+	 * <b>Cancel HVO Deployment</b>
+	 * <p>
+	 *Cancel a deployment of configuration changes to a high volume object. To use this endpoint, your HVO configuration_state must be IN_DEPLOYMENT.
+	 *
+	 * @param objectName of the object being converted to an HVO
+	 * @return VaultResponse
+	 * @vapil.api <pre>
+	 * GET /api/metadata/vobjects/{object_name}/actions/canceldeployment</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#cancel-hvo-deployment' target='_blank'>https://developer.veevavault.com/api/21.3/#cancel-hvo-deployment</a>
+	 * @vapil.request <pre>
+	 * MdlResponse resp = vaultClient.newRequest(MetaDataRequest.class)
+	 *				.cancelHvoDeployment(objectName);</pre>
+	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());</pre>
+	 *
+	 */
+	public VaultResponse cancelHvoDeployment(String objectName) {
+		String url = vaultClient.getAPIEndpoint(URL_MDL_EXECUTE_ASYNC_CANCEL_DEPLOYMENT, true)
+				.replace("{object_name}", objectName);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		return send(HttpMethod.POST, request, VaultResponse.class);
 	}
 
 	/**
@@ -169,7 +221,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return MetaDataComponentTypeResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/components/{component_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-component-type-metadata' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-component-type-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-component-type-metadata' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-component-type-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataComponentTypeResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.retrieveComponentTypeMetadata(componentName);</pre>
@@ -232,7 +284,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return MetaDataObjectResponse for single object
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/vobjects/{object_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-object-metadata' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-object-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-object-metadata' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-object-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataObjectResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.retrieveObjectMetadata(objectName);</pre>
@@ -285,7 +337,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return MetaDataObjectFieldResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/vobjects/{object_name}/fields/{object_field_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-object-field-metadata' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-object-field-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-object-field-metadata' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-object-field-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataObjectFieldResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.retrieveObjectFieldMetaData(objectName, fieldName);</pre>
@@ -325,7 +377,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return MetaDataObjectBulkResponse for all objects
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/vobjects</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-object-collection' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-object-collection</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-object-collection' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-object-collection</a>
 	 * @vapil.request <pre>
 	 * MetaDataObjectBulkResponse resp = vaultClient.newRequest(MetaDataRequest.class).retrieveObjectCollection();</pre>
 	 * @vapil.response <pre>
@@ -358,7 +410,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return MetaDataComponentTypeBulkResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/configuration/{component_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#component-record-collection' target='_blank'>https://developer.veevavault.com/api/21.2/#component-record-collection</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#component-record-collection' target='_blank'>https://developer.veevavault.com/api/21.3/#component-record-collection</a>
 	 * @vapil.request <pre>
 	 * MetaDataComponentTypeBulkResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.retrieveComponentRecords(componentType);</pre>
@@ -385,7 +437,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return MetaDataComponentRecordResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/configuration/{component_type}.{record_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-component-record-xml-json' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-component-record-xml-json</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-component-record-xml-json' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-component-record-xml-json</a>
 	 * @vapil.request <pre>
 	 * MetaDataComponentRecordResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.retrieveComponentRecordXmlJson(componentType, recordName);</pre>
@@ -413,7 +465,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return MdlResponse
 	 * @vapil.api <pre>
 	 * GET /api/mdl/components/{component_type}.{record_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-component-record-mdl' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-component-record-mdl</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-component-record-mdl' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-component-record-mdl</a>
 	 * @vapil.request <pre>
 	 * MdlResponse resp = vaultClient.newRequest(MetaDataRequest.class)
 	 * 				.retrieveComponentRecordMdl("Picklist","test__c");</pre>
@@ -450,7 +502,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return ComponentContentResponse
 	 * @vapil.api <pre>
 	 * POST /api/mdl/files</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#upload-content-file' target='_blank'>https://developer.veevavault.com/api/21.2/#upload-content-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#upload-content-file' target='_blank'>https://developer.veevavault.com/api/21.3/#upload-content-file</a>
 	 */
 	public ComponentContentResponse uploadContentFile() {
 		String url = vaultClient.getAPIEndpoint(URL_MDL_UPLOAD_CONTENT_FILE, false);
@@ -480,7 +532,7 @@ public class MetaDataRequest extends VaultRequest {
 	 * @return ComponentContentResponse
 	 * @vapil.api <pre>
 	 * GET /api/mdl/components/{component_type}.{record_name}/files</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.2/#retrieve-content-file' target='_blank'>https://developer.veevavault.com/api/21.2/#retrieve-content-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-content-file' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-content-file</a>
 	 */
 	public ComponentContentResponse retrieveContentFile(String componentType, String recordName) {
 		String url = vaultClient.getAPIEndpoint(URL_MDL_CONTENT_FILES, false);

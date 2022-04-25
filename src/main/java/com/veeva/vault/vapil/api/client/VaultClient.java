@@ -35,7 +35,7 @@ public class VaultClient {
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v21.3";
+	public static final String VAULT_API_VERSION = "v22.1";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter
@@ -226,6 +226,19 @@ public class VaultClient {
 			return getAPIEndpoint(pageUrl.substring(5), false);
 
 		return getAPIEndpoint(pageUrl, true);
+	}
+
+	public String getHrefEndpoint(String href) {
+		if (href.startsWith("https://" + vaultDNS))
+			return href;
+
+		if (href.startsWith("/api/" + VAULT_API_VERSION))
+			return getAPIEndpoint(href.substring(VAULT_API_VERSION.length() + 5), true);
+
+		if (href.startsWith("/api/"))
+			return getAPIEndpoint(href.substring(5), false);
+
+		return getAPIEndpoint(href, true);
 	}
 
 	/**

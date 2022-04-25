@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * The Audit APIs retrieve information about audits and audit types
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.3/#logs">https://developer.veevavault.com/api/21.3/#logs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.1/#logs">https://developer.veevavault.com/api/22.1/#logs</a>
  */
 public class LogRequest extends VaultRequest {
 	// API Endpoints
@@ -26,6 +27,7 @@ public class LogRequest extends VaultRequest {
 	private static final String URL_AUDIT_METADATA = "/metadata/audittrail/{audit_trail_type}";
 	private static final String URL_AUDIT_DETAILS = "/audittrail/{audit_trail_type}";
 	private static final String URL_API_USAGE = "/logs/api_usage";
+	private static final String URL_CODE_LOG = "/logs/code/runtime";
 	private static final String URL_AUDIT_DOCUMENT = "/objects/documents/{doc_id}/audittrail";
 	private static final String URL_AUDIT_OBJECT = "/vobjects/{object_name}/{object_record_id}/audittrail";
 
@@ -54,7 +56,6 @@ public class LogRequest extends VaultRequest {
 	private Integer limit;
 
 	// Builder Parameters for the api_usage request
-	private ZonedDateTime logDate;
 	private String logFormat;
 	private String outputPath;
 
@@ -79,7 +80,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-audit-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/22.1/#retrieve-audit-types</a>
 	 * @vapil.request <pre>
 	 * AuditTypesResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditTypes();</pre>
@@ -105,7 +106,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-audit-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/22.1/#retrieve-audit-metadata</a>
 	 * @vapil.request <pre>
 	 * AuditMetadataResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);</pre>
@@ -149,7 +150,7 @@ public class LogRequest extends VaultRequest {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-audit-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/22.1/#retrieve-audit-details</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
@@ -363,7 +364,7 @@ public class LogRequest extends VaultRequest {
 	 * @return DocumentAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-document</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/22.1/#retrieve-complete-audit-history-for-a-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -438,7 +439,7 @@ public class LogRequest extends VaultRequest {
 	 * @return ObjectAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-complete-audit-history-for-a-single-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/22.1/#retrieve-complete-audit-history-for-a-single-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
@@ -514,10 +515,11 @@ public class LogRequest extends VaultRequest {
 	 * If outputFilePath is null or empty, the output will be stored as a byte array in the VaultResponse object.
 	 * If outputFilePath is set, it must include the full file path and a file name with a .zip extension
 	 *
+	 * @param logDate Daily log date
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/api_usage?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-daily-api-usage</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/22.1/#retrieve-daily-api-usage</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -541,16 +543,74 @@ public class LogRequest extends VaultRequest {
 	 *   catch (IOException ignored){}
 	 * }</pre>
 	 */
-	public VaultResponse retrieveDailyAPIUsage() {
+	public VaultResponse retrieveDailyAPIUsage(LocalDate logDate) {
 		String url = vaultClient.getAPIEndpoint(URL_API_USAGE);
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		if (logDate != null) {
-			request.addQueryParam(PARAM_DATE, getFormattedDate(logDate, API_USAGE_DATE_PATTERN));
+		request.addQueryParam(PARAM_DATE, getFormattedDate(logDate, API_USAGE_DATE_PATTERN));
+
+		if (logFormat != null) {
+			request.addQueryParam(PARAM_LOG_FORMAT, logFormat);
 		}
 
-		request.addQueryParam(PARAM_LOG_FORMAT, logFormat);
+		if (outputPath != null && !outputPath.isEmpty()) {
+			return sendToFile(HttpMethod.GET, request, outputPath, VaultResponse.class);
+		} else {
+			return sendReturnBinary(HttpMethod.GET, request, VaultResponse.class);
+		}
+	}
+
+	/**
+	 * <b>Download SDK Runtime Log</b>
+	 * <p>
+	 * Retrieve the SDK Runtime Log for a single day, up to 30 days in the past.
+	 * The log contains information such as the timestamp, user ID, execution ID,
+	 * class name, depth, log level, and any messages returned. Users with the Admin &gt; Logs &gt;
+	 * SDK Runtime Logs permission can access these logs.
+	 * <p>
+	 * Note that if outputFilePath is set, this method will save the output to the path specified.
+	 * If outputFilePath is null or empty, the output will be stored as a byte array in the VaultResponse object.
+	 * If outputFilePath is set, it must include the full file path and a file name with a .zip extension
+	 *
+	 * @param logDate Daily log date
+	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
+	 * @vapil.api <pre>
+	 * GET /api/{version}/logs/code/runtime?date=YYYY-MM-DD</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/22.1/#download-sdk-runtime-log</a>
+	 * @vapil.request <pre>
+	 * <i>Example 1 - To file</i>
+	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
+	 * 				.setLogDate(date)
+	 * 				.setOutputPath(outputFilePath.toString())
+	 * 				.downloadSdkRuntimeLog();</pre>
+	 * @vapil.request <pre>
+	 * <i>Example 2 - To buffer</i>
+	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
+	 * 				.setLogDate(date)
+	 * 				.setLogFormat(LogRequest.LogFormatType.LOGFILE)
+	 * 				.setOutputPath(null)
+	 * 				.downloadSdkRuntimeLog();</pre>
+	 * @vapil.response <pre>
+	 * <i>Example 2 - To buffer</i>
+	 * if (response.getResponseStatus().equals(VaultResponse.HTTP_RESPONSE_SUCCESS)) {
+	 *   try (OutputStream os = new FileOutputStream(outputFilePath.toString())) {
+	 *     os.write(response.getBinaryContent());
+	 *     System.out.println("File was saved to: " + outputFilePath.toString());
+	 *     }
+	 *   catch (IOException ignored){}
+	 * }</pre>
+	 */
+	public VaultResponse downloadSdkRuntimeLog(LocalDate logDate) {
+		String url = vaultClient.getAPIEndpoint(URL_CODE_LOG);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		request.addQueryParam(PARAM_DATE, getFormattedDate(logDate, API_USAGE_DATE_PATTERN));
+
+		if (logFormat != null) {
+			request.addQueryParam(PARAM_LOG_FORMAT, logFormat);
+		}
 
 		if (outputPath != null && !outputPath.isEmpty()) {
 			return sendToFile(HttpMethod.GET, request, outputPath, VaultResponse.class);
@@ -567,6 +627,18 @@ public class LogRequest extends VaultRequest {
 	 * @return Formatted date as string
 	 */
 	private String getFormattedDate(ZonedDateTime date, String datePattern) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
+		return date.format(formatter);
+	}
+
+	/**
+	 * Converts the date to the proper string format expected by the API
+	 *
+	 * @param date        The date to convert
+	 * @param datePattern DateTimeFormatter pattern
+	 * @return Formatted date as string
+	 */
+	private String getFormattedDate(LocalDate date, String datePattern) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
 		return date.format(formatter);
 	}
@@ -702,17 +774,6 @@ public class LogRequest extends VaultRequest {
 	 */
 	public LogRequest setLimit(Integer limit) {
 		this.limit = limit;
-		return this;
-	}
-
-	/**
-	 * The day to retrieve the API Usage log
-	 *
-	 * @param logDate Date is in UTC and follows the format YYYY-MM-DD. Date cannot be more than 30 days in the past.
-	 * @return The Request
-	 */
-	public LogRequest setLogDate(ZonedDateTime logDate) {
-		this.logDate = logDate;
 		return this;
 	}
 

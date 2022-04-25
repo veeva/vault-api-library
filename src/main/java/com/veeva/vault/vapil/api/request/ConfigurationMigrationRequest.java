@@ -8,7 +8,8 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
-import com.veeva.vault.vapil.api.model.response.PackageResultsResponse;
+import com.veeva.vault.vapil.api.model.response.PackageDeploymentResultsResponse;
+import com.veeva.vault.vapil.api.model.response.PackageImportResultsResponse;
 import com.veeva.vault.vapil.api.model.response.ValidatePackageResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Configuration Migration
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/21.3/#configuration-migration">https://developer.veevavault.com/api/21.3/#configuration-migration</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.1/#configuration-migration">https://developer.veevavault.com/api/22.1/#configuration-migration</a>
  */
 public class ConfigurationMigrationRequest extends VaultRequest {
 
@@ -28,6 +29,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	private static final String URL_PACKAGE = "/services/package";
 	private static final String URL_PACKAGE_DEPLOY = "/vobject/vault_package__v/{package_id}/actions/deploy";
 	private static final String URL_PACKAGE_DEPLOY_RESULTS = "/vobject/vault_package__v/{package_id}/actions/deploy/results";
+	private static final String URL_PACKAGE_IMPORT_RESULTS = "/vobject/vault_package__v/{package_id}/actions/import/results";
 	private static final String URL_VALIDATE = "/services/package/actions/validate";
 	private static final String URL_VALIDATE_INBOUND = "/services/vobject/vault_package_v/{package_id}/actions/validate";
 	private static final String URL_VAULT_COMPARE = "/objects/vault/actions/compare";
@@ -58,7 +60,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/package</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#export-package' target='_blank'>https://developer.veevavault.com/api/21.3/#export-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#export-package' target='_blank'>https://developer.veevavault.com/api/22.1/#export-package</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.exportPackage(packageName);</pre>
@@ -88,7 +90,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/services/package</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#import-package' target='_blank'>https://developer.veevavault.com/api/21.3/#import-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#import-package' target='_blank'>https://developer.veevavault.com/api/22.1/#import-package</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - File</i>
 	 * PackageResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
@@ -129,7 +131,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobject/vault_package__v/{package_id}/actions/deploy</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#deploy-package' target='_blank'>https://developer.veevavault.com/api/21.3/#deploy-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#deploy-package' target='_blank'>https://developer.veevavault.com/api/22.1/#deploy-package</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.deployPackage(packageId);</pre>
@@ -159,7 +161,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return PackageResultsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobject/vault_package__v/{package_id}/actions/deploy/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#retrieve-package-deploy-results' target='_blank'>https://developer.veevavault.com/api/21.3/#retrieve-package-deploy-results</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#retrieve-package-deploy-results' target='_blank'>https://developer.veevavault.com/api/22.1/#retrieve-package-deploy-results</a>
 	 * @vapil.request <pre>
 	 * PackageResultsResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.retrievePackageDeployResults(packageId);</pre>
@@ -170,12 +172,24 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 *   System.out.println("Deployment Status = " + resp.getResponseDetails().getDeploymentStatus());
 	 * }</pre>
 	 */
-	public PackageResultsResponse retrievePackageDeployResults(String packageId) {
+	public PackageDeploymentResultsResponse retrievePackageDeployResults(String packageId) {
 		String url = vaultClient.getAPIEndpoint(URL_PACKAGE_DEPLOY_RESULTS).replace("{package_id}", packageId);
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		return send(HttpMethod.GET, request, PackageResultsResponse.class);
+		return send(HttpMethod.GET, request, PackageDeploymentResultsResponse.class);
+	}
+
+	public PackageImportResultsResponse retrievePackageImportResults(String packageId) {
+		String url = vaultClient.getAPIEndpoint(URL_PACKAGE_IMPORT_RESULTS).replace("{package_id}", packageId);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		return send(HttpMethod.GET, request, PackageImportResultsResponse.class);
+	}
+
+	public PackageImportResultsResponse retrievePackageImportResultsByHref(String href) {
+		return vaultClient.newRequest(JobRequest.class).retrieveJobArtifactByHref(href, PackageImportResultsResponse.class);
 	}
 
 	/**
@@ -185,7 +199,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/vault/actions/compare</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#vault-compare' target='_blank'>https://developer.veevavault.com/api/21.3/#vault-compare</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#vault-compare' target='_blank'>https://developer.veevavault.com/api/22.1/#vault-compare</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.setResultsType(ConfigurationMigrationRequest.ResultsType.COMPLETE)
@@ -244,7 +258,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/vault/actions/configreport</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#vault-configuration-report' target='_blank'>https://developer.veevavault.com/api/21.3/#vault-configuration-report</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#vault-configuration-report' target='_blank'>https://developer.veevavault.com/api/22.1/#vault-configuration-report</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.setIncludeVaultSettings(true)
@@ -304,7 +318,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return ValidatePackageResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/package/actions/validate</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#validate-package' target='_blank'>https://developer.veevavault.com/api/21.3/#validate-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#validate-package' target='_blank'>https://developer.veevavault.com/api/22.1/#validate-package</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - File</i>
 	 * ValidatePackageResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
@@ -346,7 +360,7 @@ public class ConfigurationMigrationRequest extends VaultRequest {
 	 * @return ValidatePackageResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/vobject/vault_package__v/{package_id}/actions/validate</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/21.3/#validate-inbound-package' target='_blank'>https://developer.veevavault.com/api/21.3/#validate-inbound-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.1/#validate-inbound-package' target='_blank'>https://developer.veevavault.com/api/22.1/#validate-inbound-package</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - File</i>
 	 * ValidatePackageResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)

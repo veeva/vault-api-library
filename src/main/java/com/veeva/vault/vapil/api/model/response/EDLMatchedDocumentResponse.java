@@ -29,12 +29,12 @@ public class EDLMatchedDocumentResponse extends VaultResponse {
 	public static class EdlMatchedDocument extends VaultModel {
 
 		@JsonProperty("id")
-		public Integer getId() {
-			return this.getInteger("id");
+		public String getId() {
+			return this.getString("id");
 		}
 
 		@JsonProperty("id")
-		public void setId(Integer id) {
+		public void setId(String id) {
 			this.set("id", id);
 		}
 

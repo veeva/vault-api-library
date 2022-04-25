@@ -75,6 +75,26 @@ public class VaultResponse extends VaultModel {
 	 */
 	public static final String HTTP_HEADER_VAULT_ID = "X-VaultAPI-VaultId";
 
+	/**
+	 * <b>X-VaultAPI-SdkCount</b>
+	 */
+	public static final String HTTP_HEADER_VAULT_SDK_COUNT = "X-VaultAPI-SdkCount";
+
+	/**
+	 * <b>X-VaultAPI-SdkCpuTime</b>
+	 */
+	public static final String HTTP_HEADER_VAULT_SDK_CPU_TIME = "X-VaultAPI-SdkCpuTime";
+
+	/**
+	 * <b>X-VaultAPI-SdkElapsedTime</b>
+	 */
+	public static final String HTTP_HEADER_VAULT_SDK_ELAPSED_TIME = "X-VaultAPI-SdkElapsedTime";
+
+	/**
+	 * <b>X-VaultAPI-SdkGrossMemory</b>
+	 */
+	public static final String HTTP_HEADER_VAULT_SDK_GROSS_MEMORY = "X-VaultAPI-SdkGrossMemory";
+
 
 
 	private byte[] binaryContent; // For requests that return binary data
@@ -246,6 +266,42 @@ public class VaultResponse extends VaultModel {
 	public String getHeaderVaultUserId() {
 		if (headers.keySet().contains(HTTP_HEADER_VAULT_USER_ID)) {
 			return headers.get(HTTP_HEADER_VAULT_USER_ID).get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@JsonIgnore
+	public Long getHeaderVaultSdkCount() {
+		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_COUNT)) {
+			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_COUNT).get(0));
+		} else {
+			return null;
+		}
+	}
+
+	@JsonIgnore
+	public Long getHeaderVaultSdkCpuTime() {
+		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_CPU_TIME)) {
+			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_CPU_TIME).get(0));
+		} else {
+			return null;
+		}
+	}
+
+	@JsonIgnore
+	public Long getHeaderVaultSdkElapsedTime() {
+		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_ELAPSED_TIME)) {
+			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_ELAPSED_TIME).get(0));
+		} else {
+			return null;
+		}
+	}
+
+	@JsonIgnore
+	public Long getHeaderVaultSdkGrossMemory() {
+		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_GROSS_MEMORY)) {
+			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_GROSS_MEMORY).get(0));
 		} else {
 			return null;
 		}

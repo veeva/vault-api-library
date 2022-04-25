@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -330,15 +331,14 @@ public class LogRequestTest {
 	@Test
 	public void testRetrieveDailyAPIUsageToFile(VaultClient vaultClient) {
 		// Get yesterdays logs
-		ZonedDateTime date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1);
+		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
 
 		// Set output file path
 		Path outputFilePath = Paths.get(System.getProperty("user.home"), "Desktop", "response.zip");
 
 		VaultResponse response = vaultClient.newRequest(LogRequest.class)
-				.setLogDate(date)
 				.setOutputPath(outputFilePath.toString())
-				.retrieveDailyAPIUsage();
+				.retrieveDailyAPIUsage(date);
 
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getOutputFilePath());
@@ -347,7 +347,7 @@ public class LogRequestTest {
 	@Test
 	public void testRetrieveDailyAPIUsageToBytes(VaultClient vaultClient) {
 		// Get yesterdays logs
-		ZonedDateTime date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1);
+		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
 
 		// Set output file path
 		Path outputFilePath = Paths.get(System.getProperty("user.home"), "Desktop", "response.zip");
@@ -356,10 +356,50 @@ public class LogRequestTest {
 		// Be sure and call setOutputPath(null) here. This is a shared value and can be used in multiple reqs,
 		// so safest to set to null in case another call set this value
 		VaultResponse response = vaultClient.newRequest(LogRequest.class)
-				.setLogDate(date)
 				.setLogFormat(LogRequest.LogFormatType.LOGFILE)
 				.setOutputPath(null)
-				.retrieveDailyAPIUsage();
+				.retrieveDailyAPIUsage(date);
+
+		Assertions.assertTrue(response.isSuccessful());
+		if (response.getResponseStatus().equals(VaultResponse.HTTP_RESPONSE_SUCCESS)) {
+			try (OutputStream os = new FileOutputStream(outputFilePath.toString())) {
+				os.write(response.getBinaryContent());
+			}
+			catch (IOException ignored){}
+		}
+	}
+
+	@Test
+	public void testDownloadSdkRuntimeLogsToFile(VaultClient vaultClient) {
+		// Get yesterdays logs
+		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
+
+		// Set output file path
+		Path outputFilePath = Paths.get(System.getProperty("user.home"), "Desktop", "response.zip");
+
+		VaultResponse response = vaultClient.newRequest(LogRequest.class)
+				.setOutputPath(outputFilePath.toString())
+				.downloadSdkRuntimeLog(date);
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getOutputFilePath());
+	}
+
+	@Test
+	public void testDownloadSdkRuntimeLogsToBytes(VaultClient vaultClient) {
+		// Get yesterdays logs
+		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
+
+		// Set output file path
+		Path outputFilePath = Paths.get(System.getProperty("user.home"), "Desktop", "response.zip");
+
+		// Retrieve the Zip file as bytes in the response
+		// Be sure and call setOutputPath(null) here. This is a shared value and can be used in multiple reqs,
+		// so safest to set to null in case another call set this value
+		VaultResponse response = vaultClient.newRequest(LogRequest.class)
+				.setLogFormat(LogRequest.LogFormatType.LOGFILE)
+				.setOutputPath(null)
+				.downloadSdkRuntimeLog(date);
 
 		Assertions.assertTrue(response.isSuccessful());
 		if (response.getResponseStatus().equals(VaultResponse.HTTP_RESPONSE_SUCCESS)) {

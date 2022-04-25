@@ -21,11 +21,11 @@ import java.util.List;
 public class DocumentVersionResponse extends VaultResponse {
 
 	@JsonProperty("renditions")
-	public List<Object> getRenditions() {
-		return (List<Object>) this.get("renditions");
+	public Renditions getRenditions() {
+		return (Renditions) this.get("renditions");
 	}
 
-	public void setRenditions(List<Object> renditions) {
+	public void setRenditions(DocumentResponse.Renditions renditions) {
 		this.set("renditions", renditions);
 	}
 
@@ -56,6 +56,18 @@ public class DocumentVersionResponse extends VaultResponse {
 
 		public void setValue(String value) {
 			this.set("value", value);
+		}
+	}
+
+	static public class Renditions extends VaultModel {
+
+		@JsonProperty("viewable_rendition__v")
+		public String getViewableRendition() {
+			return this.getString("viewable_rendition__v");
+		}
+
+		public void setViewableRendition(String viewableRendition) {
+			this.set("viewable_rendition__v", viewableRendition);
 		}
 	}
 }

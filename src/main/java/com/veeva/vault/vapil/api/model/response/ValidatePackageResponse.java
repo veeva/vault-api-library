@@ -9,6 +9,7 @@ package com.veeva.vault.vapil.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
+import com.veeva.vault.vapil.api.model.common.PackageStep;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
 import java.util.List;
@@ -125,88 +126,5 @@ public class ValidatePackageResponse extends VaultResponse {
 			this.set("total_steps", totalSteps);
 		}
 
-		public static class PackageStep extends VaultModel {
-
-			@JsonProperty("deployment_action")
-			public String getDeploymentAction() {
-				return this.getString("deployment_action");
-			}
-
-			public void setDeploymentAction(String deploymentAction) {
-				this.set("deployment_action", deploymentAction);
-			}
-
-			@JsonProperty("deployment_status__v")
-			public String getDeploymentStatus() {
-				return this.getString("deployment_status__v");
-			}
-
-			public void setDeploymentStatus(String deploymentStatus) {
-				this.set("deployment_status__v", deploymentStatus);
-			}
-
-			@JsonProperty("name__v")
-			public String getName() {
-				return this.getString("name__v");
-			}
-
-			public void setName(String name) {
-				this.set("name__v", name);
-			}
-
-			@JsonProperty("step_label__v")
-			public String getStepLabel() {
-				return this.getString("step_label__v");
-			}
-
-			public void setStepLabel(String stepLabel) {
-				this.set("step_label__v", stepLabel);
-			}
-
-			@JsonProperty("step_name__v")
-			public String getStepName() {
-				return this.getString("step_name__v");
-			}
-
-			public void setStepName(String stepName) {
-				this.set("step_name__v", stepName);
-			}
-
-			@JsonProperty("step_type__v")
-			public String getStepType() {
-				return this.getString("step_type__v");
-			}
-
-			public void setStepType(String stepType) {
-				this.set("step_type__v", stepType);
-			}
-
-			@JsonProperty("type__v")
-			public String getType() {
-				return this.getString("type__v");
-			}
-
-			public void setType(String type) {
-				this.set("type__v", type);
-			}
-
-			@JsonProperty("validation_message")
-			public String getValidationMessage() {
-				return this.getString("validation_message");
-			}
-
-			public void setValidationMessage(String validationMessage) {
-				this.set("validation_message", validationMessage);
-			}
-
-			@JsonProperty("validation_response")
-			public String getValidationResponse() {
-				return this.getString("validation_response");
-			}
-
-			public void setValidationResponse(String validationResponse) {
-				this.set("validation_response", validationResponse);
-			}
-		}
 	}
 }

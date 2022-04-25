@@ -27,7 +27,7 @@ import java.util.Set;
 @Tag("DocumentRequest")
 @ExtendWith(VaultClientParameterResolver.class)
 public class DocumentRequestTest {
-	static final int DOC_ID = 5;
+	static final int DOC_ID = 6;
 	static final int MAJOR_VERSION = 0;
 	static final int MINOR_VERSION = 1;
 
@@ -396,6 +396,26 @@ public class DocumentRequestTest {
 				.setTokenGroup("example")
 				.documentTokens(docIds);
 		Assertions.assertTrue(response.isSuccessful());
+	}
+
+	@Test
+	public void testReclassifyDocumentWithMigrationMode(VaultClient vaultClient) {
+		Document doc = new Document();
+
+		doc.setName("VAPIL Single Document");
+		doc.setLifecycle("General Lifecycle");
+		doc.setType("General");
+		doc.setTitle("Test Reclassify VAPIL");
+		doc.setDocumentNumber("4");
+		doc.setStatus("Approved");
+		doc.setId(DOC_ID);
+
+		DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
+				.setMigrationMode(true)
+				.reclassifyDocument(doc);
+
+		Assertions.assertTrue(response.isSuccessful());
+
 	}
 
 }

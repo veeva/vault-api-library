@@ -32,7 +32,7 @@ public class MetaDataRequestComponentTest {
 	@Test
 	public void testGetComponent(VaultClient vaultClient) {
 		MetaDataComponentTypeResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrieveComponentTypeMetadata("Picklist");
+				.retrieveComponentTypeMetadata("Tab");
 		Assertions.assertTrue(response.isSuccessful());
 
 		ComponentType comp = response.getData();

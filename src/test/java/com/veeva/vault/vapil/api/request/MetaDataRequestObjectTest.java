@@ -10,8 +10,10 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.metadata.VaultObject;
 import com.veeva.vault.vapil.api.model.metadata.VaultObjectField;
+import com.veeva.vault.vapil.api.model.metadata.VaultObjectPageLayout;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectBulkResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectFieldResponse;
+import com.veeva.vault.vapil.api.model.response.MetaDataObjectPageLayoutResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -69,6 +71,36 @@ public class MetaDataRequestObjectTest {
 		
 		if (fieldMetaData.getObjectReference() != null) {
 			Assertions.assertNotNull(fieldMetaData.getObjectReference().getUrl());
+		}
+	}
+
+	@Test
+	public void testGetObjectPageLayouts(VaultClient vaultClient) {
+		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.retrievePageLayouts("test_object__c");
+
+		Assertions.assertTrue(response.isSuccessful());
+
+		VaultObjectPageLayout layout = response.getData().get(0);
+		Assertions.assertNotNull(layout);
+
+		if (layout != null) {
+			Assertions.assertNotNull(layout.getName());
+		}
+	}
+
+	@Test
+	public void testGetObjectPageLayoutMetadata(VaultClient vaultClient) {
+		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.retrievePageLayoutMetadata("test_object__c", "test_object_detail_page_layout__c");
+
+		Assertions.assertTrue(response.isSuccessful());
+
+		VaultObjectPageLayout layout = response.getData().get(0);
+		Assertions.assertNotNull(layout);
+
+		if (layout != null) {
+			Assertions.assertNotNull(layout.getName());
 		}
 	}
 }

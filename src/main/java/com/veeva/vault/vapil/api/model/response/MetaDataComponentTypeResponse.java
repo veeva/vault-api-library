@@ -11,10 +11,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.common.ComponentType;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
+import java.util.List;
+
 /**
  * Response model for the following API calls:
  * <p>
- * /api/{version}/metadata/components/component_type}
+ * /api/{version}/metadata/components/{component_type}
  */
 public class MetaDataComponentTypeResponse extends VaultResponse {
 

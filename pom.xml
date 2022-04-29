@@ -5,7 +5,7 @@
 
 	<groupId>com.veeva.vault</groupId>
 	<artifactId>vapil</artifactId>
-	<version>22.1.0</version>
+	<version>22.1.1</version>
 
 	<packaging>jar</packaging>
 
@@ -260,22 +260,6 @@
 							<goal>deploy-file</goal>
 						</goals>
 						<phase>deploy</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.4</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

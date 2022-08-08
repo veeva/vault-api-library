@@ -125,4 +125,14 @@ public class ConfigurationMigrationRequestTest {
             Assertions.assertTrue(false);
         }
     }
+
+    @Test
+    public void retrieveOutboundPackageDependenciesTest(VaultClient vaultClient) {
+        OutboundPackageDependenciesResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
+                .retrieveOutboundPackageDependencies("0PO000000001001");
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getResponseDetails().getPackageId());
+        Assertions.assertNotNull(response.getPackageDependencies().get(0).getComponentName());
+    }
 }

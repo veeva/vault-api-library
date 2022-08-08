@@ -9,6 +9,7 @@ package com.veeva.vault.vapil.api.model.response;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -192,119 +193,67 @@ public class VaultResponse extends VaultModel {
 
 	@JsonIgnore
 	public String getHttpHeaderContentDisposition() {
-		if (headers.keySet().contains(HTTP_HEADER_CONTENT_DISPOSITION)) {
-			return headers.get(HTTP_HEADER_CONTENT_DISPOSITION).get(0);
-		} else {
-			return null;
-		}
+		return getHeaderAsStringIgnoreCase(HTTP_HEADER_CONTENT_DISPOSITION);
 	}
 
 	@JsonIgnore
 	public String getHeaderContentType() {
-		if (headers.keySet().contains(HTTP_HEADER_CONTENT_TYPE)) {
-			return headers.get(HTTP_HEADER_CONTENT_TYPE).get(0);
-		} else {
-			return null;
-		}
+		return getHeaderAsStringIgnoreCase(HTTP_HEADER_CONTENT_TYPE);
 	}
 
 	@JsonIgnore
 	public Integer getHeaderVaultBurstLimit() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_BURST)) {
-			return Integer.valueOf(headers.get(HTTP_HEADER_VAULT_BURST).get(0));
-		} else {
-			return null;
-		}
+		return  getHeaderAsIntegerIgnoreCase(HTTP_HEADER_VAULT_BURST);
 	}
 
 	@JsonIgnore
 	public Integer getHeaderVaultBurstLimitRemaining() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_BURST_REMAINING)) {
-			return Integer.valueOf(headers.get(HTTP_HEADER_VAULT_BURST_REMAINING).get(0));
-		} else {
-			return null;
-		}
+		return  getHeaderAsIntegerIgnoreCase(HTTP_HEADER_VAULT_BURST_REMAINING);
 	}
 
 	@JsonIgnore
 	public String getHeaderVaultExecutionId() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_EXECUTION_ID)) {
-			return headers.get(HTTP_HEADER_VAULT_EXECUTION_ID).get(0);
-		} else {
-			return null;
-		}
+		return getHeaderAsStringIgnoreCase(HTTP_HEADER_VAULT_EXECUTION_ID);
 	}
 
 	@JsonIgnore
 	public Integer getHeaderVaultId() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_ID)) {
-			return Integer.valueOf(headers.get(HTTP_HEADER_VAULT_ID).get(0));
-		} else {
-			return null;
-		}
+		return getHeaderAsIntegerIgnoreCase(HTTP_HEADER_VAULT_ID);
 	}
 
 	@JsonIgnore
-	public String getHeaderVaultResponseDelay() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_RESPONSE_DELAY)) {
-			return headers.get(HTTP_HEADER_VAULT_RESPONSE_DELAY).get(0);
-		} else {
-			return null;
-		}
+	public Integer getHeaderVaultResponseDelay() {
+		return getHeaderAsIntegerIgnoreCase(HTTP_HEADER_VAULT_RESPONSE_DELAY);
 	}
 
 	@JsonIgnore
 	public String getHeaderVaultTruncatedSessionId() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_TRUNCATED_SESSION_ID)) {
-			return headers.get(HTTP_HEADER_VAULT_TRUNCATED_SESSION_ID).get(0);
-		} else {
-			return null;
-		}
+		return getHeaderAsStringIgnoreCase(HTTP_HEADER_VAULT_TRUNCATED_SESSION_ID);
 	}
 
 	@JsonIgnore
 	public String getHeaderVaultUserId() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_USER_ID)) {
-			return headers.get(HTTP_HEADER_VAULT_USER_ID).get(0);
-		} else {
-			return null;
-		}
+		return getHeaderAsStringIgnoreCase(HTTP_HEADER_VAULT_USER_ID);
 	}
 
 	@JsonIgnore
-	public Long getHeaderVaultSdkCount() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_COUNT)) {
-			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_COUNT).get(0));
-		} else {
-			return null;
-		}
+	public Integer getHeaderVaultSdkCount() {
+		return getHeaderAsIntegerIgnoreCase(HTTP_HEADER_VAULT_SDK_COUNT);
 	}
 
 	@JsonIgnore
 	public Long getHeaderVaultSdkCpuTime() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_CPU_TIME)) {
-			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_CPU_TIME).get(0));
-		} else {
-			return null;
-		}
+		return getHeaderAsLongIgnoreCase(HTTP_HEADER_VAULT_SDK_CPU_TIME);
 	}
 
 	@JsonIgnore
 	public Long getHeaderVaultSdkElapsedTime() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_ELAPSED_TIME)) {
-			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_ELAPSED_TIME).get(0));
-		} else {
-			return null;
-		}
+		return getHeaderAsLongIgnoreCase(HTTP_HEADER_VAULT_SDK_ELAPSED_TIME);
 	}
 
 	@JsonIgnore
 	public Long getHeaderVaultSdkGrossMemory() {
-		if (headers.keySet().contains(HTTP_HEADER_VAULT_SDK_GROSS_MEMORY)) {
-			return Long.valueOf(headers.get(HTTP_HEADER_VAULT_SDK_GROSS_MEMORY).get(0));
-		} else {
-			return null;
-		}
+		return getHeaderAsLongIgnoreCase(HTTP_HEADER_VAULT_SDK_GROSS_MEMORY);
 	}
 
 	/**
@@ -337,6 +286,38 @@ public class VaultResponse extends VaultModel {
 		this.outputFilePath = outputFilePath;
 	}
 
+	public Object getHeaderIgnoreCase(String header) {
+		return headers.entrySet().stream()
+				.filter(headers -> headers.getKey().equalsIgnoreCase(header))
+				.map(headers -> headers.getValue().get(0))
+				.findFirst()
+				.orElse(null);
+	}
+
+	private Integer getHeaderAsIntegerIgnoreCase(String header) {
+		Object headerValue = getHeaderIgnoreCase(header);
+		if (headerValue != null) {
+			return Integer.valueOf(headerValue.toString());
+		}
+		return null;
+	}
+
+	private Long getHeaderAsLongIgnoreCase(String header) {
+		Object headerValue = getHeaderIgnoreCase(header);
+		if (headerValue != null) {
+			return Long.valueOf(headerValue.toString());
+		}
+		return null;
+	}
+
+	private String getHeaderAsStringIgnoreCase(String header) {
+		Object headerValue = getHeaderIgnoreCase(header);
+		if (headerValue != null) {
+			return String.valueOf(headerValue.toString());
+		}
+		return null;
+	}
+
 	public static class APIResponseError extends VaultModel {
 
 		@JsonProperty("message")
@@ -359,4 +340,5 @@ public class VaultResponse extends VaultModel {
 			this.set("type", type);
 		}
 	}
+
 }

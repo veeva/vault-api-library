@@ -12,9 +12,9 @@ VAPIL provides full API endpoint coverage for Vault integrations.
 	The VAPIL release cycle follows the Vault API release cycle, with three general releases a year.
 	Each VAPIL release aligns with the features of the Vault API release for consistency and coverage.
 <ul>
-	<li>Vault API version v21.1 is released, VAPIL version v21.1.0 is released</li>
-	<li>When defects are fixed, VAPIL version v21.1.1, v21.1.2, etc will be released</li>
-	<li>Vault API version v21.2 is released, VAPIL version v21.2.0 is released</li>
+	<li>Vault API version v22.2 is released, VAPIL version v22.2.0 is released</li>
+	<li>When defects are fixed, VAPIL version v22.2.1, v22.2.2, etc will be released</li>
+	<li>Vault API version v22.3 is released, VAPIL version v22.3.0 is released</li>
 </ul>
 <b>Consistent integration solution with Vault API requests/responses</b>
 <ul>
@@ -24,7 +24,7 @@ VAPIL provides full API endpoint coverage for Vault integrations.
 	<li>Expose API requests/responses in clearly defined Java classes, getters, setters, and methods</li>
 </ul>
 <b>Dedication to documentation, available in <a
-		href="https://veeva.github.io/vault-api-library/javadoc/22.1.1/index.html" target="_blank">Javadoc</a></b>
+		href="https://veeva.github.io/vault-api-library/javadoc/22.2.1/index.html" target="_blank">Javadoc</a></b>
 <ul>
 	<li>Easily find API endpoints from Vault help webpage in the source or Javadoc</li>
 	<li>One-to-one alignment between VAPIL methods and the Vault API endpoint/documentation</li>
@@ -69,7 +69,7 @@ Source code is available on GitHub: <a
      &lt;dependency&gt;
           &lt;groupId&gt;com.veeva.vault&lt;/groupId&gt;
           &lt;artifactId&gt;vapil&lt;/artifactId&gt;
-          &lt;version&gt;22.1.1&lt;/version&gt;
+          &lt;version&gt;22.2.0&lt;/version&gt;
      &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre>
 	</li>

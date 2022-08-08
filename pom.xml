@@ -5,7 +5,7 @@
 
 	<groupId>com.veeva.vault</groupId>
 	<artifactId>vapil</artifactId>
-	<version>22.1.1</version>
+	<version>22.2.0</version>
 
 	<packaging>jar</packaging>
 
@@ -248,7 +248,7 @@
 					<version>${project.version}</version>
 					<packaging>jar</packaging>
 					<generatePom>true</generatePom>
-					<url>file://${project.build.directory}/remote</url>
+					<url>file://${basedir}/binaries</url>
 					<file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
 					<javadoc>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</javadoc>
 					<sources>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</sources>

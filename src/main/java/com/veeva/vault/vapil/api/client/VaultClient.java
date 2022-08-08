@@ -35,7 +35,7 @@ public class VaultClient {
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v22.1";
+	public static final String VAULT_API_VERSION = "v22.2";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter

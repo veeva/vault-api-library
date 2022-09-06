@@ -50,13 +50,13 @@ public class SCIMUserBulkResponse extends VaultResponse {
 		this.set("itemsPerPage", itemsPerPage);
 	}
 
-	@JsonProperty("resources")
+	@JsonProperty("Resources")
 	public List<SCIMUser> getResources() {
-		return (List<SCIMUser>) this.get("resources");
+		return (List<SCIMUser>) this.get("Resources");
 	}
 
 	public void setResources(List<SCIMUser> resources) {
-		this.set("resources", resources);
+		this.set("Resources", resources);
 	}
 
 	@JsonProperty("schemas")

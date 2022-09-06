@@ -162,13 +162,13 @@ public class SCIMResponse extends VaultResponse {
 		this.set("patch", patch);
 	}
 
-	@JsonProperty("resources")
+	@JsonProperty("Resources")
 	public List<Resource> getResources() {
-		return (List<Resource>) this.get("resources");
+		return (List<Resource>) this.get("Resources");
 	}
 
 	public void setResources(List<Resource> resources) {
-		this.set("resources", resources);
+		this.set("Resources", resources);
 	}
 
 	@JsonProperty("schema")

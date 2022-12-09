@@ -63,19 +63,19 @@ public class FileStagingRequestTest {
 	}
 
 	@Test
-	public void testGetItemContentBinary(VaultClient vaultClient) {
+	public void testDownloadItemContentBinary(VaultClient vaultClient) {
 		VaultResponse resp = vaultClient.newRequest(FileStagingRequest.class)
-				.getItemContent("/Test/upload.txt");
+				.downloadItemContent("/Test/upload.txt");
 		Assertions.assertTrue(resp.isSuccessful());
 		Assertions.assertNotNull(resp.getBinaryContent());
 	}
 
 	@Test
-	public void testGetItemContentToFile(VaultClient vaultClient) {
+	public void testDownloadItemContentToFile(VaultClient vaultClient) {
 		TestProperties testProperties = new TestProperties();
 		VaultResponse resp = vaultClient.newRequest(FileStagingRequest.class)
 				.setOutputPath(testProperties.getTestFile())
-				.getItemContent("/Test/upload.txt");
+				.downloadItemContent("/Test/upload.txt");
 		Assertions.assertTrue(resp.isSuccessful());
 	}
 

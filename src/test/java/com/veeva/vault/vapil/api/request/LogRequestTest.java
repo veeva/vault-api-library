@@ -9,6 +9,7 @@ package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import com.veeva.vault.vapil.api.model.response.*;
@@ -19,6 +20,7 @@ import com.veeva.vault.vapil.api.model.response.DomainAuditResponse.DomainAuditD
 import com.veeva.vault.vapil.api.model.response.LoginAuditResponse.LoginAuditData;
 import com.veeva.vault.vapil.api.model.response.ObjectAuditResponse.ObjectAuditData;
 import com.veeva.vault.vapil.api.model.response.SystemAuditResponse.SystemAuditData;
+import com.veeva.vault.vapil.api.model.response.EmailNotificationHistoryResponse.EmailNotification;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,8 +66,8 @@ public class LogRequestTest {
 	@Test
 	public void testRetrieveDocumentAuditDetails(VaultClient vaultClient) {
 		DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
-				.setEndDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
+				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
+				.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
 				.setLimit(4)
 				.retrieveAuditDetails(LogRequest.AuditTrailType.DOCUMENT);
 
@@ -84,7 +86,7 @@ public class LogRequestTest {
 	@Test
 	public void testRetrieveDomainAuditDetails(VaultClient vaultClient) {
 		DomainAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
+				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
 				.retrieveAuditDetails(LogRequest.AuditTrailType.DOMAIN);
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -101,7 +103,7 @@ public class LogRequestTest {
 	@Test
 	public void testRetrieveLoginAuditDetails(VaultClient vaultClient) {
 		LoginAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
+				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
 				.retrieveAuditDetails(LogRequest.AuditTrailType.LOGIN);
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -119,7 +121,7 @@ public class LogRequestTest {
 	@Test
 	public void testRetrieveObjectAuditDetails(VaultClient vaultClient) {
 		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20))
+				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20))
 				.setLimit(10)
 				.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
 
@@ -156,8 +158,8 @@ public class LogRequestTest {
 	@Test
 	public void testRetrieveSystemAuditDetails(VaultClient vaultClient) {
 		LogRequest request = vaultClient.newRequest(LogRequest.class);
-		request.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20));
-		request.setEndDate(ZonedDateTime.now(ZoneId.of("UTC")));
+		request.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20));
+		request.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")));
 		request.setAllDates(false);
 		request.setFormatResult(LogRequest.FormatResultType.JSON);
 		request.setLimit(4);
@@ -208,7 +210,7 @@ public class LogRequestTest {
 	public void testRetrieveSystemAuditDetailsAsCsv(VaultClient vaultClient) {
 
 		JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
+				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
 				.setFormatResult(LogRequest.FormatResultType.CSV)
 				.retrieveAuditDetails(LogRequest.AuditTrailType.SYSTEM);
 
@@ -327,6 +329,131 @@ public class LogRequestTest {
 
 		System.out.println("Test complete...");
 	}
+
+
+	@Nested
+	@DisplayName("Test Retrieve Email Notification History")
+	class testRetrieveEmailNotificationHistory {
+		@Test
+		@DisplayName("with no query parameters")
+		void noQueryParameters(VaultClient vaultClient) {
+			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
+					.retrieveEmailNotificationHistory();
+
+			System.out.println("Response Status: " + response.getResponseStatus());
+			System.out.println("Response Message: " + response.getResponse());
+			assertTrue(response.isSuccessful());
+
+			EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
+			System.out.println("Response Details ****");
+			System.out.println("Offset = " + details.getOffset());
+			System.out.println("Limit = " + details.getLimit());
+			System.out.println("Size = " + details.getSize());
+			System.out.println("Total = " + details.getTotal());
+
+			System.out.println("Items ****");
+			for (EmailNotification data : response.getData()) {
+				System.out.println("id = " + data.getNotificationId());
+				System.out.println("Send Date = " + data.getSendDate());
+				System.out.println("Recipient Email: " + data.getRecipientEmail());
+				assertNotNull(data.getNotificationId());
+				assertNotNull(data.getSendDate());
+			}
+		}
+
+		@Test
+		@DisplayName("with invalid query parameters")
+		void invalidQueryParameters(VaultClient vaultClient) {
+			ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29);
+
+			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDateTime(startDate)
+					.retrieveEmailNotificationHistory();
+
+			System.out.println("Response Status: " + response.getResponseStatus());
+			System.out.println("Response Message: " + response.getResponse());
+			assertFalse(response.isSuccessful());
+
+		}
+
+		@Test
+		@DisplayName("with start and end date/time query parameters")
+		void startAndEndDateTimeQueryParameters(VaultClient vaultClient) {
+
+			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(30))
+					.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
+					.retrieveEmailNotificationHistory();
+
+			System.out.println("Response Status: " + response.getResponseStatus());
+			System.out.println("Response Message: " + response.getResponse());
+			assertTrue(response.isSuccessful());
+
+			EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
+			System.out.println("Response Details ****");
+			System.out.println("Offset = " + details.getOffset());
+			System.out.println("Limit = " + details.getLimit());
+			System.out.println("Size = " + details.getSize());
+			System.out.println("Total = " + details.getTotal());
+
+			System.out.println("Items ****");
+			for (EmailNotification data : response.getData()) {
+				System.out.println("id = " + data.getNotificationId());
+				System.out.println("Send Date: " + data.getSendDate());
+				System.out.println("Recipient Email: " + data.getRecipientEmail());
+				assertNotNull(data.getNotificationId());
+				assertNotNull(data.getSendDate());
+			}
+		}
+
+		@Test
+		@DisplayName("with start and end date query parameters")
+		void startAndEndDateQueryParameters(VaultClient vaultClient) {
+
+			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDate(LocalDate.now().minusDays(30))
+					.setEndDate(LocalDate.now().minusDays(1))
+					.retrieveEmailNotificationHistory();
+
+			System.out.println("Response Status: " + response.getResponseStatus());
+			System.out.println("Response Message: " + response.getResponse());
+			assertTrue(response.isSuccessful());
+
+			EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
+			System.out.println("Response Details ****");
+			System.out.println("Offset = " + details.getOffset());
+			System.out.println("Limit = " + details.getLimit());
+			System.out.println("Size = " + details.getSize());
+			System.out.println("Total = " + details.getTotal());
+
+			System.out.println("Items ****");
+			for (EmailNotification data : response.getData()) {
+				System.out.println("id = " + data.getNotificationId());
+				System.out.println("Send Date: " + data.getSendDate());
+				System.out.println("Recipient Email: " + data.getRecipientEmail());
+				assertNotNull(data.getNotificationId());
+				assertNotNull(data.getSendDate());
+			}
+		}
+
+		@Test
+		@DisplayName("with all_dates = true query parameter")
+		void allDatesEqualsTrueQueryParameters(VaultClient vaultClient) {
+
+			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
+					.setAllDates(true)
+					.setFormatResult(LogRequest.FormatResultType.CSV)
+					.retrieveEmailNotificationHistory();
+
+//			This will only work once every 24 hours
+			assertTrue(response.isSuccessful());
+			System.out.println("Response Status: " + response.getResponseStatus());
+			System.out.println("Response Message: " + response.getResponse());
+			System.out.println("Job ID: " + response.getJobId());
+
+		}
+	}
+
 
 	@Test
 	public void testRetrieveDailyAPIUsageToFile(VaultClient vaultClient) {

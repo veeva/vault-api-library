@@ -96,6 +96,11 @@ public class VaultResponse extends VaultModel {
 	 */
 	public static final String HTTP_HEADER_VAULT_SDK_GROSS_MEMORY = "X-VaultAPI-SdkGrossMemory";
 
+	/**
+	 * <b>X-VaultAPI-DowntimeExpectedDurationMinutes</b>
+	 */
+	public static final String HTTP_HEADER_DOWNTIME_EXPECTED_DURATION_MINUTES = "X-VaultAPI-DowntimeExpectedDurationMinutes";
+
 
 
 	private byte[] binaryContent; // For requests that return binary data
@@ -255,6 +260,9 @@ public class VaultResponse extends VaultModel {
 	public Long getHeaderVaultSdkGrossMemory() {
 		return getHeaderAsLongIgnoreCase(HTTP_HEADER_VAULT_SDK_GROSS_MEMORY);
 	}
+
+	@JsonIgnore
+	public Integer getHeaderDowntimeExpectedDurationMinutes() { return getHeaderAsIntegerIgnoreCase(HTTP_HEADER_DOWNTIME_EXPECTED_DURATION_MINUTES); }
 
 	/**
 	 * For requests returning binary content

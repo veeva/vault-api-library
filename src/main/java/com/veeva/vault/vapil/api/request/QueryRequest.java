@@ -24,7 +24,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * See {@link #query(String)} for example request and response methods, including reading of the resulting
  * data and handling of the X-VaultAPI-DescribeQuery parameter.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.2/#vault-query-language-vql">https://developer.veevavault.com/api/22.2/#vault-query-language-vql</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#vault-query-language-vql">https://developer.veevavault.com/api/22.3/#vault-query-language-vql</a>
  */
 public class QueryRequest extends VaultRequest {
 	private static Logger log = Logger.getLogger(QueryRequest.class);

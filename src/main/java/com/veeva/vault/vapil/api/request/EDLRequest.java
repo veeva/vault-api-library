@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Expected Document Lists (EDLs) help you to measure the completeness of projects.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.2/#expected-document-lists">https://developer.veevavault.com/api/22.2/#expected-document-lists</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#expected-document-lists">https://developer.veevavault.com/api/22.3/#expected-document-lists</a>
  */
 public class EDLRequest extends VaultRequest {
 
@@ -56,7 +56,7 @@ public class EDLRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/edl_item__v/actions/createplaceholder</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#create-a-placeholder-from-an-edl-item' target='_blank'>https://developer.veevavault.com/api/22.2/#create-a-placeholder-from-an-edl-item</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#create-a-placeholder-from-an-edl-item' target='_blank'>https://developer.veevavault.com/api/22.3/#create-a-placeholder-from-an-edl-item</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(EDLRequest.class)
 	 *                 .createPlaceholderFromEDLItem(edlItemIds);</pre>
@@ -89,7 +89,7 @@ public class EDLRequest extends VaultRequest {
 	 * @return EDLResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/composites/trees/{edl_hierarchy_or_template}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-all-root-nodes' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-all-root-nodes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-all-root-nodes' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-all-root-nodes</a>
 	 * @vapil.request <pre>
 	 * List&lt;EDLNode&gt; resp = vaultClient.newRequest(EDLRequest.class)
 	 * .retrieveAllRootNodes(EDLRequest.NodeType.TEMPLATE)
@@ -114,7 +114,7 @@ public class EDLRequest extends VaultRequest {
 	 * @return EDLResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/composites/trees/{edl_hierarchy_or_template}/actions/listnodes</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-specific-root-nodes' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-specific-root-nodes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-specific-root-nodes' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-specific-root-nodes</a>
 	 * @vapil.request <pre>
 	 * List&lt;EDLNode&gt; resp = vaultClient.newRequest(EDLRequest.class)
 	 * .retrieveSpecificRootNodes(EDLRequest.NodeType.TEMPLATE)
@@ -151,7 +151,7 @@ public class EDLRequest extends VaultRequest {
 	 * @return EDLResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/composites/trees/edl_hierarchy__v/{parent_node_id}/children</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-a-node-s-children' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-a-node-s-children</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-a-node-s-children' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-a-node-s-children</a>
 	 * @vapil.request <pre>
 	 * List&lt;EDLNode&gt; resp = vaultClient.newRequest(EDLRequest.class)
 	 * .retrieveNodeChildren(EDLRequest.NodeType.HIERARCHY, parent_node_id)
@@ -179,7 +179,7 @@ public class EDLRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/composites/trees/edl_hierarchy__v/{parent_node_id}/children</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#update-node-order' target='_blank'>https://developer.veevavault.com/api/22.2/#update-node-order</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#update-node-order' target='_blank'>https://developer.veevavault.com/api/22.3/#update-node-order</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(EDLRequest.class)
 	 *     .setContentTypeJson() or .setContentTypeCSV()
@@ -214,7 +214,7 @@ public class EDLRequest extends VaultRequest {
 	 * @return EDLMatchedDocumentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/edl_matched_documents/batch/actions/add</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#add-edl-matched-documents' target='_blank'>https://developer.veevavault.com/api/22.2/#add-edl-matched-documents</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#add-edl-matched-documents' target='_blank'>https://developer.veevavault.com/api/22.3/#add-edl-matched-documents</a>
 	 * @vapil.request <pre>
 	 * EDLMatchedDocumentResponse resp = vaultClient.newRequest(EDLRequest.class)
 	 *     .setContentTypeJson() or .setContentTypeCSV()
@@ -247,7 +247,7 @@ public class EDLRequest extends VaultRequest {
 	 * @return EDLMatchedDocumentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/edl_matched_documents/batch/actions/remove</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#remove-edl-matched-documents' target='_blank'>https://developer.veevavault.com/api/22.2/#remove-edl-matched-documents</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#remove-edl-matched-documents' target='_blank'>https://developer.veevavault.com/api/22.3/#remove-edl-matched-documents</a>
 	 * @vapil.request <pre>
 	 * EDLMatchedDocumentResponse resp = vaultClient.newRequest(EDLRequest.class)
 	 *     .setContentTypeJson() or .setContentTypeCSV()

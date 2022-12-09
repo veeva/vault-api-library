@@ -14,12 +14,11 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 /**
  * The Audit APIs retrieve information about audits and audit types
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.2/#logs">https://developer.veevavault.com/api/22.2/#logs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#logs">https://developer.veevavault.com/api/22.3/#logs</a>
  */
 public class LogRequest extends VaultRequest {
 	// API Endpoints
@@ -30,6 +29,7 @@ public class LogRequest extends VaultRequest {
 	private static final String URL_CODE_LOG = "/logs/code/runtime";
 	private static final String URL_AUDIT_DOCUMENT = "/objects/documents/{doc_id}/audittrail";
 	private static final String URL_AUDIT_OBJECT = "/vobjects/{object_name}/{object_record_id}/audittrail";
+	private static final String URL_EMAIL_NOTIFICATION_HISTORY = "/notifications/histories";
 
 	// API Request Parameters for audit details request
 	private static final String PARAM_START_DATE = "start_date";
@@ -42,15 +42,17 @@ public class LogRequest extends VaultRequest {
 	private static final String PARAM_DATE = "date";
 	private static final String PARAM_LOG_FORMAT = "log_format";
 
-	// Required date format for audit details request
-	private static final String AUDIT_DETAILS_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	// Required date format for audit details request and retrieve email notification history request
+	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
-	// Required date format for api_usage request
-	private static final String API_USAGE_DATE_PATTERN = "yyyy-MM-dd";
+	// Required date format for api_usage request and retrieve email notification history request
+	private static final String DATE_PATTERN = "yyyy-MM-dd";
 
 	// Builder Parameters for audit details request
-	private ZonedDateTime startDate;
-	private ZonedDateTime endDate;
+	private ZonedDateTime startDateTime;
+	private ZonedDateTime endDateTime;
+	private LocalDate startDate;
+	private LocalDate endDate;
 	private Boolean allDates;
 	private String formatResult;
 	private Integer limit;
@@ -61,6 +63,8 @@ public class LogRequest extends VaultRequest {
 
 	private LogRequest() {
 		// Defaults for the request
+		startDateTime = null;
+		endDateTime = null;
 		startDate = null;
 		endDate = null;
 		allDates = false;
@@ -80,7 +84,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-audit-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-audit-types</a>
 	 * @vapil.request <pre>
 	 * AuditTypesResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditTypes();</pre>
@@ -106,7 +110,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-audit-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-audit-metadata</a>
 	 * @vapil.request <pre>
 	 * AuditMetadataResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);</pre>
@@ -150,7 +154,7 @@ public class LogRequest extends VaultRequest {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-audit-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-audit-details</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
@@ -306,12 +310,12 @@ public class LogRequest extends VaultRequest {
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		if (startDate != null) {
-			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDate, AUDIT_DETAILS_DATE_PATTERN));
+		if (startDateTime != null) {
+			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDateTime, DATE_TIME_PATTERN));
 		}
 
-		if (endDate != null) {
-			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDate, AUDIT_DETAILS_DATE_PATTERN));
+		if (endDateTime != null) {
+			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDateTime, DATE_TIME_PATTERN));
 		}
 
 		if (formatResult != null && !formatResult.isEmpty()) {
@@ -364,7 +368,7 @@ public class LogRequest extends VaultRequest {
 	 * @return DocumentAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-complete-audit-history-for-a-single-document</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -408,12 +412,12 @@ public class LogRequest extends VaultRequest {
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		if (startDate != null) {
-			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDate, AUDIT_DETAILS_DATE_PATTERN));
+		if (startDateTime != null) {
+			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDateTime, DATE_TIME_PATTERN));
 		}
 
-		if (endDate != null) {
-			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDate, AUDIT_DETAILS_DATE_PATTERN));
+		if (endDateTime != null) {
+			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDateTime, DATE_TIME_PATTERN));
 		}
 
 		if (formatResult != null && !formatResult.isEmpty()) {
@@ -439,7 +443,7 @@ public class LogRequest extends VaultRequest {
 	 * @return ObjectAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-complete-audit-history-for-a-single-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
@@ -482,12 +486,12 @@ public class LogRequest extends VaultRequest {
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		if (startDate != null) {
-			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDate, AUDIT_DETAILS_DATE_PATTERN));
+		if (startDateTime != null) {
+			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDateTime, DATE_TIME_PATTERN));
 		}
 
-		if (endDate != null) {
-			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDate, AUDIT_DETAILS_DATE_PATTERN));
+		if (endDateTime != null) {
+			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDateTime, DATE_TIME_PATTERN));
 		}
 
 		if (formatResult != null && !formatResult.isEmpty()) {
@@ -501,6 +505,116 @@ public class LogRequest extends VaultRequest {
 		} else {
 			return send(HttpMethod.GET, request, ObjectAuditResponse.class);
 		}
+	}
+
+	/**
+	 * <b>Retrieve Email Notification History</b>
+	 * <p>
+	 * Retrieve details about the email notifications sent by Vault. Details include the notification date, recipient, subject, and delivery status.
+	 * <p>
+	 *
+	 * @return Returns one of the following:<br>
+	 * EmailNotificationHistoryResponse
+	 * JobCreateResponse when format result is CSV
+	 * @vapil.api <pre>
+	 * GET /api/{version}/notifications/histories</pre>
+	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/22.3/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-email-notification-histories</a>
+	 * @vapil.request <pre>
+	 * <i>Example 1 - EmailNotificationHistoryResponse</i>
+	 * EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
+	 * 					.retrieveEmailNotificationHistory();</pre>
+	 * @vapil.response <pre>
+	 * <i>Example 1 - EmailNotificationHistoryResponse</i>
+	 * System.out.println("Response Status: " + response.getResponseStatus());
+	 * System.out.println("Response Message: " + response.getResponse());
+	 *
+	 * EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
+	 * System.out.println("Response Details ****");
+	 * System.out.println("Offset = " + details.getOffset());
+	 * System.out.println("Limit = " + details.getLimit());
+	 * System.out.println("Size = " + details.getSize());
+	 * System.out.println("Total = " + details.getTotal());
+	 *
+	 * System.out.println("Items ****");
+	 * for (EmailNotification data : response.getData()) {
+	 * 	System.out.println("id = " + data.getNotificationId());
+	 * 	System.out.println("Send Date = " + data.getSendDate());
+	 * 	System.out.println("Recipient Email: " + data.getRecipientEmail());
+	 * }
+	 * </pre>
+	 * @vapil.request <pre>
+	 * <i>Example 2 - EmailNotificationHistoryResponse</i>
+	 * 	EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
+	 * 			.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
+	 * 			.setEndDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
+	 * 			.retrieveEmailNotificationHistory();</pre>
+	 * @vapil.response <pre>
+	 * <i>Example 2 - EmailNotificationHistoryResponse</i>
+	 * System.out.println("Response Status: " + response.getResponseStatus());
+	 * System.out.println("Response Message: " + response.getResponse());
+	 *
+	 * EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
+	 * System.out.println("Response Details ****");
+	 * System.out.println("Offset = " + details.getOffset());
+	 * System.out.println("Limit = " + details.getLimit());
+	 * System.out.println("Size = " + details.getSize());
+	 * System.out.println("Total = " + details.getTotal());
+	 *
+	 * System.out.println("Items ****");
+	 * for (EmailNotification data : response.getData()) {
+	 * 	System.out.println("id = " + data.getNotificationId());
+	 * 	System.out.println("Send Date = " + data.getSendDate());
+	 * 	System.out.println("Recipient Email: " + data.getRecipientEmail());
+	 * }
+	 * </pre>
+	 * @vapil.request <pre>
+	 * <i>Example 3 - JobCreateResponse</i>
+	 * JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
+	 * 				.setAllDates(true)
+	 * 				.setFormatResult(LogRequest.FormatResultType.CSV)
+	 * 				.retrieveEmailNotificationHistory();</pre>
+	 * @vapil.response <pre>
+	 * <i>Example 3 - JobCreateResponse</i>
+	 * System.out.println("Response Status: " + response.getResponseStatus());
+	 * System.out.println("Response Message: " + response.getResponse());
+	 * System.out.println("Job ID: " + response.getJobId());
+	 * System.out.println("Url = " + resp.getUrl());
+	 * </pre>
+	 */
+	public <T> T retrieveEmailNotificationHistory() {
+		String url = vaultClient.getAPIEndpoint(URL_EMAIL_NOTIFICATION_HISTORY);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+//		API accepts two Date Formats, "yyyy-MM-dd'T'HH:mm:ss'Z'" or "yyyy-MM-dd"
+		if (startDateTime != null) {
+			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDateTime, DATE_TIME_PATTERN));
+		} else if(startDate != null) {
+			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDate, DATE_PATTERN));
+		}
+
+		if (endDateTime != null) {
+			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDateTime, DATE_TIME_PATTERN));
+		} else if(endDate != null) {
+			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDate, DATE_PATTERN));
+		}
+
+		if (formatResult != null && !formatResult.isEmpty()) {
+			request.addQueryParam(PARAM_FORMAT_RESULT, formatResult);
+		}
+
+		request.addQueryParam(PARAM_LIMIT, limit);
+
+		//special case, if all dates, then return jobcreateresponse
+		if (allDates != null && allDates) {
+			request.addQueryParam(PARAM_ALL_DATES, allDates);
+			return send(HttpMethod.GET, request, (Class<T>) JobCreateResponse.class);
+		}
+
+		//get the first page
+		T response = (T) send(HttpMethod.GET, request, EmailNotificationHistoryResponse.class);
+
+		return response;
 	}
 
 	/**
@@ -519,7 +633,7 @@ public class LogRequest extends VaultRequest {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/api_usage?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/22.2/#retrieve-daily-api-usage</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-daily-api-usage</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -543,12 +657,14 @@ public class LogRequest extends VaultRequest {
 	 *   catch (IOException ignored){}
 	 * }</pre>
 	 */
+
+
 	public VaultResponse retrieveDailyAPIUsage(LocalDate logDate) {
 		String url = vaultClient.getAPIEndpoint(URL_API_USAGE);
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		request.addQueryParam(PARAM_DATE, getFormattedDate(logDate, API_USAGE_DATE_PATTERN));
+		request.addQueryParam(PARAM_DATE, getFormattedDate(logDate, DATE_PATTERN));
 
 		if (logFormat != null) {
 			request.addQueryParam(PARAM_LOG_FORMAT, logFormat);
@@ -577,7 +693,7 @@ public class LogRequest extends VaultRequest {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/runtime?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.2/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/22.2/#download-sdk-runtime-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/22.3/#download-sdk-runtime-log</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -606,7 +722,7 @@ public class LogRequest extends VaultRequest {
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		request.addQueryParam(PARAM_DATE, getFormattedDate(logDate, API_USAGE_DATE_PATTERN));
+		request.addQueryParam(PARAM_DATE, getFormattedDate(logDate, DATE_PATTERN));
 
 		if (logFormat != null) {
 			request.addQueryParam(PARAM_LOG_FORMAT, logFormat);
@@ -618,6 +734,7 @@ public class LogRequest extends VaultRequest {
 			return sendReturnBinary(HttpMethod.GET, request, VaultResponse.class);
 		}
 	}
+
 
 	/**
 	 * Converts the date to the proper string format expected by the API
@@ -723,23 +840,55 @@ public class LogRequest extends VaultRequest {
 	 */
 
 	/**
-	 * Specify a start date to retrieve audit information.
+	 * <p>
+	 * Specify a start date and time to retrieve audit information or email notification history
+	 * <p>
+	 * For audit information, this date cannot be more than 30 days ago. If omitted, defaults to the last 30 days.
+	 * <p>
+	 * For email notification history, this date cannot be more than 2 years ago. If omitted, defaults to the start of the day.
 	 *
-	 * @param startDate This date cannot be more than 30 days ago. If omitted, defaults to the last 30 days.
+	 * @param startDate Start date and time for audit information or email notification history log requests.
 	 * @return The Request
 	 */
-	public LogRequest setStartDate(ZonedDateTime startDate) {
+	public LogRequest setStartDateTime(ZonedDateTime startDate) {
+		this.startDateTime = startDate;
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Specify an end date and time to retrieve audit information or email notification history
+	 * <p>
+	 * For audit information, this date cannot be more than 30 days ago. If omitted, defaults to the last 30 days.
+	 * <p>
+	 * For email notification history, this date cannot be more than 30 days away from the specified start date. If an end date has been specified, a start date must also be set.
+	 *
+	 * @param endDate End date and time for audit information or email notification history log requests.
+	 * @return The Request
+	 */
+	public LogRequest setEndDateTime(ZonedDateTime endDate) {
+		this.endDateTime = endDate;
+		return this;
+	}
+
+	/**
+	 * Specify a start date to retrieve email notification history.
+	 *
+	 * @param startDate This date cannot be more than 2 years ago. If omitted, defaults to the start of the day.
+	 * @return The Request
+	 */
+	public LogRequest setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 		return this;
 	}
 
 	/**
-	 * Specify an end date to retrieve audit information.
+	 * Specify an end date to retrieve email notification history.
 	 *
-	 * @param endDate This date cannot be more than 30 days ago. If omitted, defaults to the last 30 days.
+	 * @param endDate This date cannot be more than 30 days away from the specified start date. If an end date has been specified, a start date must also be set.
 	 * @return The Request
 	 */
-	public LogRequest setEndDate(ZonedDateTime endDate) {
+	public LogRequest setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 		return this;
 	}

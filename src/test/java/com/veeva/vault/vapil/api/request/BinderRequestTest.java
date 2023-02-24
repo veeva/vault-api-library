@@ -3,8 +3,7 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.Binder.Node.BinderSection;
 import com.veeva.vault.vapil.api.model.common.Document;
-import com.veeva.vault.vapil.api.model.response.BinderResponse;
-import com.veeva.vault.vapil.api.model.response.BinderSectionResponse;
+import com.veeva.vault.vapil.api.model.response.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,9 +19,11 @@ public class BinderRequestTest {
     static final int FKO_BINDER_MAJOR_VERSION = 1;
     static final int FKO_BINDER_MINOR_VERSION = 0;
     static final int NEW_BINDER_ID = 2;
-    static final String NEW_BINDER_NAME = "VAPIL Binder";
+    static final String NEW_BINDER_NAME = "VAPIL Test Binder";
     static final String NEW_BINDER_LIFECYCLE = "General Lifecycle";
-    static final String NEW_BINDER_TYPE = "General";
+    static final String NEW_BINDER_TYPE = "VAPIL Test Doc Type";
+    static final String NEW_BINDER_SUBTYPE = "VAPIL Test Doc Subtype";
+    static final String NEW_BINDER_CLASSIFICATION = "VAPIL Test Doc Classification";
     static final String NEW_BINDER_TITLE = "Test Upload VAPIL Binder";
     static final String UPDATED_BINDER_NAME = "Vapil Binder Updated";
     static final String UPDATED_BINDER_TITLE = "Test Upload VAPIL Binder Updated";
@@ -169,4 +170,63 @@ public class BinderRequestTest {
         Assertions.assertTrue(response.isSuccessful());
     }
 
+    @Test
+    public void testExportBinder(VaultClient vaultClient) {
+//        Create Binder
+        Document doc = new Document();
+
+        doc.setName(NEW_BINDER_NAME);
+        doc.setLifecycle(NEW_BINDER_LIFECYCLE);
+        doc.setType(NEW_BINDER_TYPE);
+        doc.setSubtype(NEW_BINDER_SUBTYPE);
+        doc.setClassification(NEW_BINDER_CLASSIFICATION);
+
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .createBinder(doc);
+
+        int binderId = response.getDocument().getId();
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(binderId);
+
+//        Export Binder
+        JobCreateResponse jobCreateResponse = vaultClient.newRequest(BinderRequest.class)
+                .setExportAudit(true)
+                .setExportAuditFormatType(BinderRequest.AuditFormatType.CSV)
+                .setExportAttachmentType(BinderRequest.AttachmentType.ALL)
+                .setExportDocumentVersionType(BinderRequest.DocumentVersionType.MAJOR)
+                .exportBinder(binderId);
+
+        int jobId = jobCreateResponse.getJobId();
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(jobId);
+
+//        Check status of job
+        String jobStatus = "";
+        for (int i = 0; i < 6; i++) {
+            if (jobStatus.equals("SUCCESS")) break;
+            JobStatusResponse jobStatusResponse = vaultClient.newRequest(JobRequest.class)
+                    .retrieveJobStatus(jobId);
+            jobStatus = jobStatusResponse.getData().getStatus();
+            switch (jobStatus) {
+                case "SUCCESS":
+                    BinderExportResponse binderExportResponse = vaultClient.newRequest(BinderRequest.class)
+                            .retrieveBinderExportResults(jobId);
+                    Assertions.assertTrue(binderExportResponse.isSuccessful());
+                    Assertions.assertNotNull(binderExportResponse.getFile());
+                    break;
+                case "QUEUED":
+                case "QUEUING":
+                case "RUNNING":
+                    try {
+                        Thread.sleep(11000);
+                        break;
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                default:
+                    Assertions.assertEquals("SUCCESS", jobStatus);
+            }
+        }
+        Assertions.assertEquals("SUCCESS", jobStatus);
+    }
 }

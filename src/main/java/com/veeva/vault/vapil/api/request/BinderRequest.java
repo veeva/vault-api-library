@@ -1043,15 +1043,15 @@ public class BinderRequest extends VaultRequest {
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
 		if (exportAttachmentType != null)
-			request.addQueryParam("attachments", exportAttachmentType);
+			request.addQueryParam("attachments", exportAttachmentType.getValue());
 		if (exportAudit != null)
 			request.addQueryParam("audit", exportAudit);
 		if (exportAuditFormatType != null)
-			request.addQueryParam("audit_format", exportAuditFormatType);
+			request.addQueryParam("audit_format", exportAuditFormatType.getValue());
 		if (exportDocumentMetadata != null)
 			request.addQueryParam("docfield", exportDocumentMetadata);
 		if (exportDocumentVersionType != null)
-			request.addQueryParam("docversion", exportDocumentVersionType);
+			request.addQueryParam("docversion", exportDocumentVersionType.getValue());
 		if (exportRenditionType != null)
 			request.addQueryParam("renditiontype", exportRenditionType);
 		if (exportSource != null)
@@ -1092,15 +1092,15 @@ public class BinderRequest extends VaultRequest {
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
 		if (exportAttachmentType != null)
-			request.addQueryParam("attachments", exportAttachmentType);
+			request.addQueryParam("attachments", exportAttachmentType.getValue());
 		if (exportAudit != null)
 			request.addQueryParam("audit", exportAudit);
 		if (exportAuditFormatType != null)
-			request.addQueryParam("audit_format", exportAuditFormatType);
+			request.addQueryParam("audit_format", exportAuditFormatType.getValue());
 		if (exportDocumentMetadata != null)
 			request.addQueryParam("docfield", exportDocumentMetadata);
 		if (exportDocumentVersionType != null)
-			request.addQueryParam("docversion", exportDocumentVersionType);
+			request.addQueryParam("docversion", exportDocumentVersionType.getValue());
 		if (exportRenditionType != null)
 			request.addQueryParam("renditiontype", exportRenditionType);
 		if (exportSource != null)

@@ -8,13 +8,8 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
-import com.veeva.vault.vapil.api.model.response.SandboxEntitlementResponse;
-import com.veeva.vault.vapil.api.model.response.SandboxResponse;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import com.veeva.vault.vapil.api.model.response.*;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
@@ -22,15 +17,25 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 @ExtendWith(VaultClientParameterResolver.class)
 public class SandboxRequestTest {
 
-    @Test
-    public void TestRetrieveSandboxEntitlements(VaultClient vaultClient) {
+	@Test
+	@DisplayName("Should successfully retrieve the total number of available and number of in-use sandbox Vaults for the authenticated Vault")
+	public void testRetrieveSandboxEntitlements(VaultClient vaultClient) {
 		SandboxEntitlementResponse response = vaultClient.newRequest(SandboxRequest.class).retrieveSandboxEntitlements();
 		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	@Test
-	public void TestRetrieveSandboxes(VaultClient vaultClient) {
+	@DisplayName("Should successfully retrieve information about the sandbox Vaults for the authenticated Vault")
+	public void testRetrieveSandboxes(VaultClient vaultClient) {
 		SandboxResponse response = vaultClient.newRequest(SandboxRequest.class).retrieveSandboxes();
+		Assertions.assertTrue(response.isSuccessful());
+	}
+
+	@Test
+	@DisplayName("Should retrieve information about the sandbox for the given Vault ID")
+	public void testRetrieveSandboxDetailsById(VaultClient vaultClient) {
+		SandboxDetailsResponse response = vaultClient.newRequest(SandboxRequest.class)
+				.retrieveSandboxDetailsById(1001190);
 		Assertions.assertTrue(response.isSuccessful());
 	}
 

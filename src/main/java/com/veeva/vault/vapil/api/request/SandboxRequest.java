@@ -69,16 +69,16 @@ public class SandboxRequest extends VaultRequest {
 	 * Retrieve information about the sandbox for the given vault ID.
 	 *
 	 * @param vaultId vault id
-	 * @return SandboxResponse
+	 * @return SandboxDetailsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox/{vault_id}</pre>
 	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-sandbox-details-by-id' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-sandbox-details-by-id</a>
 	 */
-	public SandboxResponse retrieveSandboxDetailsById(int vaultId) {
+	public SandboxDetailsResponse retrieveSandboxDetailsById(int vaultId) {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_DETAILS).replace("{vault_id}", String.valueOf(vaultId));
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		SandboxResponse response = send(HttpMethod.GET, request, SandboxResponse.class);
+		SandboxDetailsResponse response = send(HttpMethod.GET, request, SandboxDetailsResponse.class);
 		return response;
 	}
 

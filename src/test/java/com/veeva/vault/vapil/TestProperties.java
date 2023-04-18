@@ -36,26 +36,15 @@ public class TestProperties {
 	 * Vault Client Id Properties
 	 * 
 	 */
-	public String getClientIdCompany() {
-		return properties.getProperty("clientid.company");
-	}
-	public String getClientIdOrganization() {
-		return properties.getProperty("clientid.organization");
-	}
-	public String getClientIdTeam() {
-		return properties.getProperty("clientid.team");
-	}
-	public Boolean isClient() {
-		return Boolean.getBoolean("clientid.isclient");
-	}
-	public String getClientIdProgram() {
-		return properties.getProperty("clientid.program");
-	}
+
 	/*
 	 * 
 	 * Domain and User Name Properties
 	 * 
 	 */
+	public String getVaultClientId() {
+		return properties.getProperty("vault.clientid");
+	}
     public String getVaultDNS() {
         return properties.getProperty("vault.dns");
     }

@@ -8,30 +8,25 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.TestProperties;
-import com.veeva.vault.vapil.api.request.FileStagingRequest.Kind;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import com.veeva.vault.vapil.api.request.FileStagingRequest.Kind;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 
 @Tag("FileStaging")
 @ExtendWith(VaultClientParameterResolver.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FileStagingRequestTest {
 
-	@Test
-	public void testCustom(VaultClient vaultClient) {
-		FileStagingRequest request = vaultClient.newRequest(FileStagingRequest.class);
-
-	}
+	static final String RESOURCES_FOLDER_PATH = "src\\test\\resources\\";
 
 	@Test
 	public void testListItemsAtAPath(VaultClient vaultClient) {
@@ -63,104 +58,181 @@ public class FileStagingRequestTest {
 	}
 
 	@Test
-	public void testDownloadItemContentBinary(VaultClient vaultClient) {
-		VaultResponse resp = vaultClient.newRequest(FileStagingRequest.class)
-				.downloadItemContent("/Test/upload.txt");
-		Assertions.assertTrue(resp.isSuccessful());
-		Assertions.assertNotNull(resp.getBinaryContent());
+	public void testDownloadItemContentBinary(VaultClient vaultClient) throws IOException {
+
+//		Create file
+		File testFile = new File(RESOURCES_FOLDER_PATH + "test_create_file.txt");
+		byte[] bytes = Files.readAllBytes(testFile.toPath());
+
+		FileStagingItemResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.setFile(testFile.getPath(), bytes)
+				.createFolderOrFile(Kind.FILE, "test_download_bytes_file.txt");
+
+//		Download file
+		VaultResponse downloadResp = vaultClient.newRequest(FileStagingRequest.class)
+				.downloadItemContent("/test_download_bytes_file.txt");
+		Assertions.assertTrue(downloadResp.isSuccessful());
+		Assertions.assertNotNull(downloadResp.getBinaryContent());
+		byte[] byteArray = downloadResp.getBinaryContent();
+		String string = new String(byteArray, StandardCharsets.UTF_8);
+		System.out.println("Bytes : " + string);
 	}
 
 	@Test
-	public void testDownloadItemContentToFile(VaultClient vaultClient) {
-		TestProperties testProperties = new TestProperties();
-		VaultResponse resp = vaultClient.newRequest(FileStagingRequest.class)
-				.setOutputPath(testProperties.getTestFile())
-				.downloadItemContent("/Test/upload.txt");
-		Assertions.assertTrue(resp.isSuccessful());
+	public void testDownloadItemContentToFile(VaultClient vaultClient) throws IOException {
+
+//		Create file
+		File testFile = new File(RESOURCES_FOLDER_PATH + "test_create_file.txt");
+		byte[] bytes = Files.readAllBytes(testFile.toPath());
+
+		FileStagingItemResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.setFile(testFile.getPath(), bytes)
+				.createFolderOrFile(Kind.FILE, "test_download_file.txt");
+
+//		Download to file
+		VaultResponse downloadResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOutputPath(RESOURCES_FOLDER_PATH + "test_download_file.txt")
+				.downloadItemContent("/test_download_file.txt");
+		Assertions.assertTrue(downloadResp.isSuccessful());
 	}
 
 	@Test
 	public void testCreateFolder(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
-		fileStagingRequest.setOverwrite(true);
-
-		FileStagingItemResponse resp = fileStagingRequest.createFolderOrFile(Kind.FOLDER, "/Test");
+		FileStagingItemResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createFolderOrFile(Kind.FOLDER, "/TestCreateFolder");
 		Assertions.assertTrue(resp.isSuccessful());
 	}
 
 	@Test
-	public void testCreateFile(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
-		fileStagingRequest.setSize(new Integer(14));
-		fileStagingRequest.setOverwrite(true);
+	public void testCreateFile(VaultClient vaultClient) throws IOException {
+		File testFile = new File(RESOURCES_FOLDER_PATH + "test_create_file.txt");
+		byte[] bytes = Files.readAllBytes(testFile.toPath());
 
-		TestProperties testProperties = new TestProperties();
-		File file = new File(testProperties.getTestFile());
-		try {
-			fileStagingRequest.setFile(file.getName(), Files.readAllBytes(file.toPath()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		FileStagingItemResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.setFile(testFile.getPath(), bytes)
+				.createFolderOrFile(Kind.FILE, "test_create_file.txt");
 
-		FileStagingItemResponse resp = fileStagingRequest.createFolderOrFile(Kind.FILE, "/Test/upload.txt");
 		Assertions.assertTrue(resp.isSuccessful());
 	}
 
 	@Test
-	public void testUpdateFileOrFolder(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
-		fileStagingRequest.setName("change.txt");
+	public void testUpdateFileOrFolder(VaultClient vaultClient) throws IOException {
 
-		FileStagingJobResponse resp = fileStagingRequest.updateFolderOrFile("/Test/upload.txt");
+//		Create file
+		File testFile = new File(RESOURCES_FOLDER_PATH + "test_create_file.txt");
+		byte[] bytes = Files.readAllBytes(testFile.toPath());
+
+		FileStagingItemResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.setFile(testFile.getPath(), bytes)
+				.createFolderOrFile(Kind.FILE, "test_update_file.txt");
+
+//		Update file
+		FileStagingJobResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.setName("test_update_filex.txt")
+				.updateFolderOrFile("/test_update_file.txt");
+
 		Assertions.assertTrue(resp.isSuccessful());
 		Assertions.assertNotNull(resp.getData().getJobId());
 	}
 
 	@Test
-	public void testDeleteFileOrFolder(VaultClient vaultClient) {
-		FileStagingJobResponse resp = vaultClient.newRequest(FileStagingRequest.class).deleteFolderOrFile("/Test/change.txt");
+	public void testDeleteFileOrFolder(VaultClient vaultClient) throws InterruptedException {
+
+//		Create folder
+		FileStagingItemResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createFolderOrFile(Kind.FOLDER, "TestDeleteFolder");
+
+		Thread.sleep(2000);
+
+//		Delete folder
+		FileStagingJobResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.setRecursive(true)
+				.deleteFolderOrFile("/TestDeleteFolder");
 		Assertions.assertTrue(resp.isSuccessful());
 		Assertions.assertNotNull(resp.getData().getJobId());
 	}
 
 	@Test
 	public void testCreateResumableUploadSession(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
-		fileStagingRequest.setOverwrite(true);
+		FileStagingSessionResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createResumableUploadSession("/test_create_resumable_upload_session.txt", 51130017);
 
-		FileStagingSessionResponse resp = fileStagingRequest.createResumableUploadSession("/Test/verteobiotech.pdf", 14789842);
 		Assertions.assertTrue(resp.isSuccessful());
 		Assertions.assertNotNull(resp.getData().getId());
-		System.out.println(resp.getData().getId());
+		System.out.println("Resumable Upload ID: " + resp.getData().getId());
 	}
 
 	@Test
-	public void testUploadToASession(VaultClient vaultClient) {
-		TestProperties testProperties = new TestProperties();
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
-		File file = new File(testProperties.getTestFile());
+	public void testUploadToASession(VaultClient vaultClient) throws IOException, InterruptedException {
 
-		try {
-			fileStagingRequest.setFile(file.getName(), Files.readAllBytes(file.toPath()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		FileStagingSessionResponse resp = fileStagingRequest.uploadToASession("caa075c08839bcbaab736cb6bd737969", 1);
+//		Create session
+		FileStagingSessionResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createResumableUploadSession("/test_upload_to_a_session.txt", 51130017);
+
+		String uploadSessionId = createResp.getData().getId();
+
+		Thread.sleep(5000);
+
+//		Upload to session
+		File testFile = new File(RESOURCES_FOLDER_PATH + "test_resumable_upload.txt");
+		byte[] bytes = Files.readAllBytes(testFile.toPath());
+
+		FileStagingSessionResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.setFile(testFile.getName(), bytes)
+				.uploadToASession(uploadSessionId, 1);
+
 		Assertions.assertTrue(resp.isSuccessful());
 		System.out.println(resp.getData().toJsonString());
 	}
 
 	@Test
-	public void testCommitUploadSession(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	public void testCommitUploadSession(VaultClient vaultClient) throws IOException, InterruptedException {
 
-		FileStagingJobResponse resp = fileStagingRequest.commitUploadSession("caa075c08839bcbaab736cb6bd737969");
+//		Create session
+		FileStagingSessionResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createResumableUploadSession("/test_commit_upload_session.txt", 51130017);
+
+		String uploadSessionId = createResp.getData().getId();
+
+		Thread.sleep(5000);
+
+//		Upload to Session
+		File testFile = new File(RESOURCES_FOLDER_PATH + "test_resumable_upload.txt");
+		byte[] bytes = Files.readAllBytes(testFile.toPath());
+
+		FileStagingSessionResponse uploadResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setFile(testFile.getName(), bytes)
+				.uploadToASession(uploadSessionId, 1);
+
+		Thread.sleep(5000);
+
+//		Commit session
+		FileStagingJobResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.commitUploadSession(uploadSessionId);
 		Assertions.assertTrue(resp.isSuccessful());
 		System.out.println(resp.getData().getJobId());
 	}
 
 	@Test
-	public void testListUploadSessions(VaultClient vaultClient) {
+	public void testListUploadSessions(VaultClient vaultClient) throws InterruptedException {
+
+//		Create session
+		FileStagingSessionResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createResumableUploadSession("/test_list_upload_sessions.txt", 51130017);
+
+		Thread.sleep(5000);
+
+//		List upload sessions
 		FileStagingSessionBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
 				.listUploadSessions();
 		Assertions.assertTrue(response.isSuccessful());
@@ -177,21 +249,49 @@ public class FileStagingRequestTest {
 	}
 
 	@Test
-	public void testGetUploadSessionDetails(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	public void testGetUploadSessionDetails(VaultClient vaultClient) throws InterruptedException {
 
-		FileStagingSessionResponse resp = fileStagingRequest.getUploadSessionDetails("caa075c08839bcbaab736cb6bd737969");
+//		Create session
+		FileStagingSessionResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createResumableUploadSession("/test_get_upload_session_details.txt", 51130017);
+
+		String uploadSessionId = createResp.getData().getId();
+
+		Thread.sleep(5000);
+
+//		Get upload session details
+		FileStagingSessionResponse resp = vaultClient.newRequest(FileStagingRequest.class)
+				.getUploadSessionDetails(uploadSessionId);
 		Assertions.assertTrue(resp.isSuccessful());
 		Assertions.assertNotNull(resp.getData().getId());
 	}
 
 	@Test
-	public void testListFilePartsUploadedToASession(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	public void testListFilePartsUploadedToASession(VaultClient vaultClient) throws InterruptedException, IOException {
+//		Create Session
+		FileStagingSessionResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createResumableUploadSession("/test_list_file_parts_uploaded_to_a_session.txt", 51130017);
 
-		FileStagingSessionBulkResponse resp = fileStagingRequest
+		String uploadSessionId = createResp.getData().getId();
+
+		Thread.sleep(5000);
+
+//		Upload to session
+		File testFile = new File(RESOURCES_FOLDER_PATH + "test_resumable_upload.txt");
+		byte[] bytes = Files.readAllBytes(testFile.toPath());
+
+		FileStagingSessionResponse uploadResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setFile(testFile.getName(), bytes)
+				.uploadToASession(uploadSessionId, 1);
+
+		Thread.sleep(5000);
+
+//		List uploaded file parts
+		FileStagingSessionBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class)
 				.setLimit(1)
-				.listFilePartsUploadedToASession("caa075c08839bcbaab736cb6bd737969");
+				.listFilePartsUploadedToASession(uploadSessionId);
 		Assertions.assertTrue(resp.isSuccessful());
 		Assertions.assertNotEquals(0, resp.getData().size());
 
@@ -201,11 +301,20 @@ public class FileStagingRequestTest {
 
 
 	@Test
-	public void testAbortUploadSession(VaultClient vaultClient) {
-		FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	public void testAbortUploadSession(VaultClient vaultClient) throws InterruptedException {
+//		Create session
+		FileStagingSessionResponse createResp = vaultClient.newRequest(FileStagingRequest.class)
+				.setOverwrite(true)
+				.createResumableUploadSession("/test_abort_upload_session.txt", 51130017);
 
-		VaultResponse resp = fileStagingRequest.abortUploadSession("caa075c08839bcbaab736cb6bd737969");
-		Assertions.assertTrue(resp.isSuccessful());
+		String uploadSessionId = createResp.getData().getId();
+
+		Thread.sleep(5000);
+
+//		Abort session
+		VaultResponse abortResponse = vaultClient.newRequest(FileStagingRequest.class)
+				.abortUploadSession(uploadSessionId);
+		Assertions.assertTrue(abortResponse.isSuccessful());
 	}
 
 }

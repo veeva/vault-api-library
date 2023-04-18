@@ -4,21 +4,23 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.Job;
 import com.veeva.vault.vapil.api.model.common.LoaderTask;
 import com.veeva.vault.vapil.api.model.builder.LoaderTaskBuilder;
-import com.veeva.vault.vapil.api.model.response.JobStatusResponse;
-import com.veeva.vault.vapil.api.model.response.LoaderResponse;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
+import com.veeva.vault.vapil.api.model.response.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(VaultClientParameterResolver.class)
 public class LoaderRequestTest {
 
+    static final String RESOURCES_FOLDER_PATH = "src\\test\\resources\\";
 
     @Test
     public void testBuilder() {
@@ -37,6 +39,49 @@ public class LoaderRequestTest {
         Assertions.assertNotNull(builtTask.getVqlCriteria());
         Assertions.assertNotEquals("",builtTask.getVqlCriteria());
         //System.out.println(taskBuilder.build().toJsonString());
+    }
+
+    @Test
+    @DisplayName("Should successfully create and run a loader job to extract data")
+    public void testExtractDataFiles(VaultClient vaultClient) throws Exception {
+//		Create file on file staging server
+        File testFile = new File(RESOURCES_FOLDER_PATH + "test_create_file.txt");
+        byte[] bytes = Files.readAllBytes(testFile.toPath());
+
+        FileStagingItemResponse fileStagingResponse = vaultClient.newRequest(FileStagingRequest.class)
+                .setOverwrite(true)
+                .setFile(testFile.getPath(), bytes)
+                .createFolderOrFile(FileStagingRequest.Kind.FILE, "test_create_file.txt");
+        Assertions.assertTrue(fileStagingResponse.isSuccessful());
+
+//		Create multiple documents
+        String csvFilePath = RESOURCES_FOLDER_PATH + "test_create_multiple_documents.csv";
+        DocumentBulkResponse createResponse = vaultClient.newRequest(DocumentRequest.class)
+                .setInputPath(csvFilePath)
+                .createMultipleDocuments();
+        Assertions.assertTrue(createResponse.isSuccessful());
+        for (DocumentResponse documentResponse : createResponse.getData()) {
+            Assertions.assertTrue(documentResponse.isSuccessful());
+        }
+
+//        Build Loader Task
+        LoaderTaskBuilder taskBuilder = new LoaderTaskBuilder()
+                .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_RENDITIONS)
+                .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_SOURCE)
+                .setObjectType(LoaderTaskBuilder.ObjectType.DOCUMENTS)
+                .addField("id")
+                .addField("name__v")
+                .appendWhere("name__v != 'X'")
+                .setMaxRows(3)
+                .setSkip(1);
+        LoaderTask builtTask = taskBuilder.build();
+
+//        Run extract job
+        LoaderResponse extractResponse = vaultClient.newRequest(LoaderRequest.class)
+                .addLoaderTask(builtTask)
+                .extractDataFiles();
+
+        Assertions.assertTrue(extractResponse.isSuccessful());
     }
 
     @Test

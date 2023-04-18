@@ -25,6 +25,9 @@ public class LoaderTaskBuilder {
 	protected List<String> fields = new LinkedList<>();
 	protected List<String> orderBy = new LinkedList<>();
 	protected StringBuilder whereClause = new StringBuilder();
+	private Integer maxRows;
+	private Integer skip;
+	private StringBuilder vqlCriteria = new StringBuilder();
 
 	public LoaderTask build() {
 		if (extractOptions.size() > 0) {
@@ -43,7 +46,19 @@ public class LoaderTaskBuilder {
 		}
 
 		if (whereClause.length() > 0) {
-			loaderTask.setVqlCriteria(whereClause.toString());
+			vqlCriteria.append(whereClause);
+		}
+
+		if (maxRows != null) {
+			vqlCriteria.append(" MAXROWS " + maxRows);
+		}
+
+		if (skip != null) {
+			vqlCriteria.append(" SKIP " + skip);
+		}
+
+		if (vqlCriteria.length() > 0) {
+			loaderTask.setVqlCriteria(vqlCriteria.toString());
 		}
 
 		return loaderTask;
@@ -195,9 +210,18 @@ public class LoaderTaskBuilder {
 			} else {
 				where = vql[0].toString();
 			}
-
 			whereClause.append(where);
 		}
+		return this;
+	}
+
+	public LoaderTaskBuilder setMaxRows(Integer maxRows) {
+		this.maxRows = maxRows;
+		return this;
+	}
+
+	public LoaderTaskBuilder setSkip(Integer skip) {
+		this.skip = skip;
 		return this;
 	}
 

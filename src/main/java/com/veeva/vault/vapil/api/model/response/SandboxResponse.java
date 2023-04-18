@@ -164,6 +164,15 @@ public class SandboxResponse extends VaultResponse {
             this.set("vault_id", vaultId);
         }
 
+        @JsonProperty("size")
+        public String getSize() {
+            return this.getString("size");
+        }
+
+        public void setSize(String size) {
+            this.set("size", size);
+        }
+
         @JsonProperty("entitlements")
         public List<Entitlement> getEntitlements() {
             return (List<Entitlement>) this.get("entitlements");
@@ -172,18 +181,17 @@ public class SandboxResponse extends VaultResponse {
         public void setEntitlements(List<Entitlement> entitlements) {
             this.set("entitlements", entitlements);
         }
-
     }
 
     public static class Entitlement extends VaultModel {
 
-        @JsonProperty("type")
-        public String getType() {
-            return this.getString("type");
+        @JsonProperty("size")
+        public String getSize() {
+            return this.getString("size");
         }
 
-        public void setType(String type) {
-            this.set("type", type);
+        public void setSize(String size) {
+            this.set("size", size);
         }
 
         @JsonProperty("available")

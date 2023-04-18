@@ -14,11 +14,13 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The Audit APIs retrieve information about audits and audit types
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#logs">https://developer.veevavault.com/api/22.3/#logs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#logs">https://developer.veevavault.com/api/23.1/#logs</a>
  */
 public class LogRequest extends VaultRequest {
 	// API Endpoints
@@ -37,6 +39,7 @@ public class LogRequest extends VaultRequest {
 	private static final String PARAM_ALL_DATES = "all_dates";
 	private static final String PARAM_FORMAT_RESULT = "format_result";
 	private static final String PARAM_LIMIT = "limit";
+	private static final String PARAM_EVENT = "events";
 
 	// API Request Parameters for api_usage request
 	private static final String PARAM_DATE = "date";
@@ -60,6 +63,7 @@ public class LogRequest extends VaultRequest {
 	// Builder Parameters for the api_usage request
 	private String logFormat;
 	private String outputPath;
+	private Set<String> events;
 
 	private LogRequest() {
 		// Defaults for the request
@@ -84,7 +88,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-audit-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-audit-types</a>
 	 * @vapil.request <pre>
 	 * AuditTypesResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditTypes();</pre>
@@ -110,7 +114,7 @@ public class LogRequest extends VaultRequest {
 	 * @return AuditMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-audit-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-audit-metadata</a>
 	 * @vapil.request <pre>
 	 * AuditMetadataResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);</pre>
@@ -139,9 +143,9 @@ public class LogRequest extends VaultRequest {
 	/**
 	 * <b>Retrieve Audit Details</b>
 	 * <p>
-	 * Retrieve audit details for a specific audit type. This request supports parameters to narrow the results to a specified date and time within the past 30 days.
+	 * Retrieve audit details for a specific audit type. This request supports parameters to narrow the results to specific audit events, or a specified date and time within the past 30 days.
 	 * <p>
-	 * NOTE: Only returns the first page; use retrieveAuditDetailsAllPages to include all pages
+	 * NOTE: Only returns the first page; use retrieveAuditDetailsByPage paginate through previous and next pages
 	 *
 	 * @param <T>            Response Type class
 	 * @param auditTrailType The name of the specified audit type (The AuditTrailType enum values translate to document_audit_trail, object_audit_trail, etc.).
@@ -154,13 +158,14 @@ public class LogRequest extends VaultRequest {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-audit-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-audit-details</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
 	 * 				.setEndDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
 	 * 				.setLimit(4)
+	 * 				.setEvents(new HashSet&lt;&gt;(Arrays.asList("UploadDocBulk", "ExportBinder")))
 	 * 				.retrieveAuditDetails(LogRequest.AuditTrailType.DOCUMENT);</pre>
 	 * @vapil.response <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
@@ -260,6 +265,7 @@ public class LogRequest extends VaultRequest {
 	 * <i>Example 4 - ObjectAuditResponse</i>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
+	 * 				.setEvents(new HashSet&lt;&gt;(Arrays.asList("Create", "Update")))
 	 * 				.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);</pre>
 	 * @vapil.response <pre>
 	 * <i>Example 4 - ObjectAuditResponse</i>
@@ -322,6 +328,11 @@ public class LogRequest extends VaultRequest {
 			request.addQueryParam(PARAM_FORMAT_RESULT, formatResult);
 		}
 
+		if (events != null && !events.isEmpty()) {
+			String eventsList = events.stream().collect(Collectors.joining(","));
+			request.addQueryParam(PARAM_EVENT, eventsList);
+		}
+
 		request.addQueryParam(PARAM_LIMIT, limit);
 
 		//special case, if all dates, then return jobcreateresponse
@@ -368,7 +379,7 @@ public class LogRequest extends VaultRequest {
 	 * @return DocumentAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-document</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-complete-audit-history-for-a-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -443,7 +454,7 @@ public class LogRequest extends VaultRequest {
 	 * @return ObjectAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-complete-audit-history-for-a-single-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-complete-audit-history-for-a-single-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
@@ -512,13 +523,13 @@ public class LogRequest extends VaultRequest {
 	 * <p>
 	 * Retrieve details about the email notifications sent by Vault. Details include the notification date, recipient, subject, and delivery status.
 	 * <p>
-	 *
+	 * @param <T>            Response Type class
 	 * @return Returns one of the following:<br>
 	 * EmailNotificationHistoryResponse
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/notifications/histories</pre>
-	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/22.3/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-email-notification-histories</a>
+	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/23.1/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-email-notification-histories</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - EmailNotificationHistoryResponse</i>
 	 * EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
@@ -633,7 +644,7 @@ public class LogRequest extends VaultRequest {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/api_usage?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-daily-api-usage</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-daily-api-usage</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -693,7 +704,7 @@ public class LogRequest extends VaultRequest {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/runtime?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/22.3/#download-sdk-runtime-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/23.1/#download-sdk-runtime-log</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -945,6 +956,17 @@ public class LogRequest extends VaultRequest {
 	 */
 	public LogRequest setOutputPath(String outputPath) {
 		this.outputPath = outputPath;
+		return this;
+	}
+
+	/**
+	 * Specify audit events when retrieving object or documents audit trails
+	 *
+	 * @param events Comma-separated list of one or more audit events
+	 * @return The Request
+	 */
+	public LogRequest setEvents(Set<String> events) {
+		this.events = events;
 		return this;
 	}
 }

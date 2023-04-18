@@ -1,0 +1,17 @@
+{
+  "authenticationType": "BASIC",
+  "idpOauthAccessToken": "",
+  "idpOauthScope": "openid",
+  "idpUsername": "",
+  "idpPassword": "",
+  "vaultUsername": "",
+  "vaultPassword": "",
+  "vaultDNS": "",
+  "vaultSessionId": "",
+  "vaultClientId": "verteobiotech-vault-quality-client-myintegration",
+  "vaultOauthClientId": "",
+  "vaultOauthProfileId": "",
+  "logApiErrors": true,
+  "httpTimeout": null,
+  "validateSession": true
+}

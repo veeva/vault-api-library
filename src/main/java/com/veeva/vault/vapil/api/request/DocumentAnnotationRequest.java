@@ -15,7 +15,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Document Annotation Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#document-annotations">https://developer.veevavault.com/api/22.3/#document-annotations</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#document-annotations">https://developer.veevavault.com/api/23.1/#document-annotations</a>
  */
 public class DocumentAnnotationRequest extends VaultRequest {
 	// API Endpoints
@@ -42,7 +42,7 @@ public class DocumentAnnotationRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/annotations</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-document-annotations' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-document-annotations</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-document-annotations' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-document-annotations</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To File</i>
 	 * VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
@@ -83,7 +83,7 @@ public class DocumentAnnotationRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/annotations</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-document-version-annotations' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-document-version-annotations</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-document-version-annotations' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-document-version-annotations</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 	 * 				.setOutputPath(outputPath.toString())
@@ -121,7 +121,7 @@ public class DocumentAnnotationRequest extends VaultRequest {
 	 * @return DocumentAnnotationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/anchors</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-anchor-ids' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-anchor-ids</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-anchor-ids' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-anchor-ids</a>
 	 * @vapil.request <pre>
 	 * DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 	 * 				.retrieveAnchorIds(docId);</pre>
@@ -158,7 +158,7 @@ public class DocumentAnnotationRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/doc-export-annotations-to-csv</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-document-version-notes-as-csv' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-document-version-notes-as-csv</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-document-version-notes-as-csv' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-document-version-notes-as-csv</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To File</i>
 	 * VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
@@ -203,7 +203,7 @@ public class DocumentAnnotationRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/export-video-annotations</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-video-annotations' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-video-annotations</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-video-annotations' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-video-annotations</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 	 * 				.setOutputPath(outputPath.toString())
@@ -231,7 +231,7 @@ public class DocumentAnnotationRequest extends VaultRequest {
 	 * @return DocumentAnnotationResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}/annotations</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#upload-document-annotations' target='_blank'>https://developer.veevavault.com/api/22.3/#upload-document-annotations</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#upload-document-annotations' target='_blank'>https://developer.veevavault.com/api/23.1/#upload-document-annotations</a>
 	 * @vapil.request <pre>
 	 * DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 	 * 				.setInputPath(inputPath.toString())
@@ -265,7 +265,7 @@ public class DocumentAnnotationRequest extends VaultRequest {
 	 * @return DocumentAnnotationResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/annotations</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#upload-document-version-annotations' target='_blank'>https://developer.veevavault.com/api/22.3/#upload-document-version-annotations</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#upload-document-version-annotations' target='_blank'>https://developer.veevavault.com/api/23.1/#upload-document-version-annotations</a>
 	 * @vapil.request <pre>
 	 * DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 	 * 				.setInputPath(inputPath.toString())

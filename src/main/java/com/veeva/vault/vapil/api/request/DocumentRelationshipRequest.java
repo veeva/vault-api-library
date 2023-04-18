@@ -18,7 +18,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Document Relationship Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#document-relationships">https://developer.veevavault.com/api/22.3/#document-relationships</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#document-relationships">https://developer.veevavault.com/api/23.1/#document-relationships</a>
  */
 public class DocumentRelationshipRequest extends VaultRequest {
 	// API Endpoints
@@ -47,7 +47,7 @@ public class DocumentRelationshipRequest extends VaultRequest {
 	 * @return DocumentRelationshipMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/types/{type}/relationships</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-document-type-relationships' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-document-type-relationships</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-document-type-relationships' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-document-type-relationships</a>
 	 * @vapil.request <pre>
 	 * DocumentRelationshipMetadataResponse response = vaultClient.newRequest(DocumentRelationshipRequest.class)
 	 * 					.retrieveDocumentTypeRelationships(documentType);</pre>
@@ -116,7 +116,7 @@ public class DocumentRelationshipRequest extends VaultRequest {
 	 * @return DocumentRelationshipResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/relationships</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-document-relationships' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-document-relationships</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-document-relationships' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-document-relationships</a>
 	 * @vapil.request <pre>
 	 * DocumentRelationshipRetrieveResponse response = vaultClient.newRequest(DocumentRelationshipRequest.class)
 	 * 				.retrieveDocumentRelationships(docId, majorVersion, minorVersion);</pre>
@@ -158,7 +158,7 @@ public class DocumentRelationshipRequest extends VaultRequest {
 	 * @return DocumentRelationshipRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/relationships/{relationship_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-document-relationship' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-document-relationship</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-document-relationship' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-document-relationship</a>
 	 * @vapil.request <pre>
 	 * DocumentRelationshipRetrieveResponse response = vaultClient.newRequest(DocumentRelationshipRequest.class)
 	 * 				.retrieveDocumentRelationship(docId, majorVersion, minorVersion, relationshipId);</pre>
@@ -201,7 +201,7 @@ public class DocumentRelationshipRequest extends VaultRequest {
 	 * @return DocumentRelationshipResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{document_id}/versions/{major_version_number__v}/{minor_version_number__v}/relationships</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#create-single-document-relationship' target='_blank'>https://developer.veevavault.com/api/22.3/#create-single-document-relationship</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#create-single-document-relationship' target='_blank'>https://developer.veevavault.com/api/23.1/#create-single-document-relationship</a>
 	 * @vapil.request <pre>
 	 * DocumentRelationshipResponse response = vaultClient.newRequest(DocumentRelationshipRequest.class)
 	 * 				.createSingleDocumentRelationship(docId, majorVersion, minorVersion, docRelationship);</pre>
@@ -235,7 +235,7 @@ public class DocumentRelationshipRequest extends VaultRequest {
 	 * @return DocumentRelationshipBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/relationships/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#create-multiple-document-relationships' target='_blank'>https://developer.veevavault.com/api/22.3/#create-multiple-document-relationships</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#create-multiple-document-relationships' target='_blank'>https://developer.veevavault.com/api/23.1/#create-multiple-document-relationships</a>
 	 */
 	public DocumentRelationshipBulkResponse createMultipleDocumentRelationships() {
 		return bulkDocumentRelationshipOperation(HttpMethod.POST, URL_DOCUMENT_RELATIONSHIPS_BATCH);
@@ -253,7 +253,7 @@ public class DocumentRelationshipRequest extends VaultRequest {
 	 * @return DocumentRelationshipResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{document_id}/versions/{major_version_number__v}/{minor_version_number__v}/relationships/{relationship_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#delete-single-document-relationship' target='_blank'>https://developer.veevavault.com/api/22.3/#delete-single-document-relationship</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#delete-single-document-relationship' target='_blank'>https://developer.veevavault.com/api/23.1/#delete-single-document-relationship</a>
 	 * @vapil.request <pre>
 	 * DocumentRelationshipResponse response = vaultClient.newRequest(DocumentRelationshipRequest.class)
 	 * 				.deleteSingleDocumentRelationship(docId, majorVersion, minorVersion, relationshipId);</pre>
@@ -285,7 +285,7 @@ public class DocumentRelationshipRequest extends VaultRequest {
 	 * @return DocumentRelationshipBulkResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/relationships/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#delete-multiple-document-relationships' target='_blank'>https://developer.veevavault.com/api/22.3/#delete-multiple-document-relationships</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#delete-multiple-document-relationships' target='_blank'>https://developer.veevavault.com/api/23.1/#delete-multiple-document-relationships</a>
 	 */
 	public DocumentRelationshipBulkResponse deleteMultipleDocumentRelationships() {
 		return bulkDocumentRelationshipOperation(HttpMethod.DELETE, URL_DOCUMENT_RELATIONSHIPS_BATCH);

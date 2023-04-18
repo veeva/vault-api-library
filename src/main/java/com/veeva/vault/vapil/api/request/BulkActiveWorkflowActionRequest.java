@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * The Bulk Active Workflow APIs retrieve information about actions and action details and to execute actions.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#bulk-active-workflow-actions">https://developer.veevavault.com/api/22.3/#bulk-active-workflow-actions</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#bulk-active-workflow-actions">https://developer.veevavault.com/api/23.1/#bulk-active-workflow-actions</a>
  */
 public class BulkActiveWorkflowActionRequest extends VaultRequest {
 
@@ -33,7 +33,7 @@ public class BulkActiveWorkflowActionRequest extends VaultRequest {
 	 * @return BulkWorkflowJobStartResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/object/workflow/actions/canceltasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Cancel By Task Ids</i>
 	 * List&lt;Integer&gt; ids = Arrays.asList(new Integer[]{1000,1001});
@@ -79,7 +79,7 @@ public class BulkActiveWorkflowActionRequest extends VaultRequest {
 	 * @return BulkWorkflowJobStartResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/object/workflow/actions/cancelworkflows</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows</a>
 	 * @vapil.request <pre>
 	 * List&lt;String&gt; ids = Arrays.asList(new String[]{"1","2","3"});
 	 * BulkWorkflowJobStartResponse response = vaultClient.newRequest(BulkActiveWorkflowActionRequest.class)
@@ -111,7 +111,7 @@ public class BulkActiveWorkflowActionRequest extends VaultRequest {
 	 * @return BulkWorkflowJobStartResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/object/workflow/actions/reassigntasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows</a>
 	 * @vapil.request <pre>
 	 * BulkWorkflowJobStartResponse response = vaultClient.newRequest(BulkActiveWorkflowActionRequest.class)
 	 * 				.reassignTasks(12345, 67890);</pre>
@@ -142,7 +142,7 @@ public class BulkActiveWorkflowActionRequest extends VaultRequest {
 	 * @return BulkWorkflowJobStartResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/object/workflow/actions/replaceworkflowowner</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/22.3/#initiate-workflow-actions-on-multiple-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows' target='_blank'>https://developer.veevavault.com/api/23.1/#initiate-workflow-actions-on-multiple-workflows</a>
 	 * @vapil.request <pre>
 	 * BulkWorkflowJobStartResponse response = vaultClient.newRequest(BulkActiveWorkflowActionRequest.class)
 	 * 				.replaceWorkflowOwner(12345, 67890);</pre>
@@ -171,7 +171,7 @@ public class BulkActiveWorkflowActionRequest extends VaultRequest {
 	 * @return BulkWorkflowActionDetailsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/object/workflow/actions/{action}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-bulk-workflow-actions-details' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-bulk-workflow-actions-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-bulk-workflow-actions-details' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-bulk-workflow-actions-details</a>
 	 * @vapil.request <pre>
 	 * BulkWorkflowActionDetailsResponse resp = vaultClient.newRequest(BulkActiveWorkflowActionRequest.class)
 	 * 				.retrieveBulkWorkflowActionDetails();</pre>
@@ -226,7 +226,7 @@ public class BulkActiveWorkflowActionRequest extends VaultRequest {
 	 * @return BulkWorkflowActionsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/object/workflow/actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-bulk-workflow-actions' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-bulk-workflow-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-bulk-workflow-actions' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-bulk-workflow-actions</a>
 	 * @vapil.request <pre>
 	 * BulkWorkflowActionsResponse resp = vaultClient.newRequest(BulkActiveWorkflowActionRequest.class)
 	 * 				.retrieveBulkWorkflowActions();</pre>

@@ -31,6 +31,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Tag("LogRequest")
 @ExtendWith(VaultClientParameterResolver.class)
@@ -64,11 +67,13 @@ public class LogRequestTest {
 	}
 
 	@Test
+	@DisplayName("Should successfully retrieve document audit details with specified query params")
 	public void testRetrieveDocumentAuditDetails(VaultClient vaultClient) {
 		DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
 				.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
 				.setLimit(4)
+				.setEvents(new HashSet<>(Arrays.asList("UploadDocBulk", "ExportBinder")))
 				.retrieveAuditDetails(LogRequest.AuditTrailType.DOCUMENT);
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -119,10 +124,12 @@ public class LogRequestTest {
 	}
 
 	@Test
+	@DisplayName("Should successfully retrieve object audit details with specified query params")
 	public void testRetrieveObjectAuditDetails(VaultClient vaultClient) {
 		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20))
 				.setLimit(10)
+				.setEvents(new HashSet<>(Arrays.asList("Create", "Update")))
 				.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
 
 		Assertions.assertTrue(response.isSuccessful());

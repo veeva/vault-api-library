@@ -9,6 +9,7 @@ package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.model.response.GroupRetrieveResponse;
 import com.veeva.vault.vapil.api.model.response.GroupResponse;
+import com.veeva.vault.vapil.api.model.response.GroupRetrieveAutoManagedResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataGroupResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Retrieve Domain specific information
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/22.3/#domain-information">https://developer.veevavault.com/api/22.3/#domain-information</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#domain-information">https://developer.veevavault.com/api/23.1/#domain-information</a>
  */
 public class GroupRequest extends VaultRequest {
 	private static Logger log = Logger.getLogger(GroupRequest.class);
@@ -63,7 +64,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return The response
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/groups</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-group-metadata' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-group-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-group-metadata' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-group-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataGroupResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.retrieveGroupMetadata();</pre>
@@ -101,31 +102,52 @@ public class GroupRequest extends VaultRequest {
 	/**
 	 * Retrieve all groups except Auto Managed groups.
 	 *
-	 * @param autoManaged Set to true to retrieve Auto Managed groups, false to retrieve all groups except Auto Managed groups
 	 * @return GroupRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/groups</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-all-groups' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-all-groups</a>
-	 * @vapil.api <pre>
-	 * GET /api/{version}/objects/groups/auto</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#' target='_blank'>https://developer.veevavault.com/api/22.3/#</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-all-groups' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-all-groups</a>
 	 * @vapil.request <pre>
 	 * GroupRetrieveResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.setIncludeImplied(includeImplied)
-	 * 				.retrieveAllGroups(autoManaged);</pre>
+	 * 				.retrieveAllGroups();</pre>
 	 * @vapil.response <pre>
-	 * System.out.println("autoManaged = " + autoManaged);
-	 * System.out.println("includeImplied = " + includeImplied);
-	 * System.out.println("Status = " + resp.getResponseStatus());
+	 * for (GroupRetrieveResponse.GroupNode groupNode : response.getGroups()) {
+	 * 			System.out.println("Label: " + groupNode.getGroup().getLabel());
+	 * }
 	 * </pre>
 	 */
-	public GroupRetrieveResponse retrieveAllGroups(boolean autoManaged) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(autoManaged ? URL_GROUPS_RETRIEVE_ALL_AUTO : URL_GROUPS_RETRIEVE_ALL));
+	public GroupRetrieveResponse retrieveAllGroups() {
+		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_GROUPS_RETRIEVE_ALL));
 
 		if (includeImplied != null && includeImplied)
 			request.addQueryParam("includeImplied", String.valueOf(includeImplied).toLowerCase());
 
 		return send(HttpMethod.GET, request, GroupRetrieveResponse.class);
+	}
+
+	/**
+	 * Retrieve all Auto Managed groups.
+	 *
+	 * @return GroupRetrieveResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/objects/groups/auto</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-all-groups' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-all-groups</a>
+	 * @vapil.request <pre>
+	 * GroupRetrieveResponse resp = vaultClient.newRequest(GroupRequest.class)
+	 * 				.retrieveAllGroupsAutoManaged();</pre>
+	 * @vapil.response <pre>
+	 * for (GroupRetrieveAutoManagedResponse.Data data : response.getData()) {
+	 * 			System.out.println("Label: " + data.getGroup().getLabel());
+	 * }
+	 * </pre>
+	 */
+	public GroupRetrieveAutoManagedResponse retrieveAllGroupsAutoManaged() {
+		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_GROUPS_RETRIEVE_ALL_AUTO));
+
+		if (includeImplied != null && includeImplied)
+			request.addQueryParam("includeImplied", String.valueOf(includeImplied).toLowerCase());
+
+		return send(HttpMethod.GET, request, GroupRetrieveAutoManagedResponse.class);
 	}
 
 	/**
@@ -135,7 +157,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/groups/{group_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#retrieve-group' target='_blank'>https://developer.veevavault.com/api/22.3/#retrieve-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-group' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-group</a>
 	 * @vapil.request <pre>
 	 * GroupRetrieveResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.setIncludeImplied(includeImplied)
@@ -164,7 +186,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/groups</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#create-group' target='_blank'>https://developer.veevavault.com/api/22.3/#create-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#create-group' target='_blank'>https://developer.veevavault.com/api/23.1/#create-group</a>
 	 * @vapil.request <pre>
 	 * GroupResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.createGroup(label);</pre>
@@ -193,7 +215,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/groups/{group_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#update-group' target='_blank'>https://developer.veevavault.com/api/22.3/#update-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#update-group' target='_blank'>https://developer.veevavault.com/api/23.1/#update-group</a>
 	 * @vapil.request <pre>
 	 * GroupResponse resp = vaultClient.newRequest(GroupRequest.class).setLabel("testGroup" + rndNumStr)
 	 * 				.setActive(false)
@@ -224,7 +246,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/groups/{group_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/22.3/#delete-group' target='_blank'>https://developer.veevavault.com/api/22.3/#delete-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#delete-group' target='_blank'>https://developer.veevavault.com/api/23.1/#delete-group</a>
 	 * @vapil.request <pre>
 	 * GroupResponse resp = vaultClient.newRequest(GroupRequest.class).deleteGroup(groupId);</pre>
 	 * @vapil.response <pre>

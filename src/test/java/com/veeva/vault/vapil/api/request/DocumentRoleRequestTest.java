@@ -3,7 +3,6 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.DocumentRequestType;
 import com.veeva.vault.vapil.api.model.response.*;
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,7 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

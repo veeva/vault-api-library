@@ -22,7 +22,7 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 public class QueryRequestTest {
 	
 	@Test
-	public void TestBasicQuery(VaultClient vaultClient) {
+	public void testBasicQuery(VaultClient vaultClient) {
 		String query = "select id, username__sys from user__sys";
 		QueryResponse resp = vaultClient.newRequest(QueryRequest.class)
 				.setDescribeQuery(true)
@@ -32,7 +32,7 @@ public class QueryRequestTest {
 	}
 	
 	@Test
-	public void TestManualPagination(VaultClient vaultClient) {
+	public void testManualPagination(VaultClient vaultClient) {
 		String query = "select id,name__v,title__v,merge_fields__v,major_version_number__v from documents limit 3";
 
 		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
@@ -49,7 +49,7 @@ public class QueryRequestTest {
 	}
 
 	@Test
-	public void TestRecordProperties(VaultClient vaultClient) {
+	public void testRecordProperties(VaultClient vaultClient) {
 		String query = "select id, username__sys from user__sys";
 		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
 				.setRecordProperties(QueryRequest.RecordPropertyType.ALL)

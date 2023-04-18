@@ -10,7 +10,6 @@ package com.veeva.vault.vapil.api.request;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.client.VaultClientId;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse.APIResponseError;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
@@ -324,10 +323,10 @@ public abstract class VaultRequest {
 			request.addHeaderParam(HTTP_HEADER_AUTHORIZATION, vaultClient.getSessionId());
 
 		// Add the client id 
-		VaultClientId vaultClientId = vaultClient.getVaultClientId();
+		String vaultClientId = vaultClient.getVaultClientId();
 
-		if (vaultClientId != null && vaultClientId.isValid())
-			request.addHeaderParam(HTTP_HEADER_VAULT_CLIENT_ID, vaultClientId.getClientId());
+		if (vaultClientId != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_CLIENT_ID, vaultClientId);
 
 		return request;
 	}

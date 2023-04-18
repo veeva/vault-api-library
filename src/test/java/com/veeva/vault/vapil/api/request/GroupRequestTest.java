@@ -10,6 +10,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.metadata.Group;
 import com.veeva.vault.vapil.api.model.response.GroupResponse;
 import com.veeva.vault.vapil.api.model.response.GroupRetrieveResponse;
+import com.veeva.vault.vapil.api.model.response.GroupRetrieveAutoManagedResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataGroupResponse;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +39,14 @@ public class GroupRequestTest {
 	public void testRetrieveAllGroups(VaultClient vaultClient) {
 		GroupRetrieveResponse response = vaultClient.newRequest(GroupRequest.class)
 				.setIncludeImplied(true)
-				.retrieveAllGroups(true);
+				.retrieveAllGroups();
+		Assertions.assertTrue(response.isSuccessful());
+	}
+
+	@Test
+	public void testRetrieveAllGroupsAutoManaged(VaultClient vaultClient) {
+		GroupRetrieveAutoManagedResponse response = vaultClient.newRequest(GroupRequest.class)
+				.retrieveAllGroupsAutoManaged();
 		Assertions.assertTrue(response.isSuccessful());
 	}
 

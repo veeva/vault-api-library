@@ -160,6 +160,15 @@ public class Group extends VaultModel {
 		this.set("type__v", type);
 	}
 
+	@JsonProperty("allow_delegation_among_members__v")
+	public Boolean getAllowDelegationAmongMembers() {
+		return getBoolean("allow_delegation_among_members__v");
+	}
+
+	public void setAllowDelegationAmongMembers(Boolean allow) {
+		this.set("allow_delegation_among_members__v", allow);
+	}
+
 	public static class ImpliedMember extends VaultModel {
 
 		@JsonProperty("id")

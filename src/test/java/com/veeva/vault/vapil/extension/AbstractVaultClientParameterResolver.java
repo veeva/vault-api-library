@@ -2,8 +2,6 @@ package com.veeva.vault.vapil.extension;
 
 import com.veeva.vault.vapil.TestProperties;
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.client.VaultClientBuilder;
-import com.veeva.vault.vapil.api.client.VaultClientId;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
@@ -17,34 +15,28 @@ import java.util.Properties;
 
 public abstract class AbstractVaultClientParameterResolver  implements ParameterResolver {
 
-    final TestProperties prop = new TestProperties();
+    final TestProperties testProperties = new TestProperties();
     private static final String CURRENT_JVM = "current.jvm";
     private static final String SESSION_SUFFIX = ".sessionid";
     private VaultClient vaultClient;
 
     public AbstractVaultClientParameterResolver() {
         try {
-            VaultClientId vaultClientId = new VaultClientId(prop.getClientIdCompany(),
-                    prop.getClientIdOrganization(),
-                    prop.getClientIdTeam(),
-                    prop.isClient(),
-                    getClass().getSimpleName());
-
             String sessionId = getCurrentSessionId();
             if (sessionId != null) {
-                vaultClient = VaultClientBuilder
+                vaultClient = VaultClient
                         .newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
-                        .withVaultDNS(prop.getVaultDNS())
+                        .withVaultDNS(testProperties.getVaultDNS())
                         .withVaultSessionId(sessionId)
-                        .withVaultClientId(vaultClientId)
+                        .withVaultClientId(testProperties.getVaultClientId())
                         .build();
             } else {
-                vaultClient = VaultClientBuilder
+                vaultClient = VaultClient
                         .newClientBuilder(VaultClient.AuthenticationType.BASIC)
-                        .withVaultDNS(prop.getVaultDNS(getVaultPropertyTag()))
-                        .withVaultUsername(prop.getVaultUsername())
-                        .withVaultPassword(prop.getVaultPassword())
-                        .withVaultClientId(vaultClientId)
+                        .withVaultDNS(testProperties.getVaultDNS(getVaultPropertyTag()))
+                        .withVaultUsername(testProperties.getVaultUsername())
+                        .withVaultPassword(testProperties.getVaultPassword())
+                        .withVaultClientId(testProperties.getVaultClientId())
                         .build();
 
 

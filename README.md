@@ -24,7 +24,7 @@ VAPIL provides full API endpoint coverage for Vault integrations.
 	<li>Expose API requests/responses in clearly defined Java classes, getters, setters, and methods</li>
 </ul>
 <b>Dedication to documentation, available in <a
-		href="https://veeva.github.io/vault-api-library/javadoc/22.3.2/index.html" target="_blank">Javadoc</a></b>
+		href="https://veeva.github.io/vault-api-library/javadoc/23.1.0/index.html" target="_blank">Javadoc</a></b>
 <ul>
 	<li>Easily find API endpoints from Vault help webpage in the source or Javadoc</li>
 	<li>One-to-one alignment between VAPIL methods and the Vault API endpoint/documentation</li>
@@ -69,7 +69,7 @@ Source code is available on GitHub: <a
      &lt;dependency&gt;
           &lt;groupId&gt;com.veeva.vault&lt;/groupId&gt;
           &lt;artifactId&gt;vapil&lt;/artifactId&gt;
-          &lt;version&gt;22.3.2&lt;/version&gt;
+          &lt;version&gt;23.1.0&lt;/version&gt;
      &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre>
 	</li>
@@ -78,14 +78,14 @@ Source code is available on GitHub: <a
 public class HelloWorld {
 	public static void main(String[] args) {
 		// Set the Vault Client Id, which is required for all API calls
-		VaultClientId vaultClientId = new VaultClientId("verteobiotech","vault","quality",true,"myintegration");
+		VaultClientId vaultClientIdBuilder = new VaultClientId("verteobiotech","vault","quality",true,"myintegration");
 		// Instantiate the VAPIL VaultClient using user name and password authentication
 		VaultClient vaultClient = VaultClientBuilder
 				.newClientBuilder(VaultClient.AuthenticationType.BASIC)
 				.withVaultDNS("verteobiotech.veevavault.com")
 				.withVaultUsername("username@verteobiotech.com")
 				.withVaultPassword("password")
-				.withVaultClientId(vaultClientId)
+				.withVaultClientId(vaultClientIdBuilder)
 				.build();
 		// Perform a VQL query and display the results
 		QueryResponse resp = vaultClient.newRequest(QueryRequest.class)
@@ -117,14 +117,14 @@ Name = Mark Arnold, Email = mark.arnold@verteobiotech.com
 
 <b>Instantiate the Vault Client with an Existing Session</b>
 <pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
-VaultClientId vaultClientId = new VaultClientId("verteobiotech","vault","quality",true,"myintegration");
+VaultClientId vaultClientIdBuilder = new VaultClientId("verteobiotech","vault","quality",true,"myintegration");
 
 String sessionId = "xxxxxxxxxxxxxxxxx";
 VaultClient vaultClient = VaultClientBuilder
 	.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
 	.withVaultDNS("verteobiotech.veevavault.com")
 	.withVaultSessionId(sessionId)
-	.withVaultClientId(vaultClientId)
+	.withVaultClientId(vaultClientIdBuilder)
 	.build();
 </pre>
 
@@ -161,8 +161,8 @@ ObjectRecordBulkResponse objectResponse = vaultClient.newRequest(ObjectRecordReq
 <b>Retrieve the Audit Trail for Documents in past 30 days</b>
 <pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
 DocumentAuditResponse auditResponse = vaultClient.newRequest(LogRequest.class)
-		.setStartDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
-		.setEndDate(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
+		.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
+		.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
 		.setLimit(4)
 		.retrieveAuditDetails(LogRequest.AuditTrailType.DOCUMENT);
 

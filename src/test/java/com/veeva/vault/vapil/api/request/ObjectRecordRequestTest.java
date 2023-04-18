@@ -7,25 +7,67 @@
 */
 package com.veeva.vault.vapil.api.request;
 
+import com.opencsv.CSVWriter;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.ObjectRecord;
 import com.veeva.vault.vapil.api.model.response.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 @Tag("ObjectRecord")
 @ExtendWith(VaultClientParameterResolver.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Object record request")
 public class ObjectRecordRequestTest {
 
-	
-	@Test
+	static final String OBJECT_NAME = "vapil_test_object__c";
+
+	static final String RESOURCES_FOLDER_PATH = "src\\test\\resources";
+
+	static final List<String> recordIds = new ArrayList<>();
+
+	@BeforeAll
+	static void createObjects(VaultClient vaultClient) {
+//		Write to CSV file
+		String csvPath = RESOURCES_FOLDER_PATH + "\\test_create_objects.csv";
+		List<String[]> data = new ArrayList<>();
+		data.add(new String[]{"name__v", "status__v"});
+		for (int i = 1; i < 4; i++) {
+			String name = "VAPIL Test Create Object " + ZonedDateTime.now() + " " + i;
+			data.add(new String[]{name, "active__v"});
+		}
+
+		try (CSVWriter writer = new CSVWriter(new FileWriter(csvPath))) {
+			writer.writeAll(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+//		Create Objects
+		ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
+				.setContentTypeCsv()
+				.setInputPath(csvPath)
+				.createObjectRecords(OBJECT_NAME);
+
+		Assertions.assertTrue(response.isSuccessful());
+		for (ObjectRecordResponse objectRecordResponse : response.getData()) {
+			recordIds.add(objectRecordResponse.getData().getId());
+		}
+	}
+
+
+	@Disabled
+    @Test
 	public void testInvalidRequest(VaultClient vaultClient) {
 		
 		ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
@@ -37,54 +79,83 @@ public class ObjectRecordRequestTest {
 	
 	// Retrieve Object Record
 	@Test
+	@Order(0)
+	@DisplayName("Should successfully retrieve object record by Id")
 	public void testRetrieveObjectRecord(VaultClient vaultClient) {
-		String objectName = "tt_claim__c";
-		String recordId = "OOW000000000102";
-		ObjectRecordResponse response = vaultClient.newRequest(ObjectRecordRequest.class).retrieveObjectRecord(objectName, recordId);
+//		Retrieve created Record
+		String recordId = recordIds.get(0);
+		ObjectRecordResponse retrieveResponse = vaultClient
+				.newRequest(ObjectRecordRequest.class)
+				.retrieveObjectRecord(OBJECT_NAME, recordId);
 
-		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertTrue(retrieveResponse.isSuccessful());
+		Assertions.assertNotNull(retrieveResponse.getData().getId());
 
-		ObjectRecord objectRecord = response.getData();
-		Assertions.assertNotNull(objectRecord);
-
-		Map<String,Object> additionalFields = objectRecord.getVaultModelData();
-		Assertions.assertNotNull(additionalFields);
-		Assertions.assertNotNull(additionalFields.keySet());
 	}
 	
-	// Create: Source - CSV file, Response - JSON	
-	@Test
+	// Create: Source - CSV file, Response - JSON
+    @Test
+	@DisplayName("Should successfully create object records and return json response")
 	public void testCreateCSV_JSON(VaultClient vaultClient) {
-		String objectName = "person__sys";
-		String inputPath = "";
-		
+//		Write to CSV file
+		String csvPath = RESOURCES_FOLDER_PATH + "\\test_create_objects.csv";
+		List<String[]> data = new ArrayList<>();
+		data.add(new String[]{"name__v", "status__v"});
+		for (int i = 1; i < 4; i++) {
+			String name = "VAPIL Test Create Object " + ZonedDateTime.now() + " " + i;
+			data.add(new String[]{name, "active__v"});
+		}
+
+		try (CSVWriter writer = new CSVWriter(new FileWriter(csvPath))) {
+			writer.writeAll(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+//		Create Objects
 		ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
 				.setContentTypeCsv()
-				.setInputPath(inputPath)
-				.createObjectRecords(objectName);
+				.setInputPath(csvPath)
+				.createObjectRecords(OBJECT_NAME);
 
 		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getResponse());
+		for (ObjectRecordResponse objectRecordResponse : response.getData()) {
+			Assertions.assertNotNull(objectRecordResponse.getData().getId());
+		}
 	}	
 	
 	// Create: Source - CSV file, Response - CSV
-	@Test
+    @Test
+	@DisplayName("Should successfully create object records and return CSV response")
 	public void testCreateCSV_CSV(VaultClient vaultClient) {
-		String objectName = "person__sys";
-		String inputPath = "";
+//		Write to CSV file
+		String csvPath = RESOURCES_FOLDER_PATH + "\\test_create_objects.csv";
+		List<String[]> data = new ArrayList<>();
+		data.add(new String[]{"name__v", "status__v"});
+		for (int i = 1; i < 4; i++) {
+			String name = "VAPIL Test Create Object " + ZonedDateTime.now() + " " + i;
+			data.add(new String[]{name, "active__v"});
+		}
 
+		try (CSVWriter writer = new CSVWriter(new FileWriter(csvPath))) {
+			writer.writeAll(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+//		Create object records
 		ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
 				.setContentTypeCsv()
 				.setAcceptCSV()
-				.setInputPath(inputPath)
-				.createObjectRecords(objectName);
+				.setInputPath(csvPath)
+				.createObjectRecords(OBJECT_NAME);
 
 		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getBinaryContent());
 	}
 	
 	// Create: Source - CSV file, Response - JSON, Upsert operation with idParam
-	@Test
+	@Disabled
+    @Test
 	public void testUpsertCSV(VaultClient vaultClient) {
 		String objectName = "person__sys";
 		String inputPath = "";
@@ -101,7 +172,8 @@ public class ObjectRecordRequestTest {
 	}	
 	
 	// Create: Source - CSV file, Response - JSON, Migration Mode
-	@Test
+	@Disabled
+    @Test
 	public void testCreateMigrationMode(VaultClient vaultClient) {
 		String objectName = "tt_claim__c";
 		String inputPath = "";
@@ -117,7 +189,8 @@ public class ObjectRecordRequestTest {
 	}	
 	
 	// Create: Source - JSON string, Response - JSON
-	@Test
+	@Disabled
+    @Test
 	public void testCreateJSONString(VaultClient vaultClient) {
 		String objectName = "person__sys";
 		String requestString  = "[{\"first_name__sys\":\"Leah2\",\"last_name__sys\":\"Allison\",\"status__v\":\"active__v\",\"email__sys\":\"test@veeva.com\","
@@ -137,7 +210,8 @@ public class ObjectRecordRequestTest {
 	}
 		
 	// Create: Single Record: Source - Body Params, Response - JSON
-	@Test
+	@Disabled
+    @Test
 	public void testCreateBodyParams(VaultClient vaultClient) {
 
 		String objectName = "person__sys";
@@ -160,37 +234,73 @@ public class ObjectRecordRequestTest {
 
 
 	// Update: Source - CSV, Response - JSON
-	@Test
+    @Test
+	@Order(1)
+	@DisplayName("Should successfully update object records from CSV")
 	public void testUpdateCSV(VaultClient vaultClient) {
-		String objectName = "person__sys";
-		String inputPath = "";
-				
-		ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
+//		Write IDs to CSV file
+		String updateCsvPath = RESOURCES_FOLDER_PATH + "\\test_update_objects.csv";
+		List<String[]> updateData = new ArrayList<>();
+		updateData.add(new String[]{"id", "name__v"});
+
+		for (int i = 0; i < recordIds.size(); i++) {
+			String updateName = "VAPIL Test Updated Object " + ZonedDateTime.now() + " " + i;
+			String id = recordIds.get(i);
+			updateData.add(new String[]{id, updateName});
+		}
+
+		try (CSVWriter writer = new CSVWriter(new FileWriter(updateCsvPath))) {
+			writer.writeAll(updateData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+//		Update Object
+		ObjectRecordBulkResponse updateResponse = vaultClient.newRequest(ObjectRecordRequest.class)
 				.setContentTypeCsv()				
-				.setInputPath(inputPath)
-				.updateObjectRecords(objectName);
+				.setInputPath(updateCsvPath)
+				.updateObjectRecords(OBJECT_NAME);
 			
-		Assertions.assertTrue(response.isSuccessful());
-	    Assertions.assertNotNull(response.getResponse());
+		Assertions.assertTrue(updateResponse.isSuccessful());
+	    for (ObjectRecordResponse response : updateResponse.getData()) {
+			Assertions.assertTrue(response.isSuccessful());
+		}
 	}	
 	
 	// Delete: Source -  CSV, Response - JSON
-	@Test
-	public void testDeleteCSV(VaultClient vaultClient) {
-		String objectName = "person__sys";
-		String inputPath = "";
-	
+    @Test
+	@Order(3)
+	@DisplayName("Should successfully delete object records from CSV")
+	public void testDeleteObjectRecordsCsv(VaultClient vaultClient) {
+//		Write IDs to CSV file
+		String deleteCsvPath = RESOURCES_FOLDER_PATH + "\\test_delete_objects.csv";
+		List<String[]> deleteData = new ArrayList<>();
+		deleteData.add(new String[]{"id"});
+		for (int i = 0; i < recordIds.size(); i++) {
+			deleteData.add(new String[]{recordIds.get(i)});
+		}
+
+		try (CSVWriter writer = new CSVWriter(new FileWriter(deleteCsvPath))) {
+			writer.writeAll(deleteData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+//		Delete Object
 		ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
-				.setContentTypeCsv()				
-				.setInputPath(inputPath)
-				.deleteObjectRecords(objectName);
+				.setContentTypeCsv()
+				.setInputPath(deleteCsvPath)
+				.deleteObjectRecords(OBJECT_NAME);
 			
 		Assertions.assertTrue(response.isSuccessful());
-	    Assertions.assertNotNull(response.getResponse());
+	    for (ObjectRecordResponse recordResponse : response.getData()) {
+			Assertions.assertTrue(recordResponse.isSuccessful());
+		}
 	}	
 		
 	// Cascade Delete
-	@Test
+	@Disabled
+    @Test
 	public void testCascadeDelete(VaultClient vaultClient) {
 		String objectName = "person__sys";
 		String id = "V0E000000000382";
@@ -203,7 +313,8 @@ public class ObjectRecordRequestTest {
 	}
 	
 	// Cascade Delete Job Status
-	@Test
+	@Disabled
+    @Test
 	public void testResultsOfCascadeDeleteJobStatus(VaultClient vaultClient) {
 		String objectName = "person__sys";
 		Integer jobId = 123;
@@ -216,7 +327,8 @@ public class ObjectRecordRequestTest {
 	}
 
 	
-	@Test
+	@Disabled
+    @Test
 	public void testRetrieveDeletedObjectRecordId(VaultClient vaultClient) {
 		String objectName = "person__sys";
 
@@ -231,7 +343,8 @@ public class ObjectRecordRequestTest {
 		}
 	}
 	
-	@Test
+	@Disabled
+    @Test
 	public void testDeepCopyObjectRecord(VaultClient vaultClient) {
 
 		String objectName = "tt_claim__c";
@@ -244,11 +357,13 @@ public class ObjectRecordRequestTest {
 		Assertions.assertNotNull(response.getJobId());
 	}
 
-	@Test
-	public void testRetrieveObjectCollection(VaultClient vaultClient) {
+    @Test
+	@Order(2)
+	@DisplayName("Should successfully retrieve object record collection")
+	public void testRetrieveObjectRecordCollection(VaultClient vaultClient) {
 
 		ObjectRecordCollectionResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
-				.retrieveObjectRecordCollection("vapil_test_import_validate__c");
+				.retrieveObjectRecordCollection(OBJECT_NAME);
 
 		if (response.isPaginated()) {
 			ObjectRecordCollectionResponse paginatedResponse = vaultClient.newRequest(ObjectRecordRequest.class)

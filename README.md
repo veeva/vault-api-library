@@ -24,7 +24,7 @@ VAPIL provides full API endpoint coverage for Vault integrations.
 	<li>Expose API requests/responses in clearly defined Java classes, getters, setters, and methods</li>
 </ul>
 <b>Dedication to documentation, available in <a
-		href="https://veeva.github.io/vault-api-library/javadoc/23.1.0/index.html" target="_blank">Javadoc</a></b>
+		href="https://veeva.github.io/vault-api-library/javadoc/23.1.1/index.html" target="_blank">Javadoc</a></b>
 <ul>
 	<li>Easily find API endpoints from Vault help webpage in the source or Javadoc</li>
 	<li>One-to-one alignment between VAPIL methods and the Vault API endpoint/documentation</li>
@@ -69,7 +69,7 @@ Source code is available on GitHub: <a
      &lt;dependency&gt;
           &lt;groupId&gt;com.veeva.vault&lt;/groupId&gt;
           &lt;artifactId&gt;vapil&lt;/artifactId&gt;
-          &lt;version&gt;23.1.0&lt;/version&gt;
+          &lt;version&gt;23.1.1&lt;/version&gt;
      &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre>
 	</li>
@@ -78,14 +78,14 @@ Source code is available on GitHub: <a
 public class HelloWorld {
 	public static void main(String[] args) {
 		// Set the Vault Client Id, which is required for all API calls
-		VaultClientId vaultClientIdBuilder = new VaultClientId("verteobiotech","vault","quality",true,"myintegration");
+		String vaultClientId = "verteobiotech-vault-quality-client-myintegration";
 		// Instantiate the VAPIL VaultClient using user name and password authentication
-		VaultClient vaultClient = VaultClientBuilder
+		VaultClient vaultClient = VaultClient
 				.newClientBuilder(VaultClient.AuthenticationType.BASIC)
 				.withVaultDNS("verteobiotech.veevavault.com")
 				.withVaultUsername("username@verteobiotech.com")
 				.withVaultPassword("password")
-				.withVaultClientId(vaultClientIdBuilder)
+				.withVaultClientId(vaultClientId)
 				.build();
 		// Perform a VQL query and display the results
 		QueryResponse resp = vaultClient.newRequest(QueryRequest.class)

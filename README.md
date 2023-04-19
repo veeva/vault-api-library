@@ -117,15 +117,50 @@ Name = Mark Arnold, Email = mark.arnold@verteobiotech.com
 
 <b>Instantiate the Vault Client with an Existing Session</b>
 <pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
-VaultClientId vaultClientIdBuilder = new VaultClientId("verteobiotech","vault","quality",true,"myintegration");
+String vaultClientId = "verteobiotech-vault-quality-client-myintegration";
 
 String sessionId = "xxxxxxxxxxxxxxxxx";
-VaultClient vaultClient = VaultClientBuilder
+VaultClient vaultClient = VaultClient
 	.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
 	.withVaultDNS("verteobiotech.veevavault.com")
 	.withVaultSessionId(sessionId)
-	.withVaultClientId(vaultClientIdBuilder)
+	.withVaultClientId(vaultClientId)
 	.build();
+</pre>
+
+<b>Instantiate the Vault Client from a JSON settings file</b>
+<ul>
+<li>Store a JSON file on your local machine in the following format</li>
+</ul>
+<pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
+{
+  "authenticationType": "BASIC",
+  "idpOauthAccessToken": "",
+  "idpOauthScope": "openid",
+  "idpUsername": "",
+  "idpPassword": "",
+  "vaultUsername": "username@verteobiotech.com",
+  "vaultPassword": "password",
+  "vaultDNS": "verteobiotech.veevavault.com",
+  "vaultSessionId": "",
+  "vaultClientId": "verteobiotech-vault-quality-client-myintegration",
+  "vaultOauthClientId": "",
+  "vaultOauthProfileId": "",
+  "logApiErrors": true,
+  "httpTimeout": null,
+  "validateSession": true
+}
+</pre>
+
+<ul>
+<li>Reference the JSON file when building the client</li>
+</ul>
+
+<pre style="border: 1px solid #C4CFE5; background-color: #FBFCFD;">
+File settingsFile = new File("settings.json");
+VaultClient vaultClient = VaultClient
+		.newClientBuilderFromSettings(settingsFile)
+		.build();
 </pre>
 
 <b>Create a Single Document</b>

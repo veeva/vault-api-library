@@ -210,13 +210,35 @@ public class AuthenticationRequest extends VaultRequest {
 	}
 
 	/**
-	 * Authenticate via standard Vault user name and password
-	 * in the user's default Vault.
-	 *
+	 * Discover the authentication type of a user. With this API,
+	 * applications can dynamically adjust the login requirements per user,
+	 * and support either username/password or OAuth2.0 / OpenID Connect authentication schemes.
+	 * <p>
+	 * Create an unauthenticated Vault Client to call this endpoint.
 	 * @param username The user name for authentication
-	 * @return AuthenticationResponse
+	 * @return DiscoveryResponse
 	 * @vapil.api <pre>
 	 * POST login.veevavault.com/auth/discovery</pre>
+	 * @vapil.request <pre>
+	 * VaultClient vaultClient = VaultClient
+	 * 				.newClientBuilder(VaultClient.AuthenticationType.NO_AUTH)
+	 * 				.withVaultClientId(vaultClientId)
+	 * 				.build();
+	 *
+	 * DiscoveryResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+	 * 				.setVaultOAuthClientId("OAuthClientId")
+	 * 				.authenticationTypeDiscovery("username@cholecap.com");	</pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Auth Type: " + response.getData().getAuthType());
+	 *
+	 * for (DiscoveryResponse.DiscoveryData.AuthProfile authProfile : response.getData().getAuthProfiles()) {
+	 * 		System.out.println("ID: " + authProfile.getId());
+	 * 		System.out.println("Label: " + authProfile.getLabel());
+	 * 		System.out.println("AS Client ID: " + authProfile.getAsClientId());
+	 * 		System.out.println("*** AS Metadata ***");
+	 * 		System.out.println("    Token Endpoint: " + authProfile.getAsMetadata().getTokenEndpoint());
+	 * }
+	 * </pre>
 	 */
 	public DiscoveryResponse authenticationTypeDiscovery(String username) {
 		HttpRequestConnector request = new HttpRequestConnector(URL_DISCOVERY);

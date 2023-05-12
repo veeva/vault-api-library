@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veeva.vault.vapil.TestProperties;
 import com.veeva.vault.vapil.api.client.*;
+import com.veeva.vault.vapil.api.model.response.DiscoveryResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -117,6 +118,31 @@ public class ClientBuilderTest {
 				.build();
 
 		Assertions.assertTrue(vaultClient.validateSession());
+	}
+
+	@Test
+	@DisplayName("Should return valid Discovery Response")
+	public void testAuthenticationTypeDiscovery() {
+		VaultClient vaultClient = VaultClient
+				.newClientBuilder(VaultClient.AuthenticationType.NO_AUTH)
+				.withVaultClientId("clientId")
+				.build();
+
+		DiscoveryResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+//				.setVaultOAuthClientId("VeevaProfessionalServices")
+				.authenticationTypeDiscovery("username@cholecap.com");
+
+		System.out.println("Auth Type: " + response.getData().getAuthType());
+
+		for (DiscoveryResponse.DiscoveryData.AuthProfile authProfile : response.getData().getAuthProfiles()) {
+			System.out.println("ID: " + authProfile.getId());
+			System.out.println("Label: " + authProfile.getLabel());
+			System.out.println("AS Client ID: " + authProfile.getAsClientId());
+			System.out.println("*** AS Metadata ***");
+			System.out.println("    Token Endpoint: " + authProfile.getAsMetadata().getTokenEndpoint());
+		}
+
+		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	@Test

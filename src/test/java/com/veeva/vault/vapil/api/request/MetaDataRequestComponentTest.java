@@ -176,7 +176,8 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	public void testGetComponentRecords(VaultClient vaultClient) {
-		MetaDataComponentTypeBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveComponentRecords("Picklist");
+		MetaDataComponentTypeBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveComponentRecords("Link");
+//		MetaDataComponentTypeBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveComponentRecords("Picklist");
 
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getData());

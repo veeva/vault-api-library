@@ -323,7 +323,9 @@ public class VaultClient {
 		BASIC("BASIC"),
 		OAUTH_ACCESS_TOKEN("OAUTH_ACCESS_TOKEN"),
 		OAUTH_DISCOVERY("OAUTH_DISCOVERY"),
-		SESSION_ID("SESSION_ID");
+		SESSION_ID("SESSION_ID"),
+		NO_AUTH("NO_AUTH");
+
 
 		String typeName;
 
@@ -502,7 +504,7 @@ public class VaultClient {
 				throw new IllegalArgumentException("Vault Authentication Type is required");
 			}
 
-			if (settings.getVaultDNS() == null || settings.getVaultDNS().isEmpty()) {
+			if ((settings.getAuthenticationType() != AuthenticationType.NO_AUTH) && (settings.getVaultDNS() == null || settings.getVaultDNS().isEmpty())) {
 				log.error("Vault DNS is required");
 				throw new IllegalArgumentException("Vault DNS is required");
 			}
@@ -525,7 +527,12 @@ public class VaultClient {
 
 			//create a generic auth request and response
 			AuthenticationRequest authRequest = vaultClient.newRequest(AuthenticationRequest.class);
-			authRequest.setValidateDNS(settings.getValidateSession());
+			if (settings.getAuthenticationType() == AuthenticationType.NO_AUTH) {
+				authRequest.setValidateDNS(false);
+			} else {
+				authRequest.setValidateDNS(settings.getValidateSession());
+			}
+
 			AuthenticationResponse authResponse = null;
 
 			switch (settings.getAuthenticationType()) {
@@ -593,6 +600,11 @@ public class VaultClient {
 					vaultClient.setAuthenticationResponse(authResponse);
 					if (settings.getValidateSession()) {
 						vaultClient.validateSession();
+					}
+					break;
+				case NO_AUTH:
+					if (settings.getVaultUsername() != null && !settings.getVaultUsername().isEmpty()) {
+						vaultClient.setUsername(settings.getVaultUsername());
 					}
 					break;
 			}

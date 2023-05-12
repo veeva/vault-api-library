@@ -409,7 +409,7 @@ public class MetaDataRequest extends VaultRequest {
 	 */
 
 	/**
-	 * <b>Retrieve Component Type Metadata</b>
+	 * <b>Retrieve Component Record Collection</b>
 	 * <p>
 	 * Retrieve all records for a specific component type.
 	 *
@@ -433,7 +433,11 @@ public class MetaDataRequest extends VaultRequest {
 		HttpRequestConnector request = new HttpRequestConnector(url);
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, headerAccept);
 
-		return send(HttpMethod.GET, request, MetaDataComponentTypeBulkResponse.class);
+		// Nodes/Properties can be either single value or arrays
+		ObjectMapper objectMapper = super.getBaseObjectMapper();
+		objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+
+		return send(HttpMethod.GET, request, objectMapper, MetaDataComponentTypeBulkResponse.class);
 	}
 
 	/**

@@ -5,7 +5,7 @@
 
 	<groupId>com.veeva.vault</groupId>
 	<artifactId>vapil</artifactId>
-	<version>23.1.1</version>
+	<version>23.1.2</version>
 
 	<packaging>jar</packaging>
 
@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
-			<version>5.7.1</version>
+			<version>5.5.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>

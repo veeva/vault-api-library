@@ -24,7 +24,7 @@ VAPIL provides full API endpoint coverage for Vault integrations.
 	<li>Expose API requests/responses in clearly defined Java classes, getters, setters, and methods</li>
 </ul>
 <b>Dedication to documentation, available in <a
-		href="https://veeva.github.io/vault-api-library/javadoc/23.1.2/index.html" target="_blank">Javadoc</a></b>
+		href="https://veeva.github.io/vault-api-library/javadoc/23.1.3/index.html" target="_blank">Javadoc</a></b>
 <ul>
 	<li>Easily find API endpoints from Vault help webpage in the source or Javadoc</li>
 	<li>One-to-one alignment between VAPIL methods and the Vault API endpoint/documentation</li>
@@ -69,7 +69,7 @@ Source code is available on GitHub: <a
      &lt;dependency&gt;
           &lt;groupId&gt;com.veeva.vault&lt;/groupId&gt;
           &lt;artifactId&gt;vapil&lt;/artifactId&gt;
-          &lt;version&gt;23.1.2&lt;/version&gt;
+          &lt;version&gt;23.1.3&lt;/version&gt;
      &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre>
 	</li>

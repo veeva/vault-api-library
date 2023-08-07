@@ -7,75 +7,49 @@
 */
 package com.veeva.vault.vapil.api.request;
 
-import com.veeva.vault.vapil.TestProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
 import com.veeva.vault.vapil.api.model.response.DelegatedSessionResponse;
 import com.veeva.vault.vapil.api.model.response.DelegationsResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
+import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.io.File;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("Authentication")
+@Tag("AuthenticationRequestTest")
+@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
 @DisplayName("Authentication request")
 public class AuthenticationRequestTest {
+
+	private static final String basicSettingsFilePath = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "settings_files" + File.separator + "settings_vapil_basic.json";
+	private static File basicSettingsFile;
+	private static Map<String, String> basicMap ;
+
 	@BeforeAll
-	static void beforeAll() {
+	static void setup() {
+		basicSettingsFile = FileHelper.getSettingsFile(basicSettingsFilePath);
+		JsonNode basicNode = FileHelper.readSettingsFile(basicSettingsFile);
+		basicMap = FileHelper.convertJsonNodeToMap(basicNode);
 	}
-	
 	@Test
-	@DisplayName("Test Client Build")
-	public void testAuthentication() {
-		TestProperties testProperties = new TestProperties();
-		VaultClient vaultClient = VaultClient
-				.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-				.withVaultDNS(testProperties.getVaultDNS())
-				.withVaultUsername(testProperties.getVaultUsername())
-				.withVaultPassword(testProperties.getVaultPassword())
-				.withVaultClientId(testProperties.getVaultClientId())
-				.build();
-
-		AuthenticationResponse response = vaultClient.getAuthenticationResponse();
-
-		assertNotNull(response.getResponseStatus());
-		assertTrue(response.isSuccessful());
-	}
-
-	@Test
-	@DisplayName("Test client build with incorrect password")
-	public void testBadAuthentication() {
-		TestProperties testProperties = new TestProperties();
-		VaultClient vaultClient = VaultClient
-				.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-				.withVaultDNS(testProperties.getVaultDNS())
-				.withVaultUsername(testProperties.getVaultUsername())
-				.withVaultPassword("badpassword")
-				.withVaultClientId(testProperties.getVaultClientId())
-				.build();
-
-		AuthenticationResponse response = vaultClient.getAuthenticationResponse();
-		assertFalse(vaultClient.hasSessionId());
-		assertFalse(response.isSuccessful());
-	}
-
-	@Test
-	@DisplayName("Test login with username and password")
+	@DisplayName("Should successfully build a client from a valid username and password")
 	public void testLoginWithUsernameAndPassword(VaultClient vaultClient) {
-		TestProperties testProperties = new TestProperties();
-
 		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
-				.login(testProperties.getVaultUsername(), testProperties.getVaultPassword());
+				.login(basicMap.get("vaultUsername"), basicMap.get("vaultPassword"));
 
 		assertTrue(response.isSuccessful());
 	}
 
 
 	@Test
-	@DisplayName("Test validating a session user")
+	@DisplayName("Should successfully validate a session user")
 	public void testValidateSessionUser(VaultClient vaultClient) {
 		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
 				.validateSessionUser();
@@ -84,10 +58,19 @@ public class AuthenticationRequestTest {
 	}
 
 	@Test
-	@DisplayName("Test Session Keep Alive")
+	@DisplayName("Should successfully refresh a session duration")
 	public void testSessionKeepAlive(VaultClient vaultClient) {
 		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
 						.sessionKeepAlive();
+		assertTrue(response.isSuccessful());
+	}
+
+	@Test
+	@DisplayName("Should successfully retrieve API versions")
+	public void testRetrieveApiVersions(VaultClient vaultClient) {
+		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+				.retrieveApiVersions();
+
 		assertTrue(response.isSuccessful());
 	}
 
@@ -153,15 +136,4 @@ public class AuthenticationRequestTest {
 			assertTrue(delegateVaultClient.validateSession());
 		}
 	}
-
-	@Test
-	@DisplayName("Test retrieve API versions")
-	public void testRetrieveApiVersions(VaultClient vaultClient) {
-		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
-						.retrieveApiVersions();
-		
-		assertTrue(response.isSuccessful());
-	}
-
-
 }

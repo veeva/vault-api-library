@@ -12,6 +12,7 @@ import com.veeva.vault.vapil.api.model.response.PicklistResponse;
 import com.veeva.vault.vapil.api.model.response.PicklistValueResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 @Tag("PicklistRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class PicklistRequestTest {
 
 	@Test

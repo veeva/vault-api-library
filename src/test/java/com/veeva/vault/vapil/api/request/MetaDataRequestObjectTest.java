@@ -15,18 +15,23 @@ import com.veeva.vault.vapil.api.model.response.MetaDataObjectBulkResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectFieldResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectPageLayoutResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
-@Tag("MetaDataRequestObject")
+@Tag("MetaDataRequestObjectTest")
+@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@DisplayName("Metadata object request should")
 public class MetaDataRequestObjectTest {
 
+	static final String OBJECT_NAME = "vapil_test_object__c";
+	static final String FIELD_NAME = "name__v";
+	static final String OBJECT_PAGE_LAYOUT_NAME = "vapil_test_object_detail_page_layout__c";
+
 	@Test
-	public void testGetAllObjects(VaultClient vaultClient) {
+	@DisplayName("successfully retrieve standard and custom Vault Objects")
+	public void testRetrieveObjectCollection(VaultClient vaultClient) {
 		MetaDataObjectBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveObjectCollection();
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -34,9 +39,10 @@ public class MetaDataRequestObjectTest {
 	}
 
 	@Test
-	public void testGetObject(VaultClient vaultClient) {
+	@DisplayName("successfully retrieve all metadata configured on a standard or custom Vault Object")
+	public void testRetrieveObjectMetadata(VaultClient vaultClient) {
 		MetaDataObjectResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrieveObjectMetadata("user__sys");
+				.retrieveObjectMetadata(OBJECT_NAME);
 		Assertions.assertTrue(response.isSuccessful());
 
 		VaultObject objectMetaData = response.getObject();
@@ -61,9 +67,10 @@ public class MetaDataRequestObjectTest {
 	}
 
 	@Test
-	public void testGetObjectField(VaultClient vaultClient) {
+	@DisplayName("successfully retrieve all metadata configured on the specific Vault Object field")
+	public void testRetrieveObjectFieldMetadata(VaultClient vaultClient) {
 		MetaDataObjectFieldResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrieveObjectFieldMetaData("user__sys", "preferred_currency__sys");
+				.retrieveObjectFieldMetaData(OBJECT_NAME, FIELD_NAME);
 		Assertions.assertTrue(response.isSuccessful());
 
 		VaultObjectField fieldMetaData = response.getField();
@@ -75,9 +82,10 @@ public class MetaDataRequestObjectTest {
 	}
 
 	@Test
-	public void testGetObjectPageLayouts(VaultClient vaultClient) {
+	@DisplayName("successfully retrieve all page layouts associated with and object")
+	public void testRetrievePageLayouts(VaultClient vaultClient) {
 		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrievePageLayouts("test_object__c");
+				.retrievePageLayouts(OBJECT_NAME);
 
 		Assertions.assertTrue(response.isSuccessful());
 
@@ -90,9 +98,10 @@ public class MetaDataRequestObjectTest {
 	}
 
 	@Test
-	public void testGetObjectPageLayoutMetadata(VaultClient vaultClient) {
+	@DisplayName("successfully retrieve the metadata for a specific page layout")
+	public void testRetrievePageLayoutMetadata(VaultClient vaultClient) {
 		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrievePageLayoutMetadata("test_object__c", "test_object_detail_page_layout__c");
+				.retrievePageLayoutMetadata(OBJECT_NAME, OBJECT_PAGE_LAYOUT_NAME);
 
 		Assertions.assertTrue(response.isSuccessful());
 

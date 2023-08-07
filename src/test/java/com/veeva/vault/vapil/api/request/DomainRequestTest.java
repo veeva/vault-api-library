@@ -1,9 +1,10 @@
 package com.veeva.vault.vapil.api.request;
 
-import com.veeva.vault.vapil.TestProperties;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.DomainResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,15 +12,19 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("DomainRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@DisplayName("Domain request should")
 public class DomainRequestTest {
 
+    private static final String SUCCESS_STATUS = "SUCCESS";
     @Test
-    public void retrieveDomainInformation(VaultClient vaultClient, TestReporter reporter) {
+    @DisplayName("successfully let Domain Admons retrieve a list of all Vaults currently their domain")
+    public void testRetrieveDomainInformation(VaultClient vaultClient, TestReporter reporter) {
         DomainResponse resp = vaultClient.newRequest(DomainRequest.class)
                 .setIncludeApplications(true)
                 .retrieveDomainInformation();
-        assertEquals(TestProperties.VAULT_API_SUCCESS_STATUS, resp.getResponseStatus());
+        assertEquals(SUCCESS_STATUS, resp.getResponseStatus());
         assertNotNull(resp.getDomain());
         assertNotNull(resp.getDomain().getVaults());
         reporter.publishEntry(String.format("Domain Name = %s, Domain Type = %s\n",resp.getDomain().getDomainName(),resp.getDomain().getDomainType()));
@@ -29,10 +34,11 @@ public class DomainRequestTest {
     }
 
     @Test
-    public void retrieveDomainsTest(VaultClient vaultClient) {
+    @DisplayName("successfully let Non-domain Admins retrieve a list of all their domains, including the domain of the current Vault")
+    public void testRetrieveDomains(VaultClient vaultClient) {
         VaultResponse resp = vaultClient.newRequest(DomainRequest.class)
                 .retrieveDomains();
         assertTrue(resp.isSuccessful());
-        assertEquals(TestProperties.VAULT_API_SUCCESS_STATUS, resp.getResponseStatus());
+        assertEquals(SUCCESS_STATUS, resp.getResponseStatus());
     }
 }

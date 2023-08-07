@@ -1,0 +1,1 @@
+DROP Object vapil_test_mdl_object__c;

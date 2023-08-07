@@ -728,7 +728,7 @@ public class BinderRequest extends VaultRequest {
 	 * @vapil.response <pre>
 	 * System.out.println("Status = " + resp.getResponseStatus());</pre>
 	 */
-	public BinderSectionResponse addDocumentToBinder(int binderId, int docId, String parentId, String bindingRule) {
+	public BinderSectionResponse addDocumentToBinder(int binderId, int docId, String parentId, BindingRule bindingRule) {
 		String url = vaultClient.getAPIEndpoint(URL_BINDER_DOCUMENTS)
 				.replace("{binder_id}", String.valueOf(binderId));
 
@@ -736,7 +736,7 @@ public class BinderRequest extends VaultRequest {
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 		request.addBodyParam("document_id__v", docId);
 		request.addBodyParam("parent_id__v", parentId);
-		request.addBodyParam("binding_rule__v", bindingRule);
+		request.addBodyParam("binding_rule__v", bindingRule.getValue());
 
 
 		return send(HttpMethod.POST, request, BinderSectionResponse.class);
@@ -1403,6 +1403,23 @@ public class BinderRequest extends VaultRequest {
 		private String value;
 
 		DocumentVersionType(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum BindingRule {
+		DEFAULT("default"),
+		STEADY_STATE("steady-state"),
+		CURRENT("current"),
+		SPECIFIC("specific");
+
+		private String value;
+
+		BindingRule(String value) {
 			this.value = value;
 		}
 

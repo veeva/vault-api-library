@@ -24,16 +24,16 @@ public class SandboxRequestTest {
 	static VaultClient vaultClient;
 	static final String SANDBOX_NAME = "VAPIL Test Sandbox";
 	static final String SNAPSHOT_NAME = "VAPIL Test Snapshot";
-	static final String snapshotApiName = "vapil_test_snapshot__c";
-	static final String DOMAIN = "vaultdevsupport.com";
+	static final String SNAPSHOT_API_NAME = "vapil_test_snapshot__c";
+	static final String DOMAIN = "sb-developersupport.com";
+	private static File SETTINGS_FILE = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "settings_files" + File.separator + "settings_vapil_sandbox.json");
 	static int sandboxId;
 
 	@BeforeAll
 	static void setup() {
 //			Authenticate with Source vault
 		vaultClient = VaultClient
-				.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
-				.withVaultSessionId("")
+				.newClientBuilderFromSettings(SETTINGS_FILE)
 				.build();
 	}
 
@@ -137,7 +137,7 @@ public class SandboxRequestTest {
 	@DisplayName("Should successfully update a sandbox snapshot")
 	public void testUpdateSandboxSnapshot() {
 		JobCreateResponse jobCreateResponse = vaultClient.newRequest(SandboxRequest.class)
-				.updateSandboxSnapshot(snapshotApiName);
+				.updateSandboxSnapshot(SNAPSHOT_API_NAME);
 
 		int jobId = jobCreateResponse.getJobId();
 		Assertions.assertTrue(jobCreateResponse.isSuccessful());
@@ -160,7 +160,7 @@ public class SandboxRequestTest {
 	@DisplayName("Should successfully change the size of a sandbox")
 	public void testChangeSandboxSize() {
 		VaultResponse response = vaultClient.newRequest(SandboxRequest.class)
-				.changeSandboxSize("V2V Connection Target", SandboxRequest.SandboxSize.LARGE);
+				.changeSandboxSize(SANDBOX_NAME, SandboxRequest.SandboxSize.SMALL);
 
 		Assertions.assertTrue(response.isSuccessful());
 	}
@@ -170,7 +170,7 @@ public class SandboxRequestTest {
 	@DisplayName("Should successfully refresh a sandbox from a snapshot")
 	public void testRefreshSandboxFromSnapshot() {
 		JobCreateResponse jobCreateResponse = vaultClient.newRequest(SandboxRequest.class)
-				.refreshSandboxFromSnapshot(sandboxId, snapshotApiName);
+				.refreshSandboxFromSnapshot(sandboxId, SNAPSHOT_API_NAME);
 
 		int jobId = jobCreateResponse.getJobId();
 		Assertions.assertTrue(jobCreateResponse.isSuccessful());
@@ -183,7 +183,7 @@ public class SandboxRequestTest {
 	@DisplayName("Should successfully delete a sandbox snapshot")
 	public void testDeleteSandboxSnapshot() {
 		VaultResponse response = vaultClient.newRequest(SandboxRequest.class)
-				.deleteSandboxSnapshot(snapshotApiName);
+				.deleteSandboxSnapshot(SNAPSHOT_API_NAME);
 
 		Assertions.assertTrue(response.isSuccessful());
 	}
@@ -191,8 +191,7 @@ public class SandboxRequestTest {
 	@Order(13)
 	@Test
 	@DisplayName("Should successfully recalculate the usage values of the sandbox Vaults for the authenticated Vault")
-//	This can only be run 3 times in 24 hour period
-	public void testRecheckUsageLimit() {
+	public void testRecheckUsageLimit(VaultClient vaultClient) {
 		VaultResponse response = vaultClient.newRequest(SandboxRequest.class)
 				.recheckUsageLimit();
 

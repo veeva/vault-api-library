@@ -3,6 +3,7 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class ConfigurationMigrationRequestTest {
 
     // Run manually

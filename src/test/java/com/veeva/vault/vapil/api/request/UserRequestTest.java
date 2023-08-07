@@ -14,20 +14,48 @@ import com.veeva.vault.vapil.api.model.metadata.User;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.model.response.UserPermissionResponse.UserPermissions;
 import com.veeva.vault.vapil.api.model.response.UserPermissionResponse.UserPermissions.PermissionSet;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import com.veeva.vault.vapil.extension.DocumentRequestHelper;
+import com.veeva.vault.vapil.extension.FileHelper;
+import com.veeva.vault.vapil.extension.UserRequestHelper;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-@Tag("UserRequest")
+@Tag("UserRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("User request should")
 public class UserRequestTest {
 
+    private static final int VAULT_ID = 166231;
+    static final String CREATE_USERS_CSV_PATH = UserRequestHelper.getPathCreateMultipleUsers();
+    static final String USER_NAME__V = "user_name__v";
+    static final String USER_FIRST_NAME__V = "user_first_name__v";
+    static final String USER_LAST_NAME__V = "user_last_name__v";
+    static final String USER_EMAIL__V = "user_email__v";
+    static final String USER_TIMEZONE__V = "user_timezone__v";
+    static final String USER_LOCALE__V = "user_locale__v";
+    static final String USER_LANGUAGE__V = "user_language__v";
+    static final String SECURITY_PROFILE__V = "security_profile__v";
+    static final String SECURITY_POLICY_ID__V = "security_policy_id__v";
+    static final String LICENSE_TYPE__V = "license_type__v";
+    static final String USER_EMAIL = "vapil.test-user@veeva.com";
+    static final String TIMEZONE = "America/New_York";
+    static final String LOCALE = "en_US";
+    static final String LANGUAGE = "en";
+    static final String SECURITY_PROFILE = "copy_of_document_user__c";
+    static final String SECURITY_POLICY_ID = "49687";
+    static final String LICENSE_TYPE = "full__v";
+    private static String userId;
+
     @Test
+    @DisplayName("successfully retrieve user metadata")
     public void testRetrieveUserMetadata(VaultClient vaultClient) {
         MetaDataUserResponse response = vaultClient.newRequest(UserRequest.class).retrieveUserMetadata();
         Assertions.assertTrue(response.isSuccessful());
@@ -45,6 +73,7 @@ public class UserRequestTest {
     }
 
     @Test
+    @DisplayName("successfully retrieve all users")
     public void testRetrieveAllUsers(VaultClient vaultClient) {
         UserRetrieveResponse response = vaultClient.newRequest(UserRequest.class)
                 .retrieveAllUsers();
@@ -57,131 +86,122 @@ public class UserRequestTest {
             Assertions.assertNotNull(user.getId());
             Assertions.assertNotNull(user.getUserFirstName());
             Assertions.assertNotNull(user.getUserLastName());
-            System.out.println("\nUser: " + user.getUserName());
-            System.out.println("User ID: " + user.getId());
-            System.out.println("Name: " + user.getUserFirstName() + " " + user.getUserLastName());
-            System.out.println("Email: " + user.getUserEmail());
-            System.out.println("Timezone: " + user.getUserTimezone());
-            System.out.println("Locale: " + user.getUserLocale());
-            System.out.println("Language: " + user.getUserLanguage());
-            System.out.println("Company: " + user.getCompany());
-            System.out.println("Title: " + user.getUserTitle());
-            System.out.println("Office Phone: " + user.getOfficePhone());
-            System.out.println("Fax: " + user.getFax());
-            System.out.println("Mobile: " + user.getMobilePhone());
-            System.out.println("Site: " + user.getSite());
-            System.out.println("Domain Admin?: " + user.getIsDomainAdmin());
-            System.out.println("Active user?: " + user.getActive());
-            System.out.println("Active on domain?: " + user.getDomainActive());
-            System.out.println("Security Profile: " + user.getSecurityProfile());
-            System.out.println("License type: " + user.getLicenseType());
-            System.out.println("Security Policy ID: " + user.getSecurityPolicyId());
-            System.out.println("User needs to change password?: " + user.getUserNeedsToChangePassword());
-            System.out.println("Created by: " + user.getCreatedBy() + " on " + user.getCreatedDate());
-            System.out.println("Last modified by: " + user.getModifiedBy() + " on " + user.getModifiedDate());
-            System.out.println("Domain ID: " + user.getDomainId());
-            System.out.println("Domain Name: " + user.getDomainName());
-            System.out.println("Vault ID: " + user.getVaultId());
-            System.out.println("Federated ID: " + user.getFederatedId());
-            System.out.println("Salesforce User Name: " + user.getSalesforceUserName());
-            System.out.println("Last login at: " + user.getLastLogin());
-            System.out.println("Group IDs: " + user.getGroupId());
         }
     }
 
+    @Test
+    @DisplayName("successfully retrieve all users not in current vault")
     public void testRetrieveAllUsersNotCurrentVault(VaultClient vaultClient) {
-        System.out.println("\n****** Get All Users not in current Vault (Display First 10) ******");
         UserRetrieveResponse response = vaultClient.newRequest(UserRequest.class)
                 .setVaults("-1")
                 .retrieveAllUsers();
 
-        int i = 0;
-
         for (UserRetrieveResponse.UserNode users : response.getUsers()) {
             com.veeva.vault.vapil.api.model.common.User user = users.getUser();
-            System.out.println("\nUser: " + user.getUserName());
-            System.out.println("User ID: " + user.getId());
-            System.out.println("Name: " + user.getUserFirstName() + " " + user.getUserLastName());
-            System.out.println("Email: " + user.getUserEmail());
-            i++;
-            if (i > 10) break;
-        }
 
-        System.out.println("Test Complete...\n");
-    }
-
-    public void testRetrieveUser(VaultClient vaultClient) {
-        int userId = 1069913;
-        System.out.println("\n****** Get Single User (" + userId + ") ******");
-        UserRetrieveResponse response = vaultClient.newRequest(UserRequest.class).retrieveUser(userId);
-
-        for(UserRetrieveResponse.UserNode users : response.getUsers()) {
-            com.veeva.vault.vapil.api.model.common.User user = users.getUser();
-            System.out.println("\nUser name: " + user.getUserName());
-            System.out.println("User: " + user.getUserFirstName() + " " + user.getUserLastName());
-            System.out.println("Email: " + user.getUserEmail());
-
-            System.out.println("Test Complete...\n");
+            Assertions.assertNotNull(user.getUserName());
+            Assertions.assertNotNull(user.getId());
+            Assertions.assertNotNull(user.getUserFirstName());
+            Assertions.assertNotNull(user.getUserLastName());
         }
     }
-    public void testSingleCreateUser(VaultClient vaultClient) {
-        System.out.println("****** Creating a single user ******");
+
+    @Test
+    @Order(1)
+    @DisplayName("successfully create a user")
+    public void testCreateSingleUser(VaultClient vaultClient) {
         Map<String,Object> formData = createFormData();
         UserResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeForm()
                 .setBodyParams(formData)
                 .createSingleUser();
-        displayResults(response,true);
-        System.out.println("Test Complete...\n");
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+        userId = response.getId();
     }
 
+    @Test
+    @Order(2)
+    @DisplayName("successfully update a user")
     public void testSingleUpdateUser(VaultClient vaultClient) {
-        System.out.println("****** Updating a single user ******");
-        Map<String,Object> formData = createFormDataForUpdate();
-        UserResponse response = vaultClient.newRequest(UserRequest.class)
-                .setContentTypeXForm()
-                .setBodyParams(formData)
-                .updateSingleUser(4005489);
-        displayResults(response,true);
-        System.out.println("Test Complete...\n");
-    }
-
-    public void testUpdateVaultMembership(VaultClient vaultClient) {
-        System.out.println("****** Updating Vault Membership ******");
-        VaultResponse response = vaultClient.newRequest(UserRequest.class)
-                .setContentTypeXForm()
-                .updateVaultMembership(4005489,23700);
-        System.out.println("Status = " + response.isSuccessful());
-        System.out.println("Test Complete...\n");
-    }
-
-    // Create map data for testing creation of new user
-    public Map<String,Object> createFormData() {
-        Map<String,Object> mapData = new HashMap<String,Object>();
-        mapData.put("user_name__v", "username@verteobiotech.com");
-        mapData.put("user_first_name__v","David");
-        mapData.put("user_last_name__v","Gilmour");
-        mapData.put("user_email__v","username@verteobiotech.com");
-        mapData.put("user_timezone__v","America/Phoenix");
-        mapData.put("user_locale__v","en_US");
-        mapData.put("security_policy_id__v","6017");
-        mapData.put("user_language__v","en");
-        mapData.put("security_profile__v","");
-        mapData.put("license_type__v","full__v");
-        mapData.put("file","");
-
-        return mapData;
-    }
-
-    // Create map data for testing the updating of a user
-    public Map<String,Object> createFormDataForUpdate() {
         Map<String,Object> mapData = new HashMap<String,Object>();
         mapData.put("user_first_name__v","Vapil-Update");
-        mapData.put("user_last_name__v","User Update 3");
 
-        return mapData;
+        UserResponse response = vaultClient.newRequest(UserRequest.class)
+                .setContentTypeXForm()
+                .setBodyParams(mapData)
+                .updateSingleUser(Integer.valueOf(userId));
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("successfully update vault membership")
+    public void testUpdateVaultMembership(VaultClient vaultClient) {
+        Map<String,Object> mapData = new HashMap<String,Object>();
+        mapData.put("active__v", false);
+
+        VaultResponse response = vaultClient.newRequest(UserRequest.class)
+                .setContentTypeXForm()
+                .updateVaultMembership(Integer.valueOf(userId),VAULT_ID);
+
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("successfully retrieve a specific user")
+    public void testRetrieveUser(VaultClient vaultClient) {
+        UserRetrieveResponse response = vaultClient.newRequest(UserRequest.class)
+                .retrieveUser(Integer.valueOf(userId));
+
+        for(UserRetrieveResponse.UserNode users : response.getUsers()) {
+            com.veeva.vault.vapil.api.model.common.User user = users.getUser();
+
+            Assertions.assertNotNull(user.getUserName());
+            Assertions.assertNotNull(user.getId());
+            Assertions.assertNotNull(user.getUserFirstName());
+            Assertions.assertNotNull(user.getUserLastName());
+        }
+    }
+
+    @Test
+    @Disabled
+    @Order(5)
+    @DisplayName("successfully create multiple users")
+    public void testCreateMultipleUsers(VaultClient vaultClient) {
+        List<String[]> data = new ArrayList<>();
+        data.add(new String[]{USER_NAME__V, USER_FIRST_NAME__V, USER_LAST_NAME__V, USER_EMAIL__V,
+                USER_TIMEZONE__V, USER_LOCALE__V, USER_LANGUAGE__V, SECURITY_PROFILE__V,
+                SECURITY_POLICY_ID__V, LICENSE_TYPE__V});
+        for (int i = 0; i < 3; i++) {
+            String username = "vapiltestuser" + i + "@sb-developersupport.com";
+            String firstName = "Vapil";
+            String lastName = "Test-User" + i;
+
+            data.add(new String[]{username, firstName, lastName, USER_EMAIL, TIMEZONE, LOCALE,
+                    LANGUAGE, SECURITY_PROFILE, SECURITY_POLICY_ID, LICENSE_TYPE});
+        }
+
+        FileHelper.writeCsvFile(CREATE_USERS_CSV_PATH, data);
+
+        UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
+                .setContentTypeCsv()
+                .setInputPath(CREATE_USERS_CSV_PATH)
+                .createUserRecords();
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getData());
+        for (UserResponse user : response.getData()) {
+            Assertions.assertNotNull(user.getId());
+        }
+    }
+
+    @Test
+    @Disabled
     public void testBulkCreateUsersCSV_CSV(VaultClient vaultClient, String filePath) {
         System.out.println("****** Creating users in bulk (CSV) ******");
         UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
@@ -194,15 +214,15 @@ public class UserRequestTest {
         System.out.println("Test Complete...\n");
     }
 
+    @Test
+    @Disabled
     public void testBulkCreateUsersJSON_CSV(VaultClient vaultClient, String filePath) {
-        System.out.println("****** Creating users in bulk (JSON) ******");
         UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeCsv()
                 .setInputPath(filePath)
                 .createUserRecords();
 
-        displayBulkResults(response,false);
-        System.out.println("Test Complete...\n");
+        Assertions.assertTrue(response.isSuccessful());
     }
 
     public void testBulkUpsertUsersCSV(VaultClient vaultClient, String filePath, String idParam) {
@@ -260,14 +280,6 @@ public class UserRequestTest {
         System.out.println("Test Complete...\n");
     }
 
-
-
-
-
-
-
-
-
     public void testChangeUserPassword(VaultClient vaultClient, int userId, String oldPass, String newPass) {
         System.out.println("\n****** Changing User Password (" + userId + ") ******");
         VaultResponse response = vaultClient.newRequest(UserRequest.class).changePassword(userId, oldPass, newPass);
@@ -320,6 +332,22 @@ public class UserRequestTest {
         System.out.println("Test Complete...");
     }
 
+    // Create map data for testing creation of new user
+    public Map<String,Object> createFormData() {
+        Map<String,Object> mapData = new HashMap<String,Object>();
+        mapData.put(USER_NAME__V, "vapiltestuser@sb-developersupport.com");
+        mapData.put(USER_FIRST_NAME__V,"Vapil");
+        mapData.put(USER_LAST_NAME__V,"Test-User");
+        mapData.put(USER_EMAIL__V,USER_EMAIL);
+        mapData.put(USER_TIMEZONE__V,TIMEZONE);
+        mapData.put(USER_LOCALE__V,LOCALE);
+        mapData.put(USER_LANGUAGE__V,LANGUAGE);
+        mapData.put(SECURITY_PROFILE__V,SECURITY_PROFILE);
+        mapData.put(SECURITY_POLICY_ID__V,SECURITY_POLICY_ID);
+        mapData.put(LICENSE_TYPE__V,LICENSE_TYPE);
+
+        return mapData;
+    }
 
     public void displayResults(UserResponse response, Boolean singleOperation) {
         System.out.println(response.getResponse());

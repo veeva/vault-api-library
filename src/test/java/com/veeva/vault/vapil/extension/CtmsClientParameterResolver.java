@@ -4,8 +4,8 @@ public class CtmsClientParameterResolver extends AbstractVaultClientParameterRes
 
     private static final String VAULT_PROP_PREFIX = "ctms";
 
-    @Override
-    protected String getVaultPropertyTag() {
-        return VAULT_PROP_PREFIX;
-    }
+//    @Override
+//    protected String getVaultPropertyTag() {
+//        return VAULT_PROP_PREFIX;
+//    }
 }

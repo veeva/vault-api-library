@@ -5,25 +5,113 @@ import com.veeva.vault.vapil.api.model.common.Job;
 import com.veeva.vault.vapil.api.model.common.LoaderTask;
 import com.veeva.vault.vapil.api.model.builder.LoaderTaskBuilder;
 import com.veeva.vault.vapil.api.model.response.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.veeva.vault.vapil.extension.*;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
-import java.io.File;
-import java.nio.file.Files;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Tag("LoaderRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Loader Request should")
 public class LoaderRequestTest {
 
-    static final String RESOURCES_FOLDER_PATH = "src\\test\\resources\\";
+    static final int MAJOR_VERSION = 0;
+    static final int MINOR_VERSION = 1;
+    static final String DOC_TYPE_LABEL = "VAPIL Test Doc Type";
+    static final String DOC_SUBTYPE_LABEL = "VAPIL Test Doc Subtype";
+    static final String DOC_CLASSIFICATION_LABEL = "VAPIL Test Doc Classification";
+    static final String DOC_LIFECYCLE = "VAPIL Test Doc Lifecycle";
+    static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingLoaderFilePath();
+    static final String LOADER_FILE_CSV_PATH = FileHelper.getPathLoaderFile();
+    static LoaderTask loaderTask;
+    static int loadJobId;
+    static int extractJobId;
+
+    static List<Integer> loadTasks = new ArrayList<>();
+    static List<Integer> extractTasks = new ArrayList<>();
+
+    static List<Integer> docIds = new ArrayList<>();
+
+    @BeforeAll
+    static void setup(VaultClient vaultClient) throws IOException {
+        List<String[]> data = new ArrayList<>();
+        data.add(new String[]{"file", "name__v", "type__v", "subtype__v",
+                "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
+        for (int i = 0; i < 3; i++) {
+            String name = "VAPIL Loader " + ZonedDateTime.now() + " " + i;
+            data.add(new String[]{FILE_STAGING_FILE, name, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
+                    DOC_LIFECYCLE, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
+        }
+        FileHelper.writeCsvFile(LOADER_FILE_CSV_PATH, data);
+
+        FileStagingHelper.createLoaderFileOnFileStaging(vaultClient);
+    }
+
+    @AfterAll
+    static void teardown(VaultClient vaultClient) {
+        DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
+        Assertions.assertTrue(response.isSuccessful());
+        for (DocumentResponse documentResponse : response.getData()) {
+            Assertions.assertTrue(documentResponse.isSuccessful());
+        }
+    }
 
     @Test
-    public void testBuilder() {
+    @Order(1)
+    @DisplayName("successfully create a loader job and load a set of data files")
+    public void testLoadDataObjects(VaultClient vaultClient) throws InterruptedException {
+        String jsonString = "[\n" +
+                "  {\n" +
+                "    \"object_type\": \"documents__v\",\n" +
+                "    \"action\": \"create\",\n" +
+                "    \"file\": \"loader_file.csv\",\n" +
+                "    \"order\": 1\n" +
+                "  }\n" +
+                "]";
+
+        LoaderResponse loadResponse = vaultClient.newRequest(LoaderRequest.class)
+                .setJson(jsonString)
+                .loadDataObjects();
+
+        Assertions.assertTrue(loadResponse.isSuccessful());
+        Assertions.assertNotNull(loadResponse.getJobId());
+        loadJobId = loadResponse.getJobId();
+        Assertions.assertNotNull(loadResponse.getUrl());
+        Assertions.assertNotNull(loadResponse.getTasks());
+        for (LoaderTask task : loadResponse.getTasks()) {
+            Assertions.assertNotNull(task.getTaskId());
+            loadTasks.add(task.getTaskId());
+        }
+        Thread.sleep(5000);
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("successfully retrieve success logs of the loader results")
+    public void testRetrieveLoadSuccessLogResults(VaultClient vaultClient) {
+        for (Integer taskId : loadTasks) {
+            VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoadSuccessLogResults(loadJobId, taskId);
+
+            Assertions.assertTrue(resultResponse.isSuccessful());
+            Assertions.assertNotNull(resultResponse.getBinaryContent());
+            byte[] byteArray = resultResponse.getBinaryContent();
+            String responseString = new String(byteArray, StandardCharsets.UTF_8);
+            extractDocIds(responseString);
+        }
+    }
+
+
+    @Test
+    @Order(3)
+    @DisplayName("successfully build a loader task")
+    public void testBuild() {
         LoaderTaskBuilder taskBuilder = new LoaderTaskBuilder()
                 .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_RENDITIONS)
                 .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_SOURCE)
@@ -31,57 +119,57 @@ public class LoaderRequestTest {
                 .addField("id")
                 .addField("name__v")
                 .appendWhere("name__v != 'X'");
-        LoaderTask builtTask = taskBuilder.build();
+        loaderTask = taskBuilder.build();
 
-        Assertions.assertNotNull(builtTask);
-        Assertions.assertNotNull(builtTask.getFields());
-        Assertions.assertEquals(2,builtTask.getFields().size());
-        Assertions.assertNotNull(builtTask.getVqlCriteria());
-        Assertions.assertNotEquals("",builtTask.getVqlCriteria());
-        //System.out.println(taskBuilder.build().toJsonString());
+        Assertions.assertNotNull(loaderTask);
+        Assertions.assertNotNull(loaderTask.getFields());
+        Assertions.assertEquals(2,loaderTask.getFields().size());
+        Assertions.assertNotNull(loaderTask.getVqlCriteria());
+        Assertions.assertNotEquals("",loaderTask.getVqlCriteria());
     }
 
     @Test
-    @DisplayName("Should successfully create and run a loader job to extract data")
+    @Order(4)
+    @DisplayName("successfully create and run a loader job to extract data")
     public void testExtractDataFiles(VaultClient vaultClient) throws Exception {
-//		Create file on file staging server
-        File testFile = new File(RESOURCES_FOLDER_PATH + "test_create_file.txt");
-        byte[] bytes = Files.readAllBytes(testFile.toPath());
-
-        FileStagingItemResponse fileStagingResponse = vaultClient.newRequest(FileStagingRequest.class)
-                .setOverwrite(true)
-                .setFile(testFile.getPath(), bytes)
-                .createFolderOrFile(FileStagingRequest.Kind.FILE, "test_create_file.txt");
-        Assertions.assertTrue(fileStagingResponse.isSuccessful());
-
-//		Create multiple documents
-        String csvFilePath = RESOURCES_FOLDER_PATH + "test_create_multiple_documents.csv";
-        DocumentBulkResponse createResponse = vaultClient.newRequest(DocumentRequest.class)
-                .setInputPath(csvFilePath)
-                .createMultipleDocuments();
-        Assertions.assertTrue(createResponse.isSuccessful());
-        for (DocumentResponse documentResponse : createResponse.getData()) {
-            Assertions.assertTrue(documentResponse.isSuccessful());
-        }
-
-//        Build Loader Task
-        LoaderTaskBuilder taskBuilder = new LoaderTaskBuilder()
-                .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_RENDITIONS)
-                .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_SOURCE)
-                .setObjectType(LoaderTaskBuilder.ObjectType.DOCUMENTS)
-                .addField("id")
-                .addField("name__v")
-                .appendWhere("name__v != 'X'")
-                .setMaxRows(3)
-                .setSkip(1);
-        LoaderTask builtTask = taskBuilder.build();
-
-//        Run extract job
         LoaderResponse extractResponse = vaultClient.newRequest(LoaderRequest.class)
-                .addLoaderTask(builtTask)
+                .addLoaderTask(loaderTask)
                 .extractDataFiles();
 
         Assertions.assertTrue(extractResponse.isSuccessful());
+        Assertions.assertNotNull(extractResponse.getJobId());
+        extractJobId = extractResponse.getJobId();
+        Assertions.assertNotNull(extractResponse.getUrl());
+        Assertions.assertNotNull(extractResponse.getTasks());
+        for (LoaderTask task : extractResponse.getTasks()) {
+            Assertions.assertNotNull(task.getTaskId());
+            extractTasks.add(task.getTaskId());
+        }
+        Thread.sleep(5000);
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("successfully retrieve results of a specified job task")
+    public void testRetrieveLoaderExtractResults(VaultClient vaultClient) {
+        for (Integer taskId : extractTasks) {
+            VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoaderExtractResults(extractJobId, taskId);
+            Assertions.assertNotNull(resultResponse);
+            Assertions.assertNotNull(resultResponse.getBinaryContent());
+        }
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("successfully retrieve results of a specified job task that includes renditions requested with documents.")
+    public void testRetrieveLoaderExtractRenditionsResults(VaultClient vaultClient) {
+        for (Integer taskId : extractTasks) {
+            VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoaderExtractRenditionsResults(extractJobId, taskId);
+            Assertions.assertNotNull(resultResponse);
+            Assertions.assertNotNull(resultResponse.getBinaryContent());
+        }
     }
 
     @Test
@@ -136,11 +224,11 @@ public class LoaderRequestTest {
 
                         for (Integer taskId : taskIds) {
                             VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
-                                    .retrieveExtractResults(jobId, taskId);
+                                    .retrieveLoaderExtractResults(jobId, taskId);
                             System.out.println(new String(resultResponse.getBinaryContent()));
 
                             VaultResponse renditionResponse = vaultClient.newRequest(LoaderRequest.class)
-                                    .retrieveExtractRenditionResults(jobId, taskId);
+                                    .retrieveLoaderExtractRenditionsResults(jobId, taskId);
                             System.out.println(new String(renditionResponse.getBinaryContent()));
                         }
                     } else {
@@ -213,6 +301,19 @@ public class LoaderRequestTest {
                         Thread.sleep(30000);
                     }
                 }
+            }
+        }
+    }
+
+    public void extractDocIds(String csvResponse) {
+        String[] lines = csvResponse.split("\n");
+        // Skip the header line
+        for (int i = 1; i < lines.length; i++) {
+            String[] columns = lines[i].split(",");
+
+            if (columns.length >= 2) {
+                String docId = columns[1];
+                docIds.add(Integer.valueOf(docId));
             }
         }
     }

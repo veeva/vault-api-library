@@ -1,0 +1,18 @@
+[
+    {
+        "name__v": "vapil_test_binder_template_2__c",
+        "label__v": "VAPIL Test Binder Template 2",
+        "type__v": "vapil_test_doc_type__c",
+        "subtype__v": "vapil_test_doc_subtype__c",
+        "classification__v": "vapil_test_doc_classification__c",
+        "active__v": "true"
+    },
+    {
+        "name__v": "vapil_test_binder_template_3__c",
+        "label__v": "VAPIL Test Binder Template 3",
+        "type__v": "vapil_test_doc_type__c",
+        "subtype__v": "vapil_test_doc_subtype__c",
+        "classification__v": "vapil_test_doc_classification__c",
+        "active__v": "true"
+    }
+]

@@ -1,0 +1,23 @@
+RECREATE Object vapil_test_mdl_object__c (
+   label('VAPIL Test MDL Object'),
+   label_plural('VAPIL Test MDL Object'),
+   active(true),
+   description('Test object for VAPIL testing'),
+   help_content(),
+   in_menu(true),
+   allow_attachments(false),
+   enable_esignatures(false),
+   audit(true),
+   order(0),
+   dynamic_security(false),
+   system_managed(false),
+   available_lifecycles(),
+   object_class('base'),
+   allow_types(false),
+   user_role_setup_object(),
+   secure_sharing_settings(false),
+   secure_attachments(false),
+   secure_audit_trail(false),
+   prevent_record_overwrite(false),
+   data_store('standard')
+);

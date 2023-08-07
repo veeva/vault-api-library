@@ -102,16 +102,16 @@ public class LoaderRequest extends VaultRequest {
 	}
 
 	/**
-	 * <b>Retrieve Extract Results</b>
+	 * <b>Retrieve Loader Extract Results</b>
 	 *
 	 * @param jobId  The Job Id
 	 * @param taskId The Task Id
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-extract-results' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-extract-results</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-loader-extract-results' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-extract-results</a>
 	 */
-	public VaultResponse retrieveExtractResults(int jobId, int taskId) {
+	public VaultResponse retrieveLoaderExtractResults(int jobId, int taskId) {
 		return retrieveResults(URL_LOADER_TASK_RESULTS, jobId, taskId);
 	}
 
@@ -125,7 +125,7 @@ public class LoaderRequest extends VaultRequest {
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/results/renditions</pre>
 	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-loader-extract-renditions-results' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-loader-extract-renditions-results</a>
 	 */
-	public VaultResponse retrieveExtractRenditionResults(int jobId, int taskId) {
+	public VaultResponse retrieveLoaderExtractRenditionsResults(int jobId, int taskId) {
 		return retrieveResults(URL_LOADER_TASK_RENDITION_RESULTS, jobId, taskId);
 	}
 

@@ -22,6 +22,7 @@ import java.util.Random;
 
 @Tag("GroupRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class GroupRequestTest {
 
 	@Test

@@ -8,28 +8,53 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.response.InitiateDocumentWorkflowResponse;
-import com.veeva.vault.vapil.api.model.response.DocumentWorkflowDetailsResponse;
+import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.model.response.DocumentWorkflowDetailsResponse.Control;
 import com.veeva.vault.vapil.api.model.response.DocumentWorkflowDetailsResponse.Prompt;
-import com.veeva.vault.vapil.api.model.response.DocumentWorkflowResponse;
 import com.veeva.vault.vapil.api.model.response.DocumentWorkflowResponse.DocumentWorkflow;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import com.veeva.vault.vapil.extension.DocumentRequestHelper;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 @Tag("DocumentWorkflowRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Document workflow request")
 public class DocumentWorkflowRequestTest {
 
+	private static final String VAPIL_TEST_DOC_WORKFLOW = "Objectworkflow.vapil_test_doc_workflow__c";
+	static List<String> documents = new ArrayList<>();
+
+	@BeforeAll
+	static void setup(VaultClient vaultClient) throws IOException {
+		DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
+		Assertions.assertTrue(response.isSuccessful());
+		documents.add(String.valueOf(response.getDocument().getId()));
+	}
+
+	@AfterAll
+	static void teardown(VaultClient vaultClient) throws IOException {
+		List<Integer> docIds = new ArrayList<>();
+		for (String doc : documents) {
+			docIds.add(Integer.valueOf(doc));
+		}
+		DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
+		Assertions.assertTrue(response.isSuccessful());
+		for (DocumentResponse doc : response.getData()) {
+			Assertions.assertTrue(doc.isSuccessful());
+		}
+	}
+
 	@Test
-	public void testDocumentWorkflows(VaultClient vaultClient) {
+	@Order(1)
+	@DisplayName("Should successfully retrieve all available doc workflows")
+	public void testRetrieveAllDocumentWorkflows(VaultClient vaultClient) {
 		DocumentWorkflowResponse response = vaultClient.newRequest(DocumentWorkflowRequest.class)
 				.retrieveAllDocumentWorkflows();
 		Assertions.assertTrue(response.isSuccessful());
@@ -43,11 +68,13 @@ public class DocumentWorkflowRequestTest {
 	}
 	
 	@Test
-	public void testDocumentWorkflowDetails(VaultClient vaultClient, boolean loc, String workflowName) {
+	@Order(2)
+	@DisplayName("Should successfully retrieve doc workflow details")
+	public void testRetrieveDocumentWorkflowDetails(VaultClient vaultClient) {
 		System.out.println("\n------ Retrieve all available document workflow details ------");
 
 		DocumentWorkflowDetailsResponse response = vaultClient.newRequest(DocumentWorkflowRequest.class)
-				.retrieveDocumentWorkflowDetails(workflowName);
+				.retrieveDocumentWorkflowDetails(VAPIL_TEST_DOC_WORKFLOW);
 
 		if (response.getData() != null) {
 			DocumentWorkflowDetailsResponse.DocumentWorkflow workflow = response.getData();
@@ -63,7 +90,7 @@ public class DocumentWorkflowRequestTest {
 				for (Prompt prompts : con.getPrompts()) {
 					System.out.println("\tPrompts Exist\n");
 					System.out.println("------------------------------");
-					System.out.println("\tPrompt Lable " + prompts.getLabel());
+					System.out.println("\tPrompt Label " + prompts.getLabel());
 					System.out.println("\tPrompt Name " + prompts.getName());
 					System.out.println("\tPrompt Multivalue " + prompts.getMultiValue());
 
@@ -73,39 +100,26 @@ public class DocumentWorkflowRequestTest {
 		System.out.println("Test Complete...");
 	}
 
-	/**
-	 * 
-	 * @param vaultClient
-	 * @param loc
-	 * @param workflowName
-	 */
-	public void testInitiateDocumentWorkflow(VaultClient vaultClient, boolean loc, String workflowName) {
+	@Test
+	@Disabled("There is a bug in the API that is preventing this from working")
+	@Order(3)
+	@DisplayName("Should successfully retrieve doc workflow details")
+	public void testInitiateDocumentWorkflow(VaultClient vaultClient) {
 		System.out.println("\n------ Initiate Document Workflow ------");
 
-		// Document Values
-		List<String> documents = new ArrayList<String>();
-		documents.add("29");
 		// Participant Name Values pair
 		HashMap<String, String> participantName = new HashMap<String, String>();
-		participantName.put("sme__c","user:2929873");
-		participantName.put("executive_approvers__c","user:2929873");
+		participantName.put("", "");
 		// Description value
-		String description = "Workflow Description: Multi Document Workflow";
+		String description = "VAPIL Test Doc Workflow";
 
 
 		InitiateDocumentWorkflowResponse response = vaultClient.newRequest(DocumentWorkflowRequest.class)
-						.initiateDocumentWorkflow(workflowName, documents,participantName,description);
+				.initiateDocumentWorkflow(VAPIL_TEST_DOC_WORKFLOW, documents, participantName, description);
 
-		System.out.println("Status = " + response.getResponseStatus());
-
-		if (response.getResponseStatus().equalsIgnoreCase("SUCCESS")) {
-			System.out.println("Record ID " + response.getData().getRecordId());
-			System.out.println("Record URL " + response.getData().getRecordUrl());
-			System.out.println("Workflow ID " + response.getData().getWorkflowId());
-		}
-		System.out.println("Test Complete...");
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData().getRecordId());
+		Assertions.assertNotNull(response.getData().getWorkflowId());
+		Assertions.assertNotNull(response.getData().getRecordUrl());
 	}
-
-	
-
 }

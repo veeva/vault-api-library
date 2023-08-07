@@ -9,7 +9,6 @@ package com.veeva.vault.vapil.api.request;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.veeva.vault.vapil.api.model.common.Job;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
@@ -195,21 +194,21 @@ public class MetaDataRequest extends VaultRequest {
 	}
 
 	/**
-	 * <b>Retrieve Component Types</b>
+	 * <b>Retrieve All Component Metadata</b>
 	 * <p>
-	 * Get a list of all metadata component types in the Vault
+	 * Retrieve metadata of all component types in your Vault.
 	 *
 	 * @return MetaDataComponentTypeBulkResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/components</pre>
 	 * @vapil.request <pre>
 	 * MetaDataComponentTypeBulkResponse resp = vaultClient.newRequest(MetaDataRequest.class)
-	 * 				.retrieveComponentTypes();</pre>
+	 * 				.retrieveAllComponentMetadata();</pre>
 	 * @vapil.response <pre>
 	 * for (ComponentType c : resp.getData())
 	 *   System.out.println(c.getName() + " s" + c.getLabel());</pre>
 	 */
-	public MetaDataComponentTypeBulkResponse retrieveComponentTypes() {
+	public MetaDataComponentTypeBulkResponse retrieveAllComponentMetadata() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_COMPONENTS));
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, headerAccept);
 

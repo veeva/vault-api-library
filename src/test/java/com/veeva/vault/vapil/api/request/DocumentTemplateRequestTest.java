@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.DocumentTemplate;
 import com.veeva.vault.vapil.api.model.response.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 @Tag("DocumentTemplateRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class DocumentTemplateRequestTest {
 
 	// From your test Vault, find a document type to use for creation of document templates

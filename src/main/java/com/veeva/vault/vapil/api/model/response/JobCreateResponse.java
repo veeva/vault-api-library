@@ -41,34 +41,4 @@ public class JobCreateResponse extends VaultResponse {
 	public void setUrl(String url) {
 		this.set("url", url);
 	}
-
-	@JsonProperty("warnings")
-	public List<Warning> getWarnings() {
-		return (List<Warning>) this.get("warnings");
-	}
-
-	public void setWarnings(List<Warning> warnings) {
-		this.set("warnings", warnings);
-	}
-
-	public static class Warning extends VaultModel {
-
-		@JsonProperty("message")
-		public String getMessage() {
-			return this.getString("message");
-		}
-
-		public void setMessage(String message) {
-			this.set("message", message);
-		}
-
-		@JsonProperty("type")
-		public String getType() {
-			return this.getString("type");
-		}
-
-		public void setType(String type) {
-			this.set("type", type);
-		}
-	}
 }

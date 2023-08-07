@@ -9,7 +9,6 @@ package com.veeva.vault.vapil.api.model.response;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -101,10 +100,16 @@ public class VaultResponse extends VaultModel {
 	 */
 	public static final String HTTP_HEADER_DOWNTIME_EXPECTED_DURATION_MINUTES = "X-VaultAPI-DowntimeExpectedDurationMinutes";
 
+	/**
+	 * <b>X-VaultAPI-Status</b>
+	 */
+	public static final String HTTP_HEADER_STATUS = "X-VaultAPI-Status";
+
 
 
 	private byte[] binaryContent; // For requests that return binary data
 	private List<APIResponseError> errors;
+	private List<APIResponseWarning> warnings;
 	private Map<String, List<String>> headers;
 	private String outputFilePath; // For requests that wrote a file
 	private String response = ""; // Response as string	
@@ -186,6 +191,26 @@ public class VaultResponse extends VaultModel {
 		return errors != null && !errors.isEmpty();
 	}
 
+	@JsonProperty("warnings")
+	public List<APIResponseWarning> getWarnings() {
+		return warnings;
+	}
+
+	@JsonProperty("warnings")
+	public void setWarnings(List<APIResponseWarning> warnings) {
+		this.warnings = warnings;
+	}
+
+	/**
+	 * Determine if warnings exist in the API Response
+	 *
+	 * @return True if warnings exist
+	 */
+	@JsonIgnore
+	public boolean hasWarnings() {
+		return warnings != null && !warnings.isEmpty();
+	}
+
 	@JsonIgnore
 	public Map<String, List<String>> getHeaders() {
 		return headers;
@@ -264,6 +289,11 @@ public class VaultResponse extends VaultModel {
 	@JsonIgnore
 	public Integer getHeaderDowntimeExpectedDurationMinutes() { return getHeaderAsIntegerIgnoreCase(HTTP_HEADER_DOWNTIME_EXPECTED_DURATION_MINUTES); }
 
+	@JsonIgnore
+	public String getHeaderStatus() {
+		return getHeaderAsStringIgnoreCase(HTTP_HEADER_STATUS);
+	}
+
 	/**
 	 * For requests returning binary content
 	 *
@@ -327,6 +357,29 @@ public class VaultResponse extends VaultModel {
 	}
 
 	public static class APIResponseError extends VaultModel {
+
+		@JsonProperty("message")
+		public String getMessage() {
+			return this.getString("message");
+		}
+
+		@JsonProperty("message")
+		public void setMessage(String message) {
+			this.set("message", message);
+		}
+
+		@JsonProperty("type")
+		public String getType() {
+			return getString("type");
+		}
+
+		@JsonProperty("type")
+		public void setType(String type) {
+			this.set("type", type);
+		}
+	}
+
+	public static class APIResponseWarning extends VaultModel {
 
 		@JsonProperty("message")
 		public String getMessage() {

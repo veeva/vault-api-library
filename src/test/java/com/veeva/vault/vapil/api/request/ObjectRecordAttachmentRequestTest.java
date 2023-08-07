@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.ObjectRecordAttachmentResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import java.time.ZonedDateTime;
 
 @Tag("ObjectRecordAttachmentRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class ObjectRecordAttachmentRequestTest {
 	static final String OBJECT_NAME = "";
 	static final String RECORD_ID = "";

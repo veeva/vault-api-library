@@ -1,0 +1,17 @@
+{
+    "authenticationType": "SESSION_ID",
+    "idpOauthAccessToken": "",
+    "idpOauthScope": "openid",
+    "idpUsername": "",
+    "idpPassword": "",
+    "vaultUsername": "user@cholecap.com",
+    "vaultPassword": "",
+    "vaultDNS": "dns.veevavault.com",
+    "vaultSessionId": "123456789",
+    "vaultClientId": "veeva-vault-devsupport-client-vapil",
+    "vaultOauthClientId": "",
+    "vaultOauthProfileId": "",
+    "logApiErrors": true,
+    "httpTimeout": null,
+    "validateSession": true
+}

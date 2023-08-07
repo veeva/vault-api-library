@@ -72,36 +72,6 @@ public class QueryResponse extends VaultResponse {
 		this.set("responseDetails", responseDetails);
 	}
 
-	@JsonProperty("warnings")
-	public List<JobCreateResponse.Warning> getWarnings() {
-		return (List<JobCreateResponse.Warning>) this.get("warnings");
-	}
-
-	public void setWarnings(List<Warning> warnings) {
-		this.set("warnings", warnings);
-	}
-
-	public static class Warning extends VaultModel {
-
-		@JsonProperty("message")
-		public String getMessage() {
-			return this.getString("message");
-		}
-
-		public void setMessage(String message) {
-			this.set("message", message);
-		}
-
-		@JsonProperty("type")
-		public String getType() {
-			return this.getString("type");
-		}
-
-		public void setType(String type) {
-			this.set("type", type);
-		}
-	}
-
 	public static class QueryDescribe extends VaultModel {
 		@JsonProperty("object")
 		public QueryObject getQueryObject() {

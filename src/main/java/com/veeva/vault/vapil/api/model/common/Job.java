@@ -32,13 +32,13 @@ public class Job extends VaultModel {
 		this.set("created_date", createdDate);
 	}
 
-	@JsonProperty("id")
-	public Integer getId() {
-		return getInteger("id");
+	@JsonProperty("job_id")
+	public Integer getJobId() {
+		return getInteger("job_id");
 	}
 
-	public void setId(Integer id) {
-		this.set("id", id);
+	public void setJobId(Integer jobId) {
+		this.set("job_id", jobId);
 	}
 
 	@JsonProperty("links")

@@ -1,0 +1,10 @@
+ALTER Object vapil_test_mdl_object__c (
+ADD Field test_alter_field__c(
+  label('Test Alter Field'),
+  type('String'),
+  active(true),
+  required(false),
+  list_column(false),
+  unique(false),
+  order(0))
+);

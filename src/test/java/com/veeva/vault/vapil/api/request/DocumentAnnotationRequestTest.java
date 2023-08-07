@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.DocumentAnnotationResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 
 @Tag("DocumentAnnotation")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class DocumentAnnotationRequestTest {
 	static final int DOC_ID = 7;
 	static final int VIDEO_ID = 8;

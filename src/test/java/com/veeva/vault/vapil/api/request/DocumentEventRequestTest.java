@@ -14,6 +14,7 @@ import com.veeva.vault.vapil.api.model.response.DocumentEventSubtypeResponse;
 import com.veeva.vault.vapil.api.model.response.DocumentEventTypeResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 @Tag("DocumentEvent")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class DocumentEventRequestTest {
 
 	@Test

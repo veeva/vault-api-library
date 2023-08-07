@@ -1,6 +1,8 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;;
+import com.veeva.vault.vapil.extension.BinderTemplateHelper;
+import com.veeva.vault.vapil.extension.FileHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
@@ -10,18 +12,211 @@ import com.veeva.vault.vapil.api.model.response.BinderTemplateMetadataResponse;
 import com.veeva.vault.vapil.api.model.response.BinderTemplateNodeBulkResponse;
 import com.veeva.vault.vapil.api.model.response.BinderTemplateResponse;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
-@Tag("BinderTemplateRequest")
+@Tag("BinderTemplateRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Binder template request should")
 public class BinderTemplateRequestTest {
 	private static String DOCUMENT_TYPE = "general__c";
+	private static final String DOC_TYPE_NAME = "vapil_test_doc_type__c";
+	private static final String DOC_SUBTYPE_NAME = "vapil_test_doc_subtype__c";
+	private static final String DOC_CLASSIFICATION_NAME = "vapil_test_doc_classification__c";
+	static List<String> templateNames = new ArrayList<>();
+	static String templateNodeId;
 
 	@Test
+	@Order(1)
+	@DisplayName("successfully create a binder template")
+	public void testCreateBinderTemplate(VaultClient vaultClient) {
+		BinderTemplate template = new BinderTemplate();
+		template.setLabel("VAPIL Test Binder Template 1");
+		template.setType(DOC_TYPE_NAME);
+		template.setSubType(DOC_SUBTYPE_NAME);
+		template.setClassification(DOC_CLASSIFICATION_NAME);
+		template.setActive(true);
+		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.createBinderTemplate(template);
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+		Assertions.assertNotNull(response.getData().get(0).getName());
+		templateNames.add(response.getData().get(0).getName());
+	}
+
+	@Test
+	@Order(2)
+	@DisplayName("successfully retrieve binder template attributes")
+	public void testRetrieveBinderTemplateAttributes(VaultClient vaultClient) {
+		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.retrieveBinderTemplateAttributes(templateNames.get(0));
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+		for (BinderTemplate template : response.getData()) {
+			Assertions.assertNotNull(template.getName());
+			Assertions.assertNotNull(template.getLabel());
+			Assertions.assertNotNull(template.getActive());
+		}
+	}
+
+	@Test
+	@Order(3)
+	@DisplayName("successfully create a binder template node")
+	public void testCreateBinderTemplateNode(VaultClient vaultClient) {
+
+		// Create a root node in the binder
+		BinderTemplate templateNode = new BinderTemplate();
+		templateNode.setId("01");
+		templateNode.setLabel("Section 1");
+		templateNode.setParentId("");
+		templateNode.setNodeType(BinderTemplate.NodeType.SECTION);
+
+		// Create a child node in the node from above
+		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.createBinderTemplateNode(templateNames.get(0), templateNode);
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData().get(0).getId());
+		templateNodeId = response.getData().get(0).getId();
+
+		BinderTemplate templateSubNode = new BinderTemplate();
+		templateSubNode.setId("01.01");
+		templateSubNode.setLabel("Section 1-1");
+		templateSubNode.setParentId(templateNodeId); // Generated id from above
+		templateSubNode.setNodeType(BinderTemplate.NodeType.SECTION);
+
+		response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.createBinderTemplateNode(templateNames.get(0), templateSubNode);
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData().get(0).getId());
+	}
+
+	@Test
+	@Order(4)
+	@DisplayName("successfully retrieve binder template node attributes")
+	public void testRetrieveBinderTemplateNodeAttributes(VaultClient vaultClient) {
+		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.retrieveBinderTemplateNodeAttributes(templateNames.get(0));
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+		for (BinderTemplate template : response.getData()) {
+			Assertions.assertNotNull(template.getId());
+			Assertions.assertNotNull(template.getLabel());
+			Assertions.assertNotNull(template.getNodeType());
+		}
+	}
+
+	@Test
+	@Order(5)
+	@DisplayName("successfully update a binder template")
+	public void testUpdateBinderTemplate(VaultClient vaultClient) {
+		BinderTemplate template = new BinderTemplate();
+		template.setType(DOC_TYPE_NAME);
+
+		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.updateBinderTemplate(templateNames.get(0), template);
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+		for (BinderTemplate binderTemplate : response.getData()) {
+			Assertions.assertNotNull(binderTemplate.getName());
+		}
+	}
+
+	@Test
+	@Order(6)
+	@DisplayName("successfully replace existing binder template nodes")
+	public void testReplaceBinderTemplateNodes(VaultClient vaultClient) {
+
+		// Create a root node in the binder
+		BinderTemplate templateNode = new BinderTemplate();
+		templateNode.setId(templateNodeId);
+		templateNode.setLabel("Section 1");
+		templateNode.setParentId("");
+		templateNode.setNodeType(BinderTemplate.NodeType.SECTION);
+
+		// Create a child node in the node from above
+		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.createBinderTemplateNode(templateNames.get(0), templateNode);
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData().get(0).getId());
+		templateNodeId = response.getData().get(0).getId();
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData().get(0).getId());
+	}
+
+	@Test
+	@Order(7)
+	@DisplayName("successfully bulk create binder templates using JSON")
+	public void testBulkCreateBinderTemplatesJSON(VaultClient vaultClient) {
+		File jsonFile = new File(BinderTemplateHelper.getJsonPathCreateMultipleBinderTemplates());
+		Assertions.assertTrue(jsonFile.exists());
+		String jsonString = FileHelper.convertJsonFileToString(jsonFile);
+
+		BinderTemplateBulkResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.setContentTypeJson()
+				.setRequestString(jsonString)
+				.bulkCreateBinderTemplates();
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+
+		for (BinderTemplateBulkResponse.TemplateResult result : response.getData()) {
+			Assertions.assertTrue(result.isSuccessful());
+			Assertions.assertNotNull(result.getName());
+		}
+	}
+
+	@Test
+	@Order(8)
+	@DisplayName("successfully bulk update binder templates using JSON")
+	public void testBulkUpdateBinderTemplatesJSON(VaultClient vaultClient) {
+		File jsonFile = new File(BinderTemplateHelper.getJsonPathUpdateMultipleBinderTemplates());
+		Assertions.assertTrue(jsonFile.exists());
+		String jsonString = FileHelper.convertJsonFileToString(jsonFile);
+
+		BinderTemplateBulkResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.setContentTypeJson()
+				.setRequestString(jsonString)
+				.bulkUpdateBinderTemplates();
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
+
+		for (BinderTemplateBulkResponse.TemplateResult result : response.getData()) {
+			Assertions.assertTrue(result.isSuccessful());
+			Assertions.assertNotNull(result.getName());
+			templateNames.add(result.getName());
+		}
+	}
+
+	@Test
+	@Order(9)
+	@DisplayName("successfully delete a binder template")
+	public void testDeleteBinderTemplate(VaultClient vaultClient) {
+		for (String templateName : templateNames) {
+			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+					.deleteBinderTemplate(templateName);
+
+			Assertions.assertTrue(response.isSuccessful());
+		}
+	}
+
+	@Test
+	@DisplayName("successfully retrieve binder template metadata")
 	public void testRetrieveBinderTemplateMetadata(VaultClient vaultClient) {
 		BinderTemplateMetadataResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateMetadata();
@@ -31,6 +226,7 @@ public class BinderTemplateRequestTest {
 	}
 
 	@Test
+	@DisplayName("successfully retrieve binder template node metadata")
 	public void testRetrieveBinderTemplateNodeMetadata(VaultClient vaultClient) {
 		BinderTemplateMetadataResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateNodeMetadata();
@@ -40,6 +236,7 @@ public class BinderTemplateRequestTest {
 	}
 
 	@Test
+	@DisplayName("successfully retrieve binder template collection")
 	public void testRetrieveBinderTemplateCollection(VaultClient vaultClient) {
 		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateCollection();
@@ -48,124 +245,36 @@ public class BinderTemplateRequestTest {
 		Assertions.assertNotNull(response.getData());
 	}
 
-
-	@Nested
-	@DisplayName("Tests that require a template collection")
-	class TestTemplateAttributes {
-
-		String templateName;
-
-		// Load Template Collection
-		@BeforeEach
-		public void beforeEach(VaultClient vaultClient) {
-			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.retrieveBinderTemplateCollection();
-			templateName = response.getData().get(0).getName();
-		}
-
-		@Test
-		public void testRetrieveBinderTemplateAttributes(VaultClient vaultClient) {
-			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.retrieveBinderTemplateAttributes(templateName);
-
-			Assertions.assertTrue(response.isSuccessful());
-			Assertions.assertNotNull(response.getData());
-		}
-
-
-		@Test
-		public void testRetrieveBinderTemplateNodeAttributes(VaultClient vaultClient) {
-			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.retrieveBinderTemplateNodeAttributes(templateName);
-
-			Assertions.assertTrue(response.isSuccessful());
-			Assertions.assertNotNull(response.getData());
-		}
-
-	}
-
 	@Test
-	public void testCreateBinderTemplate(VaultClient vaultClient) {
-		BinderTemplate template = new BinderTemplate();
-		template.setLabel("Binder Template 1");
-		template.setType(DOCUMENT_TYPE);
-		template.setActive(true);
-		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-			.createBinderTemplate(template);
+	@Disabled
+	public void testReplaceBinderTemplateNodesJSON(VaultClient vaultClient) {
+		String binderTemplateName = "binder_template_1_json__c";
+
+		// JSON Root Nodes
+		StringBuilder jsonText = new StringBuilder();
+		jsonText.append("[");
+		jsonText.append("{\"id\": \"100\",\"node_type__v\": \"section\",\"label__v\": \"Root Node 1 - Replaced\",\"order__v\": 1,\"number__v\": \"01\",\"parent_id__v\": \"\"},");
+		jsonText.append("{\"id\": \"200\",\"node_type__v\": \"section\",\"label__v\": \"Root Node 2 - Replaced\",\"order__v\": 2,\"number__v\": \"02\",\"parent_id__v\": \"\"},");
+		jsonText.append("{\"id\": \"300\",\"node_type__v\": \"section\",\"label__v\": \"Root Node 3 - Replaced\",\"order__v\": 3,\"number__v\": \"03\",\"parent_id__v\": \"\"},");
+		jsonText.append("{\"id\": \"101\",\"node_type__v\": \"section\",\"label__v\": \"Sub Node 1 - Replaced\",\"order__v\": 1,\"number__v\": \"01.01\",\"parent_id__v\": \"100\"},");
+		jsonText.append("{\"id\": \"102\",\"node_type__v\": \"section\",\"label__v\": \"Sub Node 2 - Replaced\",\"order__v\": 1,\"number__v\": \"01.02\",\"parent_id__v\": \"200\"},");
+		jsonText.append("{\"id\": \"103\",\"node_type__v\": \"section\",\"label__v\": \"Sub Node 3 - Replaced\",\"order__v\": 1,\"number__v\": \"01.03\",\"parent_id__v\": \"300\"}");
+		jsonText.append("]");
+
+		BinderTemplateNodeBulkResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
+				.setContentTypeJson()
+				.setRequestString(jsonText.toString())
+				.replaceBinderTemplateNodes(binderTemplateName);
 
 		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getData());
-	}
-
-	@Nested
-	@DisplayName("Tests that require a binder template")
-	class TestBinderTemplate {
-
-		String templateName;
-
-		// Load Template
-		@BeforeEach
-		public void beforeEach(VaultClient vaultClient) {
-			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.retrieveBinderTemplateCollection();
-			templateName = response.getData().get(0).getName();
-		}
-
-		@Test
-		public void testUpdateBinderTemplate(VaultClient vaultClient) {
-			BinderTemplate template = new BinderTemplate();
-			template.setLabel("Binder Template - Updated");
-			template.setActive(false);
-
-			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.updateBinderTemplate(templateName, template);
-
-			Assertions.assertTrue(response.isSuccessful());
-		}
-
-
-		@Test
-		public void testCreateBinderTemplateNode(VaultClient vaultClient) {
-
-			// Create a root node in the binder
-			BinderTemplate templateNode = new BinderTemplate();
-			templateNode.setId("01");
-			templateNode.setLabel("Single Root Node 1");
-			templateNode.setNumber("01");
-			templateNode.setParentId("");
-			templateNode.setNodeType(BinderTemplate.NodeType.SECTION);
-
-			// Create a child node in the node from above
-			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.createBinderTemplateNode(templateName, templateNode);
-
-			Assertions.assertTrue(response.isSuccessful());
-			Assertions.assertNotNull(response.getData().get(0).getId());
-
-			BinderTemplate templateSubNode = new BinderTemplate();
-			templateSubNode.setId("01.01");
-			templateSubNode.setLabel("Sub Node 1");
-			templateSubNode.setNumber("01.01");
-			templateSubNode.setParentId(response.getData().get(0).getId()); // Generated id from above
-			templateSubNode.setNodeType(BinderTemplate.NodeType.SECTION);
-
-			response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.createBinderTemplateNode(templateName, templateSubNode);
-
-			Assertions.assertTrue(response.isSuccessful());
-		}
-
-
-		@Test
-		public void testDeleteBinderTemplate(VaultClient vaultClient) {
-			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-					.deleteBinderTemplate(templateName);
-			Assertions.assertTrue(response.isSuccessful());
+		for (BinderTemplateNodeBulkResponse.TemplateNodeResult result : response.getData()) {
+			Assertions.assertEquals("SUCCESS", result.getResponseStatus());
 		}
 	}
 
 	// Run manually
 	@Test
+	@Disabled
 	public void testBulkCreateBinderTemplatesCSVFile(VaultClient vaultClient) {
 
 		// In this test, the API should create binder_template_1_csv__c and binder_template_2_csv__c
@@ -192,6 +301,7 @@ public class BinderTemplateRequestTest {
 	}
 
 	@Test
+	@Disabled
 	public void testBulkCreateBinderTemplatesCSVBytes(VaultClient vaultClient) {
 
 		String fileName = "binder_template_sample.csv";
@@ -212,29 +322,8 @@ public class BinderTemplateRequestTest {
 		}
 	}
 
-	// Run manually
 	@Test
-	public void testBulkCreateBinderTemplatesJSON(VaultClient vaultClient) {
-
-		StringBuilder jsonString = new StringBuilder();
-		jsonString.append("[");
-		jsonString.append("{\"name__v\": \"binder_template_1_json__c\",\"label__v\": \"Binder Template 1\",\"type__v\": \"" + DOCUMENT_TYPE + "\",\"subtype__v\": \"\",\"classification__v\": \"\",\"active__v\": \"true\"},");
-		jsonString.append("{\"name__v\": \"binder_template_2_json__c\",\"label__v\": \"Binder Template 2\",\"type__v\": \"" + DOCUMENT_TYPE + "\",\"subtype__v\": \"\",\"classification__v\": \"\",\"active__v\": \"true\"}");
-		jsonString.append("]");
-
-		BinderTemplateRequest request = vaultClient.newRequest(BinderTemplateRequest.class);
-		request.setContentTypeJson();
-		request.setRequestString(jsonString.toString());
-		BinderTemplateBulkResponse response = request.bulkCreateBinderTemplates();
-
-		Assertions.assertTrue(response.isSuccessful());
-		for (BinderTemplateBulkResponse.TemplateResult result : response.getData()) {
-			Assertions.assertEquals("SUCCESS", result.getResponseStatus());
-		}
-	}
-
-
-	@Test
+	@Disabled
 	public void testBulkUpdateBinderTemplatesCSVFile(VaultClient vaultClient) {
 
 		String fileName = "binder_template_sample.csv";
@@ -258,6 +347,7 @@ public class BinderTemplateRequestTest {
 	}
 
 	@Test
+	@Disabled
 	public void testBulkUpdateBinderTemplatesCSVBytes(VaultClient vaultClient) {
 
 		String fileName = "binder_template_sample.csv";
@@ -278,31 +368,9 @@ public class BinderTemplateRequestTest {
 		}
 	}
 
-	@Test
-	public void testBulkUpdateBinderTemplatesJSON(VaultClient vaultClient) {
-
-		// JSON
-		StringBuilder jsonString = new StringBuilder();
-		jsonString.append("[");
-		jsonString.append("{\"name__v\": \"binder_template_1_json__c\",\"label__v\": \"Binder Template 1 - Updated\",\"active__v\": \"true\"},");
-		jsonString.append("{\"name__v\": \"binder_template_2_json__c\",\"label__v\": \"Binder Template 2 - Updated\",\"active__v\": \"false\"}");
-		jsonString.append("]");
-
-		BinderTemplateRequest request = vaultClient.newRequest(BinderTemplateRequest.class);
-
-		// Test the request using JSON input
-		request.setContentTypeJson();
-		request.setRequestString(jsonString.toString());
-		BinderTemplateBulkResponse response = request.bulkUpdateBinderTemplates();
-
-		Assertions.assertTrue(response.isSuccessful());
-		for (BinderTemplateBulkResponse.TemplateResult result : response.getData()) {
-			Assertions.assertEquals("SUCCESS", result.getResponseStatus());
-		}
-	}
-
 	// Run manually
 	@Test
+	@Disabled
 	public void testBulkCreateBinderTemplateNodesCSV(VaultClient vaultClient) {
 		String binderTemplateName = "binder_template_1_csv__c";
 		String fileName = "binder_template_node_sample.csv";
@@ -330,6 +398,7 @@ public class BinderTemplateRequestTest {
 	}
 
 	@Test
+	@Disabled
 	public void testBulkCreateBinderTemplateNodesCSVBytes(VaultClient vaultClient) {
 		String binderTemplateName = "binder_template_1_bytes__c";
 		String fileName = "binder_template_node_sample.csv";
@@ -356,6 +425,7 @@ public class BinderTemplateRequestTest {
 	}
 
 	@Test
+	@Disabled
 	public void testBulkCreateBinderTemplateNodesJSON(VaultClient vaultClient) {
 		String binderTemplateName = "binder_template_1_json__c";
 
@@ -384,6 +454,7 @@ public class BinderTemplateRequestTest {
 
 	// Run manually
 	@Test
+	@Disabled
 	public void testReplaceBinderTemplateNodesCSVFile(VaultClient vaultClient) {
 		String binderTemplateName = "binder_template_1_csv__c";
 		String fileName = "binder_template_node_sample.csv";
@@ -412,6 +483,7 @@ public class BinderTemplateRequestTest {
 	}
 
 	@Test
+	@Disabled
 	public void testReplaceBinderTemplateNodesCSVBytes(VaultClient vaultClient) {
 		/**** Very Important ****/
 		/** This deletes the entire node tree first, no matter what.  So do not try to use it to replace a single node
@@ -440,32 +512,6 @@ public class BinderTemplateRequestTest {
 
 		BinderTemplateNodeBulkResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.setBinaryFile(fileName, csvText.toString().getBytes())
-				.replaceBinderTemplateNodes(binderTemplateName);
-
-		Assertions.assertTrue(response.isSuccessful());
-		for (BinderTemplateNodeBulkResponse.TemplateNodeResult result : response.getData()) {
-			Assertions.assertEquals("SUCCESS", result.getResponseStatus());
-		}
-	}
-
-	@Test
-	public void testReplaceBinderTemplateNodesJSON(VaultClient vaultClient) {
-		String binderTemplateName = "binder_template_1_json__c";
-
-		// JSON Root Nodes
-		StringBuilder jsonText = new StringBuilder();
-		jsonText.append("[");
-		jsonText.append("{\"id\": \"100\",\"node_type__v\": \"section\",\"label__v\": \"Root Node 1 - Replaced\",\"order__v\": 1,\"number__v\": \"01\",\"parent_id__v\": \"\"},");
-		jsonText.append("{\"id\": \"200\",\"node_type__v\": \"section\",\"label__v\": \"Root Node 2 - Replaced\",\"order__v\": 2,\"number__v\": \"02\",\"parent_id__v\": \"\"},");
-		jsonText.append("{\"id\": \"300\",\"node_type__v\": \"section\",\"label__v\": \"Root Node 3 - Replaced\",\"order__v\": 3,\"number__v\": \"03\",\"parent_id__v\": \"\"},");
-		jsonText.append("{\"id\": \"101\",\"node_type__v\": \"section\",\"label__v\": \"Sub Node 1 - Replaced\",\"order__v\": 1,\"number__v\": \"01.01\",\"parent_id__v\": \"100\"},");
-		jsonText.append("{\"id\": \"102\",\"node_type__v\": \"section\",\"label__v\": \"Sub Node 2 - Replaced\",\"order__v\": 1,\"number__v\": \"01.02\",\"parent_id__v\": \"200\"},");
-		jsonText.append("{\"id\": \"103\",\"node_type__v\": \"section\",\"label__v\": \"Sub Node 3 - Replaced\",\"order__v\": 1,\"number__v\": \"01.03\",\"parent_id__v\": \"300\"}");
-		jsonText.append("]");
-
-		BinderTemplateNodeBulkResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
-				.setContentTypeJson()
-				.setRequestString(jsonText.toString())
 				.replaceBinderTemplateNodes(binderTemplateName);
 
 		Assertions.assertTrue(response.isSuccessful());

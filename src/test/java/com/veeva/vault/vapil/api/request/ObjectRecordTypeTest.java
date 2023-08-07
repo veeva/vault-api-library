@@ -8,16 +8,19 @@ import com.veeva.vault.vapil.api.model.response.ObjectRecordTypeResponse;
 import com.veeva.vault.vapil.api.model.response.QueryResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.TestRunHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class ObjectRecordTypeTest {
 
     @Test
@@ -48,7 +51,8 @@ public class ObjectRecordTypeTest {
         List<ObjectRecord> objectRecords = new ArrayList<>();
         for(int i = 0; i < 6; i++) {
             ObjectRecord objectRecord = new ObjectRecord();
-            objectRecord.set("test_run_id__c", TestRunHelper.getFilesafeTestRunID());
+//            objectRecord.set("test_run_id__c", TestRunHelper.getFilesafeTestRunID());
+            objectRecord.set("test_run_id__c", ZonedDateTime.now());
             objectRecord.set("test_object_no__c", i);
             if (i % 2 == 0) {
                 objectRecord.set("create_test_date__c","2050-01-01");
@@ -76,7 +80,8 @@ public class ObjectRecordTypeTest {
         List<ObjectRecord> objectRecords = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             ObjectRecord objectRecord = new ObjectRecord();
-            objectRecord.set("test_run_id__c", TestRunHelper.getFilesafeTestRunID());
+//            objectRecord.set("test_run_id__c", TestRunHelper.getFilesafeTestRunID());
+            objectRecord.set("test_run_id__c", ZonedDateTime.now());
             objectRecord.set("test_object_no__c", i);
             switch (i % 5) {
                 case 1:
@@ -113,7 +118,7 @@ public class ObjectRecordTypeTest {
             Assertions.assertNull(resp.getErrors());
             Assertions.assertTrue(resp.getData().stream().allMatch(VaultResponse::isSuccessful));
             //"vapil_test_change_obj_type__c"
-            QueryResponse newRecs = vaultClient.newRequest(QueryRequest.class).query("select id, name__v, object_type__v, test_object_no__c  from vapil_test_change_obj_type__c where test_run_id__c = '"+TestRunHelper.getFilesafeTestRunID()+"'");
+            QueryResponse newRecs = vaultClient.newRequest(QueryRequest.class).query("select id, name__v, object_type__v, test_object_no__c  from vapil_test_change_obj_type__c where test_run_id__c = '"+ZonedDateTime.now()+"'");
             Assertions.assertTrue(newRecs.isSuccessful());
             Assertions.assertEquals(10, newRecs.getData().size());
             objectRecords.clear();

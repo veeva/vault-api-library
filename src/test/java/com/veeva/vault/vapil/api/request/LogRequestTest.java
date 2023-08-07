@@ -8,6 +8,7 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.extension.DocumentRequestHelper;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,16 +31,40 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-@Tag("LogRequest")
+@Tag("LogRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@DisplayName("Loq Request should")
 public class LogRequestTest {
 
+	private static Set<LogRequest.AuditTrailType> auditTrailTypes = new HashSet<>(Arrays.asList(
+			LogRequest.AuditTrailType.DOCUMENT,
+			LogRequest.AuditTrailType.DOMAIN,
+			LogRequest.AuditTrailType.LOGIN,
+			LogRequest.AuditTrailType.OBJECT,
+			LogRequest.AuditTrailType.SYSTEM));
+
+	private static String USER__SYS = "user__sys";
+	private static String VAPIL_USER_ID = "17042915";
+	private static int docId;
+
+	@BeforeAll
+	public static void setup(VaultClient vaultClient) throws IOException {
+		DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
+		Assertions.assertTrue(response.isSuccessful());
+		docId = response.getDocument().getId();
+	}
+
+	@AfterAll
+	public static void teardown(VaultClient vaultClient) {
+		List<Integer> docIdList = Arrays.asList(docId);
+		DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIdList);
+		Assertions.assertTrue(response.isSuccessful());
+	}
+
 	@Test
+	@DisplayName("successfully retrieve all available audit types you have permission to access")
 	public void testRetrieveAuditTypes(VaultClient vaultClient) {
 		AuditTypesResponse response = vaultClient.newRequest(LogRequest.class)
 				.retrieveAuditTypes();
@@ -47,204 +72,195 @@ public class LogRequestTest {
 		Assertions.assertTrue(response.isSuccessful());
 		for (AuditTrail auditTrail : response.getAuditTrails()) {
 			Assertions.assertNotNull(auditTrail.getName());
-			System.out.println(auditTrail.getName());
 		}
 	}
 
 	@Test
+	@DisplayName("successfully retrieve all fields and their metadata for a specified audit trail or log type.")
 	public void testRetrieveAuditMetadata(VaultClient vaultClient) {
-		AuditMetadataResponse response = vaultClient.newRequest(LogRequest.class)
-				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);
+		for (LogRequest.AuditTrailType auditTrailType : auditTrailTypes) {
+			AuditMetadataResponse response = vaultClient.newRequest(LogRequest.class)
+					.retrieveAuditMetadata(auditTrailType);
 
-		Assertions.assertTrue(response.isSuccessful());
-		AuditMetadata metadata = response.getData();
-		Assertions.assertNotNull(metadata.getName());
+			Assertions.assertTrue(response.isSuccessful());
+			AuditMetadata metadata = response.getData();
+			Assertions.assertNotNull(metadata.getName());
 
-		for (AuditMetadata.Field field : metadata.getFields()) {
-			Assertions.assertNotNull(field.getName());
-			Assertions.assertNotNull(field.getType());
+			for (AuditMetadata.Field field : metadata.getFields()) {
+				Assertions.assertNotNull(field.getName());
+				Assertions.assertNotNull(field.getType());
+			}
 		}
 	}
 
+	@Nested
+	@DisplayName("successfully Retrieve audit details")
+	class testRetrieveAuditDetails {
+		@Test
+		@DisplayName("for specific dates of audit type: Document")
+		public void testRetrieveDocumentAuditDetails(VaultClient vaultClient) {
+			DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
+					.setLimit(10)
+					.setEvents(new HashSet<>(Arrays.asList("UploadDocBulk", "ExportBinder")))
+					.retrieveAuditDetails(LogRequest.AuditTrailType.DOCUMENT);
+
+			Assertions.assertTrue(response.isSuccessful());
+			AuditDetailsResponse.ResponseDetails auditDetails = response.getResponseDetails();
+			Assertions.assertNotNull(auditDetails.getDetailsObject().getName());
+			Assertions.assertNotNull(auditDetails.getDetailsObject().getUrl());
+
+			for (DocumentAudit documentAuditData : response.getData()) {
+				Assertions.assertNotNull(documentAuditData.getId());
+				Assertions.assertNotNull(documentAuditData.getTimestamp());
+			}
+
+		}
+
+		@Test
+		@DisplayName("for specific dates of audit type: Domain")
+		public void testRetrieveDomainAuditDetails(VaultClient vaultClient) {
+			DomainAuditResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
+					.setLimit(4)
+					.retrieveAuditDetails(LogRequest.AuditTrailType.DOMAIN);
+
+			Assertions.assertTrue(response.isSuccessful());
+			AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
+			Assertions.assertNotNull(details.getDetailsObject().getName());
+			Assertions.assertNotNull(details.getDetailsObject().getUrl());
+
+			for (DomainAuditData data : response.getData()) {
+				Assertions.assertNotNull(data.getId());
+				Assertions.assertNotNull(data.getTimestamp());
+			}
+		}
+
+		@Test
+		@DisplayName("for specific dates of audit type: Login")
+		public void testRetrieveLoginAuditDetails(VaultClient vaultClient) {
+			LoginAuditResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
+					.retrieveAuditDetails(LogRequest.AuditTrailType.LOGIN);
+
+			Assertions.assertTrue(response.isSuccessful());
+			AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
+			Assertions.assertNotNull(details.getDetailsObject().getName());
+			Assertions.assertNotNull(details.getDetailsObject().getUrl());
+
+			for (LoginAuditData data : response.getData()) {
+				Assertions.assertNotNull(data.getId());
+				Assertions.assertNotNull(data.getTimestamp());
+				Assertions.assertNotNull(data.getUserName());
+			}
+		}
+
+		@Test
+		@DisplayName("for specific dates of audit type: Object")
+		public void testRetrieveObjectAuditDetails(VaultClient vaultClient) {
+			ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20))
+					.setLimit(10)
+					.setEvents(new HashSet<>(Arrays.asList("Create", "Update")))
+					.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
+
+			Assertions.assertTrue(response.isSuccessful());
+			AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
+			Assertions.assertNotNull(details.getDetailsObject().getName());
+			Assertions.assertNotNull(details.getDetailsObject().getUrl());
+
+			for (ObjectAuditData data : response.getData()) {
+				Assertions.assertNotNull(data.getId());
+				Assertions.assertNotNull(data.getTimestamp());
+				Assertions.assertNotNull(data.getRecordId());
+			}
+
+			if (response.isPaginated()) {
+				ObjectAuditResponse paginatedResponse = vaultClient.newRequest(LogRequest.class)
+						.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.OBJECT,
+								response.getResponseDetails().getNextPage());
+				Assertions.assertTrue(paginatedResponse.isSuccessful());
+			}
+		}
+
+		@Test
+		@DisplayName("for specific dates of audit type: System")
+		public void testRetrieveSystemAuditDetails(VaultClient vaultClient) {
+			SystemAuditResponse response = vaultClient.newRequest(LogRequest.class)
+					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
+					.setLimit(10)
+					.retrieveAuditDetails(LogRequest.AuditTrailType.SYSTEM);
+
+			Assertions.assertTrue(response.isSuccessful());
+			AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
+			Assertions.assertNotNull(details.getDetailsObject().getName());
+			Assertions.assertNotNull(details.getDetailsObject().getUrl());
+
+			for (SystemAuditData data : response.getData()) {
+				Assertions.assertNotNull(data.getId());
+				Assertions.assertNotNull(data.getTimestamp());
+				Assertions.assertNotNull(data.getAction());
+			}
+
+			if (response.isPaginated()) {
+				SystemAuditResponse paginatedResponse = vaultClient.newRequest(LogRequest.class)
+						.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.SYSTEM,
+								response.getResponseDetails().getNextPage());
+				Assertions.assertTrue(paginatedResponse.isSuccessful());
+			}
+		}
+
+		@Test
+		@Disabled
+		@DisplayName("for all dates of audit type: Object")
+		public void testRetrieveObjectAuditDetailsAllDates(VaultClient vaultClient) {
+			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
+					.setAllDates(true)
+					.setFormatResult(LogRequest.FormatResultType.CSV)
+					.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
+
+			Assertions.assertTrue(response.isSuccessful());
+			Assertions.assertNotNull(response.getJobId());
+			Assertions.assertNotNull(response.getUrl());
+		}
+
+		@Test
+		@Disabled
+		@DisplayName("for all dates of audit type: Domain")
+		public void testRetrieveDomainAuditDetailsAllDates(VaultClient vaultClient) {
+			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
+					.setAllDates(true)
+					.setFormatResult(LogRequest.FormatResultType.CSV)
+					.retrieveAuditDetails(LogRequest.AuditTrailType.DOMAIN);
+
+			Assertions.assertTrue(response.isSuccessful());
+			Assertions.assertNotNull(response.getJobId());
+			Assertions.assertNotNull(response.getUrl());
+		}
+
+		@Test
+		@Disabled
+		@DisplayName("for all dates of audit type: System")
+		public void testRetrieveSystemAuditDetailsAsCsv(VaultClient vaultClient) {
+			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
+					.setAllDates(true)
+					.setFormatResult(LogRequest.FormatResultType.CSV)
+					.retrieveAuditDetails(LogRequest.AuditTrailType.SYSTEM);
+
+			Assertions.assertTrue(response.isSuccessful());
+			Assertions.assertNotNull(response.getJobId());
+			Assertions.assertNotNull(response.getUrl());
+		}
+
+	}
+
 	@Test
-	@DisplayName("Should successfully retrieve document audit details with specified query params")
-	public void testRetrieveDocumentAuditDetails(VaultClient vaultClient) {
+	@DisplayName("successfully retrieve complete audit history for a single document.")
+	public void testRetrieveCompleteAuditHistoryForASingleDocument(VaultClient vaultClient) {
 		DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
-				.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
-				.setLimit(4)
-				.setEvents(new HashSet<>(Arrays.asList("UploadDocBulk", "ExportBinder")))
-				.retrieveAuditDetails(LogRequest.AuditTrailType.DOCUMENT);
-
-		Assertions.assertTrue(response.isSuccessful());
-		AuditDetailsResponse.ResponseDetails auditDetails = response.getResponseDetails();
-		Assertions.assertNotNull(auditDetails.getDetailsObject().getName());
-		Assertions.assertNotNull(auditDetails.getDetailsObject().getUrl());
-
-		for (DocumentAudit documentAuditData : response.getData()) {
-			Assertions.assertNotNull(documentAuditData.getId());
-			Assertions.assertNotNull(documentAuditData.getTimestamp());
-		}
-
-	}
-
-	@Test
-	public void testRetrieveDomainAuditDetails(VaultClient vaultClient) {
-		DomainAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
-				.retrieveAuditDetails(LogRequest.AuditTrailType.DOMAIN);
-
-		Assertions.assertTrue(response.isSuccessful());
-		AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
-		Assertions.assertNotNull(details.getDetailsObject().getName());
-		Assertions.assertNotNull(details.getDetailsObject().getUrl());
-
-		for (DomainAuditData data : response.getData()) {
-			Assertions.assertNotNull(data.getId());
-			Assertions.assertNotNull(data.getTimestamp());
-		}
-	}
-
-	@Test
-	public void testRetrieveLoginAuditDetails(VaultClient vaultClient) {
-		LoginAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
-				.retrieveAuditDetails(LogRequest.AuditTrailType.LOGIN);
-
-		Assertions.assertTrue(response.isSuccessful());
-		AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
-		Assertions.assertNotNull(details.getDetailsObject().getName());
-		Assertions.assertNotNull(details.getDetailsObject().getUrl());
-
-		for (LoginAuditData data : response.getData()) {
-			Assertions.assertNotNull(data.getId());
-			Assertions.assertNotNull(data.getTimestamp());
-			Assertions.assertNotNull(data.getUserName());
-		}
-	}
-
-	@Test
-	@DisplayName("Should successfully retrieve object audit details with specified query params")
-	public void testRetrieveObjectAuditDetails(VaultClient vaultClient) {
-		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20))
-				.setLimit(10)
-				.setEvents(new HashSet<>(Arrays.asList("Create", "Update")))
-				.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
-
-		Assertions.assertTrue(response.isSuccessful());
-		AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
-		Assertions.assertNotNull(details.getDetailsObject().getName());
-		Assertions.assertNotNull(details.getDetailsObject().getUrl());
-
-		for (ObjectAuditData data : response.getData()) {
-			Assertions.assertNotNull(data.getId());
-			Assertions.assertNotNull(data.getTimestamp());
-			Assertions.assertNotNull(data.getRecordId());
-		}
-
-		if (response.isPaginated()) {
-			ObjectAuditResponse paginatedResponse = vaultClient.newRequest(LogRequest.class)
-					.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.OBJECT,
-							response.getResponseDetails().getNextPage());
-			Assertions.assertTrue(paginatedResponse.isSuccessful());
-		}
-	}
-
-	@Test
-	public void testRetrieveObjectAuditDetailsAsync(VaultClient vaultClient) {
-		JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
-				.setAllDates(true)
-				.setFormatResult(LogRequest.FormatResultType.CSV)
-				.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
-
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getJobId());
-	}
-
-	@Test
-	public void testRetrieveSystemAuditDetails(VaultClient vaultClient) {
-		LogRequest request = vaultClient.newRequest(LogRequest.class);
-		request.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20));
-		request.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")));
-		request.setAllDates(false);
-		request.setFormatResult(LogRequest.FormatResultType.JSON);
-		request.setLimit(4);
-
-		SystemAuditResponse response = request.retrieveAuditDetails(LogRequest.AuditTrailType.SYSTEM);
-		Assertions.assertTrue(response.isSuccessful());
-
-		AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
-		Assertions.assertNotNull(details.getDetailsObject().getName());
-		Assertions.assertNotNull(details.getDetailsObject().getUrl());
-
-		for (SystemAuditData data : response.getData()) {
-			Assertions.assertNotNull(data.getId());
-			Assertions.assertNotNull(data.getTimestamp());
-			Assertions.assertNotNull(data.getAction());
-		}
-
-		// Test paging
-		if (details.hasNextPage()) {
-			response = request.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.SYSTEM, details.getNextPage());
-			details = response.getResponseDetails();
-			Assertions.assertNotNull(details.getNextPage());
-			Assertions.assertNotNull(details.getPreviousPage());
-			Assertions.assertNotNull(details.getTotal());
-		}
-
-		if (details.hasPreviousPage()) {
-			response = request.retrieveAuditDetailsByPage(LogRequest.AuditTrailType.SYSTEM, details.getPreviousPage());
-			details = response.getResponseDetails();
-			Assertions.assertNotNull(details.getNextPage());
-			Assertions.assertNotNull(details.getTotal());
-		}
-	}
-
-	@Test
-	public void testRetrieveDomainFullAuditTrailAsCsv(VaultClient vaultClient) {
-		JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
-				.setAllDates(true)
-				.setFormatResult(LogRequest.FormatResultType.CSV)
-				.retrieveAuditDetails(LogRequest.AuditTrailType.DOMAIN);
-
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getJobId());
-		Assertions.assertNotNull(response.getUrl());
-	}
-
-	@Test
-	public void testRetrieveSystemAuditDetailsAsCsv(VaultClient vaultClient) {
-
-		JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
-				.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29))
-				.setFormatResult(LogRequest.FormatResultType.CSV)
-				.retrieveAuditDetails(LogRequest.AuditTrailType.SYSTEM);
-
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getJobId());
-		Assertions.assertNotNull(response.getUrl());
-	}
-
-	@Test
-	public void testRetrieveSingleDocumentAuditDetails(VaultClient vaultClient) {
-		String vql = String.format("select id from documents where version_modified_date__v > '%s'",
-				ZonedDateTime.now(ZoneId.of("UTC")).minusDays(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
-
-		QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class).query(vql);
-		Assertions.assertTrue(queryResponse.isSuccessful());
-
-		Integer id = 1;
-		for (QueryResponse.QueryResult rec : queryResponse.getData()) {
-			id = rec.getInteger("id");
-			break;
-		}
-
-		// Omit start and end dates to use the defaults (see the API guide)
-		DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
+				.setEvents(new HashSet<>(Arrays.asList("GetDocumentVersion", "UploadDoc")))
 				.setLimit(4) // Just pull 4 records so the results can be viewed more easily
-				.setFormatResult(LogRequest.FormatResultType.JSON)
-				.retrieveDocumentAuditTrail(id);
+				.retrieveCompleteAuditHistoryForASingleDocument(docId);
 		Assertions.assertTrue(response.isSuccessful());
 
 		AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
@@ -260,116 +276,66 @@ public class LogRequestTest {
 	}
 
 	@Test
-	public void testRetrieveSingleDocumentAuditDetailsAsCsv(VaultClient vaultClient) {
-		String vql = String.format("select id from documents where version_modified_date__v > '%s'",
-				ZonedDateTime.now(ZoneId.of("UTC")).minusDays(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
-
-		QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class).query(vql);
-		Assertions.assertTrue(queryResponse.isSuccessful());
-
-		Integer id = 1;
-		for (QueryResponse.QueryResult rec : queryResponse.getData()) {
-			id = rec.getInteger("id");
-			break;
-		}
-
+	@DisplayName("successfully retrieve complete audit history for a single document as a CSV file.")
+	public void testRetrieveCompleteAuditHistoryForASingleDocumentAsCsv(VaultClient vaultClient) {
 		DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setFormatResult(LogRequest.FormatResultType.CSV)
-				.retrieveDocumentAuditTrail(id);
+				.retrieveCompleteAuditHistoryForASingleDocument(docId);
+
 		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	@Test
-	public void testRetrieveSingleObjectAuditDetails(VaultClient vaultClient) {
-
-		// Omit start and end dates to use the defaults (see the API guide)
+	@DisplayName("successfully retrieve complete audit history for a single object record.")
+	public void testRetrieveCompleteAuditHistoryForASingleObjectRecord(VaultClient vaultClient) {
 		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
-				.setFormatResult(LogRequest.FormatResultType.JSON)
-				.retrieveObjectAuditTrail("user__sys", "2051303");
+				.setEvents(new HashSet<>(Arrays.asList("Create", "Edit")))
+				.retrieveCompleteAuditHistoryForASingleObjectRecord(USER__SYS, VAPIL_USER_ID);
 
 		Assertions.assertTrue(response.isSuccessful());
-		if (response.isSuccessful()) {
-			AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
-			System.out.println("Offset = " + details.getOffset());
-			System.out.println("Limit = " + details.getLimit());
-			System.out.println("Size = " + details.getSize());
-			System.out.println("Total = " + details.getTotal());
-			System.out.println("Object/Name = " + details.getDetailsObject().getName());
-			System.out.println("Object/Label = " + details.getDetailsObject().getLabel());
-			System.out.println("Object/Url = " + details.getDetailsObject().getUrl());
+		AuditDetailsResponse.ResponseDetails details = response.getResponseDetails();
+		Assertions.assertNotNull(details.getDetailsObject().getName());
+		Assertions.assertNotNull(details.getDetailsObject().getLabel());
+		Assertions.assertNotNull(details.getDetailsObject().getUrl());
 
-			System.out.println("Items ****");
-			for (ObjectAuditData data : response.getData()) {
-				System.out.println("\n**** Data Item **** ");
-				System.out.println("id = " + data.getId());
-				System.out.println("timestamp = " + data.getTimestamp());
-				System.out.println("UserName = " + data.getUserName());
-				System.out.println("Full Name = " + data.getFullName());
-				System.out.println("Action = " + data.getAction());
-				System.out.println("Item = " + data.getItem());
-				System.out.println("Record ID = " + data.getRecordId());
-				System.out.println("Object Label = " + data.getObjectLabel());
-				System.out.println("Workflow Name = " + data.getWorkflowName());
-				System.out.println("Task Name = " + data.getTaskName());
-				System.out.println("Verdict = " + data.getVerdict());
-				System.out.println("Reason = " + data.getReason());
-				System.out.println("Capacity = " + data.getCapacity());
-				System.out.println("Event Description = " + data.getEventDescription());
-				System.out.println("On Behalf Of = " + data.getOnBehalfOf());
-			}
+		for (ObjectAuditData data : response.getData()) {
+			Assertions.assertNotNull(data.getId());
+			Assertions.assertNotNull(data.getUserName());
 		}
 	}
 
 	@Test
-	public void testRetrieveSingleObjectAuditDetailsAsCsv(VaultClient vaultClient) {
-		System.out.println("\n****** Retrieve Single Object Audit Details As CSV ******");
-
-		// Omit start and end dates to use the defaults (see the API guide)
+	@DisplayName("successfully retrieve complete audit history for a single object record as a CSV file.")
+	public void testRetrieveCompleteAuditHistoryForASingleObjectRecordAsCsv(VaultClient vaultClient) {
 		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setFormatResult(LogRequest.FormatResultType.CSV)
-				.retrieveObjectAuditTrail("product__v", "00P000000000601");
+				.retrieveCompleteAuditHistoryForASingleObjectRecord(USER__SYS, VAPIL_USER_ID);
 
-		if (response.isSuccessful()) {
-			String results = new String(response.getBinaryContent());
-			System.out.println(results);
-		}
-
-		System.out.println("Test complete...");
+		Assertions.assertTrue(response.isSuccessful());
+		String results = new String(response.getBinaryContent());
+		System.out.println(results);
 	}
 
 
 	@Nested
-	@DisplayName("Test Retrieve Email Notification History")
+	@DisplayName("retrieve email notification history")
 	class testRetrieveEmailNotificationHistory {
 		@Test
-		@DisplayName("with no query parameters")
+		@DisplayName("with no query parameters successfully")
 		void noQueryParameters(VaultClient vaultClient) {
 			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
 					.retrieveEmailNotificationHistory();
 
-			System.out.println("Response Status: " + response.getResponseStatus());
-			System.out.println("Response Message: " + response.getResponse());
 			assertTrue(response.isSuccessful());
 
-			EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
-			System.out.println("Response Details ****");
-			System.out.println("Offset = " + details.getOffset());
-			System.out.println("Limit = " + details.getLimit());
-			System.out.println("Size = " + details.getSize());
-			System.out.println("Total = " + details.getTotal());
-
-			System.out.println("Items ****");
 			for (EmailNotification data : response.getData()) {
-				System.out.println("id = " + data.getNotificationId());
-				System.out.println("Send Date = " + data.getSendDate());
-				System.out.println("Recipient Email: " + data.getRecipientEmail());
 				assertNotNull(data.getNotificationId());
 				assertNotNull(data.getSendDate());
 			}
 		}
 
 		@Test
-		@DisplayName("with invalid query parameters")
+		@DisplayName("with invalid query parameters unsuccessfully")
 		void invalidQueryParameters(VaultClient vaultClient) {
 			ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29);
 
@@ -377,14 +343,12 @@ public class LogRequestTest {
 					.setStartDateTime(startDate)
 					.retrieveEmailNotificationHistory();
 
-			System.out.println("Response Status: " + response.getResponseStatus());
-			System.out.println("Response Message: " + response.getResponse());
 			assertFalse(response.isSuccessful());
 
 		}
 
 		@Test
-		@DisplayName("with start and end date/time query parameters")
+		@DisplayName("with start and end date/time query parameters successfully")
 		void startAndEndDateTimeQueryParameters(VaultClient vaultClient) {
 
 			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
@@ -392,29 +356,18 @@ public class LogRequestTest {
 					.setEndDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1))
 					.retrieveEmailNotificationHistory();
 
-			System.out.println("Response Status: " + response.getResponseStatus());
-			System.out.println("Response Message: " + response.getResponse());
 			assertTrue(response.isSuccessful());
 
 			EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
-			System.out.println("Response Details ****");
-			System.out.println("Offset = " + details.getOffset());
-			System.out.println("Limit = " + details.getLimit());
-			System.out.println("Size = " + details.getSize());
-			System.out.println("Total = " + details.getTotal());
 
-			System.out.println("Items ****");
 			for (EmailNotification data : response.getData()) {
-				System.out.println("id = " + data.getNotificationId());
-				System.out.println("Send Date: " + data.getSendDate());
-				System.out.println("Recipient Email: " + data.getRecipientEmail());
 				assertNotNull(data.getNotificationId());
 				assertNotNull(data.getSendDate());
 			}
 		}
 
 		@Test
-		@DisplayName("with start and end date query parameters")
+		@DisplayName("with start and end date query parameters successfully")
 		void startAndEndDateQueryParameters(VaultClient vaultClient) {
 
 			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
@@ -422,47 +375,33 @@ public class LogRequestTest {
 					.setEndDate(LocalDate.now().minusDays(1))
 					.retrieveEmailNotificationHistory();
 
-			System.out.println("Response Status: " + response.getResponseStatus());
-			System.out.println("Response Message: " + response.getResponse());
 			assertTrue(response.isSuccessful());
 
-			EmailNotificationHistoryResponse.ResponseDetails details = response.getResponseDetails();
-			System.out.println("Response Details ****");
-			System.out.println("Offset = " + details.getOffset());
-			System.out.println("Limit = " + details.getLimit());
-			System.out.println("Size = " + details.getSize());
-			System.out.println("Total = " + details.getTotal());
-
-			System.out.println("Items ****");
 			for (EmailNotification data : response.getData()) {
-				System.out.println("id = " + data.getNotificationId());
-				System.out.println("Send Date: " + data.getSendDate());
-				System.out.println("Recipient Email: " + data.getRecipientEmail());
 				assertNotNull(data.getNotificationId());
 				assertNotNull(data.getSendDate());
 			}
 		}
 
 		@Test
-		@DisplayName("with all_dates = true query parameter")
+		@Disabled
+		@DisplayName("with all_dates = true query parameter successfully")
 		void allDatesEqualsTrueQueryParameters(VaultClient vaultClient) {
-
+//			This will only work once every 24 hours
 			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
 					.setAllDates(true)
 					.setFormatResult(LogRequest.FormatResultType.CSV)
 					.retrieveEmailNotificationHistory();
 
-//			This will only work once every 24 hours
 			assertTrue(response.isSuccessful());
-			System.out.println("Response Status: " + response.getResponseStatus());
-			System.out.println("Response Message: " + response.getResponse());
-			System.out.println("Job ID: " + response.getJobId());
+			assertNotNull(response.getJobId());
 
 		}
 	}
 
 
 	@Test
+	@DisplayName("successfully download the API Usage Log for a single day as a file")
 	public void testRetrieveDailyAPIUsageToFile(VaultClient vaultClient) {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
@@ -479,6 +418,7 @@ public class LogRequestTest {
 	}
 
 	@Test
+	@DisplayName("successfully download the API Usage Log for a single day as bytes")
 	public void testRetrieveDailyAPIUsageToBytes(VaultClient vaultClient) {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
@@ -504,6 +444,7 @@ public class LogRequestTest {
 	}
 
 	@Test
+	@DisplayName("successfully download the SDK Runtime Log for a single day as a file")
 	public void testDownloadSdkRuntimeLogsToFile(VaultClient vaultClient) {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
@@ -520,6 +461,7 @@ public class LogRequestTest {
 	}
 
 	@Test
+	@DisplayName("successfully download the SDK Runtime Log for a single day as bytes")
 	public void testDownloadSdkRuntimeLogsToBytes(VaultClient vaultClient) {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();

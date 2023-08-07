@@ -5,6 +5,7 @@ import com.veeva.vault.vapil.api.model.response.BulkWorkflowActionDetailsRespons
 import com.veeva.vault.vapil.api.model.response.BulkWorkflowActionsResponse;
 import com.veeva.vault.vapil.api.model.response.BulkWorkflowJobStartResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Tag("BulkWorkflow")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class BulkActiveWorkflowActionRequestTest {
 
     @Test

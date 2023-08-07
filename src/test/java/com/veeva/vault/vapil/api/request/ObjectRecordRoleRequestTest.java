@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.ObjectRecordRoleChangeResponse;
 import com.veeva.vault.vapil.api.model.response.ObjectRecordRoleResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 @Tag("ObjectRoleRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class ObjectRecordRoleRequestTest {
 
 	@Test

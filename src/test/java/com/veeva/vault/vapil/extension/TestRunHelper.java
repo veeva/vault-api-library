@@ -1,32 +1,20 @@
 package com.veeva.vault.vapil.extension;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 
 public class TestRunHelper {
 
+    private static final Logger LOGGER = Logger.getLogger(TestRunHelper.class);
     private final static String WINDOWS_HOME = "HOMEPATH";
     private final static String MAC_HOME = "HOME";
     private final static String VAPIL_PATH = "/.vapil";
-    private final static String TEST_SESSION = "vapil.test.session";
-
-    private static final RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
-
-    public static String getJVMId() {
-        return runtime.getName();
-    }
-
-    public static String getFilesafeTestRunID() {
-        return getJVMId()
-                .replace('@','_')
-                .replace('.','_');
-    }
+    private final static String VAPIL_SETTINGS = "settings_vapil_testing.json";
 
     public static File getVapilTestHomePath() {
         String homeVar = System.getenv().containsKey(WINDOWS_HOME)?System.getenv(WINDOWS_HOME):System.getenv(MAC_HOME);
         File home = new File(homeVar);
-//        File home = new File("C:\\Users\\" + homeVar);
             if (home.exists() && home.canWrite()) {
                 File vapil = new File(home,VAPIL_PATH);
                 if(vapil.exists() || (vapil.mkdir())) {
@@ -36,12 +24,13 @@ public class TestRunHelper {
             return null;
     }
 
-    public static File getVapilSessionFile() {
-        final File vapilHome = getVapilTestHomePath();
+    public static File getVapilSettingsFile() {
+        File vapilHome = getVapilTestHomePath();
+        File settingsFile = null;
         if (vapilHome != null) {
-            return new File(vapilHome,TEST_SESSION);
+            settingsFile = new File(vapilHome, VAPIL_SETTINGS);
         }
-        return null;
+        return settingsFile;
     }
 
 }

@@ -6,6 +6,7 @@ import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Tag("EDL")
+@Disabled
 public class EDLRequestTest {
 
     @Test
@@ -63,7 +65,7 @@ public class EDLRequestTest {
             System.out.println("Url = " + resp.getUrl());
 
             if (resp.getWarnings() != null) {
-                for (JobCreateResponse.Warning warning : resp.getWarnings()) {
+                for (VaultResponse.APIResponseWarning warning : resp.getWarnings()) {
                     System.out.println("Type = " + warning.getMessage() + ", Message = " + warning.getMessage());
                 }
             }

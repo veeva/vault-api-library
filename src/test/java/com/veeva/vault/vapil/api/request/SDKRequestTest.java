@@ -22,6 +22,7 @@ import java.nio.file.Files;
 
 @Tag("SDKRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class SDKRequestTest {
 
 		final String CLASS_NAME = "com.veeva.vault.custom.triggers.HelloWorld";

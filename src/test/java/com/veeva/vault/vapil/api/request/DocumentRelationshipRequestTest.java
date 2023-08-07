@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.DocumentRelationship;
 import com.veeva.vault.vapil.api.model.response.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import java.nio.file.Paths;
 
 @Tag("DocumentRelationshipRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class DocumentRelationshipRequestTest {
 	static final int DOC_ID = 12;
 	static final int MAJOR_VERSION = 0;

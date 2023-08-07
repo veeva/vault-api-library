@@ -384,7 +384,8 @@ public class LogRequest extends VaultRequest {
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
 	 * 			.setFormatResult(LogRequest.FormatResultType.JSON)
-	 * 			.retrieveDocumentAuditTrail(id);</pre>
+	 * 		    .setEvents(new HashSet&lt;&gt;(Arrays.asList("GetDocumentVersion", "UploadDoc")))
+	 * 			.retrieveCompleteAuditHistoryForASingleDocument(id);</pre>
 	 * @vapil.response <pre>
 	 * AuditDetailsResponse.ResponseDetails details = resp.getResponseDetails();
 	 * System.out.println("Offset = " + details.getOffset());
@@ -417,7 +418,7 @@ public class LogRequest extends VaultRequest {
 	 * 	 System.out.println("Event Description = " + data.getEventDescription());
 	 * }</pre>
 	 */
-	public DocumentAuditResponse retrieveDocumentAuditTrail(int docId) {
+	public DocumentAuditResponse retrieveCompleteAuditHistoryForASingleDocument(int docId) {
 		String url = vaultClient.getAPIEndpoint(URL_AUDIT_DOCUMENT)
 				.replace("{doc_id}", Integer.valueOf(docId).toString());
 
@@ -433,6 +434,11 @@ public class LogRequest extends VaultRequest {
 
 		if (formatResult != null && !formatResult.isEmpty()) {
 			request.addQueryParam(PARAM_FORMAT_RESULT, formatResult);
+		}
+
+		if (events != null && !events.isEmpty()) {
+			String eventsList = events.stream().collect(Collectors.joining(","));
+			request.addQueryParam(PARAM_EVENT, eventsList);
 		}
 
 		request.addQueryParam(PARAM_LIMIT, limit);
@@ -458,7 +464,8 @@ public class LogRequest extends VaultRequest {
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
-	 * 				.retrieveObjectAuditTrail("product__v", "00P000000000601");</pre>
+	 * 			    .setEvents(new HashSet&lt;&gt;(Arrays.asList("Create", "Edit")))
+	 * 				.retrieveCompleteAuditHistoryForASingleObjectRecord("product__v", "00P000000000601");</pre>
 	 * @vapil.response <pre>
 	 * if (resp.isSuccessful()) {
 	 *   AuditDetailsResponse.ResponseDetails details = resp.getResponseDetails();
@@ -490,7 +497,7 @@ public class LogRequest extends VaultRequest {
 	 *   }
 	 * }</pre>
 	 */
-	public ObjectAuditResponse retrieveObjectAuditTrail(String objectName, String recordId) {
+	public ObjectAuditResponse retrieveCompleteAuditHistoryForASingleObjectRecord(String objectName, String recordId) {
 		String url = vaultClient.getAPIEndpoint(URL_AUDIT_OBJECT)
 				.replace("{object_name}", objectName)
 				.replace("{object_record_id}", recordId);
@@ -507,6 +514,11 @@ public class LogRequest extends VaultRequest {
 
 		if (formatResult != null && !formatResult.isEmpty()) {
 			request.addQueryParam(PARAM_FORMAT_RESULT, formatResult);
+		}
+
+		if (events != null && !events.isEmpty()) {
+			String eventsList = events.stream().collect(Collectors.joining(","));
+			request.addQueryParam(PARAM_EVENT, eventsList);
 		}
 
 		request.addQueryParam(PARAM_LIMIT, limit);

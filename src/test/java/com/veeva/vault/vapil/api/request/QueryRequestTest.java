@@ -8,58 +8,62 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.response.DocumentDeletionResponse;
 import com.veeva.vault.vapil.api.model.response.QueryResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 
-@Tag("QueryRequest")
+@Tag("QueryRequestTest")
+@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@DisplayName("Query request should")
 public class QueryRequestTest {
 	
 	@Test
-	public void testBasicQuery(VaultClient vaultClient) {
-		String query = "select id, username__sys from user__sys";
-		QueryResponse resp = vaultClient.newRequest(QueryRequest.class)
+	@DisplayName("successfully send a valid query")
+	public void testQuery(VaultClient vaultClient) {
+		String query = "SELECT id, username__sys FROM user__sys";
+		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
 				.setDescribeQuery(true)
 				.query(query);
-		Assertions.assertNotNull(resp);
-		Assertions.assertTrue(resp.isSuccessful());
+		Assertions.assertNotNull(response);
+		Assertions.assertTrue(!response.hasErrors());
 	}
 	
 	@Test
-	public void testManualPagination(VaultClient vaultClient) {
-		String query = "select id,name__v,title__v,merge_fields__v,major_version_number__v from documents limit 3";
+	@DisplayName("successfully paginate query results")
+	public void testQueryPagination(VaultClient vaultClient) {
+		String query = "SELECT id, username__sys FROM user__sys PAGESIZE 1";
 
 		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
 				.query(query);
 		Assertions.assertNotNull(response);
-		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertTrue(!response.hasErrors());
 
 		if (response.isPaginated()) {
 			QueryResponse paginatedResponse = vaultClient.newRequest(QueryRequest.class)
 					.queryByPage(response.getResponseDetails().getNextPage());
-			Assertions.assertTrue(paginatedResponse.isSuccessful());
+			Assertions.assertTrue(!paginatedResponse.hasErrors());
 			Assertions.assertNotNull(paginatedResponse.getResponseDetails().getSize());
 		}
 	}
 
 	@Test
-	public void testRecordProperties(VaultClient vaultClient) {
-		String query = "select id, username__sys from user__sys";
+	@DisplayName("successfully return the record properties object with query results")
+	public void testQueryRecordProperties(VaultClient vaultClient) {
+		String query = "SELECT id, username__sys FROM user__sys";
 		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
 				.setRecordProperties(QueryRequest.RecordPropertyType.ALL)
 				.query(query);
 
 		Assertions.assertNotNull(response);
-		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertTrue(!response.hasErrors());
 		Assertions.assertNotNull(response.getRecordProperties());
-		Assertions.assertNotNull(response.getRecordProperties().get(0).getId());
-		Assertions.assertNotNull(response.getRecordProperties().get(0).getFieldAdditionalData());
-		Assertions.assertNotNull(response.getRecordProperties().get(0).getFieldProperties());
+		for (QueryResponse.RecordProperty recordProperty : response.getRecordProperties()) {
+			Assertions.assertNotNull(recordProperty.getId());
+			Assertions.assertNotNull(recordProperty.getFieldAdditionalData());
+			Assertions.assertNotNull(recordProperty.getFieldProperties());
+		}
 	}
 }

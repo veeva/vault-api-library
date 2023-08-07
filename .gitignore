@@ -22,10 +22,8 @@ src/test/resources/test.properties
 
 # Log file
 *.log
-src/main/resources/settings.json
-src/main/resources/parentVaultSettings.json
-src/test/resources/settings.json
-src/test/resources/settingsOauth.json
-src/test/resources/settingsOauthDiscovery.json
-src/test/resources/settingsOauthDiscoveryIdpUsername.json
-src/test/resources/settingsOauthToken.json
+/src/test/resources/settings_files/settings_vapil_basic.json
+/src/test/resources/settings_files/settings_vapil_oauth_discovery.json
+/src/test/resources/settings_files/settings_vapil_oauth_token.json
+/src/test/resources/settings_files/settings_vapil_sandbox.json
+/src/test/resources/settings_files/settings_vapil_session_id.json

@@ -220,7 +220,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @vapil.api <pre>
 	 * POST login.veevavault.com/auth/discovery</pre>
 	 * @vapil.request <pre>
-	 * VaultClient vaultClient = VaultClient
+	 * VaultClient vaultClient = VaultClientBuilder
 	 * 				.newClientBuilder(VaultClient.AuthenticationType.NO_AUTH)
 	 * 				.withVaultClientId(vaultClientId)
 	 * 				.build();

@@ -301,12 +301,13 @@ public class DocumentLifecycleRequest extends VaultRequest {
 	 * PUT /api/{version}/objects/{documents_or_binders}/lifecycle_actions/{user_action_name}</pre>
 	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#bulk-document-state-change' target='_blank'>https://developer.veevavault.com/api/23.1/#bulk-document-state-change</a>
 	 */
-	public VaultResponse bulkDocumentStateChange(DocumentRequestType requestType,
+	public VaultResponse initiateBulkUserActions(DocumentRequestType requestType,
 												 String userActionName,
 												 String docIds) {
 
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_BULK_DOCUMENT_STATE_CHANGE).replace("{documents_or_binders}",
-				requestType.getValue().replace("{user_action_name}", userActionName));
+		String url = vaultClient.getAPIEndpoint(URL_ACTION_BULK_DOCUMENT_STATE_CHANGE)
+				.replace("{documents_or_binders}", requestType.getValue())
+				.replace("{user_action_name}", userActionName);
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,

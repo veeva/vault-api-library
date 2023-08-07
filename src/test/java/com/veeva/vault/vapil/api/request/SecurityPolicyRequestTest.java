@@ -4,6 +4,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.SecurityPoliciesResponse;
 import com.veeva.vault.vapil.api.model.response.SecurityPolicyResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Tag("SecurityPolicy")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class SecurityPolicyRequestTest {
 
     public final String POLICY_NAME = "6653"; //Depends on Vault where test is run

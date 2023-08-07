@@ -3,230 +3,463 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.Binder.Node.BinderSection;
 import com.veeva.vault.vapil.api.model.common.Document;
+import com.veeva.vault.vapil.api.model.common.DocumentRelationship;
 import com.veeva.vault.vapil.api.model.response.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import com.veeva.vault.vapil.extension.DocumentRequestHelper;
+import com.veeva.vault.vapil.extension.JobStatusHelper;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
-@Tag("BinderRequest")
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+@Tag("BinderRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Binder request should")
 public class BinderRequestTest {
     static final boolean DEPTH_ALL = true;
-    static final int BINDER_ID = 1;
-    static final String BINDER_NAME = "FKO Decks";
-    static final int FKO_BINDER_MAJOR_VERSION = 1;
-    static final int FKO_BINDER_MINOR_VERSION = 0;
-    static final int NEW_BINDER_ID = 2;
-    static final String NEW_BINDER_NAME = "VAPIL Test Binder";
-    static final String NEW_BINDER_LIFECYCLE = "General Lifecycle";
-    static final String NEW_BINDER_TYPE = "VAPIL Test Doc Type";
-    static final String NEW_BINDER_SUBTYPE = "VAPIL Test Doc Subtype";
-    static final String NEW_BINDER_CLASSIFICATION = "VAPIL Test Doc Classification";
-    static final String NEW_BINDER_TITLE = "Test Upload VAPIL Binder";
-    static final String UPDATED_BINDER_NAME = "Vapil Binder Updated";
-    static final String UPDATED_BINDER_TITLE = "Test Upload VAPIL Binder Updated";
-    static final String UPDATED_BINDER_TYPE = "Miscellaneous";
-    static final String UPDATED_BINDER_LIFECYCLE = "Unclassified";
-    static final int BINDER_ID_TO_DELETE = 11;
-    static final String SECTION_ID = "1617043435446:-1965656107";
-    static final String BINDER_TEMPLATE_NAME = "test_binder__c";
-    static final String NEW_BINDER_SECTION = "Binder Section";
-    static final String BINDER_SECTION_ID_TO_DELETE = "1617043378062:941861690";
+    static final int MAJOR_VERSION = 0;
+    static final String DOC_LIFECYCLE = "VAPIL Test Doc Lifecycle";
+    static final String DOC_TYPE_LABEL = "VAPIL Test Doc Type";
+    static final String DOC_SUBTYPE_LABEL = "VAPIL Test Doc Subtype";
+    static final String DOC_CLASSIFICATION_LABEL = "VAPIL Test Doc Classification";
+    static final String BINDER_TEMPLATE_NAME = "vapil_test_binder_template__c";
+    static final String BINDER_SECTION_LABEL = "VAPIL Test Binder Section";
+    static int docId;
+    static int minorVersion = 1;
+    static List<Integer> binderIds = new ArrayList<>();
+    static String binderSectionId;
+    static String docNodeId;
+    static String binderRelationshipId;
+    static int jobId;
 
-    @Test
-    public void testRetrieveBinder(VaultClient vaultClient) {
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .setDepth(DEPTH_ALL)
-                .retrieveBinder(BINDER_ID);
+    @BeforeAll
+    public static void setup(VaultClient vaultClient) throws IOException {
+        DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
         Assertions.assertTrue(response.isSuccessful());
-        Assertions.assertEquals(FKO_BINDER_MAJOR_VERSION, response.getDocument().getMajorVersionNumber());
-        Assertions.assertEquals(FKO_BINDER_MINOR_VERSION, response.getDocument().getMinorVersionNumber());
-        Assertions.assertEquals(BINDER_NAME, response.getDocument().getName());
+        docId = response.getDocument().getId();
     }
 
-    @Test
-    public void testRetrieveAllBinderVersions(VaultClient vaultClient) {
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .retrieveAllBinderVersions(BINDER_ID);
+    @AfterAll
+    public static void teardown(VaultClient vaultClient) {
+        List<Integer> docIds = new ArrayList<>();
+        docIds.add(docId);
+        DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
         Assertions.assertTrue(response.isSuccessful());
     }
 
-
     @Test
+    @Order(1)
+    @DisplayName("successfully create a binder")
     public void testCreateBinder(VaultClient vaultClient) {
 
         Document doc = new Document();
 
-        doc.setName(NEW_BINDER_NAME);
-        doc.setLifecycle(NEW_BINDER_LIFECYCLE);
-        doc.setType(NEW_BINDER_TYPE);
-        doc.setTitle(NEW_BINDER_TITLE);
+        doc.setName("VAPIL test create binder " + ZonedDateTime.now());
+        doc.setLifecycle(DOC_LIFECYCLE);
+        doc.setType(DOC_TYPE_LABEL);
+        doc.setSubtype(DOC_SUBTYPE_LABEL);
+        doc.setClassification(DOC_CLASSIFICATION_LABEL);
 
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .setAsync(true)
                 .createBinder(doc);
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getDocument().getId());
+        binderIds.add(response.getDocument().getId());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("successfully create a binder version")
+    public void testCreateBinderVersion(VaultClient vaultClient) {
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .createBinderVersion(binderIds.get(0));
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getDocument().getMinorVersionNumber());
+        minorVersion = response.getDocument().getMinorVersionNumber();
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("successfully retrieve a binder")
+    public void testRetrieveBinder(VaultClient vaultClient) {
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .setDepth(DEPTH_ALL)
+                .retrieveBinder(binderIds.get(0));
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getDocument());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("successfully retrieve all versions of a binder")
+    public void testRetrieveAllBinderVersions(VaultClient vaultClient) {
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .retrieveAllBinderVersions(binderIds.get(0));
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("successfully retrieve a version of a binder")
+    public void testRetrieveBinderVersion(VaultClient vaultClient) {
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                        .retrieveBinderVersion(binderIds.get(0), MAJOR_VERSION, minorVersion);
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("successfully update a binder")
+    public void testUpdateBinder(VaultClient vaultClient) {
+        Document doc = new Document();
+
+        doc.setName("VAPIL test update binder " + ZonedDateTime.now());
+
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .updateBinder(binderIds.get(0), doc);
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("successfully reclassify a binder")
+    public void testReclassifyBinder(VaultClient vaultClient) {
+        Document doc = new Document();
+
+        doc.setLifecycle(DOC_LIFECYCLE);
+        doc.setType(DOC_TYPE_LABEL);
+        doc.setSubtype(DOC_SUBTYPE_LABEL);
+        doc.setClassification(DOC_CLASSIFICATION_LABEL);
+
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .reclassifyBinder(binderIds.get(0), doc);
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("successfully update a binder version")
+    public void testUpdateBinderVersion(VaultClient vaultClient) {
+        Document doc = new Document();
+
+        doc.setName("VAPIL test update binder version " + ZonedDateTime.now());
+
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .updateBinderVersion(binderIds.get(0), MAJOR_VERSION, minorVersion, doc);
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("successfully create a binder section")
+    public void testCreateBinderSection(VaultClient vaultClient) {
+
+        BinderSection binderSection = new BinderSection();
+        binderSection.setName(BINDER_SECTION_LABEL);
+
+        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
+                .createBinderSection(binderIds.get(0), binderSection);
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+        binderSectionId = response.getId();
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("successfully retrieve all binder sections")
+    public void testRetrieveBinderSections(VaultClient vaultClient) {
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .retrieveBinderSections(binderIds.get(0));
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("successfully retrieve all binder sections from a sub-level node")
+    public void testRetrieveBinderSectionsSub(VaultClient vaultClient) {
+        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
+                .retrieveBinderSections(binderIds.get(0), binderSectionId);
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("successfully retrieve binder sections")
+    public void testRetrieveBinderVersionSection(VaultClient vaultClient) {
+        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
+                .retrieveBinderVersionSections(binderIds.get(0), MAJOR_VERSION, minorVersion, binderSectionId);
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(13)
+    @DisplayName("successfully update a binder section")
+    public void testUpdateBinderSection(VaultClient vaultClient) {
+        BinderSection binderSection = new BinderSection();
+
+        binderSection.setName("VAPIL test update binder section" + ZonedDateTime.now());
+
+        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
+                .updateBinderSection(binderIds.get(0), binderSectionId, binderSection);
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("successfully add a document to a binder")
+    public void testAddDocumentToBinder(VaultClient vaultClient) {
+        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
+                .addDocumentToBinder(binderIds.get(0), docId, "", BinderRequest.BindingRule.CURRENT);
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+        docNodeId = response.getId();
+    }
+
+    @Test
+    @Order(15)
+    @DisplayName("successfully move a document in a binder")
+    public void testMoveDocumentInBinder(VaultClient vaultClient) {
+        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
+                .moveDocumentInBinder(binderIds.get(0), docNodeId, binderSectionId);
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+        docNodeId = response.getId();
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("successfully create a binder relationship")
+    public void testCreateBinderRelationship(VaultClient vaultClient) {
+        DocumentRelationship docRelationship = new DocumentRelationship();
+        docRelationship.setRelationshipType("supporting_documents__c");
+        docRelationship.setTargetDocId(docId);
+        docRelationship.setTargetMajorVersion(0);
+        docRelationship.setTargetMinorVersion(1);
+
+        DocumentRelationshipResponse response = vaultClient.newRequest(BinderRequest.class)
+                .createBinderRelationship(binderIds.get(0), MAJOR_VERSION, minorVersion, docRelationship);
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+        binderRelationshipId = response.getId();
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("successfully retrieve a binder relationship")
+    public void testRetrieveBinderRelationship(VaultClient vaultClient) {
+        DocumentRelationshipRetrieveResponse response = vaultClient.newRequest(BinderRequest.class)
+                .retrieveBinderRelationship(binderIds.get(0), MAJOR_VERSION, minorVersion, Integer.valueOf(binderRelationshipId));
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNull(response.getErrorCodes());
+        Assertions.assertNull(response.getErrorType());
+        Assertions.assertNotNull(response.getRelationships());
+        for (DocumentRelationshipRetrieveResponse.Relationship relationship : response.getRelationships()) {
+            Assertions.assertNotNull(relationship.getRelationship().getId());
+            Assertions.assertNotNull(relationship.getRelationship().getRelationshipType());
+            Assertions.assertNotNull(relationship.getRelationship().getSourceDocId());
+            Assertions.assertNotNull(relationship.getRelationship().getTargetDocId());
+            Assertions.assertNotNull(relationship.getRelationship().getCreatedBy());
+            Assertions.assertNotNull(relationship.getRelationship().getCreatedDate());
+        }
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("successfully create a binder from a template")
+    public void testCreateBinderFromTemplate(VaultClient vaultClient) {
+        Document doc = new Document();
+
+        doc.setName("VAPIL test create binder from template " + ZonedDateTime.now());
+        doc.setLifecycle(DOC_LIFECYCLE);
+        doc.setType(DOC_TYPE_LABEL);
+        doc.setSubtype(DOC_SUBTYPE_LABEL);
+        doc.setClassification(DOC_CLASSIFICATION_LABEL);
+
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .createBinderFromTemplate(doc, BINDER_TEMPLATE_NAME);
+
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getDocument().getId());
+        binderIds.add(response.getDocument().getId());
+    }
+
+    @Test
+    @Order(20)
+    @DisplayName("successfully update a binding rule")
+    public void testUpdateBindingRule(VaultClient vaultClient) {
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .updateBindingRule(binderIds.get(0), "default", false);
 
         Assertions.assertTrue(response.isSuccessful());
         Assertions.assertNotNull(response.getDocument().getId());
     }
 
     @Test
-    public void testCreateBinderVersion(VaultClient vaultClient) {
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .createBinderVersion(NEW_BINDER_ID);
-        Assertions.assertTrue(response.isSuccessful());
-    }
-
-
-    @Test
-    public void testCreateBinderFromTemplate(VaultClient vaultClient) {
-        Document doc = new Document();
-
-        doc.setName(NEW_BINDER_NAME);
-        doc.setLifecycle(NEW_BINDER_LIFECYCLE);
-        doc.setType(NEW_BINDER_TYPE);
-        doc.setTitle(NEW_BINDER_TITLE);
-
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .createBinderFromTemplate(doc, BINDER_TEMPLATE_NAME);
-        Assertions.assertTrue(response.isSuccessful());
-    }
-
-    @Test
-    public void testUpdateBinder(VaultClient vaultClient) {
-        Document doc = new Document();
-
-        doc.setName(UPDATED_BINDER_NAME);
-        doc.setTitle(UPDATED_BINDER_TITLE);
-
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .updateBinder(NEW_BINDER_ID, doc);
-        Assertions.assertTrue(response.isSuccessful());
-    }
-
-    @Test
-    public void testReclassifyBinder(VaultClient vaultClient) {
-        Document doc = new Document();
-
-        doc.setName(UPDATED_BINDER_NAME);
-        doc.setTitle(UPDATED_BINDER_TITLE);
-        doc.setLifecycle(UPDATED_BINDER_LIFECYCLE);
-        doc.setType(UPDATED_BINDER_TYPE);
-
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .reclassifyBinder(NEW_BINDER_ID, doc);
-        Assertions.assertTrue(response.isSuccessful());
-    }
-
-    @Test
-    public void testDeleteBinder(VaultClient vaultClient) {
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .deleteBinder(BINDER_ID_TO_DELETE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
-
-    @Test
-    public void testRetrieveBinderSectionRootNode(VaultClient vaultClient) {
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .retrieveBinderSections(BINDER_ID);
-        Assertions.assertTrue(response.isSuccessful());
-    }
-
-    @Test
-    public void testRetrieveBinderSectionSpecificNode(VaultClient vaultClient) {
+    @Order(21)
+    @DisplayName("successfully update a binder section binding rule")
+    public void testUpdateBinderSectionBindingRule(VaultClient vaultClient) {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
-                .retrieveBinderSections(BINDER_ID, SECTION_ID);
+                .updateBinderSectionBindingRule(binderIds.get(0), binderSectionId, "default", false);
+
         Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
     }
 
     @Test
-    public void testRetrieveBinderVersionSection(VaultClient vaultClient) {
+    @Order(22)
+    @DisplayName("successfully update a binder document binding rule")
+    public void testUpdateBinderDocumentBindingRule(VaultClient vaultClient) {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
-                .retrieveBinderVersionSections(BINDER_ID, FKO_BINDER_MAJOR_VERSION, FKO_BINDER_MINOR_VERSION, SECTION_ID);
+                .updateBinderDocumentBindingRule(binderIds.get(0), docNodeId, "default");
+
         Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
     }
 
     @Test
-    public void testCreateBinderSection(VaultClient vaultClient) {
+    @Order(23)
+    @DisplayName("successfully delete a binder relationship")
+    public void testDeleteBinderRelationship(VaultClient vaultClient) {
+        DocumentRelationshipResponse response = vaultClient.newRequest(BinderRequest.class)
+                .deleteBinderRelationship(binderIds.get(0), MAJOR_VERSION, minorVersion, Integer.valueOf(binderRelationshipId));
 
-        BinderSection binderSection = new BinderSection();
-        binderSection.setName(NEW_BINDER_SECTION);
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+    }
 
+    @Test
+    @Order(24)
+    @DisplayName("successfully remove a document from a binder")
+    public void testRemoveDocumentFromBinder(VaultClient vaultClient) {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
-                .createBinderSection(BINDER_ID, binderSection);
+                .removeDocumentFromBinder(binderIds.get(0), docNodeId);
+
         Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
     }
 
     @Test
-    public void testDeleteBinderSection(VaultClient vaultClient) {
-
-        BinderSection binderSection = new BinderSection();
-        binderSection.setName(NEW_BINDER_SECTION);
-
-        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
-                .deleteBinderSection(BINDER_ID, BINDER_SECTION_ID_TO_DELETE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
-
-    @Test
+    @Order(25)
+    @DisplayName("successfully export a binder")
     public void testExportBinder(VaultClient vaultClient) {
-//        Create Binder
-        Document doc = new Document();
-
-        doc.setName(NEW_BINDER_NAME);
-        doc.setLifecycle(NEW_BINDER_LIFECYCLE);
-        doc.setType(NEW_BINDER_TYPE);
-        doc.setSubtype(NEW_BINDER_SUBTYPE);
-        doc.setClassification(NEW_BINDER_CLASSIFICATION);
-
-        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
-                .createBinder(doc);
-
-        int binderId = response.getDocument().getId();
-        Assertions.assertTrue(response.isSuccessful());
-        Assertions.assertNotNull(binderId);
-
-//        Export Binder
         JobCreateResponse jobCreateResponse = vaultClient.newRequest(BinderRequest.class)
                 .setExportAudit(true)
                 .setExportAuditFormatType(BinderRequest.AuditFormatType.CSV)
                 .setExportAttachmentType(BinderRequest.AttachmentType.ALL)
                 .setExportDocumentVersionType(BinderRequest.DocumentVersionType.MAJOR)
-                .exportBinder(binderId);
+                .exportBinder(binderIds.get(0));
 
-        int jobId = jobCreateResponse.getJobId();
-        Assertions.assertTrue(response.isSuccessful());
-        Assertions.assertNotNull(jobId);
+        Assertions.assertTrue(jobCreateResponse.isSuccessful());
+        Assertions.assertNotNull(jobCreateResponse.getJobId());
+        jobId = jobCreateResponse.getJobId();
 
-//        Check status of job
-        String jobStatus = "";
-        for (int i = 0; i < 6; i++) {
-            if (jobStatus.equals("SUCCESS")) break;
-            JobStatusResponse jobStatusResponse = vaultClient.newRequest(JobRequest.class)
-                    .retrieveJobStatus(jobId);
-            jobStatus = jobStatusResponse.getData().getStatus();
-            switch (jobStatus) {
-                case "SUCCESS":
-                    BinderExportResponse binderExportResponse = vaultClient.newRequest(BinderRequest.class)
-                            .retrieveBinderExportResults(jobId);
-                    Assertions.assertTrue(binderExportResponse.isSuccessful());
-                    Assertions.assertNotNull(binderExportResponse.getFile());
-                    break;
-                case "QUEUED":
-                case "QUEUING":
-                case "RUNNING":
-                    try {
-                        Thread.sleep(11000);
-                        break;
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                default:
-                    Assertions.assertEquals("SUCCESS", jobStatus);
-            }
-        }
-        Assertions.assertEquals("SUCCESS", jobStatus);
+        boolean jobStatus = JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+        Assertions.assertTrue(jobStatus);
     }
+
+    @Test
+    @Order(26)
+    @DisplayName("successfully retrieve binder export results")
+    public void testRetrieveBinderExportResults(VaultClient vaultClient) {
+        BinderExportResponse exportResponse = vaultClient.newRequest(BinderRequest.class)
+                .retrieveBinderExportResults(jobId);
+
+        Assertions.assertTrue(exportResponse.isSuccessful());
+        Assertions.assertNotNull(exportResponse.getJobId());
+        Assertions.assertNotNull(exportResponse.getId());
+        Assertions.assertNotNull(exportResponse.getFile());
+    }
+
+    @Test
+    @Order(27)
+    @DisplayName("successfully export sections of a binder")
+    public void testExportBinderSections(VaultClient vaultClient) {
+        HashSet<String> binderSectionIds = new HashSet<>();
+        binderSectionIds.add(binderSectionId);
+
+        JobCreateResponse jobCreateResponse = vaultClient.newRequest(BinderRequest.class)
+                .setExportAudit(true)
+                .setExportAuditFormatType(BinderRequest.AuditFormatType.CSV)
+                .setExportAttachmentType(BinderRequest.AttachmentType.ALL)
+                .setExportDocumentVersionType(BinderRequest.DocumentVersionType.MAJOR)
+                .exportBinderSections(binderIds.get(0), binderSectionIds);
+
+        Assertions.assertTrue(jobCreateResponse.isSuccessful());
+        Assertions.assertNotNull(jobCreateResponse.getJobId());
+        int jobId = jobCreateResponse.getJobId();
+
+        boolean jobStatus = JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+        Assertions.assertTrue(jobStatus);
+    }
+
+    @Test
+    @Order(28)
+    @DisplayName("successfully export sections of a specific binder version")
+    public void testExportBinderVersionSections(VaultClient vaultClient) {
+        HashSet<String> binderSectionIds = new HashSet<>();
+        binderSectionIds.add(binderSectionId);
+
+        JobCreateResponse jobCreateResponse = vaultClient.newRequest(BinderRequest.class)
+                .setExportAudit(true)
+                .setExportAuditFormatType(BinderRequest.AuditFormatType.CSV)
+                .setExportAttachmentType(BinderRequest.AttachmentType.ALL)
+                .setExportDocumentVersionType(BinderRequest.DocumentVersionType.MAJOR)
+                .exportBinderSections(binderIds.get(0), MAJOR_VERSION, minorVersion, binderSectionIds);
+
+        Assertions.assertTrue(jobCreateResponse.isSuccessful());
+        Assertions.assertNotNull(jobCreateResponse.getJobId());
+        int jobId = jobCreateResponse.getJobId();
+
+        boolean jobStatus = JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+        Assertions.assertTrue(jobStatus);
+    }
+
+    @Test
+    @Order(29)
+    @DisplayName("successfully delete a binder section")
+    public void testDeleteBinderSection(VaultClient vaultClient) {
+
+        BinderSection binderSection = new BinderSection();
+        binderSection.setName(BINDER_SECTION_LABEL);
+
+        BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
+                .deleteBinderSection(binderIds.get(0), binderSectionId);
+        Assertions.assertTrue(response.isSuccessful());
+        Assertions.assertNotNull(response.getId());
+    }
+
+    @Test
+    @Order(30)
+    @DisplayName("successfully delete a binder version")
+    public void testDeleteBinderVersion(VaultClient vaultClient) {
+        BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                .deleteBinderVersion(binderIds.get(0), MAJOR_VERSION, minorVersion);
+        Assertions.assertTrue(response.isSuccessful());
+    }
+
+    @Test
+    @Order(31)
+    @DisplayName("successfully delete a binder")
+    public void testDeleteBinder(VaultClient vaultClient) {
+        for (Integer id : binderIds) {
+            BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                    .deleteBinder(id);
+
+            Assertions.assertTrue(response.isSuccessful());
+            Assertions.assertNotNull(response.getDocument().getId());
+        }
+    }
+
 }

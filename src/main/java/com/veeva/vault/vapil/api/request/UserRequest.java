@@ -249,8 +249,7 @@ public class UserRequest extends VaultRequest {
 	 * displayResults(resp,true);</pre>
 	 */
 	public UserResponse updateSingleUser(int userId) {
-		String url = vaultClient.getAPIEndpoint(URL_USER_ID)
-				.replace("{user_id}", String.valueOf(userId));
+		String url = URL_USER_ID.replace("{user_id}", String.valueOf(userId));
 		return sendUserRequest(HttpMethod.PUT, url);
 	}
 

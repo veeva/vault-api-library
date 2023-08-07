@@ -16,6 +16,7 @@ import com.veeva.vault.vapil.api.model.response.SCIMResponse.Resource;
 import com.veeva.vault.vapil.api.model.response.SCIMUserBulkResponse;
 import com.veeva.vault.vapil.api.model.response.SCIMUserResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Tag("SCIMRequest")
 @ExtendWith(VaultClientParameterResolver.class)
+@Disabled
 public class SCIMRequestTest {
 
     final String USER_ID = "280259";

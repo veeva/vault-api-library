@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.response.JobCreateResponse;
@@ -89,6 +88,7 @@ public class DocumentRequest extends VaultRequest {
 	private static final String URL_DOC_EXTRACT = "/objects/documents/batch/actions/fileextract";
 	private static final String URL_DOC_EXTRACT_VERSIONS = "/objects/documents/versions/batch/actions/fileextract";
 	private static final String URL_DOC_EXTRACT_RESULTS = "/objects/documents/batch/actions/fileextract/{jobid}/results";
+	private static final String URL_DOC_RECLASSIFY = "/objects/documents/batch/actions/reclassify";
 	private static final String URL_DOC_FILE = "/objects/documents/{doc_id}/file";
 	private static final String URL_DOC_ALL_FIELDS = "/metadata/objects/documents/properties";
 	private static final String URL_DOCS_BATCH = "/objects/documents/batch";
@@ -903,9 +903,29 @@ public class DocumentRequest extends VaultRequest {
 	 * PUT /api/{version}/objects/documents/{doc_id}</pre>
 	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#reclassify-document' target='_blank'>https://developer.veevavault.com/api/23.1/#reclassify-document</a>
 	 */
-	public DocumentResponse reclassifyDocument(Document doc) {
+	public DocumentResponse reclassifySingleDocument(Document doc) {
 		doc.set("reclassify", "true");
 		return updateSingleDocument(doc);
+	}
+
+	/**
+	 * <b>Reclassify Multiple Documents</b>
+	 * <p>
+	 * Reclassify documents in bulk. Reclassify allows you to change the document type of existing documents
+	 * or assign document types to unclassified documents.
+	 * A document is the combination of the type__v, subtype__v, and classification__v
+	 * fields on a document. When you reclassify, Vault may add or remove certain fields
+	 * on the document. You can only reclassify the latest version of a document
+	 * you cannot reclassify a checked out document.
+	 *
+	 * @return DocumentBulkResponse
+	 * @vapil.api <pre>
+	 * PUT /api/{version}/objects/documents/batch/actions/reclassify</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#reclassify-multiple-documents' target='_blank'>https://developer.veevavault.com/api/23.2/#reclassify-multiple-documents</a>
+	 */
+	public DocumentBulkResponse reclassifyMultipleDocuments() {
+
+		return bulkDocument(HttpMethod.PUT, URL_DOC_RECLASSIFY);
 	}
 
 	/**

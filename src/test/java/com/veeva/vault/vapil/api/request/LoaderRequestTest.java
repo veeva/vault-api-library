@@ -32,14 +32,16 @@ public class LoaderRequestTest {
     static LoaderTask loaderTask;
     static int loadJobId;
     static int extractJobId;
-
     static List<Integer> loadTasks = new ArrayList<>();
     static List<Integer> extractTasks = new ArrayList<>();
-
     static List<Integer> docIds = new ArrayList<>();
+    private static VaultClient vaultClient;
 
     @BeforeAll
-    static void setup(VaultClient vaultClient) throws IOException {
+    static void setup(VaultClient client) throws IOException {
+        vaultClient = client;
+        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+
         List<String[]> data = new ArrayList<>();
         data.add(new String[]{"file", "name__v", "type__v", "subtype__v",
                 "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
@@ -54,7 +56,7 @@ public class LoaderRequestTest {
     }
 
     @AfterAll
-    static void teardown(VaultClient vaultClient) {
+    static void teardown() {
         DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
         Assertions.assertTrue(response.isSuccessful());
         for (DocumentResponse documentResponse : response.getData()) {
@@ -65,7 +67,7 @@ public class LoaderRequestTest {
     @Test
     @Order(1)
     @DisplayName("successfully create a loader job and load a set of data files")
-    public void testLoadDataObjects(VaultClient vaultClient) throws InterruptedException {
+    public void testLoadDataObjects() throws InterruptedException {
         String jsonString = "[\n" +
                 "  {\n" +
                 "    \"object_type\": \"documents__v\",\n" +
@@ -94,7 +96,7 @@ public class LoaderRequestTest {
     @Test
     @Order(2)
     @DisplayName("successfully retrieve success logs of the loader results")
-    public void testRetrieveLoadSuccessLogResults(VaultClient vaultClient) {
+    public void testRetrieveLoadSuccessLogResults() {
         for (Integer taskId : loadTasks) {
             VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
                     .retrieveLoadSuccessLogResults(loadJobId, taskId);
@@ -131,7 +133,7 @@ public class LoaderRequestTest {
     @Test
     @Order(4)
     @DisplayName("successfully create and run a loader job to extract data")
-    public void testExtractDataFiles(VaultClient vaultClient) throws Exception {
+    public void testExtractDataFiles() throws Exception {
         LoaderResponse extractResponse = vaultClient.newRequest(LoaderRequest.class)
                 .addLoaderTask(loaderTask)
                 .extractDataFiles();
@@ -151,7 +153,7 @@ public class LoaderRequestTest {
     @Test
     @Order(5)
     @DisplayName("successfully retrieve results of a specified job task")
-    public void testRetrieveLoaderExtractResults(VaultClient vaultClient) {
+    public void testRetrieveLoaderExtractResults() {
         for (Integer taskId : extractTasks) {
             VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
                     .retrieveLoaderExtractResults(extractJobId, taskId);
@@ -163,7 +165,7 @@ public class LoaderRequestTest {
     @Test
     @Order(6)
     @DisplayName("successfully retrieve results of a specified job task that includes renditions requested with documents.")
-    public void testRetrieveLoaderExtractRenditionsResults(VaultClient vaultClient) {
+    public void testRetrieveLoaderExtractRenditionsResults() {
         for (Integer taskId : extractTasks) {
             VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
                     .retrieveLoaderExtractRenditionsResults(extractJobId, taskId);
@@ -174,7 +176,7 @@ public class LoaderRequestTest {
 
     @Test
     @Disabled("Needs Further setup/Eval")
-    public void testExtract(VaultClient vaultClient) throws Exception {
+    public void testExtract() throws Exception {
         //There are dependencies so an autonomous approach will require duplication.
         Integer jobId = null;
         List<Integer> taskIds = new ArrayList<>();
@@ -244,7 +246,7 @@ public class LoaderRequestTest {
 
     @Test
     @Disabled("Needs Further setup/Eval")
-    public void testLoad(VaultClient vaultClient) throws Exception {
+    public void testLoad() throws Exception {
         //There are dependencies so an autonomous approach will require duplication.
         Integer jobId = null;
         List<Integer> taskIds = new ArrayList<>();

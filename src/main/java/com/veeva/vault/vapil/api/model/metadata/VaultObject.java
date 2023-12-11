@@ -314,6 +314,15 @@ public class VaultObject extends VaultModel {
 		this.set("user_role_setup_object", userRoleSetupObject);
 	}
 
+	@JsonProperty("configuration_data")
+	public Boolean getConfigurationData() {
+		return getBoolean("configuration_data");
+	}
+
+	public void setConfigurationData(Boolean configurationData) {
+		this.set("configuration_data", configurationData);
+	}
+
 	public static class ObjectReference extends VaultModel {
 
 		@JsonProperty("label")

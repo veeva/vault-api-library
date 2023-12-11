@@ -21,7 +21,7 @@ import org.json.JSONObject;
 /**
  * Sandbox Vaults
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#sandbox-vaults">https://developer.veevavault.com/api/23.1/#sandbox-vaults</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#sandbox-vaults">https://developer.veevavault.com/api/23.3/#sandbox-vaults</a>
  */
 public class SandboxRequest extends VaultRequest {
 
@@ -40,7 +40,6 @@ public class SandboxRequest extends VaultRequest {
 	private static final String URL_DELETE_SNAPSHOT = "/objects/sandbox/snapshot/{api_name}";
 	private static final String URL_PRODUCTION_BUILD = "/api/{version}/objects/sandbox/actions/buildproduction";
 	private static final String URL_PRODUCTION_PROMOTE = "/api/{version}/objects/sandbox/actions/promoteproduction";
-
 	private static final String SANDBOX_ADD_REQUESTER = "add_requster";
 	private static final String SANDBOX_ALLOWANCE = "allowance";
 	private static final String SANDBOX_DOMAIN = "domain";
@@ -71,7 +70,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-sandboxes' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-sandboxes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-sandboxes' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-sandboxes</a>
 	 */
 	public SandboxResponse retrieveSandboxes() {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX);
@@ -90,7 +89,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxDetailsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox/{vault_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-sandbox-details-by-id' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-sandbox-details-by-id</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-sandbox-details-by-id' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-sandbox-details-by-id</a>
 	 */
 	public SandboxDetailsResponse retrieveSandboxDetailsById(int vaultId) {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_DETAILS).replace("{vault_id}", String.valueOf(vaultId));
@@ -108,7 +107,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/actions/recheckusage</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#recheck-sandbox-usage-limit' target='_blank'>https://developer.veevavault.com/api/23.1/#recheck-sandbox-usage-limit</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#recheck-sandbox-usage-limit' target='_blank'>https://developer.veevavault.com/api/23.3/#recheck-sandbox-usage-limit</a>
 	 */
 	public VaultResponse recheckUsageLimit() {
 		String url = vaultClient.getAPIEndpoint(URL_RECHECK_USAGE_LIMIT);
@@ -127,7 +126,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/batch/changesize</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#change-sandbox-size' target='_blank'>https://developer.veevavault.com/api/23.1/#change-sandbox-size</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#change-sandbox-size' target='_blank'>https://developer.veevavault.com/api/23.3/#change-sandbox-size</a>
 	 */
 	public VaultResponse changeSandboxSize(String name, SandboxSize sandboxSize) {
 		String url = vaultClient.getAPIEndpoint(URL_CHANGE_SANDBOX_SIZE);
@@ -154,7 +153,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxEntitlementResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox_entitlements</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-sandbox-entitlements</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-sandbox-entitlements</a>
 	 */
 	public SandboxEntitlementResponse retrieveSandboxEntitlements() {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_ENTITLEMENTS);
@@ -178,7 +177,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/entitlements/set</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#set-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/23.1/#set-sandbox-entitlements</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#set-sandbox-entitlements' target='_blank'>https://developer.veevavault.com/api/23.3/#set-sandbox-entitlements</a>
 	 */
 	public SandboxResponse setSandboxEntitlements(String name,
 												  String type,
@@ -211,7 +210,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#create-or-refresh-sandbox' target='_blank'>https://developer.veevavault.com/api/23.1/#create-or-refresh-sandbox</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-or-refresh-sandbox' target='_blank'>https://developer.veevavault.com/api/23.3/#create-or-refresh-sandbox</a>
 	 */
 	public JobCreateResponse createOrRefreshSandbox(String type, String domain, String name) {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX);
@@ -252,7 +251,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/{vault_id}/actions/refresh</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#refresh-sandbox-from-snapshot' target='_blank'>https://developer.veevavault.com/api/23.1/#refresh-sandbox-from-snapshot</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#refresh-sandbox-from-snapshot' target='_blank'>https://developer.veevavault.com/api/23.3/#refresh-sandbox-from-snapshot</a>
 	 */
 	public JobCreateResponse refreshSandboxFromSnapshot(int vaultId, String sourceSnapshot) {
 		String url = vaultClient.getAPIEndpoint(URL_REFRESH_SANDBOX_FROM_SNAPSHOT).replace("{vault_id}", String.valueOf(vaultId));
@@ -272,7 +271,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/sandbox/{name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#delete-sandbox' target='_blank'>https://developer.veevavault.com/api/23.1/#delete-sandbox</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#delete-sandbox' target='_blank'>https://developer.veevavault.com/api/23.3/#delete-sandbox</a>
 	 */
 	public VaultResponse deleteSandbox(String name) {
 		String url = vaultClient.getAPIEndpoint(URL_DELETE_SANDBOX).replace("{name}", name);
@@ -294,7 +293,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/snapshot</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#create-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.1/#create-sandbox-snapshot</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.3/#create-sandbox-snapshot</a>
 	 */
 	public JobCreateResponse createSandboxSnapshot(String sourceSandbox, String name, String description, Boolean includeData) {
 		String url = vaultClient.getAPIEndpoint(URL_SANDBOX_SNAPSHOTS);
@@ -317,7 +316,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return SandboxSnapshotResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/sandbox/snapshot</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-sandbox-snapshots' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-sandbox-snapshots</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-sandbox-snapshots' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-sandbox-snapshots</a>
 	 */
 
 	public SandboxSnapshotResponse retrieveSandboxSnapshots() {
@@ -337,7 +336,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/sandbox/snapshot/{api_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#delete-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.1/#delete-sandbox-snapshot</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#delete-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.3/#delete-sandbox-snapshot</a>
 	 */
 	public VaultResponse deleteSandboxSnapshot(String apiName) {
 		String url = vaultClient.getAPIEndpoint(URL_DELETE_SNAPSHOT).replace("{api_name}", apiName);
@@ -357,7 +356,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/snapshot/{api_name}/actions/update</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#update-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.1/#update-sandbox-snapshot</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#update-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.3/#update-sandbox-snapshot</a>
 	 */
 
 	public JobCreateResponse updateSandboxSnapshot(String apiName) {
@@ -378,7 +377,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/snapshot/{api_name}/actions/upgrade</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#upgrade-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.1/#upgrade-sandbox-snapshot</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#upgrade-sandbox-snapshot' target='_blank'>https://developer.veevavault.com/api/23.3/#upgrade-sandbox-snapshot</a>
 	 */
 
 	public JobCreateResponse upgradeSandboxSnapshot(String apiName) {
@@ -397,7 +396,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/actions/buildproduction</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#build-production-vault' target='_blank'>https://developer.veevavault.com/api/23.1/#build-production-vault</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#build-production-vault' target='_blank'>https://developer.veevavault.com/api/23.3/#build-production-vault</a>
 	 */
 	public JobCreateResponse buildProductionVault(String source) {
 		String url = vaultClient.getAPIEndpoint(URL_PRODUCTION_BUILD);
@@ -415,7 +414,7 @@ public class SandboxRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/sandbox/actions/promoteproduction</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#build-production-vault' target='_blank'>https://developer.veevavault.com/api/23.1/#build-production-vault</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#build-production-vault' target='_blank'>https://developer.veevavault.com/api/23.3/#build-production-vault</a>
 	 */
 	public VaultResponse promoteToProduction(String name) {
 		String url = vaultClient.getAPIEndpoint(URL_PRODUCTION_PROMOTE);
@@ -523,7 +522,10 @@ public class SandboxRequest extends VaultRequest {
 	 */
 	public enum SandboxSize {
 		SMALL("Small"),
+		MEDIUM("Medium"),
 		LARGE("Large"),
+		VERY_LARGE("Very Large"),
+		EXTRA_LARGE("Extra Large"),
 		FULL("Full");
 
 		String value;

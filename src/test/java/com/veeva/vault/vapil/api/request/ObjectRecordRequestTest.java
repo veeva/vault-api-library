@@ -35,13 +35,19 @@ public class ObjectRecordRequestTest {
 	static final String UPDATE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathUpdateObjectRecordsCsv();
 	static final String DELETE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathDeleteObjectRecordsCsv();
 	static List<String> recordIds = new ArrayList<>();
+	private static VaultClient vaultClient;
 
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 
 	// Create: Source - CSV file, Response - JSON
 	@Test
 	@Order(1)
 	@DisplayName("successfully create object records and return json response")
-	public void testCreateCSV_JSON(VaultClient vaultClient) {
+	public void testCreateCSV_JSON() {
 
 		List<String[]> data = new ArrayList<>();
 		data.add(new String[]{"name__v"});
@@ -71,7 +77,7 @@ public class ObjectRecordRequestTest {
 	@Test
 	@Order(2)
 	@DisplayName("successfully create object records and return CSV response")
-	public void testCreateCSV_CSV(VaultClient vaultClient) {
+	public void testCreateCSV_CSV() {
 
 		List<String[]> data = new ArrayList<>();
 		data.add(new String[]{"name__v"});
@@ -100,7 +106,7 @@ public class ObjectRecordRequestTest {
 	@Test
 	@Order(3)
 	@DisplayName("successfully retrieve object record by Id")
-	public void testRetrieveObjectRecord(VaultClient vaultClient) {
+	public void testRetrieveObjectRecord() {
 //		Retrieve created Record
 		String recordId = recordIds.get(0);
 		ObjectRecordResponse retrieveResponse = vaultClient
@@ -116,7 +122,7 @@ public class ObjectRecordRequestTest {
 	@Test
 	@Order(4)
 	@DisplayName("successfully update object records from CSV")
-	public void testUpdateCSV(VaultClient vaultClient) {
+	public void testUpdateCSV() {
 
 		List<String[]> updateData = new ArrayList<>();
 		updateData.add(new String[]{"id", "name__v"});
@@ -144,7 +150,7 @@ public class ObjectRecordRequestTest {
 	@Test
 	@Order(5)
 	@DisplayName("successfully retrieve object record collection")
-	public void testRetrieveObjectRecordCollection(VaultClient vaultClient) {
+	public void testRetrieveObjectRecordCollection() {
 
 		ObjectRecordCollectionResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
 				.retrieveObjectRecordCollection(OBJECT_NAME);
@@ -160,7 +166,7 @@ public class ObjectRecordRequestTest {
 	@Test
 	@Order(6)
 	@DisplayName("successfully delete object records from CSV")
-	public void testDeleteObjectRecordsCsv(VaultClient vaultClient) {
+	public void testDeleteObjectRecordsCsv() {
 		List<String[]> deleteData = new ArrayList<>();
 		deleteData.add(new String[]{"id"});
 		for (int i = 0; i < recordIds.size(); i++) {
@@ -183,7 +189,7 @@ public class ObjectRecordRequestTest {
 
 	@Disabled
     @Test
-	public void testInvalidRequest(VaultClient vaultClient) {
+	public void testInvalidRequest() {
 		
 		ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
 				.setContentTypeCsv()				
@@ -195,7 +201,7 @@ public class ObjectRecordRequestTest {
 	// Create: Source - CSV file, Response - JSON, Upsert operation with idParam
 	@Disabled
     @Test
-	public void testUpsertCSV(VaultClient vaultClient) {
+	public void testUpsertCSV() {
 		String objectName = "person__sys";
 		String inputPath = "";
 		String idParam = "external_id__c";
@@ -213,7 +219,7 @@ public class ObjectRecordRequestTest {
 	// Create: Source - CSV file, Response - JSON, Migration Mode
 	@Disabled
     @Test
-	public void testCreateMigrationMode(VaultClient vaultClient) {
+	public void testCreateMigrationMode() {
 		String objectName = "tt_claim__c";
 		String inputPath = "";
 				
@@ -230,7 +236,7 @@ public class ObjectRecordRequestTest {
 	// Create: Source - JSON string, Response - JSON
 	@Disabled
     @Test
-	public void testCreateJSONString(VaultClient vaultClient) {
+	public void testCreateJSONString() {
 		String objectName = "person__sys";
 		String requestString  = "[{\"first_name__sys\":\"Leah2\",\"last_name__sys\":\"Allison\",\"status__v\":\"active__v\",\"email__sys\":\"test@veeva.com\","
 				+ "\"external_id__c\":1003,\"language__sys\":\"0LU000000000101\",\"locale__sys\":\"0LO000000000104\",\"locale__sys.name__v\":\"United States\","
@@ -251,7 +257,7 @@ public class ObjectRecordRequestTest {
 	// Create: Single Record: Source - Body Params, Response - JSON
 	@Disabled
     @Test
-	public void testCreateBodyParams(VaultClient vaultClient) {
+	public void testCreateBodyParams() {
 
 		String objectName = "person__sys";
 
@@ -274,7 +280,7 @@ public class ObjectRecordRequestTest {
 	// Cascade Delete
 	@Disabled
     @Test
-	public void testCascadeDelete(VaultClient vaultClient) {
+	public void testCascadeDelete() {
 		String objectName = "person__sys";
 		String id = "V0E000000000382";
 		
@@ -288,7 +294,7 @@ public class ObjectRecordRequestTest {
 	// Cascade Delete Job Status
 	@Disabled
     @Test
-	public void testResultsOfCascadeDeleteJobStatus(VaultClient vaultClient) {
+	public void testResultsOfCascadeDeleteJobStatus() {
 		String objectName = "person__sys";
 		Integer jobId = 123;
 
@@ -302,7 +308,7 @@ public class ObjectRecordRequestTest {
 	
 	@Disabled
     @Test
-	public void testRetrieveDeletedObjectRecordId(VaultClient vaultClient) {
+	public void testRetrieveDeletedObjectRecordId() {
 		String objectName = "person__sys";
 
 		ObjectRecordDeletedResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
@@ -318,7 +324,7 @@ public class ObjectRecordRequestTest {
 	
 	@Disabled
     @Test
-	public void testDeepCopyObjectRecord(VaultClient vaultClient) {
+	public void testDeepCopyObjectRecord() {
 
 		String objectName = "tt_claim__c";
 		String objectRecordId = "OOW000000000803";

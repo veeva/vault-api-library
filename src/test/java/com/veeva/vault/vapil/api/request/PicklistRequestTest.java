@@ -11,10 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.PicklistResponse;
 import com.veeva.vault.vapil.api.model.response.PicklistValueResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
@@ -23,13 +20,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Tag("PicklistRequest")
+@Tag("PicklistRequestTest")
+@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
-@Disabled
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Picklist Request should")
 public class PicklistRequestTest {
 
+	private static final String PICKLIST_NAME = "vapil_test_picklist__c";
+	private static String picklistValueName;
+	private static VaultClient vaultClient;
+
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
+
 	@Test
-	public void testRetrieveAllPicklists(VaultClient vaultClient) {
+	@Order(1)
+	@DisplayName("successfully retrieve all picklists")
+	public void testRetrieveAllPicklists() {
 		PicklistResponse response = vaultClient.newRequest(PicklistRequest.class).retrieveAllPicklists();
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -41,63 +52,80 @@ public class PicklistRequestTest {
 	}
 
 	@Test
-	public void testRetrievePicklistValue(VaultClient vaultClient) {
-		PicklistValueResponse response = vaultClient.newRequest(PicklistRequest.class).retrievePicklistValues("activity_type__v");
-
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getPicklistValues());
-	}
-
-	@Test
-	public void testCreatePicklistValues(VaultClient vaultClient) {
-		String picklistName = "color__c";
+	@Order(2)
+	@DisplayName("successfully create a picklist value")
+	public void testCreatePicklistValues() {
 		List<String> newPicklistValues = new ArrayList<>();
-		newPicklistValues.add("White");
-		newPicklistValues.add("Orange");
-		newPicklistValues.add("Yellow");
+		newPicklistValues.add("VAPIL Test Value_" + System.currentTimeMillis());
 
-		PicklistValueResponse response = vaultClient.newRequest(PicklistRequest.class).createPicklistValues(picklistName, newPicklistValues);
+		PicklistValueResponse response = vaultClient.newRequest(PicklistRequest.class)
+				.createPicklistValues(PICKLIST_NAME, newPicklistValues);
 		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getResponse());
+
+		List<PicklistValueResponse.PicklistValue> picklistValuesList = response.getPicklistValues();
+		Assertions.assertNotNull(picklistValuesList);
+
+		Assertions.assertNotNull(picklistValuesList.get(0).getName());
+		picklistValueName = picklistValuesList.get(0).getName();
+
+		Assertions.assertNotNull(picklistValuesList.get(0).getLabel());
 	}
 
 	@Test
-	public void testUpdatePicklistValueLabel(VaultClient vaultClient) {
-		String picklistName = "color__c";
+	@Order(3)
+	@DisplayName("successfully retrieve all picklist values for a specified picklist")
+	public void testRetrievePicklistValues() {
+		PicklistValueResponse response = vaultClient.newRequest(PicklistRequest.class)
+				.retrievePicklistValues(PICKLIST_NAME);
+
+		Assertions.assertTrue(response.isSuccessful());
+
+		List<PicklistValueResponse.PicklistValue> picklistValues = response.getPicklistValues();
+		Assertions.assertNotNull(picklistValues);
+		picklistValues.forEach(picklistValue -> {
+			Assertions.assertNotNull(picklistValue.getName());
+			Assertions.assertNotNull(picklistValue.getLabel());
+		});
+	}
+
+	@Test
+	@Order(4)
+	@DisplayName("successfully update a picklist value label")
+	public void testUpdatePicklistValueLabel() throws InterruptedException {
 		Map<String,String> newPicklistLabels = new HashMap<>();
-		newPicklistLabels.put("red__c", "Rouge");
+		newPicklistLabels.put(picklistValueName, "VAPIL Test Value Updated");
 
-		VaultResponse response = vaultClient.newRequest(PicklistRequest.class).updatePicklistValueLabel(picklistName, newPicklistLabels);
+		PicklistValueResponse response = vaultClient.newRequest(PicklistRequest.class)
+				.updatePicklistValueLabel(PICKLIST_NAME, newPicklistLabels);
+
 		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getResponse());
+
+		List<PicklistValueResponse.PicklistValue> picklistValuesList = response.getPicklistValues();
+		Assertions.assertNotNull(picklistValuesList);
+		Assertions.assertNotNull(picklistValuesList.get(0).getName());
+
+		Assertions.assertNotNull(picklistValuesList.get(0).getLabel());
 	}
 
 	@Test
-	public void testUpdatePicklistValueName(VaultClient vaultClient) {
-		String picklistName = "color__c";
-		String picklistValueName = "red__c";
-		String newName = "rouge";
-
-		VaultResponse response = vaultClient.newRequest(PicklistRequest.class).updatePicklistValue(picklistName, picklistValueName, newName);
+	@Order(5)
+	@DisplayName("successfully update a picklist value name")
+	public void testUpdatePicklistValueName() throws InterruptedException {
+		String updatedPicklistValueName = picklistValueName.replace("value", "value_updated").replace("__c", "");
+		VaultResponse response = vaultClient.newRequest(PicklistRequest.class)
+				.updatePicklistValue(PICKLIST_NAME, picklistValueName, updatedPicklistValueName);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getResponse());
+		picklistValueName = updatedPicklistValueName;
+		picklistValueName += "__c";
 	}
 
 	@Test
-	public void testUpdatePicklistValueStatus(VaultClient vaultClient) {
-		String picklistName = "color__c";
-		String picklistValueName = "rouge__c";
-		VaultResponse response = vaultClient.newRequest(PicklistRequest.class).updatePicklistValue(picklistName, picklistValueName, true);
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getResponse());
-	}
-
-
-	@Test
-	public void testInactivatePicklistValue(VaultClient vaultClient) {
-		String picklistName = "color__c";
-		String picklistValueName = "rouge__c";
-		VaultResponse response = vaultClient.newRequest(PicklistRequest.class).inactivatePicklistValue(picklistName, picklistValueName);
+	@Order(6)
+	@DisplayName("successfully inactivate a picklist value")
+	public void testInactivatePicklistValue() {
+		VaultResponse response = vaultClient.newRequest(PicklistRequest.class)
+				.inactivatePicklistValue(PICKLIST_NAME, picklistValueName);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getResponse());
 	}

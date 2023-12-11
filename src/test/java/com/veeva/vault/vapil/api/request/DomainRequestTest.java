@@ -3,10 +3,7 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.DomainResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestReporter;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
@@ -18,9 +15,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DomainRequestTest {
 
     private static final String SUCCESS_STATUS = "SUCCESS";
+    private static VaultClient vaultClient;
+
+    @BeforeAll
+    static void setup(VaultClient client) {
+        vaultClient = client;
+        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+    }
+
     @Test
     @DisplayName("successfully let Domain Admons retrieve a list of all Vaults currently their domain")
-    public void testRetrieveDomainInformation(VaultClient vaultClient, TestReporter reporter) {
+    public void testRetrieveDomainInformation(TestReporter reporter) {
         DomainResponse resp = vaultClient.newRequest(DomainRequest.class)
                 .setIncludeApplications(true)
                 .retrieveDomainInformation();
@@ -35,7 +40,7 @@ public class DomainRequestTest {
 
     @Test
     @DisplayName("successfully let Non-domain Admins retrieve a list of all their domains, including the domain of the current Vault")
-    public void testRetrieveDomains(VaultClient vaultClient) {
+    public void testRetrieveDomains() {
         VaultResponse resp = vaultClient.newRequest(DomainRequest.class)
                 .retrieveDomains();
         assertTrue(resp.isSuccessful());

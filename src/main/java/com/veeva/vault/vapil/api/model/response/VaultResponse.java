@@ -23,6 +23,11 @@ public class VaultResponse extends VaultModel {
 	/**
 	 * responseStatus = FAILURE
 	 */
+	public static final String HTTP_RESPONSE_WARNING = "WARNING";
+
+	/**
+	 * responseStatus = FAILURE
+	 */
 	public static final String HTTP_RESPONSE_FAILURE = "FAILURE";
 
 	/**
@@ -115,6 +120,26 @@ public class VaultResponse extends VaultModel {
 	private String response = ""; // Response as string	
 	private String responseStatus;
 	private String responseMessage;
+
+	/**
+	 * @return true if there was a warning response
+	 */
+	public boolean isWarning() {
+		if (this.responseStatus != null) {
+			return this.responseStatus.equalsIgnoreCase(VaultResponse.HTTP_RESPONSE_WARNING);
+		}
+		return false;
+	}
+
+	/**
+	 * @return true if there was a failure response
+	 */
+	public boolean isFailure() {
+		if (this.responseStatus != null) {
+			return this.responseStatus.equalsIgnoreCase(VaultResponse.HTTP_RESPONSE_FAILURE);
+		}
+		return false;
+	}
 
 	/**
 	 * @return true if there was a successful response

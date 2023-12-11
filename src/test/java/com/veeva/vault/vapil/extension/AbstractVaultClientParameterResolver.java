@@ -13,7 +13,7 @@ import static com.veeva.vault.vapil.api.client.VaultClient.AuthenticationType.BA
 import static com.veeva.vault.vapil.api.client.VaultClient.AuthenticationType.SESSION_ID;
 
 public abstract class AbstractVaultClientParameterResolver implements ParameterResolver {
-    private final static String VAPIL_SETTINGS_FILE = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "settings_files" + File.separator + "settings_vapil_basic.json";
+    private final static String VAPIL_SETTINGS_FILE = "settings_vapil_basic.json";
     private File settingsFile;
     private VaultClient vaultClient;
     private String sessionId;

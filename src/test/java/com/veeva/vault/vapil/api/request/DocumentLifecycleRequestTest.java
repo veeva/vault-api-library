@@ -32,9 +32,13 @@ public class DocumentLifecycleRequestTest {
 	static final String DRAFT_STATE = "draft__c";
 	static String lifecycleActionName;
 	static List<Integer> docIds = new ArrayList<>();
+	private static VaultClient vaultClient;
 
 	@BeforeAll
-	static void createDocuments(VaultClient vaultClient) throws IOException {
+	static void setup(VaultClient client) throws IOException {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+
 		DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient);
 
 		Assertions.assertTrue(createResponse.isSuccessful());
@@ -46,7 +50,7 @@ public class DocumentLifecycleRequestTest {
 	}
 
 	@AfterAll
-	static void deleteDocuments(VaultClient vaultClient) {
+	static void teardown() {
 		DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -58,7 +62,7 @@ public class DocumentLifecycleRequestTest {
 	@Test
 	@Order(1)
 	@DisplayName("successfully retrieve all available user actions on a specific version of a document")
-	public void testRetrieveUserActions(VaultClient vaultClient) {
+	public void testRetrieveUserActions() {
 		DocumentActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class).retrieveUserActions(
 				DocumentRequestType.DOCUMENTS, Integer.valueOf(docIds.get(0)), MAJOR_VERSION, MINOR_VERSION);
 		Assertions.assertTrue(response.isSuccessful());
@@ -70,7 +74,7 @@ public class DocumentLifecycleRequestTest {
 	@Test
 	@Order(2)
 	@DisplayName("successfully retrieve all available user actions on specific versions of multiple documents")
-	public void testRetrieveUserActionsOnMultipleDocumentsOrBinders(VaultClient vaultClient) {
+	public void testRetrieveUserActionsOnMultipleDocumentsOrBinders() {
 		StringJoiner documents = new StringJoiner(",");
 		for (int docId : docIds) {
 			documents.add(String.format("%s:%s:%s",docId, MAJOR_VERSION, MINOR_VERSION));
@@ -91,7 +95,7 @@ public class DocumentLifecycleRequestTest {
 	@Test
 	@Order(3)
 	@DisplayName("successfully retrieve the entry criteria for a user action")
-	public void testRetrieveEntryCriteria(VaultClient vaultClient) {
+	public void testRetrieveEntryCriteria() {
 		DocumentActionEntryCriteriaResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 				.retrieveEntryCriteria(DocumentRequestType.DOCUMENTS, docIds.get(0), MAJOR_VERSION, MINOR_VERSION, lifecycleActionName);
 		Assertions.assertTrue(response.isSuccessful());
@@ -106,7 +110,7 @@ public class DocumentLifecycleRequestTest {
 	@Test
 	@Order(4)
 	@DisplayName("successfully initiate a user action on a record")
-	public void testInitiateUserAction(VaultClient vaultClient) {
+	public void testInitiateUserAction() {
 		DocumentActionInitiateResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class).initiateUserAction(
 				DocumentRequestType.DOCUMENTS, docIds.get(0), MAJOR_VERSION, MINOR_VERSION, lifecycleActionName);
 
@@ -117,7 +121,7 @@ public class DocumentLifecycleRequestTest {
 	@Test
 	@Order(5)
 	@DisplayName("successfully initiate a bulk user action on multiple documents")
-	public void testInitiateBulkUserActions(VaultClient vaultClient) {
+	public void testInitiateBulkUserActions() {
 		StringJoiner documents = new StringJoiner(",");
 		for (int i = 1; i < docIds.size(); i++) {
 			documents.add(String.format("%s:%s:%s", docIds.get(i), MAJOR_VERSION, MINOR_VERSION));
@@ -134,7 +138,7 @@ public class DocumentLifecycleRequestTest {
 
 	@Disabled
 	@Test
-	public void testRetrieveLifecycleRoleAssignmentRules(VaultClient vaultClient) {
+	public void testRetrieveLifecycleRoleAssignmentRules() {
 		DocumentLifecycleRoleAssignmentResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 				.setLifecycleName("general_lifecycle__c").setRoleName("editor__c")
 				.retrieveLifecycleRoleAssignmentRules();

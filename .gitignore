@@ -27,3 +27,5 @@ src/test/resources/test.properties
 /src/test/resources/settings_files/settings_vapil_oauth_token.json
 /src/test/resources/settings_files/settings_vapil_sandbox.json
 /src/test/resources/settings_files/settings_vapil_session_id.json
+src/test/resources/settings_files/settings_vapil_basic_eric.json
+src/test/resources/settings_files/settings_vapil_basic_lr.json

@@ -126,5 +126,23 @@ public class ValidatePackageResponse extends VaultResponse {
 			this.set("total_steps", totalSteps);
 		}
 
+		@JsonProperty("total_steps_blocked")
+		public Integer getTotalStepsBlocked() {
+			return this.getInteger("total_steps_blocked");
+		}
+
+		public void setTotalStepsBlocked(Integer totalStepsBlocked) {
+			this.set("total_steps_blocked", totalStepsBlocked);
+		}
+
+		@JsonProperty("package_id")
+		public String getPackageId() {
+			return this.getString("package_id");
+		}
+
+		public void setPackageId(String packageId) {
+			this.set("package_id", packageId);
+		}
+
 	}
 }

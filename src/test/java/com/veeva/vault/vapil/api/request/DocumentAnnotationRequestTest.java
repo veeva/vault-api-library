@@ -10,10 +10,8 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.DocumentAnnotationResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import com.veeva.vault.vapil.extension.FileHelper;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
@@ -23,43 +21,51 @@ import java.nio.file.Files;
 
 @Tag("DocumentAnnotation")
 @ExtendWith(VaultClientParameterResolver.class)
-@Disabled
 public class DocumentAnnotationRequestTest {
-	static final int DOC_ID = 7;
+	static final int DOC_ID = 876;
 	static final int VIDEO_ID = 8;
 	static final int MAJOR_VERSION = 0;
 	static final int MINOR_VERSION = 1;
+	static final String ANNOTATIONS_IMPORT_FILE_PATH = FileHelper.getPathAnnotationsImportFile();
+	private static VaultClient vaultClient;
+
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 
 	@Test
-	public void testRetrieveDocumentAnnotations(VaultClient vaultClient) {
+	public void testExportDocumentAnnotationsToPdf() {
 		VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 				.setOutputPath(null)
-				.retrieveDocumentAnnotations(DOC_ID);
+				.exportDocumentAnnotationsToPdf(DOC_ID);
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getBinaryContent());
+
+	}
+
+	@Test
+	public void testExportDocumentVersionAnnotationsToPdf() {
+		VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
+				.setOutputPath(null)
+				.exportDocumentVersionAnnotationsToPdf(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
 
+	@Disabled
 	@Test
-	public void testRetrieveDocumentVersionAnnotations(VaultClient vaultClient) {
-
-		VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-				.setOutputPath(null)
-				.retrieveDocumentVersionAnnotations(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getBinaryContent());
-	}
-
-	@Test
-	public void testRetrieveAnchorIds(VaultClient vaultClient) {
+	public void testRetrieveAnchorIds() {
 		DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 				.retrieveAnchorIds(DOC_ID);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getAnchorDataList());
 	}
 
+	@Disabled
 	@Test
-	public void testRetrieveDocumentVersionNotesAsCSV(VaultClient vaultClient) {
-
+	public void testRetrieveDocumentVersionNotesAsCSV() {
 		VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 				.setOutputPath(null)
 				.retrieveDocumentVersionNotesAsCSV(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
@@ -67,8 +73,9 @@ public class DocumentAnnotationRequestTest {
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
 
+	@Disabled
 	@Test
-	public void testRetrieveVideoAnnotations(VaultClient vaultClient) {
+	public void testRetrieveVideoAnnotations() {
 		int majorVersion = 0;
 		int minorVersion = 1;
 
@@ -80,49 +87,45 @@ public class DocumentAnnotationRequestTest {
 	}
 
 
-	// Need to be manually run to specify file
 	@Test
-	public void testUploadDocumentAnnotationsFile(VaultClient vaultClient) {
-		String inputPath = "";
-
+	public void testImportDocumentAnnotationsFromPdf() {
 		DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-				.setInputPath(inputPath)
-				.uploadDocumentAnnotations(DOC_ID);
+				.setInputPath(ANNOTATIONS_IMPORT_FILE_PATH)
+				.importDocumentAnnotationsFromPdf(DOC_ID);
 		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	// Need to be manually run to specify file
+	@Disabled
 	@Test
-	public void testUploadDocumentAnnotationsBytes(VaultClient vaultClient) throws IOException {
+	public void testUploadDocumentAnnotationsBytes() throws IOException {
 		String fileName = "";
 		String inputPath = "";
 
 		DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 					.setBinaryFile(fileName, Files.readAllBytes(new File(inputPath).toPath()))
-					.uploadDocumentAnnotations(DOC_ID);
+					.importDocumentAnnotationsFromPdf(DOC_ID);
 		Assertions.assertTrue(response.isSuccessful());
 	}
 
-	// Need to be manually run to specify file
 	@Test
-	public void testUploadDocumentVersionAnnotationsFile(VaultClient vaultClient) {
-		String inputPath = "";
-
+	public void testImportDocumentVersionAnnotationsFromPdf() {
 		DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-				.setInputPath(inputPath)
-				.uploadDocumentVersionAnnotations(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
+				.setInputPath(ANNOTATIONS_IMPORT_FILE_PATH)
+				.importDocumentVersionAnnotationsFromPdf(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
 		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	// Need to be manually run to specify file
+	@Disabled
 	@Test
-	public void testUploadDocumentVersionAnnotationsBytes(VaultClient vaultClient) throws IOException {
+	public void testUploadDocumentVersionAnnotationsBytes() throws IOException {
 		String fileName = "";
 		String inputPath = "";
 
 		DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
 				.setBinaryFile(fileName, Files.readAllBytes(new File(inputPath).toPath()))
-				.uploadDocumentVersionAnnotations(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
+				.importDocumentVersionAnnotationsFromPdf(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
 		Assertions.assertTrue(response.isSuccessful());
 	}
 }

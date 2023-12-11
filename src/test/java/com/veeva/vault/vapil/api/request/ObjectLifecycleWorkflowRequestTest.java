@@ -24,10 +24,14 @@ class ObjectLifecycleWorkflowRequestTest {
     static final String WORKFLOW_ACTION_NAME = "Objectlifecyclestateuseraction.vapil_test_object__c.active_state__c.start_vapil_test_object_workflow_useract__c";
     static final String DELETE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathDeleteObjectRecordsCsv();
     static List<String> recordIds = new ArrayList<>();
+    private static VaultClient vaultClient;
 
 
     @BeforeAll
-    static void createObjectRecords(VaultClient vaultClient) throws IOException {
+    static void setup(VaultClient client) throws IOException {
+        vaultClient = client;
+        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+
         ObjectRecordBulkResponse response = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
 
         Assertions.assertTrue(response.isSuccessful());
@@ -38,7 +42,7 @@ class ObjectLifecycleWorkflowRequestTest {
     }
 
     @AfterAll
-    static void deleteObjectRecords(VaultClient vaultClient) throws IOException {
+    static void teardown() throws IOException {
         ObjectRecordBulkResponse response = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
         Assertions.assertTrue(response.isSuccessful());
 
@@ -55,7 +59,7 @@ class ObjectLifecycleWorkflowRequestTest {
     @Order(1)
     @Test
     @DisplayName("successfully retrieve all available user actions that can be initiated on a specific object record")
-    void testRetrieveObjectRecordUserActions(VaultClient vaultClient) {
+    void testRetrieveObjectRecordUserActions() {
         ObjectRecordActionResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
                 .retrieveObjectRecordUserActions(OBJECT_NAME, recordIds.get(0));
 
@@ -69,7 +73,7 @@ class ObjectLifecycleWorkflowRequestTest {
     @Order(2)
     @Test
     @DisplayName("successfully retrieve the details for a specific user action")
-    void testRetrieveObjectRecordUserActionDetails(VaultClient vaultClient) {
+    void testRetrieveObjectRecordUserActionDetails() {
         ObjectRecordActionResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
                 .retrieveObjectRecordUserActionDetails(OBJECT_NAME, recordIds.get(0), WORKFLOW_ACTION_NAME);
 
@@ -83,7 +87,7 @@ class ObjectLifecycleWorkflowRequestTest {
     @Order(3)
     @Test
     @DisplayName("successfully initiate a user action on a single object record")
-    void testInitiateObjectActionOnASingleRecord(VaultClient vaultClient) {
+    void testInitiateObjectActionOnASingleRecord() {
         ObjectRecordActionResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
                 .initiateObjectActionOnASingleRecord(OBJECT_NAME, recordIds.get(0), WORKFLOW_ACTION_NAME);
 
@@ -93,7 +97,7 @@ class ObjectLifecycleWorkflowRequestTest {
     @Order(4)
     @Test
     @DisplayName("successfully initiate a user action on multiple object records")
-    void testInitiateObjectActionOnMultipleRecords(VaultClient vaultClient) {
+    void testInitiateObjectActionOnMultipleRecords() {
         Set<String> recordIdSet = new HashSet<>();
         for (int i = 1; i < recordIds.size(); i++) {
             recordIdSet.add(recordIds.get(i));
@@ -112,7 +116,7 @@ class ObjectLifecycleWorkflowRequestTest {
     @Order(5)
     @Test
     @DisplayName("successfully retrieve Multi-Record Workflows")
-    void testRetrieveMultiRecordWorkflows(VaultClient vaultClient) {
+    void testRetrieveMultiRecordWorkflows() {
         ObjectMultiRecordWorkflowsResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
                 .retrieveMultiRecordWorkflows();
 
@@ -126,7 +130,7 @@ class ObjectLifecycleWorkflowRequestTest {
     @Order(6)
     @Test
     @DisplayName("successfully retrieve Multi-Record Workflow Details")
-    void testRetrieveMultiRecordWorkflowDetails(VaultClient vaultClient) {
+    void testRetrieveMultiRecordWorkflowDetails() {
         ObjectMultiRecordWorkflowDetailsResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
                 .retrieveMultiRecordWorkflowDetails(MULTI_RECORD_WORKFLOW_NAME);
 
@@ -139,7 +143,7 @@ class ObjectLifecycleWorkflowRequestTest {
     @Test
     @Disabled
     @DisplayName("successfully initiate a Multi-Record Workflow")
-    void testInitiateMultiRecordWorkflow(VaultClient vaultClient) {
+    void testInitiateMultiRecordWorkflow() {
         String record1 = String.format("Object:%s.%s", OBJECT_NAME, recordIds.get(recordIds.size() - 2));
         String record2 = String.format("Object:%s.%s", OBJECT_NAME, recordIds.get(recordIds.size() - 1));
 

@@ -32,11 +32,18 @@ public class BinderTemplateRequestTest {
 	private static final String DOC_CLASSIFICATION_NAME = "vapil_test_doc_classification__c";
 	static List<String> templateNames = new ArrayList<>();
 	static String templateNodeId;
+	private static VaultClient vaultClient;
+
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 
 	@Test
 	@Order(1)
 	@DisplayName("successfully create a binder template")
-	public void testCreateBinderTemplate(VaultClient vaultClient) {
+	public void testCreateBinderTemplate() {
 		BinderTemplate template = new BinderTemplate();
 		template.setLabel("VAPIL Test Binder Template 1");
 		template.setType(DOC_TYPE_NAME);
@@ -55,7 +62,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(2)
 	@DisplayName("successfully retrieve binder template attributes")
-	public void testRetrieveBinderTemplateAttributes(VaultClient vaultClient) {
+	public void testRetrieveBinderTemplateAttributes() {
 		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateAttributes(templateNames.get(0));
 
@@ -71,7 +78,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(3)
 	@DisplayName("successfully create a binder template node")
-	public void testCreateBinderTemplateNode(VaultClient vaultClient) {
+	public void testCreateBinderTemplateNode() {
 
 		// Create a root node in the binder
 		BinderTemplate templateNode = new BinderTemplate();
@@ -104,7 +111,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(4)
 	@DisplayName("successfully retrieve binder template node attributes")
-	public void testRetrieveBinderTemplateNodeAttributes(VaultClient vaultClient) {
+	public void testRetrieveBinderTemplateNodeAttributes() {
 		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateNodeAttributes(templateNames.get(0));
 
@@ -120,7 +127,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(5)
 	@DisplayName("successfully update a binder template")
-	public void testUpdateBinderTemplate(VaultClient vaultClient) {
+	public void testUpdateBinderTemplate() {
 		BinderTemplate template = new BinderTemplate();
 		template.setType(DOC_TYPE_NAME);
 
@@ -137,7 +144,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(6)
 	@DisplayName("successfully replace existing binder template nodes")
-	public void testReplaceBinderTemplateNodes(VaultClient vaultClient) {
+	public void testReplaceBinderTemplateNodes() {
 
 		// Create a root node in the binder
 		BinderTemplate templateNode = new BinderTemplate();
@@ -161,7 +168,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(7)
 	@DisplayName("successfully bulk create binder templates using JSON")
-	public void testBulkCreateBinderTemplatesJSON(VaultClient vaultClient) {
+	public void testBulkCreateBinderTemplatesJSON() {
 		File jsonFile = new File(BinderTemplateHelper.getJsonPathCreateMultipleBinderTemplates());
 		Assertions.assertTrue(jsonFile.exists());
 		String jsonString = FileHelper.convertJsonFileToString(jsonFile);
@@ -183,7 +190,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(8)
 	@DisplayName("successfully bulk update binder templates using JSON")
-	public void testBulkUpdateBinderTemplatesJSON(VaultClient vaultClient) {
+	public void testBulkUpdateBinderTemplatesJSON() {
 		File jsonFile = new File(BinderTemplateHelper.getJsonPathUpdateMultipleBinderTemplates());
 		Assertions.assertTrue(jsonFile.exists());
 		String jsonString = FileHelper.convertJsonFileToString(jsonFile);
@@ -206,7 +213,7 @@ public class BinderTemplateRequestTest {
 	@Test
 	@Order(9)
 	@DisplayName("successfully delete a binder template")
-	public void testDeleteBinderTemplate(VaultClient vaultClient) {
+	public void testDeleteBinderTemplate() {
 		for (String templateName : templateNames) {
 			BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 					.deleteBinderTemplate(templateName);
@@ -217,7 +224,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve binder template metadata")
-	public void testRetrieveBinderTemplateMetadata(VaultClient vaultClient) {
+	public void testRetrieveBinderTemplateMetadata() {
 		BinderTemplateMetadataResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateMetadata();
 
@@ -227,7 +234,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve binder template node metadata")
-	public void testRetrieveBinderTemplateNodeMetadata(VaultClient vaultClient) {
+	public void testRetrieveBinderTemplateNodeMetadata() {
 		BinderTemplateMetadataResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateNodeMetadata();
 
@@ -237,7 +244,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve binder template collection")
-	public void testRetrieveBinderTemplateCollection(VaultClient vaultClient) {
+	public void testRetrieveBinderTemplateCollection() {
 		BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 				.retrieveBinderTemplateCollection();
 
@@ -247,7 +254,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@Disabled
-	public void testReplaceBinderTemplateNodesJSON(VaultClient vaultClient) {
+	public void testReplaceBinderTemplateNodesJSON() {
 		String binderTemplateName = "binder_template_1_json__c";
 
 		// JSON Root Nodes
@@ -275,7 +282,7 @@ public class BinderTemplateRequestTest {
 	// Run manually
 	@Test
 	@Disabled
-	public void testBulkCreateBinderTemplatesCSVFile(VaultClient vaultClient) {
+	public void testBulkCreateBinderTemplatesCSVFile() {
 
 		// In this test, the API should create binder_template_1_csv__c and binder_template_2_csv__c
 		// which will be used in the other bulk tests and the binder node tests
@@ -302,7 +309,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@Disabled
-	public void testBulkCreateBinderTemplatesCSVBytes(VaultClient vaultClient) {
+	public void testBulkCreateBinderTemplatesCSVBytes() {
 
 		String fileName = "binder_template_sample.csv";
 
@@ -324,7 +331,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@Disabled
-	public void testBulkUpdateBinderTemplatesCSVFile(VaultClient vaultClient) {
+	public void testBulkUpdateBinderTemplatesCSVFile() {
 
 		String fileName = "binder_template_sample.csv";
 
@@ -348,7 +355,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@Disabled
-	public void testBulkUpdateBinderTemplatesCSVBytes(VaultClient vaultClient) {
+	public void testBulkUpdateBinderTemplatesCSVBytes() {
 
 		String fileName = "binder_template_sample.csv";
 
@@ -371,7 +378,7 @@ public class BinderTemplateRequestTest {
 	// Run manually
 	@Test
 	@Disabled
-	public void testBulkCreateBinderTemplateNodesCSV(VaultClient vaultClient) {
+	public void testBulkCreateBinderTemplateNodesCSV() {
 		String binderTemplateName = "binder_template_1_csv__c";
 		String fileName = "binder_template_node_sample.csv";
 
@@ -399,7 +406,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@Disabled
-	public void testBulkCreateBinderTemplateNodesCSVBytes(VaultClient vaultClient) {
+	public void testBulkCreateBinderTemplateNodesCSVBytes() {
 		String binderTemplateName = "binder_template_1_bytes__c";
 		String fileName = "binder_template_node_sample.csv";
 
@@ -426,7 +433,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@Disabled
-	public void testBulkCreateBinderTemplateNodesJSON(VaultClient vaultClient) {
+	public void testBulkCreateBinderTemplateNodesJSON() {
 		String binderTemplateName = "binder_template_1_json__c";
 
 		// JSON Root Nodes
@@ -455,7 +462,7 @@ public class BinderTemplateRequestTest {
 	// Run manually
 	@Test
 	@Disabled
-	public void testReplaceBinderTemplateNodesCSVFile(VaultClient vaultClient) {
+	public void testReplaceBinderTemplateNodesCSVFile() {
 		String binderTemplateName = "binder_template_1_csv__c";
 		String fileName = "binder_template_node_sample.csv";
 
@@ -484,7 +491,7 @@ public class BinderTemplateRequestTest {
 
 	@Test
 	@Disabled
-	public void testReplaceBinderTemplateNodesCSVBytes(VaultClient vaultClient) {
+	public void testReplaceBinderTemplateNodesCSVBytes() {
 		/**** Very Important ****/
 		/** This deletes the entire node tree first, no matter what.  So do not try to use it to replace a single node
 		 *  or to update nodes.  Use the create or update endpoints for that.

@@ -52,16 +52,19 @@ public class DocumentRequestTest {
 	static final String RECLASSIFY_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathReclassifyMultipleDocuments();
 	static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
 	static List<Integer> docIds = new ArrayList<>();
+	private static VaultClient vaultClient;
 
 	@BeforeAll
-	static void setup(VaultClient vaultClient) {
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 		FileStagingHelper.createTestFileOnFileStaging(vaultClient);
 	}
 
 	@Test
 	@Order(1)
 	@DisplayName("successfully create a single document")
-	public void testCreateSingleDocument(VaultClient vaultClient) {
+	public void testCreateSingleDocument() {
 		Document doc = new Document();
 
 		doc.setName("VAPIL test create single document " + ZonedDateTime.now());
@@ -84,7 +87,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(2)
 	@DisplayName("successfully create a document from a template")
-	public void testCreateSingleDocumentFromTemplate(VaultClient vaultClient) {
+	public void testCreateSingleDocumentFromTemplate() {
 		Document doc = new Document();
 
 		doc.setName("VAPIL Test Doc From Template " + ZonedDateTime.now());
@@ -105,7 +108,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(3)
 	@DisplayName("successfully create multiple documents from CSV and file on staging server")
-	public void testCreateMultipleDocumentsFile(VaultClient vaultClient) throws IOException {
+	public void testCreateMultipleDocumentsFile() throws IOException {
 //		Write Headers and data to CSV file
 		List<String[]> data = new ArrayList<>();
 		data.add(new String[]{"file", "name__v", "type__v", "subtype__v",
@@ -131,7 +134,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(4)
 	@DisplayName("successfully update a single document")
-	public void testUpdateSingleDocument(VaultClient vaultClient) {
+	public void testUpdateSingleDocument() {
 //		Update Document
 		int id = docIds.get(0);
 		String updatedName = "VAPIL Test Update Single Document";
@@ -158,7 +161,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(5)
 	@DisplayName("successfully update multiple documents from a CSV")
-	public void testUpdateMultipleDocuments(VaultClient vaultClient) throws IOException {
+	public void testUpdateMultipleDocuments() throws IOException {
 		String updatedTitle = "VAPIL Test Update multiple documents";
 
 		List<String[]> data = new ArrayList<>();
@@ -187,7 +190,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(5)
 	@DisplayName("successfully reclassify multiple documents from a CSV")
-	public void testReclassifyMultipleDocuments(VaultClient vaultClient) throws IOException {
+	public void testReclassifyMultipleDocuments() throws IOException {
 		List<String[]> data = new ArrayList<>();
 		data.add(new String[]{"id", "lifecycle__v", "type__v"});
 
@@ -213,7 +216,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(6)
 	@DisplayName("successfully retrieve document by ID")
-	public void testRetrieveDocument(VaultClient vaultClient) {
+	public void testRetrieveDocument() {
 		DocumentResponse documentResponse = vaultClient.newRequest(DocumentRequest.class)
 				.retrieveDocument(docIds.get(0));
 
@@ -226,7 +229,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(7)
 	@DisplayName("successfully retrieve document versions by ID")
-	public void testRetrieveDocumentVersions(VaultClient vaultClient) {
+	public void testRetrieveDocumentVersions() {
 		DocumentVersionResponse documentVersionResponse = vaultClient.newRequest(DocumentRequest.class)
 				.retrieveDocumentVersions(docIds.get(0));
 
@@ -237,7 +240,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(8)
 	@DisplayName("successfully retrieve document by ID, minor version, and major version")
-	public void testRetrieveDocumentVersion(VaultClient vaultClient) {
+	public void testRetrieveDocumentVersion() {
 		int id = docIds.get(0);
 		DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.retrieveDocumentVersion(id, MAJOR_VERSION, MINOR_VERSION);
@@ -250,7 +253,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(9)
 	@DisplayName("successfully retrieve all documents")
-	public void testRetrieveAllDocuments(VaultClient vaultClient) {
+	public void testRetrieveAllDocuments() {
 		DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class).retrieveAllDocuments();
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getDocuments());
@@ -259,7 +262,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(10)
 	@DisplayName("successfully retrieve all document fields")
-	public void testRetrieveAllDocumentFields(VaultClient vaultClient) {
+	public void testRetrieveAllDocumentFields() {
 		DocumentFieldResponse response  = vaultClient.newRequest(DocumentRequest.class).retrieveAllDocumentFields();
 		Assertions.assertTrue(response.isSuccessful());
 	}
@@ -267,7 +270,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(11)
 	@DisplayName("successfully retrieve all document types")
-	public void testRetrieveAllDocumentTypes(VaultClient vaultClient) {
+	public void testRetrieveAllDocumentTypes() {
 		DocumentTypesResponse response = vaultClient.newRequest(DocumentRequest.class).retrieveAllDocumentTypes();
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getTypes());
@@ -276,7 +279,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(12)
 	@DisplayName("successfully retrieve doc type")
-	public void testRetrieveDocumentType(VaultClient vaultClient) {
+	public void testRetrieveDocumentType() {
 		DocumentTypeResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.retrieveDocumentType(DOC_TYPE_NAME);
 		Assertions.assertTrue(response.isSuccessful());
@@ -286,7 +289,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(13)
 	@DisplayName("successfully retrieve document subtype")
-	public void testRetrieveDocumentSubtype(VaultClient vaultClient) {
+	public void testRetrieveDocumentSubtype() {
 		DocumentSubtypeResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.retrieveDocumentSubtype(DOC_TYPE_NAME, DOC_SUBTYPE_NAME);
 		Assertions.assertTrue(response.isSuccessful());
@@ -296,7 +299,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(14)
 	@DisplayName("successfully retrieve document classification")
-	public void testRetrieveDocumentClassification(VaultClient vaultClient) {
+	public void testRetrieveDocumentClassification() {
 		DocumentClassificationResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.retrieveDocumentClassification(
 						DOC_TYPE_NAME,
@@ -310,7 +313,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(15)
 	@DisplayName("successfully delete a single document by ID")
-	public void testDeleteSingleDocument(VaultClient vaultClient) {
+	public void testDeleteSingleDocument() {
 		int id = docIds.get(docIds.size() - 1);
 		DocumentResponse deleteDocumentResponse = vaultClient.newRequest(DocumentRequest.class)
 				.deleteSingleDocument(id);
@@ -323,7 +326,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(16)
 	@DisplayName("successfully delete multiple documents from a CSV")
-	public void testDeleteMultipleDocuments(VaultClient vaultClient) throws IOException {
+	public void testDeleteMultipleDocuments() throws IOException {
 		FileHelper.createCsvFile(DELETE_DOCUMENTS_CSV_PATH);
 
 		List<String[]> data = new ArrayList<>();
@@ -350,7 +353,7 @@ public class DocumentRequestTest {
 	@Test
 	@Order(17)
 	@DisplayName("successfully retrieve deleted document IDs")
-	public void testGetDocumentDeletions(VaultClient vaultClient) {
+	public void testGetDocumentDeletions() {
 		DocumentDeletionResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.setLimit(1)
 				.retrieveDeletedDocumentIds();
@@ -369,7 +372,7 @@ public class DocumentRequestTest {
 	// Test Manually
 	@Disabled
 	@Test
-	public void testExportDocuments(VaultClient vaultClient) {
+	public void testExportDocuments() {
 		String filePath = "";
 		JobCreateResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.setInputPath(filePath)
@@ -380,7 +383,7 @@ public class DocumentRequestTest {
 	// Test Manually
 	@Disabled
 	@Test
-	public void testExportDocumentVersions(VaultClient vaultClient) {
+	public void testExportDocumentVersions() {
 		String filePath = "";
 
 		JobCreateResponse response = vaultClient.newRequest(DocumentRequest.class)
@@ -392,7 +395,7 @@ public class DocumentRequestTest {
 	// Test Manually
 	@Disabled
 	@Test
-	public void testRetrieveExportResults(VaultClient vaultClient) {
+	public void testRetrieveExportResults() {
 		int jobId = 0;
 		DocumentExportResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.retrieveDocumentExportResults(jobId);
@@ -402,7 +405,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testDownloadDocumentFile(VaultClient vaultClient) {
+	public void testDownloadDocumentFile() {
 		VaultResponse response = vaultClient.newRequest(DocumentRequest.class).downloadDocumentFile(DOC_ID);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
@@ -410,7 +413,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testDownloadDocumentVersionFile(VaultClient vaultClient) {
+	public void testDownloadDocumentVersionFile() {
 		VaultResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.downloadDocumentVersionFile(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
 		Assertions.assertTrue(response.isSuccessful());
@@ -419,7 +422,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testDownloadDocumentVersionThumbnailFile(VaultClient vaultClient) {
+	public void testDownloadDocumentVersionThumbnailFile() {
 		VaultResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.downloadDocumentVersionThumbnailFile(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
 		Assertions.assertTrue(response.isSuccessful());
@@ -428,7 +431,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testCreateSingleDocumentVersionLatestContent(VaultClient vaultClient) {
+	public void testCreateSingleDocumentVersionLatestContent() {
 		DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
 				.createSingleDocumentVersion(DOC_ID, DocumentRequest.CreateDraftType.LATESTCONTENT);
 		Assertions.assertTrue(response.isSuccessful());
@@ -438,7 +441,7 @@ public class DocumentRequestTest {
 	// Test Manually
 	@Disabled
 	@Test
-	public void testCreateSingleDocumentVersionUploadedContent(VaultClient vaultClient) {
+	public void testCreateSingleDocumentVersionUploadedContent() {
 		String filePath = "";
 
 		DocumentResponse response =vaultClient.newRequest(DocumentRequest.class)
@@ -450,7 +453,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testRetrieveCommonDocumentFields(VaultClient vaultClient) {
+	public void testRetrieveCommonDocumentFields() {
 		Set<Integer> docIds = new HashSet<>();
 		docIds.add(5);
 		docIds.add(12);
@@ -461,7 +464,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testUpdateDocumentVersion(VaultClient vaultClient) {
+	public void testUpdateDocumentVersion() {
 		Document doc = new Document();
 		doc.setId(DOC_ID);
 		doc.setTitle("VAPIL - Updated");
@@ -475,7 +478,7 @@ public class DocumentRequestTest {
 	// Run Manually
 	@Disabled
 	@Test
-	public void testCreateContentPlaceholderDocument(VaultClient vaultClient) {
+	public void testCreateContentPlaceholderDocument() {
 		String filePath = "";
 		Document doc = new Document();
 
@@ -493,7 +496,7 @@ public class DocumentRequestTest {
 	// Run Manually
 	@Disabled
 	@Test
-	public void testCreateCrossLinkDocument(VaultClient vaultClient) {
+	public void testCreateCrossLinkDocument() {
 		String filePath = "";
 		int vaultId = 0; // Set Correct Values
 		int crossLinkDocId = 0; // Set correct value
@@ -514,7 +517,7 @@ public class DocumentRequestTest {
 	// Run Manually
 	@Disabled
 	@Test
-	public void testCreateCrossLinkDocumentLatestVersion(VaultClient vaultClient) {
+	public void testCreateCrossLinkDocumentLatestVersion() {
 		String filePath = "";
 		int vaultId = 0; // Set Correct Values
 		int crossLinkDocId = 0; // Set correct value
@@ -537,7 +540,7 @@ public class DocumentRequestTest {
 	// Run Manually
 	@Disabled
 	@Test
-	public void testCreateCrossLinkDocumentSpecificVersion(VaultClient vaultClient) {
+	public void testCreateCrossLinkDocumentSpecificVersion() {
 		String filePath = "";
 		int vaultId = 0; // Set Correct Values
 		int crossLinkDocId = 0; // Set correct value
@@ -560,7 +563,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testRetrieveDocumentLockMetadata(VaultClient vaultClient) {
+	public void testRetrieveDocumentLockMetadata() {
 		MetaDataDocumentLockResponse response = vaultClient
 				.newRequest(DocumentRequest.class)
 				.retrieveDocumentLockMetadata();
@@ -570,7 +573,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testCreateDocumentLock(VaultClient vaultClient) {
+	public void testCreateDocumentLock() {
 		VaultResponse response = vaultClient
 				.newRequest(DocumentRequest.class)
 				.createDocumentLock(DOC_ID);
@@ -579,7 +582,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testRetrieveDocumentLock(VaultClient vaultClient) {
+	public void testRetrieveDocumentLock() {
 		DocumentLockResponse response = vaultClient
 				.newRequest(DocumentRequest.class)
 				.retrieveDocumentLock(DOC_ID);
@@ -589,7 +592,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testDeleteDocumentLock(VaultClient vaultClient) {
+	public void testDeleteDocumentLock() {
 		VaultResponse response = vaultClient
 				.newRequest(DocumentRequest.class)
 				.retrieveDocumentLock(DOC_ID);
@@ -599,7 +602,7 @@ public class DocumentRequestTest {
 	// Test Manually
 	@Disabled
 	@Test
-	public void testCreateMultipleDocumentsBytes(VaultClient vaultClient) throws IOException {
+	public void testCreateMultipleDocumentsBytes() throws IOException {
 		String csvFilePath = "";
 		File csv = new File(csvFilePath);
 
@@ -612,7 +615,7 @@ public class DocumentRequestTest {
 	// Test Manually
 	@Disabled
 	@Test
-	public void testCreateMultipleDocumentVersions(VaultClient vaultClient) {
+	public void testCreateMultipleDocumentVersions() {
 		String csvFilePath = "";
 		File csv = new File(csvFilePath);
 
@@ -626,7 +629,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testDocumentToken(VaultClient vaultClient) {
+	public void testDocumentToken() {
 		List<Integer> docIds = new ArrayList<>();
 		docIds.add(5);
 		docIds.add(12);
@@ -641,7 +644,7 @@ public class DocumentRequestTest {
 
 	@Disabled
 	@Test
-	public void testReclassifyDocumentWithMigrationMode(VaultClient vaultClient) {
+	public void testReclassifyDocumentWithMigrationMode() {
 		Document doc = new Document();
 
 		doc.setName("VAPIL Single Document");

@@ -12,24 +12,23 @@ public class JobStatusHelper {
 //        	Check status of job
         String jobStatus = "";
         boolean jobCompleted = false;
-        for (int i = 0; i < 42; i++) {
+        for (int i = 0; i < 50; i++) {
             if (jobStatus.equals("SUCCESS")) break;
             JobStatusResponse jobStatusResponse = vaultClient.newRequest(JobRequest.class)
                     .retrieveJobStatus(jobId);
             jobStatus = jobStatusResponse.getData().getStatus();
-            switch (jobStatus) {
-                case "SUCCESS":
-                    jobCompleted = true;
-                    break;
-                case "QUEUED":
-                case "QUEUING":
-                case "RUNNING":
-                    try {
-                        Thread.sleep(11000);
-                        break;
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+            if (jobStatus.equals("SUCCESS")) {
+                jobCompleted = true;
+                break;
+            } else if (jobStatus.equals("FAILURE")) {
+                jobCompleted = false;
+                break;
+            } else {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         return jobCompleted;

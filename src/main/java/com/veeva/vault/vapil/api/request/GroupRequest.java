@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Retrieve Domain specific information
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#domain-information">https://developer.veevavault.com/api/23.1/#domain-information</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#domain-information">https://developer.veevavault.com/api/23.3/#domain-information</a>
  */
 public class GroupRequest extends VaultRequest {
 	private static Logger log = Logger.getLogger(GroupRequest.class);
@@ -64,7 +64,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return The response
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/groups</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-group-metadata' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-group-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-group-metadata' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-group-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataGroupResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.retrieveGroupMetadata();</pre>
@@ -105,7 +105,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/groups</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-all-groups' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-all-groups</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-all-groups' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-all-groups</a>
 	 * @vapil.request <pre>
 	 * GroupRetrieveResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.setIncludeImplied(includeImplied)
@@ -131,7 +131,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/groups/auto</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-all-groups' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-all-groups</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-all-groups' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-all-groups</a>
 	 * @vapil.request <pre>
 	 * GroupRetrieveResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.retrieveAllGroupsAutoManaged();</pre>
@@ -157,7 +157,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/groups/{group_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-group' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-group' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-group</a>
 	 * @vapil.request <pre>
 	 * GroupRetrieveResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.setIncludeImplied(includeImplied)
@@ -186,7 +186,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/groups</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#create-group' target='_blank'>https://developer.veevavault.com/api/23.1/#create-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-group' target='_blank'>https://developer.veevavault.com/api/23.3/#create-group</a>
 	 * @vapil.request <pre>
 	 * GroupResponse resp = vaultClient.newRequest(GroupRequest.class)
 	 * 				.createGroup(label);</pre>
@@ -215,7 +215,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/groups/{group_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#update-group' target='_blank'>https://developer.veevavault.com/api/23.1/#update-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#update-group' target='_blank'>https://developer.veevavault.com/api/23.3/#update-group</a>
 	 * @vapil.request <pre>
 	 * GroupResponse resp = vaultClient.newRequest(GroupRequest.class).setLabel("testGroup" + rndNumStr)
 	 * 				.setActive(false)
@@ -246,7 +246,7 @@ public class GroupRequest extends VaultRequest {
 	 * @return GroupResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/groups/{group_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#delete-group' target='_blank'>https://developer.veevavault.com/api/23.1/#delete-group</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#delete-group' target='_blank'>https://developer.veevavault.com/api/23.3/#delete-group</a>
 	 * @vapil.request <pre>
 	 * GroupResponse resp = vaultClient.newRequest(GroupRequest.class).deleteGroup(groupId);</pre>
 	 * @vapil.response <pre>

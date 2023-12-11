@@ -21,13 +21,13 @@ import java.io.File;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SandboxRequestTest {
 
-	static VaultClient vaultClient;
 	static final String SANDBOX_NAME = "VAPIL Test Sandbox";
 	static final String SNAPSHOT_NAME = "VAPIL Test Snapshot";
 	static final String SNAPSHOT_API_NAME = "vapil_test_snapshot__c";
 	static final String DOMAIN = "sb-developersupport.com";
 	private static File SETTINGS_FILE = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "settings_files" + File.separator + "settings_vapil_sandbox.json");
 	static int sandboxId;
+	private static VaultClient vaultClient;
 
 	@BeforeAll
 	static void setup() {
@@ -75,7 +75,7 @@ public class SandboxRequestTest {
 		SandboxResponse response = vaultClient.newRequest(SandboxRequest.class)
 				.setSandboxEntitlements(SANDBOX_NAME, "config", 99, true, 0, SandboxRequest.SandboxSize.SMALL);
 
-		Assertions.assertFalse(response.isSuccessful());
+		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	@Order(3)
@@ -152,7 +152,7 @@ public class SandboxRequestTest {
 		JobCreateResponse response = vaultClient.newRequest(SandboxRequest.class)
 				.upgradeSandboxSnapshot(SNAPSHOT_NAME);
 
-		Assertions.assertFalse(response.isSuccessful());
+		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	@Order(10)
@@ -191,7 +191,7 @@ public class SandboxRequestTest {
 	@Order(13)
 	@Test
 	@DisplayName("Should successfully recalculate the usage values of the sandbox Vaults for the authenticated Vault")
-	public void testRecheckUsageLimit(VaultClient vaultClient) {
+	public void testRecheckUsageLimit() {
 		VaultResponse response = vaultClient.newRequest(SandboxRequest.class)
 				.recheckUsageLimit();
 
@@ -200,7 +200,7 @@ public class SandboxRequestTest {
 
 	@Disabled
 	@Test
-	public void testBuildProduction(VaultClient vaultClient) {
+	public void testBuildProduction() {
 		JobCreateResponse response = vaultClient.newRequest(SandboxRequest.class)
 				.buildProductionVault("12345");
 		Assertions.assertTrue(response.isSuccessful());
@@ -209,7 +209,7 @@ public class SandboxRequestTest {
 
 	@Disabled
 	@Test
-	public void testPromoteToProduction(VaultClient vaultClient) {
+	public void testPromoteToProduction() {
 		VaultResponse response = vaultClient.newRequest(SandboxRequest.class)
 				.promoteToProduction("Test Vault");
 		Assertions.assertTrue(response.isSuccessful());

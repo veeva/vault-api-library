@@ -37,16 +37,20 @@ public class BinderRequestTest {
     static String docNodeId;
     static String binderRelationshipId;
     static int jobId;
+    private static VaultClient vaultClient;
 
     @BeforeAll
-    public static void setup(VaultClient vaultClient) throws IOException {
+    public static void setup(VaultClient client) throws IOException {
+        vaultClient = client;
+        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+
         DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
         Assertions.assertTrue(response.isSuccessful());
         docId = response.getDocument().getId();
     }
 
     @AfterAll
-    public static void teardown(VaultClient vaultClient) {
+    public static void teardown() {
         List<Integer> docIds = new ArrayList<>();
         docIds.add(docId);
         DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
@@ -56,7 +60,7 @@ public class BinderRequestTest {
     @Test
     @Order(1)
     @DisplayName("successfully create a binder")
-    public void testCreateBinder(VaultClient vaultClient) {
+    public void testCreateBinder() {
 
         Document doc = new Document();
 
@@ -77,7 +81,7 @@ public class BinderRequestTest {
     @Test
     @Order(2)
     @DisplayName("successfully create a binder version")
-    public void testCreateBinderVersion(VaultClient vaultClient) {
+    public void testCreateBinderVersion() {
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                 .createBinderVersion(binderIds.get(0));
         Assertions.assertTrue(response.isSuccessful());
@@ -88,7 +92,7 @@ public class BinderRequestTest {
     @Test
     @Order(3)
     @DisplayName("successfully retrieve a binder")
-    public void testRetrieveBinder(VaultClient vaultClient) {
+    public void testRetrieveBinder() {
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                 .setDepth(DEPTH_ALL)
                 .retrieveBinder(binderIds.get(0));
@@ -99,7 +103,7 @@ public class BinderRequestTest {
     @Test
     @Order(4)
     @DisplayName("successfully retrieve all versions of a binder")
-    public void testRetrieveAllBinderVersions(VaultClient vaultClient) {
+    public void testRetrieveAllBinderVersions() {
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                 .retrieveAllBinderVersions(binderIds.get(0));
         Assertions.assertTrue(response.isSuccessful());
@@ -108,7 +112,7 @@ public class BinderRequestTest {
     @Test
     @Order(5)
     @DisplayName("successfully retrieve a version of a binder")
-    public void testRetrieveBinderVersion(VaultClient vaultClient) {
+    public void testRetrieveBinderVersion() {
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                         .retrieveBinderVersion(binderIds.get(0), MAJOR_VERSION, minorVersion);
         Assertions.assertTrue(response.isSuccessful());
@@ -117,7 +121,7 @@ public class BinderRequestTest {
     @Test
     @Order(6)
     @DisplayName("successfully update a binder")
-    public void testUpdateBinder(VaultClient vaultClient) {
+    public void testUpdateBinder() {
         Document doc = new Document();
 
         doc.setName("VAPIL test update binder " + ZonedDateTime.now());
@@ -130,7 +134,7 @@ public class BinderRequestTest {
     @Test
     @Order(7)
     @DisplayName("successfully reclassify a binder")
-    public void testReclassifyBinder(VaultClient vaultClient) {
+    public void testReclassifyBinder() {
         Document doc = new Document();
 
         doc.setLifecycle(DOC_LIFECYCLE);
@@ -146,7 +150,7 @@ public class BinderRequestTest {
     @Test
     @Order(8)
     @DisplayName("successfully update a binder version")
-    public void testUpdateBinderVersion(VaultClient vaultClient) {
+    public void testUpdateBinderVersion() {
         Document doc = new Document();
 
         doc.setName("VAPIL test update binder version " + ZonedDateTime.now());
@@ -159,7 +163,7 @@ public class BinderRequestTest {
     @Test
     @Order(9)
     @DisplayName("successfully create a binder section")
-    public void testCreateBinderSection(VaultClient vaultClient) {
+    public void testCreateBinderSection() {
 
         BinderSection binderSection = new BinderSection();
         binderSection.setName(BINDER_SECTION_LABEL);
@@ -174,7 +178,7 @@ public class BinderRequestTest {
     @Test
     @Order(10)
     @DisplayName("successfully retrieve all binder sections")
-    public void testRetrieveBinderSections(VaultClient vaultClient) {
+    public void testRetrieveBinderSections() {
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                 .retrieveBinderSections(binderIds.get(0));
         Assertions.assertTrue(response.isSuccessful());
@@ -183,7 +187,7 @@ public class BinderRequestTest {
     @Test
     @Order(11)
     @DisplayName("successfully retrieve all binder sections from a sub-level node")
-    public void testRetrieveBinderSectionsSub(VaultClient vaultClient) {
+    public void testRetrieveBinderSectionsSub() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
                 .retrieveBinderSections(binderIds.get(0), binderSectionId);
         Assertions.assertTrue(response.isSuccessful());
@@ -192,7 +196,7 @@ public class BinderRequestTest {
     @Test
     @Order(12)
     @DisplayName("successfully retrieve binder sections")
-    public void testRetrieveBinderVersionSection(VaultClient vaultClient) {
+    public void testRetrieveBinderVersionSection() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
                 .retrieveBinderVersionSections(binderIds.get(0), MAJOR_VERSION, minorVersion, binderSectionId);
         Assertions.assertTrue(response.isSuccessful());
@@ -201,7 +205,7 @@ public class BinderRequestTest {
     @Test
     @Order(13)
     @DisplayName("successfully update a binder section")
-    public void testUpdateBinderSection(VaultClient vaultClient) {
+    public void testUpdateBinderSection() {
         BinderSection binderSection = new BinderSection();
 
         binderSection.setName("VAPIL test update binder section" + ZonedDateTime.now());
@@ -215,7 +219,7 @@ public class BinderRequestTest {
     @Test
     @Order(14)
     @DisplayName("successfully add a document to a binder")
-    public void testAddDocumentToBinder(VaultClient vaultClient) {
+    public void testAddDocumentToBinder() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
                 .addDocumentToBinder(binderIds.get(0), docId, "", BinderRequest.BindingRule.CURRENT);
 
@@ -227,7 +231,7 @@ public class BinderRequestTest {
     @Test
     @Order(15)
     @DisplayName("successfully move a document in a binder")
-    public void testMoveDocumentInBinder(VaultClient vaultClient) {
+    public void testMoveDocumentInBinder() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
                 .moveDocumentInBinder(binderIds.get(0), docNodeId, binderSectionId);
 
@@ -239,7 +243,7 @@ public class BinderRequestTest {
     @Test
     @Order(16)
     @DisplayName("successfully create a binder relationship")
-    public void testCreateBinderRelationship(VaultClient vaultClient) {
+    public void testCreateBinderRelationship() {
         DocumentRelationship docRelationship = new DocumentRelationship();
         docRelationship.setRelationshipType("supporting_documents__c");
         docRelationship.setTargetDocId(docId);
@@ -257,7 +261,7 @@ public class BinderRequestTest {
     @Test
     @Order(17)
     @DisplayName("successfully retrieve a binder relationship")
-    public void testRetrieveBinderRelationship(VaultClient vaultClient) {
+    public void testRetrieveBinderRelationship() {
         DocumentRelationshipRetrieveResponse response = vaultClient.newRequest(BinderRequest.class)
                 .retrieveBinderRelationship(binderIds.get(0), MAJOR_VERSION, minorVersion, Integer.valueOf(binderRelationshipId));
 
@@ -278,7 +282,7 @@ public class BinderRequestTest {
     @Test
     @Order(18)
     @DisplayName("successfully create a binder from a template")
-    public void testCreateBinderFromTemplate(VaultClient vaultClient) {
+    public void testCreateBinderFromTemplate() {
         Document doc = new Document();
 
         doc.setName("VAPIL test create binder from template " + ZonedDateTime.now());
@@ -298,7 +302,7 @@ public class BinderRequestTest {
     @Test
     @Order(20)
     @DisplayName("successfully update a binding rule")
-    public void testUpdateBindingRule(VaultClient vaultClient) {
+    public void testUpdateBindingRule() {
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                 .updateBindingRule(binderIds.get(0), "default", false);
 
@@ -309,7 +313,7 @@ public class BinderRequestTest {
     @Test
     @Order(21)
     @DisplayName("successfully update a binder section binding rule")
-    public void testUpdateBinderSectionBindingRule(VaultClient vaultClient) {
+    public void testUpdateBinderSectionBindingRule() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
                 .updateBinderSectionBindingRule(binderIds.get(0), binderSectionId, "default", false);
 
@@ -320,7 +324,7 @@ public class BinderRequestTest {
     @Test
     @Order(22)
     @DisplayName("successfully update a binder document binding rule")
-    public void testUpdateBinderDocumentBindingRule(VaultClient vaultClient) {
+    public void testUpdateBinderDocumentBindingRule() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
                 .updateBinderDocumentBindingRule(binderIds.get(0), docNodeId, "default");
 
@@ -331,7 +335,7 @@ public class BinderRequestTest {
     @Test
     @Order(23)
     @DisplayName("successfully delete a binder relationship")
-    public void testDeleteBinderRelationship(VaultClient vaultClient) {
+    public void testDeleteBinderRelationship() {
         DocumentRelationshipResponse response = vaultClient.newRequest(BinderRequest.class)
                 .deleteBinderRelationship(binderIds.get(0), MAJOR_VERSION, minorVersion, Integer.valueOf(binderRelationshipId));
 
@@ -342,7 +346,7 @@ public class BinderRequestTest {
     @Test
     @Order(24)
     @DisplayName("successfully remove a document from a binder")
-    public void testRemoveDocumentFromBinder(VaultClient vaultClient) {
+    public void testRemoveDocumentFromBinder() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
                 .removeDocumentFromBinder(binderIds.get(0), docNodeId);
 
@@ -353,7 +357,7 @@ public class BinderRequestTest {
     @Test
     @Order(25)
     @DisplayName("successfully export a binder")
-    public void testExportBinder(VaultClient vaultClient) {
+    public void testExportBinder() {
         JobCreateResponse jobCreateResponse = vaultClient.newRequest(BinderRequest.class)
                 .setExportAudit(true)
                 .setExportAuditFormatType(BinderRequest.AuditFormatType.CSV)
@@ -372,7 +376,7 @@ public class BinderRequestTest {
     @Test
     @Order(26)
     @DisplayName("successfully retrieve binder export results")
-    public void testRetrieveBinderExportResults(VaultClient vaultClient) {
+    public void testRetrieveBinderExportResults() {
         BinderExportResponse exportResponse = vaultClient.newRequest(BinderRequest.class)
                 .retrieveBinderExportResults(jobId);
 
@@ -385,7 +389,7 @@ public class BinderRequestTest {
     @Test
     @Order(27)
     @DisplayName("successfully export sections of a binder")
-    public void testExportBinderSections(VaultClient vaultClient) {
+    public void testExportBinderSections() {
         HashSet<String> binderSectionIds = new HashSet<>();
         binderSectionIds.add(binderSectionId);
 
@@ -407,7 +411,7 @@ public class BinderRequestTest {
     @Test
     @Order(28)
     @DisplayName("successfully export sections of a specific binder version")
-    public void testExportBinderVersionSections(VaultClient vaultClient) {
+    public void testExportBinderVersionSections() {
         HashSet<String> binderSectionIds = new HashSet<>();
         binderSectionIds.add(binderSectionId);
 
@@ -429,7 +433,7 @@ public class BinderRequestTest {
     @Test
     @Order(29)
     @DisplayName("successfully delete a binder section")
-    public void testDeleteBinderSection(VaultClient vaultClient) {
+    public void testDeleteBinderSection() {
 
         BinderSection binderSection = new BinderSection();
         binderSection.setName(BINDER_SECTION_LABEL);
@@ -443,7 +447,7 @@ public class BinderRequestTest {
     @Test
     @Order(30)
     @DisplayName("successfully delete a binder version")
-    public void testDeleteBinderVersion(VaultClient vaultClient) {
+    public void testDeleteBinderVersion() {
         BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                 .deleteBinderVersion(binderIds.get(0), MAJOR_VERSION, minorVersion);
         Assertions.assertTrue(response.isSuccessful());
@@ -452,7 +456,7 @@ public class BinderRequestTest {
     @Test
     @Order(31)
     @DisplayName("successfully delete a binder")
-    public void testDeleteBinder(VaultClient vaultClient) {
+    public void testDeleteBinder() {
         for (Integer id : binderIds) {
             BinderResponse response = vaultClient.newRequest(BinderRequest.class)
                     .deleteBinder(id);

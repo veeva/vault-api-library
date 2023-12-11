@@ -17,7 +17,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Managing Vault Java SDK Code
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.1/#managing-vault-java-sdk-code">https://developer.veevavault.com/api/23.1/#managing-vault-java-sdk-code</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#managing-vault-java-sdk-code">https://developer.veevavault.com/api/23.3/#managing-vault-java-sdk-code</a>
  */
 public class SDKRequest extends VaultRequest {
 	// API Endpoints
@@ -52,7 +52,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return SDKResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/code/{class_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-single-source-code-file' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-single-source-code-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-single-source-code-file' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-single-source-code-file</a>
 	 * @vapil.request <pre>
 	 * SDKResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.retrieveSingleSourceCodeFile(className);</pre>
@@ -84,7 +84,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return SDKResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/code/{class_name}/disable</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#enable-or-disable-vault-extension' target='_blank'>https://developer.veevavault.com/api/23.1/#enable-or-disable-vault-extension</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#enable-or-disable-vault-extension' target='_blank'>https://developer.veevavault.com/api/23.3/#enable-or-disable-vault-extension</a>
 	 * @vapil.request <pre>
 	 * SDKResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.disableVaultExtension(className);</pre>
@@ -110,7 +110,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return SDKResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/code/{class_name}/enable</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#enable-or-disable-vault-extension' target='_blank'>https://developer.veevavault.com/api/23.1/#enable-or-disable-vault-extension</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#enable-or-disable-vault-extension' target='_blank'>https://developer.veevavault.com/api/23.3/#enable-or-disable-vault-extension</a>
 	 * @vapil.request <pre>
 	 * SDKResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.enableVaultExtension(className);</pre>
@@ -139,7 +139,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return SDKResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/code</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#add-or-replace-single-source-code-file' target='_blank'>https://developer.veevavault.com/api/23.1/#add-or-replace-single-source-code-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#add-or-replace-single-source-code-file' target='_blank'>https://developer.veevavault.com/api/23.3/#add-or-replace-single-source-code-file</a>
 	 * @vapil.request <pre>
 	 * SDKResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 					.setBinaryFile(sdkFile.getName(), Files.readAllBytes(sdkFile.toPath()))
@@ -185,7 +185,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/code/{class_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#delete-single-source-code-file' target='_blank'>https://developer.veevavault.com/api/23.1/#delete-single-source-code-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#delete-single-source-code-file' target='_blank'>https://developer.veevavault.com/api/23.3/#delete-single-source-code-file</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.deleteSingleSourceCodeFile(className);</pre>
@@ -210,7 +210,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return ValidatePackageResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/package/actions/validate</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#validate-package' target='_blank'>https://developer.veevavault.com/api/23.1/#validate-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#validate-package' target='_blank'>https://developer.veevavault.com/api/23.3/#validate-package</a>
 	 * @vapil.request <pre>
 	 * ValidatePackageResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.setInputPath(fileName)
@@ -246,7 +246,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return ValidatePackageResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/vobject/vault_package__v/{package_id}/actions/validate</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#validate-imported-package' target='_blank'>https://developer.veevavault.com/api/23.1/#validate-imported-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#validate-imported-package' target='_blank'>https://developer.veevavault.com/api/23.3/#validate-imported-package</a>
 	 * @vapil.request <pre>
 	 * ValidatePackageResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.validateImportedPackage(packageId);</pre>
@@ -271,7 +271,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return QueueResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/queues</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-all-queues' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-all-queues</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-all-queues' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-all-queues</a>
 	 * @vapil.request <pre>
 	 * QueueResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.retrieveAllQueues();</pre>
@@ -308,7 +308,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return QueueResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/queues/{queue_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-queue-status' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-queue-status</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-queue-status' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-queue-status</a>
 	 * @vapil.request <pre>
 	 * QueueResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 	.retrieveQueueStatus(queueName);</pre>
@@ -345,7 +345,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/services/queues/{queue_name}/actions/disable_delivery</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#disable-delivery' target='_blank'>https://developer.veevavault.com/api/23.1/#disable-delivery</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#disable-delivery' target='_blank'>https://developer.veevavault.com/api/23.3/#disable-delivery</a>
 	 * @vapil.request <pre>
 	 * VaultResponse disableResponse = vaultClient.newRequest(SDKRequest.class)
 	 * .disableDelivery(queueName);</pre>
@@ -374,7 +374,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/services/queues/{queue_name}/actions/enable_delivery</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#enable-delivery' target='_blank'>https://developer.veevavault.com/api/23.1/#enable-delivery</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#enable-delivery' target='_blank'>https://developer.veevavault.com/api/23.3/#enable-delivery</a>
 	 * @vapil.request <pre>
 	 * VaultResponse enableResponse = vaultClient.newRequest(SDKRequest.class)
 	 * 		.enableDelivery(queueName);</pre>
@@ -401,7 +401,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/services/queues/{queue_name}/actions/reset</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#reset-queue' target='_blank'>https://developer.veevavault.com/api/23.1/#reset-queue</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#reset-queue' target='_blank'>https://developer.veevavault.com/api/23.3/#reset-queue</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resetResponse = vaultClient.newRequest(SDKRequest.class)
 	 * 			.resetQueue(queueName);</pre>
@@ -427,7 +427,7 @@ public class SDKRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/certificate/{cert_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.1/#retrieve-signing-certificate' target='_blank'>https://developer.veevavault.com/api/23.1/#retrieve-signing-certificate</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-signing-certificate' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-signing-certificate</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(SDKRequest.class)
 	 * 				.setOutputPath(fileName)

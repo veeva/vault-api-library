@@ -87,7 +87,10 @@ public class PackageStep extends PackageModel {
 
     public void setPackageComponents(List<PackageComponent> packageComponents) { this.set("package_components", packageComponents);}
 
+    @JsonProperty("dependencies")
+    public List<Dependency> getDependencies() { return (List<Dependency>) this.get("dependencies"); }
 
+    public void setDependencies(List<Dependency> dependencies) { this.set("dependencies", dependencies);}
 
     public static class PackageComponent extends PackageModel {
 
@@ -236,5 +239,32 @@ public class PackageStep extends PackageModel {
         public String getDeploymentOption() { return this.getString("deployment_option__sys"); }
 
         public void setDeploymentOption(String deploymentOption) { this.set("deployment_option__sys", deploymentOption); }
+    }
+
+    public static class Dependency extends VaultModel {
+        @JsonProperty("component_name")
+        public String getComponentName() {return this.getString("component_name");}
+
+        public void setComponentName(String componentName) {this.set("component_name", componentName);}
+
+        @JsonProperty("component_type")
+        public String getComponentType() {return this.getString("component_type");}
+
+        public void setComponentType(String componentType) {this.set("component_type", componentType);}
+
+        @JsonProperty("subcomponent_name")
+        public String getSubcomponentName() {return this.getString("subcomponent_name");}
+
+        public void setSubcomponentName(String subcomponentName) {this.set("subcomponent_name", subcomponentName);}
+
+        @JsonProperty("subcomponent_type")
+        public String getSubcomponentType() {return this.getString("subcomponent_type");}
+
+        public void setSubcomponentType(String subcomponentType) {this.set("subcomponent_type", subcomponentType);}
+
+        @JsonProperty("status")
+        public String getStatus() {return this.getString("status");}
+
+        public void setStatus(String status) {this.set("status", status);}
     }
 }

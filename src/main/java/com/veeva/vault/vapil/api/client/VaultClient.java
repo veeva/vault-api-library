@@ -46,7 +46,7 @@ public class VaultClient {
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v23.2";
+	public static final String VAULT_API_VERSION = "v23.3";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter
@@ -380,6 +380,9 @@ public class VaultClient {
 		if (!isValid) {
 			authResponse.setResponseStatus(VaultResponse.HTTP_RESPONSE_FAILURE);
 			authResponse.setSessionId(null);
+			if (versionResponse != null && versionResponse.hasErrors()) {
+				authResponse.setErrors(versionResponse.getErrors());
+			}
 		}
 
 		return isValid;

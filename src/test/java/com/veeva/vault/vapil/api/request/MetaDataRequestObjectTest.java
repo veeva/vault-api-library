@@ -28,10 +28,17 @@ public class MetaDataRequestObjectTest {
 	static final String OBJECT_NAME = "vapil_test_object__c";
 	static final String FIELD_NAME = "name__v";
 	static final String OBJECT_PAGE_LAYOUT_NAME = "vapil_test_object_detail_page_layout__c";
+	private static VaultClient vaultClient;
+
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 
 	@Test
 	@DisplayName("successfully retrieve standard and custom Vault Objects")
-	public void testRetrieveObjectCollection(VaultClient vaultClient) {
+	public void testRetrieveObjectCollection() {
 		MetaDataObjectBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveObjectCollection();
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -40,7 +47,7 @@ public class MetaDataRequestObjectTest {
 
 	@Test
 	@DisplayName("successfully retrieve all metadata configured on a standard or custom Vault Object")
-	public void testRetrieveObjectMetadata(VaultClient vaultClient) {
+	public void testRetrieveObjectMetadata() {
 		MetaDataObjectResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.retrieveObjectMetadata(OBJECT_NAME);
 		Assertions.assertTrue(response.isSuccessful());
@@ -68,7 +75,7 @@ public class MetaDataRequestObjectTest {
 
 	@Test
 	@DisplayName("successfully retrieve all metadata configured on the specific Vault Object field")
-	public void testRetrieveObjectFieldMetadata(VaultClient vaultClient) {
+	public void testRetrieveObjectFieldMetadata() {
 		MetaDataObjectFieldResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.retrieveObjectFieldMetaData(OBJECT_NAME, FIELD_NAME);
 		Assertions.assertTrue(response.isSuccessful());
@@ -83,7 +90,7 @@ public class MetaDataRequestObjectTest {
 
 	@Test
 	@DisplayName("successfully retrieve all page layouts associated with and object")
-	public void testRetrievePageLayouts(VaultClient vaultClient) {
+	public void testRetrievePageLayouts() {
 		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.retrievePageLayouts(OBJECT_NAME);
 
@@ -99,7 +106,7 @@ public class MetaDataRequestObjectTest {
 
 	@Test
 	@DisplayName("successfully retrieve the metadata for a specific page layout")
-	public void testRetrievePageLayoutMetadata(VaultClient vaultClient) {
+	public void testRetrievePageLayoutMetadata() {
 		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.retrievePageLayoutMetadata(OBJECT_NAME, OBJECT_PAGE_LAYOUT_NAME);
 

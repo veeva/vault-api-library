@@ -10,7 +10,6 @@ package com.veeva.vault.vapil.api.model.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
 import java.util.List;
 

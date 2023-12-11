@@ -19,10 +19,18 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 @ExtendWith(VaultClientParameterResolver.class)
 @DisplayName("Query request should")
 public class QueryRequestTest {
+
+	private static VaultClient vaultClient;
+
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 	
 	@Test
 	@DisplayName("successfully send a valid query")
-	public void testQuery(VaultClient vaultClient) {
+	public void testQuery() {
 		String query = "SELECT id, username__sys FROM user__sys";
 		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
 				.setDescribeQuery(true)
@@ -33,7 +41,7 @@ public class QueryRequestTest {
 	
 	@Test
 	@DisplayName("successfully paginate query results")
-	public void testQueryPagination(VaultClient vaultClient) {
+	public void testQueryPagination() {
 		String query = "SELECT id, username__sys FROM user__sys PAGESIZE 1";
 
 		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
@@ -51,7 +59,7 @@ public class QueryRequestTest {
 
 	@Test
 	@DisplayName("successfully return the record properties object with query results")
-	public void testQueryRecordProperties(VaultClient vaultClient) {
+	public void testQueryRecordProperties() {
 		String query = "SELECT id, username__sys FROM user__sys";
 		QueryResponse response = vaultClient.newRequest(QueryRequest.class)
 				.setRecordProperties(QueryRequest.RecordPropertyType.ALL)

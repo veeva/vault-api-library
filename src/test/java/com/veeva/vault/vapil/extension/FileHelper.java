@@ -14,15 +14,29 @@ import java.util.List;
 import java.util.Map;
 
 public class FileHelper {
-    static final String TEST_FILE_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "vapil_test_document.docx";
-    static final String LOADER_FILE_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "loader_file.csv";
+
+    static final String SETTINGS_FILE_DIRECTORY = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "settings_files";
+    static final String TEST_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "vapil_test_document.docx";
+    static final String RESUMABLE_UPLOAD_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "test_resumable_upload.txt";
+    static final String LOADER_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "loader_file.csv";
+    static final String ANNOTATIONS_IMPORT_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "documents" + File.separator + "VAPIL Annotations Doc (Do Not Delete).pdf";
     private static Logger log = Logger.getLogger(FileHelper.class);
 
     public static String getPathTestFile() {
         return TEST_FILE_PATH;
     }
+    public static String getPathResumableUploadFile() {
+        return RESUMABLE_UPLOAD_FILE_PATH;
+    }
     public static String getPathLoaderFile() {
         return LOADER_FILE_PATH;
+    }
+    public static String getPathAnnotationsImportFile() {
+        return ANNOTATIONS_IMPORT_FILE_PATH;
     }
     public static void createCsvFile(String filePath) {
         File csvFile = new File(filePath);
@@ -62,8 +76,9 @@ public class FileHelper {
         return stringBuilder.toString();
     }
 
-    public static File getSettingsFile(String filePath) {
-        File settingsFile = new File(filePath);
+    public static File getSettingsFile(String fileName) {
+        String settingsFilePath = String.format("%s%s%s", SETTINGS_FILE_DIRECTORY, File.separator, fileName);
+        File settingsFile = new File(settingsFilePath);
         if (!settingsFile.exists()) {
             String errorMessage = String.format("JSON settings file '%s' not found", settingsFile.getAbsolutePath());
             log.error(errorMessage);
@@ -117,6 +132,22 @@ public class FileHelper {
 
         } catch (IOException e) {
             log.error("Unable to write Session ID to JSON settings file");
+        }
+    }
+
+    public static void writeOauthToken(String oauthToken, JsonNode rootNode, File settingsFile) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            // Update existing key-value pair
+            ((ObjectNode) rootNode).put("idpOauthAccessToken", oauthToken);
+
+            // Write updated JSON to file
+            objectMapper.writeValue(settingsFile, rootNode);
+
+            log.info("Oauth Token written to JSON settings file successfully!");
+
+        } catch (IOException e) {
+            log.error("Unable to write Oauth Token to JSON settings file");
         }
     }
 }

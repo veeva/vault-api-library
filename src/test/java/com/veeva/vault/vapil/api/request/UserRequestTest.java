@@ -14,14 +14,12 @@ import com.veeva.vault.vapil.api.model.metadata.User;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.model.response.UserPermissionResponse.UserPermissions;
 import com.veeva.vault.vapil.api.model.response.UserPermissionResponse.UserPermissions.PermissionSet;
-import com.veeva.vault.vapil.extension.DocumentRequestHelper;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.UserRequestHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +31,6 @@ import java.util.Map;
 @DisplayName("User request should")
 public class UserRequestTest {
 
-    private static final int VAULT_ID = 166231;
     static final String CREATE_USERS_CSV_PATH = UserRequestHelper.getPathCreateMultipleUsers();
     static final String USER_NAME__V = "user_name__v";
     static final String USER_FIRST_NAME__V = "user_first_name__v";
@@ -53,10 +50,19 @@ public class UserRequestTest {
     static final String SECURITY_POLICY_ID = "49687";
     static final String LICENSE_TYPE = "full__v";
     private static String userId;
+    private static int vaultId;
+    private static VaultClient vaultClient;
+
+    @BeforeAll
+    static void setup(VaultClient client) {
+        vaultClient = client;
+        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+        vaultId = vaultClient.getAuthenticationResponse().getHeaderVaultId();
+    }
 
     @Test
     @DisplayName("successfully retrieve user metadata")
-    public void testRetrieveUserMetadata(VaultClient vaultClient) {
+    public void testRetrieveUserMetadata() {
         MetaDataUserResponse response = vaultClient.newRequest(UserRequest.class).retrieveUserMetadata();
         Assertions.assertTrue(response.isSuccessful());
 
@@ -74,7 +80,7 @@ public class UserRequestTest {
 
     @Test
     @DisplayName("successfully retrieve all users")
-    public void testRetrieveAllUsers(VaultClient vaultClient) {
+    public void testRetrieveAllUsers() {
         UserRetrieveResponse response = vaultClient.newRequest(UserRequest.class)
                 .retrieveAllUsers();
         Assertions.assertTrue(response.isSuccessful());
@@ -91,7 +97,7 @@ public class UserRequestTest {
 
     @Test
     @DisplayName("successfully retrieve all users not in current vault")
-    public void testRetrieveAllUsersNotCurrentVault(VaultClient vaultClient) {
+    public void testRetrieveAllUsersNotCurrentVault() {
         UserRetrieveResponse response = vaultClient.newRequest(UserRequest.class)
                 .setVaults("-1")
                 .retrieveAllUsers();
@@ -109,7 +115,7 @@ public class UserRequestTest {
     @Test
     @Order(1)
     @DisplayName("successfully create a user")
-    public void testCreateSingleUser(VaultClient vaultClient) {
+    public void testCreateSingleUser() {
         Map<String,Object> formData = createFormData();
         UserResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeForm()
@@ -124,7 +130,7 @@ public class UserRequestTest {
     @Test
     @Order(2)
     @DisplayName("successfully update a user")
-    public void testSingleUpdateUser(VaultClient vaultClient) {
+    public void testSingleUpdateUser() {
         Map<String,Object> mapData = new HashMap<String,Object>();
         mapData.put("user_first_name__v","Vapil-Update");
 
@@ -140,13 +146,14 @@ public class UserRequestTest {
     @Test
     @Order(3)
     @DisplayName("successfully update vault membership")
-    public void testUpdateVaultMembership(VaultClient vaultClient) {
+    public void testUpdateVaultMembership() {
         Map<String,Object> mapData = new HashMap<String,Object>();
-        mapData.put("active__v", false);
+        mapData.put("security_profile__v", "document_user__v");
 
         VaultResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeXForm()
-                .updateVaultMembership(Integer.valueOf(userId),VAULT_ID);
+                .setBodyParams(mapData)
+                .updateVaultMembership(Integer.valueOf(userId),vaultId);
 
         Assertions.assertTrue(response.isSuccessful());
     }
@@ -154,7 +161,7 @@ public class UserRequestTest {
     @Test
     @Order(4)
     @DisplayName("successfully retrieve a specific user")
-    public void testRetrieveUser(VaultClient vaultClient) {
+    public void testRetrieveUser() {
         UserRetrieveResponse response = vaultClient.newRequest(UserRequest.class)
                 .retrieveUser(Integer.valueOf(userId));
 
@@ -172,7 +179,7 @@ public class UserRequestTest {
     @Disabled
     @Order(5)
     @DisplayName("successfully create multiple users")
-    public void testCreateMultipleUsers(VaultClient vaultClient) {
+    public void testCreateMultipleUsers() {
         List<String[]> data = new ArrayList<>();
         data.add(new String[]{USER_NAME__V, USER_FIRST_NAME__V, USER_LAST_NAME__V, USER_EMAIL__V,
                 USER_TIMEZONE__V, USER_LOCALE__V, USER_LANGUAGE__V, SECURITY_PROFILE__V,
@@ -202,7 +209,7 @@ public class UserRequestTest {
 
     @Test
     @Disabled
-    public void testBulkCreateUsersCSV_CSV(VaultClient vaultClient, String filePath) {
+    public void testBulkCreateUsersCSV_CSV(String filePath) {
         System.out.println("****** Creating users in bulk (CSV) ******");
         UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeCsv()
@@ -216,7 +223,7 @@ public class UserRequestTest {
 
     @Test
     @Disabled
-    public void testBulkCreateUsersJSON_CSV(VaultClient vaultClient, String filePath) {
+    public void testBulkCreateUsersJSON_CSV(String filePath) {
         UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeCsv()
                 .setInputPath(filePath)
@@ -225,7 +232,7 @@ public class UserRequestTest {
         Assertions.assertTrue(response.isSuccessful());
     }
 
-    public void testBulkUpsertUsersCSV(VaultClient vaultClient, String filePath, String idParam) {
+    public void testBulkUpsertUsersCSV(String filePath, String idParam) {
         System.out.println("****** Upserting Users ******");
         UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeCsv()
@@ -238,7 +245,7 @@ public class UserRequestTest {
         System.out.println("Test Complete...\n");
     }
 
-    public void testBulkUpdateUsersJSON_CSV(VaultClient vaultClient, String filePath) {
+    public void testBulkUpdateUsersJSON_CSV(String filePath) {
         System.out.println("****** Updating Users ******");
         UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeCsv()
@@ -249,7 +256,7 @@ public class UserRequestTest {
         System.out.println("Test Complete...\n");
     }
 
-    public void testBulkUpdateUsersCSV_CSV(VaultClient vaultClient, String filePath) {
+    public void testBulkUpdateUsersCSV_CSV(String filePath) {
         System.out.println("****** Updating Users ******");
         UserBulkResponse response = vaultClient.newRequest(UserRequest.class)
                 .setContentTypeCsv()
@@ -261,7 +268,7 @@ public class UserRequestTest {
         System.out.println("Test Complete...\n");
     }
 
-    public void testDisableUserSingleVault(VaultClient vaultClient) {
+    public void testDisableUserSingleVault() {
         System.out.println("****** Disabling user ******");
         UserResponse response = vaultClient.newRequest(UserRequest.class)
                 .disableUser(4005489);
@@ -270,7 +277,7 @@ public class UserRequestTest {
         System.out.println("Test Complete...\n");
     }
 
-    public void testDisableUserDomain(VaultClient vaultClient) {
+    public void testDisableUserDomain() {
         System.out.println("****** Disabling user ******");
         UserResponse response = vaultClient.newRequest(UserRequest.class)
                 .setDomainAsTrue()
@@ -280,14 +287,14 @@ public class UserRequestTest {
         System.out.println("Test Complete...\n");
     }
 
-    public void testChangeUserPassword(VaultClient vaultClient, int userId, String oldPass, String newPass) {
+    public void testChangeUserPassword(int userId, String oldPass, String newPass) {
         System.out.println("\n****** Changing User Password (" + userId + ") ******");
         VaultResponse response = vaultClient.newRequest(UserRequest.class).changePassword(userId, oldPass, newPass);
         System.out.println(response.getResponseStatus());
         System.out.println("Test Complete...");
     }
 
-    public void testRetrieveUserPermissions(VaultClient vaultClient, int userId) {
+    public void testRetrieveUserPermissions(int userId) {
         int i = 0;
         UserPermissionResponse response = vaultClient.newRequest(UserRequest.class)
                 .retrieveUserPermissions(userId);
@@ -309,7 +316,7 @@ public class UserRequestTest {
         System.out.println("Test Complete...");
     }
 
-    public void testRetrieveUserPermissionsFilter(VaultClient vaultClient, int userId) {
+    public void testRetrieveUserPermissionsFilter(int userId) {
         int i = 0;
         UserPermissionResponse response = vaultClient.newRequest(UserRequest.class)
                 .setFilter("object.product__v.object_actions")

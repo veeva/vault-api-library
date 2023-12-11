@@ -48,16 +48,20 @@ public class LogRequestTest {
 	private static String USER__SYS = "user__sys";
 	private static String VAPIL_USER_ID = "17042915";
 	private static int docId;
+	private static VaultClient vaultClient;
 
 	@BeforeAll
-	public static void setup(VaultClient vaultClient) throws IOException {
+	public static void setup(VaultClient client) throws IOException {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+
 		DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
 		Assertions.assertTrue(response.isSuccessful());
 		docId = response.getDocument().getId();
 	}
 
 	@AfterAll
-	public static void teardown(VaultClient vaultClient) {
+	public static void teardown() {
 		List<Integer> docIdList = Arrays.asList(docId);
 		DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIdList);
 		Assertions.assertTrue(response.isSuccessful());
@@ -65,7 +69,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve all available audit types you have permission to access")
-	public void testRetrieveAuditTypes(VaultClient vaultClient) {
+	public void testRetrieveAuditTypes() {
 		AuditTypesResponse response = vaultClient.newRequest(LogRequest.class)
 				.retrieveAuditTypes();
 
@@ -77,7 +81,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve all fields and their metadata for a specified audit trail or log type.")
-	public void testRetrieveAuditMetadata(VaultClient vaultClient) {
+	public void testRetrieveAuditMetadata() {
 		for (LogRequest.AuditTrailType auditTrailType : auditTrailTypes) {
 			AuditMetadataResponse response = vaultClient.newRequest(LogRequest.class)
 					.retrieveAuditMetadata(auditTrailType);
@@ -98,7 +102,7 @@ public class LogRequestTest {
 	class testRetrieveAuditDetails {
 		@Test
 		@DisplayName("for specific dates of audit type: Document")
-		public void testRetrieveDocumentAuditDetails(VaultClient vaultClient) {
+		public void testRetrieveDocumentAuditDetails() {
 			DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
 					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
 					.setLimit(10)
@@ -119,7 +123,7 @@ public class LogRequestTest {
 
 		@Test
 		@DisplayName("for specific dates of audit type: Domain")
-		public void testRetrieveDomainAuditDetails(VaultClient vaultClient) {
+		public void testRetrieveDomainAuditDetails() {
 			DomainAuditResponse response = vaultClient.newRequest(LogRequest.class)
 					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
 					.setLimit(4)
@@ -138,7 +142,7 @@ public class LogRequestTest {
 
 		@Test
 		@DisplayName("for specific dates of audit type: Login")
-		public void testRetrieveLoginAuditDetails(VaultClient vaultClient) {
+		public void testRetrieveLoginAuditDetails() {
 			LoginAuditResponse response = vaultClient.newRequest(LogRequest.class)
 					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
 					.retrieveAuditDetails(LogRequest.AuditTrailType.LOGIN);
@@ -157,7 +161,7 @@ public class LogRequestTest {
 
 		@Test
 		@DisplayName("for specific dates of audit type: Object")
-		public void testRetrieveObjectAuditDetails(VaultClient vaultClient) {
+		public void testRetrieveObjectAuditDetails() {
 			ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
 					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(20))
 					.setLimit(10)
@@ -185,7 +189,7 @@ public class LogRequestTest {
 
 		@Test
 		@DisplayName("for specific dates of audit type: System")
-		public void testRetrieveSystemAuditDetails(VaultClient vaultClient) {
+		public void testRetrieveSystemAuditDetails() {
 			SystemAuditResponse response = vaultClient.newRequest(LogRequest.class)
 					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(10))
 					.setLimit(10)
@@ -213,7 +217,7 @@ public class LogRequestTest {
 		@Test
 		@Disabled
 		@DisplayName("for all dates of audit type: Object")
-		public void testRetrieveObjectAuditDetailsAllDates(VaultClient vaultClient) {
+		public void testRetrieveObjectAuditDetailsAllDates() {
 			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
 					.setAllDates(true)
 					.setFormatResult(LogRequest.FormatResultType.CSV)
@@ -227,7 +231,7 @@ public class LogRequestTest {
 		@Test
 		@Disabled
 		@DisplayName("for all dates of audit type: Domain")
-		public void testRetrieveDomainAuditDetailsAllDates(VaultClient vaultClient) {
+		public void testRetrieveDomainAuditDetailsAllDates() {
 			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
 					.setAllDates(true)
 					.setFormatResult(LogRequest.FormatResultType.CSV)
@@ -241,7 +245,7 @@ public class LogRequestTest {
 		@Test
 		@Disabled
 		@DisplayName("for all dates of audit type: System")
-		public void testRetrieveSystemAuditDetailsAsCsv(VaultClient vaultClient) {
+		public void testRetrieveSystemAuditDetailsAsCsv() {
 			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
 					.setAllDates(true)
 					.setFormatResult(LogRequest.FormatResultType.CSV)
@@ -256,7 +260,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve complete audit history for a single document.")
-	public void testRetrieveCompleteAuditHistoryForASingleDocument(VaultClient vaultClient) {
+	public void testRetrieveCompleteAuditHistoryForASingleDocument() {
 		DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setEvents(new HashSet<>(Arrays.asList("GetDocumentVersion", "UploadDoc")))
 				.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -277,7 +281,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve complete audit history for a single document as a CSV file.")
-	public void testRetrieveCompleteAuditHistoryForASingleDocumentAsCsv(VaultClient vaultClient) {
+	public void testRetrieveCompleteAuditHistoryForASingleDocumentAsCsv() {
 		DocumentAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setFormatResult(LogRequest.FormatResultType.CSV)
 				.retrieveCompleteAuditHistoryForASingleDocument(docId);
@@ -287,7 +291,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve complete audit history for a single object record.")
-	public void testRetrieveCompleteAuditHistoryForASingleObjectRecord(VaultClient vaultClient) {
+	public void testRetrieveCompleteAuditHistoryForASingleObjectRecord() {
 		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setEvents(new HashSet<>(Arrays.asList("Create", "Edit")))
 				.retrieveCompleteAuditHistoryForASingleObjectRecord(USER__SYS, VAPIL_USER_ID);
@@ -306,7 +310,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully retrieve complete audit history for a single object record as a CSV file.")
-	public void testRetrieveCompleteAuditHistoryForASingleObjectRecordAsCsv(VaultClient vaultClient) {
+	public void testRetrieveCompleteAuditHistoryForASingleObjectRecordAsCsv() {
 		ObjectAuditResponse response = vaultClient.newRequest(LogRequest.class)
 				.setFormatResult(LogRequest.FormatResultType.CSV)
 				.retrieveCompleteAuditHistoryForASingleObjectRecord(USER__SYS, VAPIL_USER_ID);
@@ -322,7 +326,7 @@ public class LogRequestTest {
 	class testRetrieveEmailNotificationHistory {
 		@Test
 		@DisplayName("with no query parameters successfully")
-		void noQueryParameters(VaultClient vaultClient) {
+		void noQueryParameters() {
 			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
 					.retrieveEmailNotificationHistory();
 
@@ -336,7 +340,7 @@ public class LogRequestTest {
 
 		@Test
 		@DisplayName("with invalid query parameters unsuccessfully")
-		void invalidQueryParameters(VaultClient vaultClient) {
+		void invalidQueryParameters() {
 			ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(29);
 
 			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
@@ -349,7 +353,7 @@ public class LogRequestTest {
 
 		@Test
 		@DisplayName("with start and end date/time query parameters successfully")
-		void startAndEndDateTimeQueryParameters(VaultClient vaultClient) {
+		void startAndEndDateTimeQueryParameters() {
 
 			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
 					.setStartDateTime(ZonedDateTime.now(ZoneId.of("UTC")).minusDays(30))
@@ -368,7 +372,7 @@ public class LogRequestTest {
 
 		@Test
 		@DisplayName("with start and end date query parameters successfully")
-		void startAndEndDateQueryParameters(VaultClient vaultClient) {
+		void startAndEndDateQueryParameters() {
 
 			EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
 					.setStartDate(LocalDate.now().minusDays(30))
@@ -386,7 +390,7 @@ public class LogRequestTest {
 		@Test
 		@Disabled
 		@DisplayName("with all_dates = true query parameter successfully")
-		void allDatesEqualsTrueQueryParameters(VaultClient vaultClient) {
+		void allDatesEqualsTrueQueryParameters() {
 //			This will only work once every 24 hours
 			JobCreateResponse response = vaultClient.newRequest(LogRequest.class)
 					.setAllDates(true)
@@ -402,7 +406,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully download the API Usage Log for a single day as a file")
-	public void testRetrieveDailyAPIUsageToFile(VaultClient vaultClient) {
+	public void testRetrieveDailyAPIUsageToFile() {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
 
@@ -419,7 +423,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully download the API Usage Log for a single day as bytes")
-	public void testRetrieveDailyAPIUsageToBytes(VaultClient vaultClient) {
+	public void testRetrieveDailyAPIUsageToBytes() {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
 
@@ -445,7 +449,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully download the SDK Runtime Log for a single day as a file")
-	public void testDownloadSdkRuntimeLogsToFile(VaultClient vaultClient) {
+	public void testDownloadSdkRuntimeLogsToFile() {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
 
@@ -462,7 +466,7 @@ public class LogRequestTest {
 
 	@Test
 	@DisplayName("successfully download the SDK Runtime Log for a single day as bytes")
-	public void testDownloadSdkRuntimeLogsToBytes(VaultClient vaultClient) {
+	public void testDownloadSdkRuntimeLogsToBytes() {
 		// Get yesterdays logs
 		LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
 

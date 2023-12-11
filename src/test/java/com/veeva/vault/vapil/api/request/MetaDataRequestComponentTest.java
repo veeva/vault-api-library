@@ -26,9 +26,16 @@ public class MetaDataRequestComponentTest {
 	static final String MDL_ALTER_SCRIPT = MdlHelper.getMdlAlterScript();
 	static final String MDL_DROP_SCRIPT = MdlHelper.getMdlDropScript();
 	static int jobId;
+	private static VaultClient vaultClient;
+
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 
 	@AfterAll
-	static void dropObject(VaultClient vaultClient) {
+	static void teardown() {
 		VaultResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.setRequestString(MDL_DROP_SCRIPT)
 				.executeMDLScript();
@@ -39,7 +46,7 @@ public class MetaDataRequestComponentTest {
 	@Test
 	@Order(1)
 	@DisplayName("successfully execute an MDL script on a Vault")
-	public void testExecuteMdlScript(VaultClient vaultClient) {
+	public void testExecuteMdlScript() {
 		VaultResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.setRequestString(MDL_RECREATE_SCRIPT)
 				.executeMDLScript();
@@ -50,7 +57,7 @@ public class MetaDataRequestComponentTest {
 	@Test
 	@Order(2)
 	@DisplayName("successfully start an asynchronous MDL script execution")
-	public void testExecuteMdlScriptAsynchronously(VaultClient vaultClient) {
+	public void testExecuteMdlScriptAsynchronously() {
 		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.setRequestString(MDL_ALTER_SCRIPT)
 				.executeMDLScriptAsynchronously();
@@ -62,7 +69,7 @@ public class MetaDataRequestComponentTest {
 	@Test
 	@Order(3)
 	@DisplayName("successfully retrieve the results of an asynchronous MDL script execution")
-	public void testRetrieveAsynchronousMdlScriptResults(VaultClient vaultClient) {
+	public void testRetrieveAsynchronousMdlScriptResults() {
 		boolean status = JobStatusHelper.checkMdlJobCompletion(vaultClient, jobId);
 		Assertions.assertTrue(status);
 
@@ -74,7 +81,7 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	@DisplayName("successfully retrieve metadata of all component types a Vault")
-	public void testRetrieveAllComponentMetadata(VaultClient vaultClient) {
+	public void testRetrieveAllComponentMetadata() {
 		MetaDataComponentTypeBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveAllComponentMetadata();
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getData());
@@ -82,7 +89,7 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	@DisplayName("successfully retrieve metadata of a specific component type")
-	public void testRetrieveComponentTypeMetadata(VaultClient vaultClient) {
+	public void testRetrieveComponentTypeMetadata() {
 		MetaDataComponentTypeResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.retrieveComponentTypeMetadata("Tab");
 		Assertions.assertTrue(response.isSuccessful());
@@ -95,7 +102,7 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	@Disabled
-	public void testFailureAsynchMdlExecution(VaultClient vaultClient) {
+	public void testFailureAsynchMdlExecution() {
 		String mdl = "ALTER Object hvo_test_object__c (MODIFY Field test_field__c (max_length(1000000000)));";
 		System.out.println(mdl);
 		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
@@ -117,7 +124,7 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	@Disabled
-	public void testCancelHvoDeployment(VaultClient vaultClient) {
+	public void testCancelHvoDeployment() {
 		String mdl = "ALTER Object hvo_test_object__c(\n" +
 				"    ADD Field test_picklist__c(\n" +
 				"      label('Test Picklist'),\n" +
@@ -177,7 +184,7 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	@DisplayName("successfully retrieve all records for a specific component type")
-	public void testRetrieveComponentRecords(VaultClient vaultClient) {
+	public void testRetrieveComponentRecords() {
 		MetaDataComponentTypeBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveComponentRecords("Picklist");
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -186,7 +193,7 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	@DisplayName("successfully retrieve metadata of a specific component record as JSON or XML")
-	public void testRetrieveComponentRecordXmlJson(VaultClient vaultClient) {
+	public void testRetrieveComponentRecordXmlJson() {
 		MetaDataComponentRecordResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.retrieveComponentRecordXmlJson("Picklist", "language__v");
 
@@ -196,7 +203,7 @@ public class MetaDataRequestComponentTest {
 
 	@Test
 	@DisplayName("successfully retrieve metadata of a specific component record as MDL")
-	public void testRetrieveComponentRecordMdl(VaultClient vaultClient) {
+	public void testRetrieveComponentRecordMdl() {
 		MdlResponse response = vaultClient.newRequest(MetaDataRequest.class)
 				.retrieveComponentRecordMdl("Picklist", "language__v");
 

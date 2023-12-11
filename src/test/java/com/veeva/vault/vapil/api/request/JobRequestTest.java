@@ -24,12 +24,18 @@ public class JobRequestTest {
 
 	private static final String JOB_NAME = "VAPIL Test Doc Job";
 	private static int jobId;
+	private static VaultClient vaultClient;
 
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 
 	@Test
 	@Order(1)
 	@DisplayName("successfully retrieve monitors for jobs which have not yet completed in the authenticated Vault")
-	public void testRetrieveJobMonitors(VaultClient vaultClient) {
+	public void testRetrieveJobMonitors() {
 		JobMonitorResponse response = vaultClient.newRequest(JobRequest.class)
 				.retrieveJobMonitors();
 		Assertions.assertTrue(response.isSuccessful());
@@ -52,7 +58,7 @@ public class JobRequestTest {
 	@Test
 	@Order(2)
 	@DisplayName("successfully move up a scheduled job instance to start immediately")
-	public void testStartJob(VaultClient vaultClient) {
+	public void testStartJob() {
 		JobCreateResponse response = vaultClient.newRequest(JobRequest.class)
 				.startJob(jobId);
 		Assertions.assertTrue(response.isSuccessful());
@@ -64,7 +70,7 @@ public class JobRequestTest {
 	@Test
 	@Order(3)
 	@DisplayName("successfully retrieve the status of a previously submitted job request")
-	public void testRetrieveJobStatus(VaultClient vaultClient) {
+	public void testRetrieveJobStatus() {
 		String jobStatus = "";
 		boolean jobCompleted = false;
 		for (int i = 0; i < 30; i++) {
@@ -92,7 +98,7 @@ public class JobRequestTest {
 	@Test
 	@Order(4)
 	@DisplayName("successfully retrieve a history of all completed jobs in the authenticated Vault")
-	public void testRetrieveJobHistories(VaultClient vaultClient) {
+	public void testRetrieveJobHistories() {
 		JobHistoryResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobHistories();
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getJobs());
@@ -116,7 +122,7 @@ public class JobRequestTest {
 	@Disabled
 	@Order(5)
 	@DisplayName("successfully retrieve the tasks associated with an SDK job")
-	public void testRetrieveJobTasks(VaultClient vaultClient) {
+	public void testRetrieveJobTasks() {
 		JobTaskResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobTasks(1);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getTasks());

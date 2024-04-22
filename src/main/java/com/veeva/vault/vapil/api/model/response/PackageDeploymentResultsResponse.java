@@ -8,7 +8,6 @@
 package com.veeva.vault.vapil.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.veeva.vault.vapil.api.model.common.PackageCode;
 import com.veeva.vault.vapil.api.model.VaultModel;
 import com.veeva.vault.vapil.api.model.common.PackageLog;
 import com.veeva.vault.vapil.api.model.common.PackageStep;
@@ -25,6 +24,11 @@ import java.util.List;
  * and support either username/password or OAuth2.0 / OpenID Connect authentication schemes.
  */
 public class PackageDeploymentResultsResponse extends VaultResponse {
+
+	@JsonProperty("package_steps")
+	public List<PackageStep> getPackageSteps() { return (List<PackageStep>) this.get("package_steps"); }
+
+	public void setPackageSteps(List<PackageStep> packageSteps) { this.set("package_steps", packageSteps); }
 
 	@JsonProperty("responseDetails")
 	public ResponseDetails getResponseDetails() {
@@ -117,15 +121,5 @@ public class PackageDeploymentResultsResponse extends VaultResponse {
 		public void setDeployedWithFailures(Integer deployedWithFailures) {
 			this.set("deployed_with_failures", deployedWithFailures);
 		}
-
-		@JsonProperty("package_steps")
-		public List<PackageStep> getPackageSteps() { return (List<PackageStep>) this.get("package_steps"); }
-
-		public void setPackageSteps(List<PackageStep> packageSteps) { this.set("package_steps", packageSteps); }
-
-		@JsonProperty("package_code")
-		public List<PackageCode> getPackageCode() { return (List<PackageCode>) this.get("package_code"); }
-
-		public void setPackageCode(List<PackageCode> packageCode) { this.set("package_code", packageCode); }
 	}
 }

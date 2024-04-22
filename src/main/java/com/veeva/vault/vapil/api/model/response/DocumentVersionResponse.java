@@ -9,7 +9,8 @@ package com.veeva.vault.vapil.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
+import com.veeva.vault.vapil.api.model.common.Renditions;
+
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class DocumentVersionResponse extends VaultResponse {
 		return (Renditions) this.get("renditions");
 	}
 
-	public void setRenditions(DocumentResponse.Renditions renditions) {
+	public void setRenditions(Renditions renditions) {
 		this.set("renditions", renditions);
 	}
 
@@ -56,18 +57,6 @@ public class DocumentVersionResponse extends VaultResponse {
 
 		public void setValue(String value) {
 			this.set("value", value);
-		}
-	}
-
-	static public class Renditions extends VaultModel {
-
-		@JsonProperty("viewable_rendition__v")
-		public String getViewableRendition() {
-			return this.getString("viewable_rendition__v");
-		}
-
-		public void setViewableRendition(String viewableRendition) {
-			this.set("viewable_rendition__v", viewableRendition);
 		}
 	}
 }

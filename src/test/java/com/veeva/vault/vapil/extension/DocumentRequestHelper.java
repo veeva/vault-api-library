@@ -71,11 +71,12 @@ public class DocumentRequestHelper {
         FileHelper.createCsvFile(CREATE_DOCUMENTS_CSV_PATH);
 
         List<String[]> data = new ArrayList<>();
-        data.add(new String[]{"file", "name__v", "type__v", "subtype__v",
+        data.add(new String[]{"file", "name__v", "description__c", "type__v", "subtype__v",
                 "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
         for (int i = 0; i < 3; i++) {
             String name = "VAPIL Test Create Multiple Documents " + ZonedDateTime.now() + " " + i;
-            data.add(new String[]{FILE_STAGING_FILE, name, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
+            String description = "VAPIL Test";
+            data.add(new String[]{FILE_STAGING_FILE, name, description, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
                     DOC_LIFECYCLE, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
         }
 

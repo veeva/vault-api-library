@@ -15,7 +15,6 @@ import com.veeva.vault.vapil.api.request.FileStagingRequest.Kind;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.JobStatusHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
-import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -27,20 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @Tag("FileStagingRequestTest")
-@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("File Staging request should")
 public class FileStagingRequestTest {
-    static final String RESOURCES_FOLDER_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator;
+    static final String RESUMABLE_UPLOAD_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "test_resumable_upload.txt";
     static final String TEST_FOLDER_FSS_NAME = "test_create_folder";
     static final String TEST_UPDATE_FOLDER_FSS_NAME = "test_update_folder";
     static final String TEST_FILE_FSS_NAME = "vapil_test_document.docx";
     static final String TEST_DOWNLOAD_FILE_NAME = "vapil_test_document.docx";
     static final String TEST_UPDATE_FILE_FSS_NAME = "vapil_test_document_update.docx";
-    static final String TEST_RESUMABLE_UPLOAD_FILE_NAME = "test_resumable_upload.txt";
-    static final String TEST_RESUMABLE_UPLOAD_FILE_PATH = RESOURCES_FOLDER_PATH + TEST_RESUMABLE_UPLOAD_FILE_NAME;
-    static String resumableUploadSessionId;
     private static VaultClient vaultClient;
 
     @BeforeAll
@@ -55,13 +50,16 @@ public class FileStagingRequestTest {
     @DisplayName("successfully retrieve a list of files and folders for the specified path")
     class TestListItemsAtAPath {
         FileStagingItemBulkResponse listItemsAtAPathResponse = null;
+        String referenceIdHeader = "test-list-items-at-a-path";
 
         @Test
         @Order(1)
+        @Tag("SmokeTest")
         public void testRequest() {
             FileStagingItemBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .setRecursive(true)
                     .setLimit(1)
+                    .setHeaderReferenceId(referenceIdHeader)
                     .listItemsAtAPath("/");
 
             assertNotNull(response);
@@ -70,8 +68,10 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(2)
+        @Tag("SmokeTest")
         public void testResponse() {
             assertTrue(listItemsAtAPathResponse.isSuccessful());
+            assertEquals(referenceIdHeader, listItemsAtAPathResponse.getHeaderReferenceId());
             assertTrue(listItemsAtAPathResponse.isPaginated());
             assertNotNull(listItemsAtAPathResponse.getData());
             for (FileStagingItemBulkResponse.FileStagingItem item : listItemsAtAPathResponse.getData()) {
@@ -93,7 +93,6 @@ public class FileStagingRequestTest {
     class TestListItemsByPage {
         FileStagingItemBulkResponse listItemsAtAPathResponse = null;
 
-        @Disabled
         @Test
         @Order(1)
         public void testRequest() {
@@ -113,7 +112,6 @@ public class FileStagingRequestTest {
             listItemsAtAPathResponse = paginatedResponse;
         }
 
-        @Disabled
         @Test
         @Order(2)
         public void testResponse() {
@@ -190,6 +188,7 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(1)
+        @Tag("SmokeTest")
         public void testRequest() throws IOException {
             File testFile = new File(FileHelper.getPathTestFile());
             byte[] bytes = Files.readAllBytes(testFile.toPath());
@@ -204,6 +203,7 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(2)
+        @Tag("SmokeTest")
         public void testResponse() {
             assertTrue(createFileResponse.isSuccessful());
             assertNotNull(createFileResponse.getData().getKind());
@@ -476,7 +476,7 @@ public class FileStagingRequestTest {
         @Order(1)
         public void testRequest() throws IOException {
             downloadResp = vaultClient.newRequest(FileStagingRequest.class)
-                    .setOutputPath(RESOURCES_FOLDER_PATH + TEST_DOWNLOAD_FILE_NAME)
+                    .setOutputPath(FileHelper.getPathResourcesFolder() + TEST_DOWNLOAD_FILE_NAME)
                     .downloadItemContent(TEST_FILE_FSS_NAME);
 
             assertNotNull(downloadResp);
@@ -507,8 +507,9 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(1)
+        @Tag("SmokeTest")
         public void testRequest() {
-            String filePath = FileHelper.getPathResumableUploadFile();
+            String filePath = RESUMABLE_UPLOAD_FILE_PATH;
             long fileSize = new File(filePath).length();
             FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .setOverwrite(true)
@@ -519,6 +520,7 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(2)
+        @Tag("SmokeTest")
         public void testResponse() {
             assertTrue(createResumableUploadSessionResponse.isSuccessful());
             assertNotNull(createResumableUploadSessionResponse.getData());
@@ -547,7 +549,7 @@ public class FileStagingRequestTest {
 
         @BeforeAll
         public void setup() {
-            String filePath = FileHelper.getPathResumableUploadFile();
+            String filePath = RESUMABLE_UPLOAD_FILE_PATH;
             int fileSize = (int) new File(filePath).length();
             FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .setOverwrite(true)
@@ -559,6 +561,7 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(1)
+        @Tag("SmokeTest")
         public void testRequest() {
             VaultResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .abortUploadSession(createResumableUploadSessionResponse.getData().getId());
@@ -569,6 +572,7 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(2)
+        @Tag("SmokeTest")
         public void testResponse() {
             assertTrue(abortUploadSessionResponse.isSuccessful());
         }
@@ -584,7 +588,7 @@ public class FileStagingRequestTest {
 
         @BeforeAll
         public void setup() {
-            String filePath = FileHelper.getPathResumableUploadFile();
+            String filePath = RESUMABLE_UPLOAD_FILE_PATH;
             int fileSize = (int) new File(filePath).length();
             FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .setOverwrite(true)
@@ -605,6 +609,7 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(1)
+        @Tag("SmokeTest")
         public void testRequest() {
             FileStagingSessionBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .listUploadSessions();
@@ -614,6 +619,7 @@ public class FileStagingRequestTest {
 
         @Test
         @Order(2)
+        @Tag("SmokeTest")
         public void testResponse() {
             assertTrue(listUploadSessionsResponse.isSuccessful());
             assertNotNull(listUploadSessionsResponse.getData());
@@ -643,7 +649,7 @@ public class FileStagingRequestTest {
 
         @BeforeAll
         public void setup() {
-            String filePath = FileHelper.getPathResumableUploadFile();
+            String filePath = RESUMABLE_UPLOAD_FILE_PATH;
             int fileSize = (int) new File(filePath).length();
             FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .setOverwrite(true)
@@ -701,7 +707,7 @@ public class FileStagingRequestTest {
 
         @BeforeAll
         public void setup() {
-            String filePath = FileHelper.getPathResumableUploadFile();
+            String filePath = RESUMABLE_UPLOAD_FILE_PATH;
             int fileSize = (int) new File(filePath).length();
             FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
                     .setOverwrite(true)
@@ -724,7 +730,7 @@ public class FileStagingRequestTest {
         @Test
         @Order(1)
         public void testRequest() throws IOException, InterruptedException {
-            File testFile = new File(FileHelper.getPathResumableUploadFile());
+            File testFile = new File(RESUMABLE_UPLOAD_FILE_PATH);
             byte[] bytes = Files.readAllBytes(testFile.toPath());
 
             FileStagingSessionPartResponse response = vaultClient.newRequest(FileStagingRequest.class)
@@ -757,7 +763,7 @@ public class FileStagingRequestTest {
         @BeforeAll
         public void setup() throws IOException {
 //            Create resumable upload session
-            String filePath = FileHelper.getPathResumableUploadFile();
+            String filePath = RESUMABLE_UPLOAD_FILE_PATH;
             int fileSize = (int) new File(filePath).length();
             FileStagingSessionResponse sessionResponse = vaultClient.newRequest(FileStagingRequest.class)
                     .setOverwrite(true)
@@ -768,7 +774,7 @@ public class FileStagingRequestTest {
             sessionId = sessionResponse.getData().getId();
 
 //            Upload file to session
-            File testFile = new File(FileHelper.getPathResumableUploadFile());
+            File testFile = new File(RESUMABLE_UPLOAD_FILE_PATH);
             byte[] bytes = Files.readAllBytes(testFile.toPath());
 
             FileStagingSessionPartResponse response = vaultClient.newRequest(FileStagingRequest.class)
@@ -823,7 +829,7 @@ public class FileStagingRequestTest {
         @BeforeAll
         public void setup() throws IOException {
 //            Create resumable upload session
-            String filePath = FileHelper.getPathResumableUploadFile();
+            String filePath = RESUMABLE_UPLOAD_FILE_PATH;
             int fileSize = (int) new File(filePath).length();
             FileStagingSessionResponse sessionResponse = vaultClient.newRequest(FileStagingRequest.class)
                     .setOverwrite(true)
@@ -834,7 +840,7 @@ public class FileStagingRequestTest {
             sessionId = sessionResponse.getData().getId();
 
 //            Upload file to session
-            File testFile = new File(FileHelper.getPathResumableUploadFile());
+            File testFile = new File(RESUMABLE_UPLOAD_FILE_PATH);
             byte[] bytes = Files.readAllBytes(testFile.toPath());
 
             FileStagingSessionPartResponse response = vaultClient.newRequest(FileStagingRequest.class)

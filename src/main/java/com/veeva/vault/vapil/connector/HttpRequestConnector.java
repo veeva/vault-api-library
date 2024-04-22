@@ -7,7 +7,6 @@
  */
 package com.veeva.vault.vapil.connector;
 
-import org.apache.log4j.Logger;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -16,6 +15,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class HttpRequestConnector {
 	public static final String HTTP_CONTENT_TYPE_MULTIPART_FORM = "multipart/form-data";
 	public static final String HTTP_CONTENT_TYPE_MULTIPART_FORM_BOUNDARY = "multipart/form-data; boundary=";
 
-	private static Logger log = Logger.getLogger(HttpRequestConnector.class);
+	private static Logger log = LoggerFactory.getLogger(HttpRequestConnector.class);
 
 	private static int globalTimeout = 60;
 

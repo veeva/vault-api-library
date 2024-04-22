@@ -10,7 +10,8 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.connector.HttpResponseConnector;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 
@@ -22,20 +23,19 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * Note that the VaultClient automatically performs Authentication requests
  * to establish the Vault session.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#authentication">https://developer.veevavault.com/api/23.3/#authentication</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#authentication">https://developer.veevavault.com/api/24.1/#authentication</a>
  */
-public class AuthenticationRequest extends VaultRequest {
-	private static Logger log = Logger.getLogger(AuthenticationRequest.class);
+public class AuthenticationRequest extends VaultRequest<AuthenticationRequest> {
+	private static Logger log = LoggerFactory.getLogger(AuthenticationRequest.class);
 
 	// API Endpoints
 	private static final String URL_API = "";
 	private static final String URL_AUTH = "/auth";
 	private static final String URL_KEEP_ALIVE = "/keep-alive";
 	private static final String URL_VALIDATE_SESSION_USER = "/objects/users/me";
-
 	private static final String URL_RETRIEVE_DELEGATIONS = "/delegation/vaults";
-
 	private static final String URL_INITIATE_DELEGATED_SESSION = "/delegation/login";
+	private static final String URL_END_SESSION = "/session";
 
 	/**
 	 * Value = {@value #URL_DISCOVERY}
@@ -70,7 +70,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return ApiVersionResponse
 	 * @vapil.api <pre>
 	 * GET /api</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-api-versions' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-api-versions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-api-versions' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-api-versions</a>
 	 */
 	public ApiVersionResponse retrieveApiVersions() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_API));
@@ -85,7 +85,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/auth</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/23.3/#user-name-and-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/24.1/#user-name-and-password</a>
 	 */
 	public AuthenticationResponse login(String userName, String userPassword) {
 		return login(userName, userPassword, null);
@@ -101,7 +101,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/auth</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/23.3/#user-name-and-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#user-name-and-password' target='_blank'>https://developer.veevavault.com/api/24.1/#user-name-and-password</a>
 	 */
 	public AuthenticationResponse login(String username, String password, String vaultDNS) {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_AUTH));
@@ -132,7 +132,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return AuthenticationResponse
 	 * @vapil.api <pre>
 	 * POST login.veevavault.com/auth/oauth/session/{oath_oidc_profile_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#oauth-2-0-openid-connect' target='_blank'>https://developer.veevavault.com/api/23.3/#oauth-2-0-openid-connect</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#oauth-2-0-openid-connect' target='_blank'>https://developer.veevavault.com/api/24.1/#oauth-2-0-openid-connect</a>
 	 */
 	public AuthenticationResponse loginOAuth(String oauthOidcProfileId, String accessToken, String vaultDNS) {
 		String url = URL_OAUTH;
@@ -219,6 +219,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return DiscoveryResponse
 	 * @vapil.api <pre>
 	 * POST login.veevavault.com/auth/discovery</pre>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#authentication-type-discovery' target='_blank'>https://developer.veevavault.com/api/24.1/#authentication-type-discovery</a>
 	 * @vapil.request <pre>
 	 * VaultClient vaultClient = VaultClientBuilder
 	 * 				.newClientBuilder(VaultClient.AuthenticationType.NO_AUTH)
@@ -227,7 +228,8 @@ public class AuthenticationRequest extends VaultRequest {
 	 *
 	 * DiscoveryResponse response = vaultClient.newRequest(AuthenticationRequest.class)
 	 * 				.setVaultOAuthClientId("OAuthClientId")
-	 * 				.authenticationTypeDiscovery("username@cholecap.com");	</pre>
+	 * 				.authenticationTypeDiscovery("username@cholecap.com");
+     * </pre>
 	 * @vapil.response <pre>
 	 * System.out.println("Auth Type: " + response.getData().getAuthType());
 	 *
@@ -263,7 +265,15 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/keep-alive</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#session-keep-alive' target='_blank'>https://developer.veevavault.com/api/23.3/#session-keep-alive</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#session-keep-alive' target='_blank'>https://developer.veevavault.com/api/24.1/#session-keep-alive</a>
+     * @vapil.request <pre>
+     * VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+     *      .sessionKeepAlive();
+     * }
+     * </pre>
+     * @vapil.response <pre>
+     * System.out.println("Response Status:" + vaultClient.getAuthenticationResponse().getResponseStatus());
+     * </pre>
 	 */
 	public VaultResponse sessionKeepAlive() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_KEEP_ALIVE));
@@ -280,7 +290,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return UserRetrieveResponse Vault returns an array of size 1
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/me</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#validate-session-user' target='_blank'>https://developer.veevavault.com/api/23.3/#validate-session-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#validate-session-user' target='_blank'>https://developer.veevavault.com/api/24.1/#validate-session-user</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(AuthenticationRequest.class).validateSessionUser();</pre>
 	 * @vapil.response <pre>
@@ -307,7 +317,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return DelegationsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/delegation/vaults</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-delegations' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-delegations</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-delegations' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-delegations</a>
 	 * @vapil.request <pre>
 	 * DelegationsResponse response = vaultClient.newRequest(AuthenticationRequest.class)
 	 * 				.retrieveDelegations();</pre>
@@ -335,7 +345,7 @@ public class AuthenticationRequest extends VaultRequest {
 	 * @return InitiateDelegatedSessionResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/delegation/login</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-delegations' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-delegations</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#initiate-delegated-session' target='_blank'>https://developer.veevavault.com/api/24.1/#initiate-delegated-session</a>
 	 * @vapil.request <pre>
 	 * InitiateDelegatedSessionResponse response = vaultClient.newRequest(AuthenticationRequest.class)
 	 * 				.initiateDelegatedSession(vaultId, delegatorUserId);</pre>
@@ -350,6 +360,31 @@ public class AuthenticationRequest extends VaultRequest {
 		request.addBodyParam(DELEGATOR_USERID, delegatorUserId);
 
 		return send(HttpMethod.POST, request, DelegatedSessionResponse.class);
+	}
+
+	/**
+	 * End Session
+	 * <p>
+	 * Given an active sessionId, inactivate an API session.
+	 * If a user has multiple active sessions, inactivating one session does not inactivate all sessions for that user.
+	 * Each session has its own unique sessionId
+	 * </p>
+	 *
+	 * @return VaultResponse
+	 * @vapil.api <pre>
+	 * DELETE /api/{version}/session</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#end-session' target='_blank'>https://developer.veevavault.com/api/24.1/#end-session</a>
+	 * @vapil.request <pre>
+	 * VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+	 * 		.endSession();
+	 * </pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Response Status = " + response.getResponseStatus());
+	 * </pre>
+	 */
+	public VaultResponse endSession() {
+		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_END_SESSION));
+		return send(HttpMethod.DELETE, request, VaultResponse.class);
 	}
 
 	/*

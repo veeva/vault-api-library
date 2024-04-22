@@ -18,9 +18,9 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Document Events
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#document-events">https://developer.veevavault.com/api/23.3/#document-events</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#document-events">https://developer.veevavault.com/api/24.1/#document-events</a>
  */
-public class DocumentEventRequest extends VaultRequest {
+public class DocumentEventRequest extends VaultRequest<DocumentEventRequest> {
 	// API Endpoints
 	private static final String URL_DOCUMENT_EVENT = "/objects/documents/{document_id}/events";
 	private static final String URL_DOCUMENT_VERSION_EVENT = "/objects/documents/{document_id}/versions/{major_version}/{minor_version}/events";
@@ -36,7 +36,7 @@ public class DocumentEventRequest extends VaultRequest {
 	 * @return DocumentEventTypeResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/events</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-document-event-types-and-subtypes' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-document-event-types-and-subtypes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-document-event-types-and-subtypes' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-document-event-types-and-subtypes</a>
 	 * @vapil.request <pre>
 	 * DocumentEventTypeResponse response = vaultClient.newRequest(DocumentEventRequest.class)
 	 * 					.retrieveDocumentEventTypesandSubtypes();</pre>
@@ -64,7 +64,7 @@ public class DocumentEventRequest extends VaultRequest {
 	 * @return DocumentEvenSubtypeResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/events/{event_type}/types/{event_subtype}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-document-event-subtype-metadata' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-document-event-subtype-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-document-event-subtype-metadata' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-document-event-subtype-metadata</a>
 	 * @vapil.request <pre>
 	 * DocumentEventSubtypeResponse response = vaultClient.newRequest(DocumentEventRequest.class)
 	 * 					.retrieveDocumentEventSubTypeMetadata(type, subtype);</pre>
@@ -96,7 +96,7 @@ public class DocumentEventRequest extends VaultRequest {
 	 * @return DocumentEvenSubtypeResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{document_id}/versions/{major_version}/{minor_version}/events</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-document-event' target='_blank'>https://developer.veevavault.com/api/23.3/#create-document-event</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-document-event' target='_blank'>https://developer.veevavault.com/api/24.1/#create-document-event</a>
 	 * @vapil.response <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentEventRequest.class)
 	 * 				.createDocumentEvent(docId, majorVersion, minorVersion, event.getEventProperties());</pre>
@@ -122,7 +122,7 @@ public class DocumentEventRequest extends VaultRequest {
 	 * @return DocumentEventResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{document_id}/events</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-document-events' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-document-events</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-document-events' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-document-events</a>
 	 * @vapil.request <pre>
 	 * DocumentEventResponse response = vaultClient.newRequest(DocumentEventRequest.class)
 	 * 					.retrieveDocumentEvents(docId);</pre>

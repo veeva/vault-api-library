@@ -11,13 +11,15 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.metadata.VaultObject;
 import com.veeva.vault.vapil.api.model.metadata.VaultObjectField;
 import com.veeva.vault.vapil.api.model.metadata.VaultObjectPageLayout;
-import com.veeva.vault.vapil.api.model.response.MetaDataObjectBulkResponse;
-import com.veeva.vault.vapil.api.model.response.MetaDataObjectFieldResponse;
-import com.veeva.vault.vapil.api.model.response.MetaDataObjectPageLayoutResponse;
-import com.veeva.vault.vapil.api.model.response.MetaDataObjectResponse;
+import com.veeva.vault.vapil.api.model.response.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("MetaDataRequestObjectTest")
 @Tag("SmokeTest")
@@ -27,7 +29,7 @@ public class MetaDataRequestObjectTest {
 
 	static final String OBJECT_NAME = "vapil_test_object__c";
 	static final String FIELD_NAME = "name__v";
-	static final String OBJECT_PAGE_LAYOUT_NAME = "vapil_test_object_detail_page_layout__c";
+	static final String OBJECT_PAGE_LAYOUT_NAME = "vapil_test_action_layout__c";
 	private static VaultClient vaultClient;
 
 	@BeforeAll
@@ -88,35 +90,94 @@ public class MetaDataRequestObjectTest {
 		}
 	}
 
-	@Test
-	@DisplayName("successfully retrieve all page layouts associated with and object")
-	public void testRetrievePageLayouts() {
-		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrievePageLayouts(OBJECT_NAME);
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully retrieve all page layouts associated with an object")
+	class TestRetrievePageLayouts {
+		MetaDataObjectPageLayoutResponse retrievePageLayoutsResponse = null;
 
-		Assertions.assertTrue(response.isSuccessful());
+		@Test
+		@Order(1)
+		public void testRequest() {
+			retrievePageLayoutsResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.retrievePageLayouts(OBJECT_NAME);
 
-		VaultObjectPageLayout layout = response.getData().get(0);
-		Assertions.assertNotNull(layout);
+			assertNotNull(retrievePageLayoutsResponse);
+		}
 
-		if (layout != null) {
-			Assertions.assertNotNull(layout.getName());
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(retrievePageLayoutsResponse.isSuccessful());
+
+			List<VaultObjectPageLayout> layouts = retrievePageLayoutsResponse.getData();
+			assertNotNull(layouts);
+			for (VaultObjectPageLayout layout : layouts) {
+				assertNotNull(layout.getName());
+				assertNotNull(layout.getLabel());
+				assertNotNull(layout.getObjectType());
+				assertNotNull(layout.getUrl());
+				assertNotNull(layout.getActive());
+				assertNotNull(layout.getDescription());
+				assertNotNull(layout.getDefaultLayout());
+				assertNotNull(layout.getDisplayLifecycleStages());
+			}
 		}
 	}
 
-	@Test
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully retrieve the metadata for a specific page layout")
-	public void testRetrievePageLayoutMetadata() {
-		MetaDataObjectPageLayoutResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrievePageLayoutMetadata(OBJECT_NAME, OBJECT_PAGE_LAYOUT_NAME);
+	class TestRetrievePageLayoutMetadata {
+		MetaDataObjectPageLayoutResponse retrievePageLayoutMetadataResponse = null;
 
-		Assertions.assertTrue(response.isSuccessful());
+		@Test
+		@Order(1)
+		public void testRequest() {
+			retrievePageLayoutMetadataResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.retrievePageLayoutMetadata(OBJECT_NAME, OBJECT_PAGE_LAYOUT_NAME);
 
-		VaultObjectPageLayout layout = response.getData().get(0);
-		Assertions.assertNotNull(layout);
+			assertNotNull(retrievePageLayoutMetadataResponse);
+		}
 
-		if (layout != null) {
-			Assertions.assertNotNull(layout.getName());
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(retrievePageLayoutMetadataResponse.isSuccessful());
+
+			List<VaultObjectPageLayout> layouts = retrievePageLayoutMetadataResponse.getData();
+			assertNotNull(layouts);
+			VaultObjectPageLayout layout = layouts.get(0);
+			assertNotNull(layout);
+
+			assertNotNull(layout.getName());
+			assertNotNull(layout.getLabel());
+			assertNotNull(layout.getObject());
+			assertNotNull(layout.getObjectType());
+			assertNotNull(layout.getActive());
+			assertNotNull(layout.getDescription());
+			assertNotNull(layout.getDefaultLayout());
+			assertNotNull(layout.getDisplayLifecycleStages());
+			assertNotNull(layout.getCreatedDate());
+			assertNotNull(layout.getLastModifiedDate());
+
+			List<VaultObjectPageLayout.PageLayoutRule> layoutRules = layout.getLayoutRules();
+			for (VaultObjectPageLayout.PageLayoutRule rule : layoutRules) {
+				assertNotNull(rule.getEvaluationOrder());
+				assertNotNull(rule.getStatus());
+				assertNotNull(rule.getFieldsToHide());
+//				assertNotNull(rule.getSectionsToHide());
+//				assertNotNull(rule.getControlsToHide());
+				assertNotNull(rule.getHideLayout());
+//				assertNotNull(rule.getHiddenPages());
+				assertNotNull(rule.getDisplayedAsReadonlyFields());
+				assertNotNull(rule.getDisplayedAsRequiredFields());
+				assertNotNull(rule.getFocusOnLayout());
+				assertNotNull(rule.getExpression());
+
+			}
 		}
 	}
 }

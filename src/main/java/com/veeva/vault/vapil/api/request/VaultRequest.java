@@ -10,11 +10,13 @@ package com.veeva.vault.vapil.api.request;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse.APIResponseError;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpResponseConnector;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +29,7 @@ import java.util.List;
  * is extended by the specific request class that maps to a Vault
  * API endpoint. It cannot be instantiated directly.
  */
-public abstract class VaultRequest {
+public abstract class VaultRequest<T extends VaultRequest<T>> {
 
 	/**
 	 * HTTP header value for the Vault Client Id
@@ -41,8 +43,10 @@ public abstract class VaultRequest {
 	public static final String HTTP_HEADER_AUTHORIZATION = "Authorization";
 
 	public static final String HTTP_HEADER_VAULT_CLIENT_ID = "X-VaultAPI-ClientID";
+	public static final String HTTP_HEADER_REFERENCE_ID = "X-VaultAPI-ReferenceId";
+	protected String referenceId;
 
-	private static Logger log = Logger.getLogger(VaultRequest.class);
+	private static Logger log = LoggerFactory.getLogger(VaultRequest.class);
 
 	/**
 	 * The Vault client, containing domain, authentication, and session information.
@@ -328,6 +332,9 @@ public abstract class VaultRequest {
 		if (vaultClientId != null)
 			request.addHeaderParam(HTTP_HEADER_VAULT_CLIENT_ID, vaultClientId);
 
+		if (referenceId != null && !referenceId.isEmpty())
+			request.addHeaderParam(HTTP_HEADER_REFERENCE_ID, referenceId);
+
 		return request;
 	}
 
@@ -338,5 +345,17 @@ public abstract class VaultRequest {
 	 */
 	public void setVaultClient(VaultClient vaultClient) {
 		this.vaultClient = vaultClient;
+	}
+
+	/**
+	 * Abstract method to set the reference id header for the Vault API request.
+	 * This method is implemented for all Request classes. When set in the request, the
+	 * Reference ID is returned in the response headers of the returned Response class.
+	 *
+	 * @param referenceId The reference id
+	 */
+	protected T setHeaderReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+		return (T) this;
 	}
 }

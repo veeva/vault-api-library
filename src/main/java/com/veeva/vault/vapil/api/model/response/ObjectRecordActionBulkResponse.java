@@ -40,7 +40,7 @@ public class ObjectRecordActionBulkResponse extends VaultResponse {
 			return true;
 		else {
 			for (ObjectRecordAttachmentResponse objectRecordResponse : responses) {
-				if (!objectRecordResponse.isSuccessful())
+				if (objectRecordResponse.hasErrors())
 					return true;
 			}
 		}

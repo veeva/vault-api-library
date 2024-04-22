@@ -34,7 +34,7 @@ public class UserBulkResponse extends VaultResponse {
 			return true;
 		else {
 			for (UserResponse response : results) {
-				if (!response.isSuccessful())
+				if (response.hasErrors())
 					return true;
 			}
 		}

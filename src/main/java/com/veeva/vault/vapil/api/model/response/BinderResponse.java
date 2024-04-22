@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.common.Binder;
 import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.VaultModel;
+import com.veeva.vault.vapil.api.model.common.Renditions;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
 /**
@@ -56,17 +57,6 @@ public class BinderResponse extends VaultResponse {
 		this.set("versions", versions);
 	}
 
-	static public class Renditions extends VaultModel {
-
-		@JsonProperty("viewable_rendition__v")
-		public String getViewableRendition() {
-			return this.getString("viewable_rendition__v");
-		}
-
-		public void setViewableRendition(String viewableRendition) {
-			this.set("viewable_rendition__v", viewableRendition);
-		}
-	}
 
 	static public class Version extends VaultModel {
 

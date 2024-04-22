@@ -138,7 +138,7 @@ public class AuthenticationRequestTest {
 		@Test
 		@Order(2)
 		public void testResponse() {
-			assertEquals("SUCCESS", validateSessionUserResponse.getResponseStatus());
+			assertTrue(validateSessionUserResponse.isSuccessful());
 		}
 	}
 
@@ -169,6 +169,44 @@ public class AuthenticationRequestTest {
 		@Order(2)
 		public void testResponse() {
 			assertEquals("SUCCESS", authenticationTypeDiscoveryResponse.getResponseStatus());
+		}
+	}
+
+//	TODO: Test in GA after release
+	@Nested
+	@Disabled
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully end a session")
+	class TestEndSession {
+
+		private VaultResponse endSessionResponse = null;
+		private VaultClient client = null;
+		private String TEST_SETTINGS_FILE_NAME = "settings_vapil_dev.json";
+
+		@BeforeAll
+		public void setup() {
+			File settingsFile = FileHelper.getSettingsFile(TEST_SETTINGS_FILE_NAME);
+
+			client = VaultClient.newClientBuilderFromSettings(settingsFile).build();
+
+			assertNotNull(client.getAuthenticationResponse());
+			assertTrue(client.validateSession());
+		}
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			endSessionResponse = client.newRequest(AuthenticationRequest.class)
+					.endSession();
+
+			assertNotNull(endSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(endSessionResponse.isSuccessful());
 		}
 	}
 

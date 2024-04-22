@@ -8,7 +8,8 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.veeva.vault.vapil.api.model.response.QueryResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
@@ -24,10 +25,10 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * See {@link #query(String)} for example request and response methods, including reading of the resulting
  * data and handling of the X-VaultAPI-DescribeQuery parameter.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#vault-query-language-vql">https://developer.veevavault.com/api/23.3/#vault-query-language-vql</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#vault-query-language-vql">https://developer.veevavault.com/api/24.1/#vault-query-language-vql</a>
  */
-public class QueryRequest extends VaultRequest {
-	private static Logger log = Logger.getLogger(QueryRequest.class);
+public class QueryRequest extends VaultRequest<QueryRequest> {
+	private static Logger log = LoggerFactory.getLogger(QueryRequest.class);
 
 	/**
 	 * <b>X-VaultAPI-DescribeQuery</b> Set to true to include static field metadata in the response

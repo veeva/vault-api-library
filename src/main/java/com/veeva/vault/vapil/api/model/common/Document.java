@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.*;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * Model for the Document Data
@@ -133,7 +132,7 @@ public class Document extends VaultModel {
 
 	@JsonIgnore
 	public boolean isArchive() {
-		return BooleanUtils.isTrue(getArchive());
+		return Boolean.TRUE.equals(getArchive());
 	}
 
 	@JsonProperty("binder__v")
@@ -147,7 +146,7 @@ public class Document extends VaultModel {
 
 	@JsonIgnore
 	public boolean isBinder() {
-		return BooleanUtils.isTrue(getBinder());
+		return Boolean.TRUE.equals(getBinder());
 	}
 
 	@JsonProperty("bound_source_major_version__v")
@@ -197,7 +196,7 @@ public class Document extends VaultModel {
 
 	@JsonIgnore
 	public boolean isCrossLink() {
-		return BooleanUtils.isTrue(getCrossLink());
+		return Boolean.TRUE.equals(getCrossLink());
 	}
 
 	@JsonProperty("description__v")
@@ -310,7 +309,7 @@ public class Document extends VaultModel {
 
 	@JsonIgnore
 	public boolean isLocked() {
-		return BooleanUtils.isTrue(getLocked());
+		return Boolean.TRUE.equals(getLocked());
 	}
 
 	@JsonProperty("md5checksum__v")
@@ -341,11 +340,11 @@ public class Document extends VaultModel {
 	}
 
 	@JsonProperty("size__v")
-	public Integer getSize() {
-		return getInteger("size__v");
+	public Long getSize() {
+		return getLong("size__v");
 	}
 
-	public void setSize(Integer size) {
+	public void setSize(Long size) {
 		this.set("size__v", size);
 	}
 

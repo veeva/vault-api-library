@@ -8,6 +8,7 @@
 package com.veeva.vault.vapil.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.veeva.vault.vapil.api.model.VaultModel;
 import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
@@ -19,11 +20,11 @@ import java.util.List;
 public class DocumentsResponse extends VaultResponse {
 
 	@JsonProperty("documents")
-	public List<Document> getDocuments() {
-		return (List<Document>) this.get("documents");
+	public List<DocumentNode> getDocuments() {
+		return (List<DocumentNode>) this.get("documents");
 	}
 
-	public void setDocuments(List<Document> documents) {
+	public void setDocuments(List<DocumentNode> documents) {
 		this.set("documents", documents);
 	}
 
@@ -52,5 +53,17 @@ public class DocumentsResponse extends VaultResponse {
 
 	public void setStart(Integer start) {
 		this.set("start", start);
+	}
+
+	public static class DocumentNode extends VaultModel {
+		@JsonProperty("document")
+		public Document getDocument() {
+			return (Document) this.get("document");
+		}
+
+		public void setDocument(Document document) {
+			this.set("document", document);
+		}
+
 	}
 }

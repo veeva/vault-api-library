@@ -7,12 +7,14 @@ import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
 import com.veeva.vault.vapil.api.model.response.OauthTokenResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpResponseConnector;
+import com.veeva.vault.vapil.extension.AbstractVaultClientParameterResolver;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,38 +24,56 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Vault Client should")
 public class VaultClientTest {
+    private static final String VAPIL_BASIC_SETTINGS_FILE_GR = "settings_vapil_basic.json";
+    private static final String VAPIL_BASIC_SETTINGS_FILE_LR = "settings_vapil_basic_lr.json";
+    private static final String VAPIL_SESSION_ID_SETTINGS_FILE_GR = "settings_vapil_session_id.json";
+    private static final String VAPIL_SESSION_ID_SETTINGS_FILE_LR = "settings_vapil_session_id_lr.json";
+    private static String vapilBasicSettingsFileName;
+    private static String vapilSessionIdSettingsFileName;
 
-	private String getOauthToken(JsonNode oauthTokenSettingsNode) {
+    @BeforeAll
+    public static void setup() throws IOException {
+        String vapilVersion = AbstractVaultClientParameterResolver.getVapilVersion();
+        if (vapilVersion.contains("BETA")) {
+            vapilBasicSettingsFileName = VAPIL_BASIC_SETTINGS_FILE_LR;
+            vapilSessionIdSettingsFileName = VAPIL_SESSION_ID_SETTINGS_FILE_LR;
+        } else {
+            vapilBasicSettingsFileName = VAPIL_BASIC_SETTINGS_FILE_GR;
+            vapilSessionIdSettingsFileName = VAPIL_SESSION_ID_SETTINGS_FILE_GR;
+        }
+    }
 
-		try {
-			HttpRequestConnector request = new HttpRequestConnector(oauthTokenSettingsNode.get("idpAccessTokenUrl").asText());
-			request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-			request.addBodyParam("grant_type", oauthTokenSettingsNode.get("idpGrantType").asText());
-			request.addBodyParam("username", oauthTokenSettingsNode.get("idpUsername").asText());
-			request.addBodyParam("password", oauthTokenSettingsNode.get("idpPassword").asText());
-			request.addBodyParam("scope", oauthTokenSettingsNode.get("idpOauthScope").asText());
-			request.addBodyParam("client_id", oauthTokenSettingsNode.get("idpClientId").asText());
+    private String getOauthToken(JsonNode oauthTokenSettingsNode) {
 
-			HttpResponseConnector response = request.sendPost();
-			OauthTokenResponse tokenResponse = getBaseObjectMapper().readValue(response.getResponse(), OauthTokenResponse.class);
-			if (tokenResponse != null) {
-				return tokenResponse.getAccessToken();
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+        try {
+            HttpRequestConnector request = new HttpRequestConnector(oauthTokenSettingsNode.get("idpAccessTokenUrl").asText());
+            request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+            request.addBodyParam("grant_type", oauthTokenSettingsNode.get("idpGrantType").asText());
+            request.addBodyParam("username", oauthTokenSettingsNode.get("idpUsername").asText());
+            request.addBodyParam("password", oauthTokenSettingsNode.get("idpPassword").asText());
+            request.addBodyParam("scope", oauthTokenSettingsNode.get("idpOauthScope").asText());
+            request.addBodyParam("client_id", oauthTokenSettingsNode.get("idpClientId").asText());
 
-	public ObjectMapper getBaseObjectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
+            HttpResponseConnector response = request.sendPost();
+            OauthTokenResponse tokenResponse = getBaseObjectMapper().readValue(response.getResponse(), OauthTokenResponse.class);
+            if (tokenResponse != null) {
+                return tokenResponse.getAccessToken();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    public ObjectMapper getBaseObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-		return objectMapper;
-	}
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+        return objectMapper;
+    }
 
     @Test
     public void testRequestMissingClientId() {
@@ -93,8 +113,7 @@ public class VaultClientTest {
 
         @BeforeAll
         public void setup() {
-            String basicSettings = "settings_vapil_basic.json";
-            File basicSettingsFile = FileHelper.getSettingsFile(basicSettings);
+            File basicSettingsFile = FileHelper.getSettingsFile(vapilBasicSettingsFileName);
             basicSettingsNode = FileHelper.readSettingsFile(basicSettingsFile);
         }
 
@@ -172,8 +191,7 @@ public class VaultClientTest {
 
         @BeforeAll
         public void setup() {
-            String basicSettings = "settings_vapil_basic.json";
-            basicSettingsFile = FileHelper.getSettingsFile(basicSettings);
+            basicSettingsFile = FileHelper.getSettingsFile(vapilBasicSettingsFileName);
         }
 
         @Test
@@ -210,15 +228,14 @@ public class VaultClientTest {
     @DisplayName("successfully build a client from a session ID")
     class TestAuthenticationTypeSessionId {
 
-        private static final String SESSION_ID_SETTINGS_FILE_NAME = "settings_vapil_session_id.json";
         private JsonNode sessionIdSettingsNode;
         private String sessionId;
         private AuthenticationResponse authResponse = null;
 
         @BeforeAll
         public void setup() {
-            File basicSettingsFile = FileHelper.getSettingsFile(SESSION_ID_SETTINGS_FILE_NAME);
-            sessionIdSettingsNode = FileHelper.readSettingsFile(basicSettingsFile);
+            File settingsFile = FileHelper.getSettingsFile(vapilSessionIdSettingsFileName);
+            sessionIdSettingsNode = FileHelper.readSettingsFile(settingsFile);
             VaultClient testClient = VaultClient.newClientBuilder(VaultClient.AuthenticationType.BASIC)
                     .withVaultDNS(sessionIdSettingsNode.get("vaultDNS").asText())
                     .withVaultClientId(sessionIdSettingsNode.get("vaultClientId").asText())
@@ -271,14 +288,12 @@ public class VaultClientTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully build a client from a settings file")
     class TestAuthenticationTypeSessionIdSettings {
-
         private File sessionIdSettingsFile = null;
         private AuthenticationResponse authResponse = null;
 
         @BeforeAll
         public void setup() {
-            String sessionIdSettingsFileName = "settings_vapil_session_id.json";
-            sessionIdSettingsFile = FileHelper.getSettingsFile(sessionIdSettingsFileName);
+            sessionIdSettingsFile = FileHelper.getSettingsFile(vapilSessionIdSettingsFileName);
             JsonNode sessionIdSettingsNode = FileHelper.readSettingsFile(sessionIdSettingsFile);
             VaultClient testClient = VaultClient.newClientBuilder(VaultClient.AuthenticationType.BASIC)
                     .withVaultDNS(sessionIdSettingsNode.get("vaultDNS").asText())
@@ -446,7 +461,7 @@ public class VaultClientTest {
         public void setup() {
             String oauthTokenSettings = "settings_vapil_oauth_discovery.json";
             File oauthTokenSettingsFile = FileHelper.getSettingsFile(oauthTokenSettings);
-			oauthDiscoverySettingsNode = FileHelper.readSettingsFile(oauthTokenSettingsFile);
+            oauthDiscoverySettingsNode = FileHelper.readSettingsFile(oauthTokenSettingsFile);
         }
 
         @Test
@@ -458,9 +473,9 @@ public class VaultClientTest {
                     .withVaultClientId(oauthDiscoverySettingsNode.get("vaultClientId").asText())
                     .withVaultDNS(oauthDiscoverySettingsNode.get("vaultDNS").asText())
                     .withVaultOauthProfileId(oauthDiscoverySettingsNode.get("vaultOauthProfileId").asText())
-					.withVaultUsername(oauthDiscoverySettingsNode.get("vaultUsername").asText())
+                    .withVaultUsername(oauthDiscoverySettingsNode.get("vaultUsername").asText())
                     .withIdpUsername(oauthDiscoverySettingsNode.get("idpUsername").asText())
-					.withIdpPassword(oauthDiscoverySettingsNode.get("idpPassword").asText())
+                    .withIdpPassword(oauthDiscoverySettingsNode.get("idpPassword").asText())
                     .withVaultOauthClientId(oauthDiscoverySettingsNode.get("vaultOauthClientId").asText())
                     .withIdpOauthAccessToken(oauthToken)
                     .build();

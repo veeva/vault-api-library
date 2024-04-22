@@ -12,7 +12,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import org.apache.commons.lang3.BooleanUtils;
 
 public class Group extends VaultModel {
 	@JsonProperty("id")
@@ -62,7 +61,7 @@ public class Group extends VaultModel {
 
 	@JsonIgnore
 	public boolean isEditable() {
-		return BooleanUtils.isTrue(getEditable());
+		return Boolean.TRUE.equals(getEditable());
 	}
 
 	@JsonProperty("group_description__v")
@@ -148,7 +147,7 @@ public class Group extends VaultModel {
 
 	@JsonIgnore
 	public boolean isSystemGroup() {
-		return BooleanUtils.isTrue(getSystemGroup());
+		return Boolean.TRUE.equals(getSystemGroup());
 	}
 
 	@JsonProperty("type__v")

@@ -173,7 +173,7 @@ public class MetaDataRequestComponentTest {
 		try {
 			Thread.sleep(1000);
 			VaultResponse cancelResponse = vaultClient.newRequest(MetaDataRequest.class)
-					.cancelHvoDeployment("hvo_test_object__c");
+					.cancelRawObjectDeployment("hvo_test_object__c");
 
 			Assertions.assertTrue(cancelResponse.isSuccessful());
 		} catch (InterruptedException e) {

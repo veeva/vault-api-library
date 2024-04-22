@@ -1,12 +1,10 @@
 package com.veeva.vault.vapil.extension;
 
-import com.opencsv.CSVWriter;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.ObjectRecordBulkResponse;
 import com.veeva.vault.vapil.api.request.ObjectRecordRequest;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -16,9 +14,10 @@ public class ObjectRecordRequestHelper {
 
     static final String OBJECT_NAME = "vapil_test_object__c";
     static final String CREATE_OBJECTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "create_object_records.csv";
+    static final String CREATE_SINGLE_OBJECT_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "create_single_object_record.csv";
     static final String UPDATE_OBJECTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "update_object_records.csv";
     static final String DELETE_OBJECTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "delete_object_records.csv";
-    static final String CREATE_SINGLE_OBJECT_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "create_single_object_record.csv";
+    static final String MERGE_OBJECTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "merge_object_records.csv";
 
     public static String getPathCreateObjectRecordsCsv() {
         FileHelper.createCsvFile(CREATE_OBJECTS_CSV_PATH);
@@ -39,15 +38,22 @@ public class ObjectRecordRequestHelper {
         FileHelper.createCsvFile(CREATE_SINGLE_OBJECT_CSV_PATH);
         return CREATE_SINGLE_OBJECT_CSV_PATH;
     }
+
+    public static String getPathMergeObjectRecordsCsv() {
+        FileHelper.createCsvFile(MERGE_OBJECTS_CSV_PATH);
+        return MERGE_OBJECTS_CSV_PATH;
+    }
+
     public static ObjectRecordBulkResponse createObjectRecords(VaultClient vaultClient) throws IOException {
 //        Create CSV File
         FileHelper.createCsvFile(CREATE_OBJECTS_CSV_PATH);
 
         List<String[]> data = new ArrayList<>();
-        data.add(new String[]{"name__v"});
+        data.add(new String[]{"name__v", "description__c"});
         for (int i = 0; i < 5; i++) {
             String name = "VAPIL Test Create Object " + ZonedDateTime.now() + " " + i;
-            data.add(new String[]{name});
+            String description = "VAPIL Test";
+            data.add(new String[]{name, description});
         }
 
         FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);

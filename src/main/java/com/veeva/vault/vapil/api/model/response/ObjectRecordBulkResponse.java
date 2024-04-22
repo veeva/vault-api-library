@@ -43,7 +43,7 @@ public class ObjectRecordBulkResponse extends VaultResponse {
 			return true;
 		else {
 			for (ObjectRecordResponse objectRecordResponse : responses) {
-				if (!objectRecordResponse.isSuccessful())
+				if (objectRecordResponse.hasErrors())
 					return true;
 			}
 		}

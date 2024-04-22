@@ -92,6 +92,11 @@ public class PackageStep extends PackageModel {
 
     public void setDependencies(List<Dependency> dependencies) { this.set("dependencies", dependencies);}
 
+    @JsonProperty("package_code")
+    public List<PackageCode> getPackageCode() { return (List<PackageCode>) this.get("package_code"); }
+
+    public void setPackageCode(List<PackageCode> packageCode) { this.set("package_code", packageCode); }
+
     public static class PackageComponent extends PackageModel {
 
         @JsonProperty("component_name__v")

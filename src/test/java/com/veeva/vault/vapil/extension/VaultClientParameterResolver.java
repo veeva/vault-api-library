@@ -1,7 +1,10 @@
 package com.veeva.vault.vapil.extension;
 
 
-public class VaultClientParameterResolver extends AbstractVaultClientParameterResolver {
+import java.io.IOException;
 
+public class VaultClientParameterResolver extends AbstractVaultClientParameterResolver {
+    public VaultClientParameterResolver() throws IOException {
+    }
 
 }

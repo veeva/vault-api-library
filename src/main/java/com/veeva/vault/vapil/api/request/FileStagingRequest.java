@@ -23,9 +23,9 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * <li>Resumable Uploads</li>
  * </ul>
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#file-staging">https://developer.veevavault.com/api/23.3/#file-staging</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#file-staging">https://developer.veevavault.com/api/24.1/#file-staging</a>
  */
-public class FileStagingRequest extends VaultRequest {
+public class FileStagingRequest extends VaultRequest<FileStagingRequest> {
 
 	public static final String HTTP_HEADER_FILE_PART_NUMBER = "X-VaultAPI-FilePartNumber";
 
@@ -80,12 +80,17 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param item, the file path of the item
 	 * @return FileStagingItemBulkResponse
 	 * @vapil.api <pre> GET /api/{version}/services/file_staging/items/{item} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#list-items-at-a-path' target='_blank'>https://developer.veevavault.com/api/23.3/#list-items-at-a-path</a>
-	 * @vapil.request <pre>FileStagingItemBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class).listItemsAtAPath("Documents");</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#list-items-at-a-path' target='_blank'>https://developer.veevavault.com/api/24.1/#list-items-at-a-path</a>
+	 * @vapil.request <pre>
+	 * FileStagingItemBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.listItemsAtAPath("u14105917");
+	 * </pre>
 	 * @vapil.response <pre>
-	 *     for(FileStagingItem fileStagingItem : resp.getData()) {
-	 *         System.out.println(fileStagingItem);
-	 *     }
+	 * for (FileStagingItemBulkResponse.FileStagingItem fileStagingItem : response.getData()) {
+	 * 		System.out.println("Kind: " + fileStagingItem.getKind());
+	 * 		System.out.println("Name: " + fileStagingItem.getName());
+	 * 		System.out.println("Path: " + fileStagingItem.getPath());
+	 * }
 	 * </pre>
 	 */
 	public FileStagingItemBulkResponse listItemsAtAPath(String item) {
@@ -113,7 +118,7 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param pageUrl, full path to the page (including https://{vaultDNS}/api/{version}/)
 	 * @return FileStagingItemBulkResponse
 	 * @vapil.api <pre> GET /api/{version}/services/file_staging/items/{item} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#list-items-at-a-path' target='_blank'>https://developer.veevavault.com/api/23.3/#list-items-at-a-path</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#list-items-at-a-path' target='_blank'>https://developer.veevavault.com/api/24.1/#list-items-at-a-path</a>
 	 * @vapil.request <pre>FileStagingItemBulkResponse resp = vaultClient.newRequest(FileStagingRequest.class)
 	 * 		.listItemsAtPathByPage(pageUrl);</pre>
 	 * @vapil.response <pre>
@@ -143,10 +148,14 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param item, the file path of the item
 	 * @return VaultResponse
 	 * @vapil.api <pre> GET /api/{version}/services/file_staging/items/content/{item} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#get-item-content' target='_blank'>https://developer.veevavault.com/api/23.3/#get-item-content</a>
-	 * @vapil.request <pre>VaultResponse resp = vaultClient.newRequest(FileStagingRequest.class).downloadItemContent("Documents/New/file.txt");</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#get-item-content' target='_blank'>https://developer.veevavault.com/api/24.1/#get-item-content</a>
+	 * @vapil.request <pre>
+	 * VaultResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.downloadItemContent("Documents/New/file.txt");
+	 * </pre>
 	 * @vapil.response <pre>
-	 * System.out.println(resp.getResponse());
+	 * System.out.println("Content-Type: " + response.getHeaderContentType());
+	 * System.out.println("Content-Disposition: " + response.getHttpHeaderContentDisposition());
 	 * </pre>
 	 */
 	public VaultResponse downloadItemContent(String item) {
@@ -180,9 +189,18 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param path, a String value indicating the path of the item
 	 * @return FileStagingItemResponse
 	 * @vapil.api <pre> POST /api/{version}/services/file_staging/items </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-folder-or-file' target='_blank'>https://developer.veevavault.com/api/23.3/#create-folder-or-file</a>
-	 * @vapil.request <pre>FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);</pre>
-	 * @vapil.response <pre>FileStagingItemResponse resp = fileStagingRequest.createFolderOrFile(fileStagingResumableUploadSession);</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-folder-or-file' target='_blank'>https://developer.veevavault.com/api/24.1/#create-folder-or-file</a>
+	 * @vapil.request <pre>
+	 * FileStagingItemResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.setOverwrite(true)
+	 * 		.setInputPath("src/test/resources/test_file.txt")
+	 * 		.createFolderOrFile(FileStagingRequest.Kind.FILE, "test_file.txt");
+	 * </pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Kind: " + response.getData().getKind());
+	 * System.out.println("Name: " + response.getData().getName());
+	 * System.out.println("Path: " + response.getData().getPath());
+	 * </pre>
 	 */
 	public FileStagingItemResponse createFolderOrFile(Kind kind, String path) {
 
@@ -225,11 +243,15 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param item, The absolute path to a file or folder. This path is specific to the authenticated user.
 	 * @return FileStagingJobResponse
 	 * @vapil.api <pre> PUT /api/{version}/services/file_staging/items/{item} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#update-folder-or-file' target='_blank'>https://developer.veevavault.com/api/23.3/#update-folder-or-file</a>
-	 * @vapil.request <pre>FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-folder-or-file' target='_blank'>https://developer.veevavault.com/api/24.1/#update-folder-or-file</a>
+	 * @vapil.request <pre>
+	 * FileStagingJobResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.setName("u14105917/updated_test_file.txt")
+	 * 		.updateFolderOrFile("test_file.txt");
+	 * </pre>
 	 * @vapil.response <pre>
-	 *     FileStagingJobResponse resp = fileStagingRequest.updateFolderOrFile("test.txt", fileStagingResumableUploadSession);
-	 *     Integer jobId = resp.getData().getJobId();
+	 * int jobId =  response.getData().getJobId();
+	 * String url = response.getData().getUrl();
 	 * </pre>
 	 */
 	public FileStagingJobResponse updateFolderOrFile(String item) {
@@ -263,11 +285,14 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param item, The absolute path to a file or folder. This path is specific to the authenticated user.
 	 * @return FileStagingJobResponse
 	 * @vapil.api <pre> DELETE /api/{version}/services/file_staging/items/{item} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#update-folder-or-file' target='_blank'>https://developer.veevavault.com/api/23.3/#update-folder-or-file</a>
-	 * @vapil.request <pre>FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-folder-or-file' target='_blank'>https://developer.veevavault.com/api/24.1/#update-folder-or-file</a>
+	 * @vapil.request <pre>
+	 * FileStagingJobResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.deleteFolderOrFile("test_file.txt");
+	 * </pre>
 	 * @vapil.response <pre>
-	 *     FileStagingJobResponse resp = fileStagingRequest.deleteFolderOrFile("text.txt");
-	 *     Integer jobId = resp.getData().getJobId();
+	 * int jobId =  response.getData().getJobId();
+	 * String url = response.getData().getUrl();
 	 * </pre>
 	 */
 	public FileStagingJobResponse deleteFolderOrFile(String item) {
@@ -297,11 +322,16 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param size, the total size in bytes of the file
 	 * @return FileStagingSessionResponse
 	 * @vapil.api <pre> POST /api/{version}/services/file_staging/upload </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-resumable-upload-session' target='_blank'>https://developer.veevavault.com/api/23.3/#create-resumable-upload-session</a>
-	 * @vapil.request <pre>FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-resumable-upload-session' target='_blank'>https://developer.veevavault.com/api/24.1/#create-resumable-upload-session</a>
+	 * @vapil.request <pre>
+	 * long fileSize = new File(filePath).length();
+	 * FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.setOverwrite(true)
+	 * 		.createResumableUploadSession("test_file.txt", fileSize);
+	 * </pre>
 	 * @vapil.response <pre>
-	 *     FileStagingSessionResponse resp = fileStagingRequest.createResumableUploadSession(fileStagingResumableUploadSession);
-	 *     String uploadSessionId = resp.getData().getUploadSessionID();
+	 * String uploadSessionId = response.getData().getId();
+	 * String path = response.getData().getPath();
 	 * </pre>
 	 */
 	public FileStagingSessionResponse createResumableUploadSession(String path, long size) {
@@ -335,12 +365,15 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param partNumber       The part number, which uniquely identifies a file part and defines its position within the file as a whole.
 	 * @return FileStagingSessionResponse
 	 * @vapil.api <pre> PUT /api/{version}/services/file_staging/upload/{upload_session_id} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#upload-to-a-session' target='_blank'>https://developer.veevavault.com/api/23.3/#upload-to-a-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#upload-to-a-session' target='_blank'>https://developer.veevavault.com/api/24.1/#upload-to-a-session</a>
 	 * @vapil.request <pre>
-	 *     FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	 * FileStagingSessionPartResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.setFile(fileName, bytes)
+	 * 		.uploadToASession(uploadSessionId, partNumber);
 	 * </pre>
 	 * @vapil.response <pre>
-	 *     FileStagingSessionResponse resp = fileStagingRequest.uploadToASession(uploadSessionId, 1);
+	 * System.out.println("Part Number: " + response.getData().getPartNumber());
+	 * System.out.println("Size: " + response.getData().getSize());
 	 * </pre>
 	 */
 	public FileStagingSessionPartResponse uploadToASession(String uploadSessionId, int partNumber) {
@@ -377,11 +410,14 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param uploadSessionId, the session id of the resumable upload session
 	 * @return FileStagingJobResponse
 	 * @vapil.api <pre> POST /api/{version}/services/file_staging/upload/{upload_session_id} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#commit-upload-session' target='_blank'>https://developer.veevavault.com/api/23.3/#commit-upload-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#commit-upload-session' target='_blank'>https://developer.veevavault.com/api/24.1/#commit-upload-session</a>
 	 * @vapil.request <pre>
-	 *     FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	 * FileStagingJobResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.commitUploadSession(uploadSessionId);
 	 * </pre>
-	 * @vapil.response <pre>FileStagingJobResponse resp = fileStagingRequest.uploadToASession(uploadSessionId);</pre>
+	 * @vapil.response <pre>
+	 * int jobId = response.getData().getJobId();
+	 * </pre>
 	 */
 	public FileStagingJobResponse commitUploadSession(String uploadSessionId) {
 		String url = vaultClient.getAPIEndpoint(URL_FILE_STAGING_RESUMABLE_SESSION).replace("{upload_session_id}", uploadSessionId);
@@ -403,15 +439,22 @@ public class FileStagingRequest extends VaultRequest {
 	 *
 	 * @return FileStagingSessionBulkResponse
 	 * @vapil.api <pre> GET /api/{version}/services/file_staging/upload </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#list-upload-sessions' target='_blank'>https://developer.veevavault.com/api/23.3/#commit-upload-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#list-upload-sessions' target='_blank'>https://developer.veevavault.com/api/24.1/#commit-upload-session</a>
 	 * @vapil.request <pre>
-	 *     FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	 * FileStagingSessionBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.listUploadSessions();
 	 * </pre>
 	 * @vapil.response <pre>
-	 *     FileStagingSessionBulkResponse resp =  fileStagingRequest.listUploadSessions();
-	 *     for(FileStagingSession fileStagingSession : resp.getData()) {
-	 * 			System.out.println(fileStagingSession);
-	 *     }
+	 * for (ResumableUploadSession session : response.getData()) {
+	 * 		System.out.println("Id: " + session.getId());
+	 * 		System.out.println("Path: " + session.getPath());
+	 * 		System.out.println("Size: " + session.getSize());
+	 * 		System.out.println("Owner: " + session.getOwner());
+	 * }
+	 *
+	 * if (response.getResponseDetails() != null) {
+	 * 		String nextPageUrl = response.getResponseDetails().getNextPage();
+	 * }
 	 * </pre>
 	 */
 	public FileStagingSessionBulkResponse listUploadSessions() {
@@ -427,11 +470,14 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param pageUrl The URL from the previous_page or next_page parameter
 	 * @return FileStagingSessionBulkResponse
 	 * @vapil.api <pre> GET /api/{version}/services/file_staging/upload </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#list-upload-sessions' target='_blank'>https://developer.veevavault.com/api/23.3/#commit-upload-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#list-upload-sessions' target='_blank'>https://developer.veevavault.com/api/24.1/#commit-upload-session</a>
 	 * @vapil.request <pre>
-	 *     FileStagingRequest paginatedResponse = vaultClient.newRequest(JobRequest.class)
-	 *			.retrieveJobTasksByPage(response.getResponseDetails().getNextPage());</pre>
-	 * @vapil.response <pre>System.out.println(paginatedResponse.getResponseStatus())</pre>;
+	 * FileStagingSessionBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.listUploadSessionsByPage(pageUrl);
+	 * </pre>
+	 * @vapil.response <pre>
+	 * System.out.println(paginatedResponse.getResponseStatus())
+	 * </pre>;
 	 */
 	public FileStagingSessionBulkResponse listUploadSessionsByPage(String pageUrl) {
 		String url = vaultClient.getPaginationEndpoint(pageUrl);
@@ -454,14 +500,14 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param uploadSessionId, the session id of the resumable upload session
 	 * @return FileStagingSessionResponse
 	 * @vapil.api <pre> GET /api/{version}/services/file_staging/upload/{upload_session_id} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#get-upload-session-details' target='_blank'>https://developer.veevavault.com/api/23.3/#get-upload-session-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#get-upload-session-details' target='_blank'>https://developer.veevavault.com/api/24.1/#get-upload-session-details</a>
 	 * @vapil.request <pre>
-	 *     FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	 * FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.getUploadSessionDetails(uploadSessionId);
 	 * </pre>
 	 * @vapil.response <pre>
-	 *    FileStagingSessionResponse resp = fileStagingRequest.getUploadSessionDetails(uploadSessionId);
-	 *    System.out.println(resp.getSession().getCreatedDate());
-	 *
+	 * String id = response.getData().getId();
+	 * String path = response.getData().getPath();
 	 * </pre>
 	 */
 	public FileStagingSessionResponse getUploadSessionDetails(String uploadSessionId) {
@@ -485,15 +531,16 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param uploadSessionId, the session id of the resumable upload session
 	 * @return FileStagingSessionBulkResponse
 	 * @vapil.api <pre> GET /api/{version}/services/file_staging/upload/{upload_session_id}/parts </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#list-file-parts-uploaded-to-session' target='_blank'>https://developer.veevavault.com/api/23.3/#list-file-parts-uploaded-to-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#list-file-parts-uploaded-to-session' target='_blank'>https://developer.veevavault.com/api/24.1/#list-file-parts-uploaded-to-session</a>
 	 * @vapil.request <pre>
-	 *     FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	 * FileStagingSessionPartBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.listFilePartsUploadedToASession(uploadSessionId);
 	 * </pre>
 	 * @vapil.response <pre>
-	 *     FileStagingSessionBulkResponse resp =  fileStagingRequest.listFilePartsUploadedToASession();
-	 *     for(FileStagingSession fileStagingSession : resp.getData()) {
-	 * 			System.out.println(fileStagingSession.getSize());
-	 *     }
+	 * for (ResumableUploadSessionPart part : response.getData()) {
+	 * 		System.out.println("Part Number: " + part.getPartNumber());
+	 * 		System.out.println("Size: " + part.getSize());
+	 * }
 	 * </pre>
 	 */
 	public FileStagingSessionPartBulkResponse listFilePartsUploadedToASession(String uploadSessionId) {
@@ -521,12 +568,13 @@ public class FileStagingRequest extends VaultRequest {
 	 * @param uploadSessionId, the session id of the resumable upload session
 	 * @return VaultResponse
 	 * @vapil.api <pre> DELETE /api/{version}/services/file_staging/upload/{upload_session_id} </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#abort-upload-session' target='_blank'>https://developer.veevavault.com/api/23.3/#abort-upload-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#abort-upload-session' target='_blank'>https://developer.veevavault.com/api/24.1/#abort-upload-session</a>
 	 * @vapil.request <pre>
-	 *     FileStagingRequest fileStagingRequest = vaultClient.newRequest(FileStagingRequest.class);
+	 * VaultResponse response = vaultClient.newRequest(FileStagingRequest.class)
+	 * 		.abortUploadSession(uploadSessionId);
 	 * </pre>
 	 * @vapil.response <pre>
-	 *     VaultResponse resp =  fileStagingRequest.abortUploadSession(uploadSessionId);
+	 * System.out.println("Status: " + response.getResponseStatus());
 	 * </pre>
 	 */
 	public VaultResponse abortUploadSession(String uploadSessionId) {
@@ -543,7 +591,7 @@ public class FileStagingRequest extends VaultRequest {
 	 */
 	private String getItemAsUrl(String item) {
 		if (item == null || item.equals("/"))
-			return org.apache.commons.lang.StringUtils.EMPTY;
+			return "";
 		else if (item.startsWith("/"))
 			return item.substring(1);
 		else

@@ -66,4 +66,5 @@ public class DocumentsResponse extends VaultResponse {
 		}
 
 	}
+
 }

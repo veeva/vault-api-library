@@ -12,23 +12,18 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Abstract class that is extended by classes that represent nested objects within an API response.
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VaultModel {
-	private static Logger log = LoggerFactory.getLogger(VaultModel.class);
+	private static Logger log = Logger.getLogger(VaultModel.class);
 
 	@JsonIgnore
 	private List<String> fieldNames = new ArrayList<>();
@@ -215,17 +210,6 @@ public class VaultModel {
 		return (String) this.get(key);
 	}
 
-	/**
-	 * Get any value from the map by key as BigDecimal
-	 *
-	 * @param key field name (Vault name format: example_field__c)
-	 * @return BigDecimal
-	 */
-	@JsonIgnore
-	public BigDecimal getBigDecimal(String key) {
-		return (BigDecimal) this.get(key);
-	}
-
 
 	/**
 	 * Converts the existing object into a Map of String/Object
@@ -301,13 +285,12 @@ public class VaultModel {
 	 * @return JSONObject representing all model data
 	 */
 	@JsonIgnore
-	public JsonNode toJSONObject() {
+	public JSONObject toJSONObject() {
 		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			String jsonString = objectMapper.writeValueAsString(this);
-			return objectMapper.readTree(jsonString);
+			return new JSONObject(toJsonString());
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(e.getMessage());
+			e.printStackTrace();
 			return null;
 		}
 	}

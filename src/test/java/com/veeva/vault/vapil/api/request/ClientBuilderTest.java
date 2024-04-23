@@ -1,20 +1,29 @@
 package com.veeva.vault.vapil.api.request;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veeva.vault.vapil.api.client.*;
 import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
 import com.veeva.vault.vapil.api.model.response.DiscoveryResponse;
+import com.veeva.vault.vapil.api.model.response.OauthTokenResponse;
+import com.veeva.vault.vapil.connector.HttpRequestConnector;
+import com.veeva.vault.vapil.connector.HttpResponseConnector;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
+import okhttp3.*;
+import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Tag("ClientBuilderTest")
+@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ClientBuilderTest {
@@ -23,26 +32,6 @@ public class ClientBuilderTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("Should successfully build a client when a valid session ID is provided")
-	public void testSessionId(VaultClient vaultClient) {
-		VaultClient testClient = VaultClient
-				.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
-				.withVaultClientId(vaultClient.getVaultClientId())
-				.withVaultDNS(vaultClient.getVaultDNS())
-				.withVaultSessionId(vaultClient.getSessionId())
-				.withValidation(true)
-				.withApiErrorLogging(true)
-				.withHttpTimeout(60)
-				.build();
-
-		Assertions.assertTrue(testClient.validateSession());
-		File sessionSettingsFile = getSessionIdSettingsFile();
-		JsonNode sessionNode = getSessionIdSettingsNode();
-		FileHelper.writeSessionId(testClient.getSessionId(), sessionNode, sessionSettingsFile);
-	}
-
-	@Test
-	@Tag("SmokeTest")
 	@DisplayName("Should successfully build a client with a valid username and password")
 	public void testBasic() {
 		Map<String, String> basicMap = getBasicSettingsMap();
@@ -58,11 +47,13 @@ public class ClientBuilderTest {
 				.build();
 
 		Assertions.assertTrue(testClient.validateSession());
-
+		File sessionSettingsFile = getSessionIdSettingsFile();
+		JsonNode sessionNode = getSessionIdSettingsNode();
+		FileHelper.writeSessionId(testClient.getSessionId(), sessionNode, sessionSettingsFile);
 	}
 
 	@Test
-	@Tag("SmokeTest")
+	@Order(2)
 	@DisplayName("Should unsuccessfully build a client from a bad password")
 	public void testBadAuthentication() {
 		Map<String, String> basicMap = getBasicSettingsMap();
@@ -79,11 +70,30 @@ public class ClientBuilderTest {
 		assertFalse(response.isSuccessful());
 	}
 
-	// Test Manually by getting an Oauth access token and putting it in the Oauth settings file
-	@Disabled
 	@Test
+	@Order(3)
+	@DisplayName("Should successfully build a client when a valid session ID is provided")
+	public void testSessionId() {
+		Map<String, String> sessionMap = getSessionIdSettingsMap();
+		VaultClient testClient = VaultClient
+				.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
+				.withVaultClientId(sessionMap.get("vaultClientId"))
+				.withVaultDNS(sessionMap.get("vaultDNS"))
+				.withVaultSessionId(sessionMap.get("vaultSessionId"))
+				.withValidation(true)
+				.withApiErrorLogging(true)
+				.withHttpTimeout(60)
+				.build();
+
+		Assertions.assertTrue(testClient.validateSession());
+	}
+
+	@Test
+	@Order(4)
 	@DisplayName("Should successfully build a client with a valid Oauth access token")
 	public void testOauthToken() {
+		String oAuthToken = getOauthToken();
+
 		Map<String, String> oauthMap = getOauthTokenMap();
 		VaultClient vaultClient = VaultClient
 				.newClientBuilder(VaultClient.AuthenticationType.OAUTH_ACCESS_TOKEN)
@@ -91,7 +101,7 @@ public class ClientBuilderTest {
 				.withVaultDNS(oauthMap.get("vaultDNS"))
 				.withVaultOauthProfileId(oauthMap.get("vaultOauthProfileId")) //required
 				.withVaultOauthClientId(oauthMap.get("vaultOauthClientId")) //required
-				.withIdpOauthAccessToken(oauthMap.get("idpOauthAccessToken")) //required
+				.withIdpOauthAccessToken(oAuthToken) //required
 				.withIdpOauthScope(oauthMap.get("idpOauthScope")) //default = openid
 				.withValidation(true) //default = true
 				.withApiErrorLogging(true) //default = true
@@ -99,30 +109,13 @@ public class ClientBuilderTest {
 				.build();
 
 		Assertions.assertTrue(vaultClient.validateSession());
+		File oauthTokenSettingsFile = getOauthTokenSettingsFile();
+		JsonNode oauthNode = getOauthTokenNode();
+		FileHelper.writeOauthToken(oAuthToken, oauthNode, oauthTokenSettingsFile);
 	}
 
 	@Test
-	@DisplayName("Should successfully build a client with valid Oauth parameters")
-	public void testOauthDiscovery() {
-		Map<String, String> oauthMap = getOauthTokenMap();
-		VaultClient vaultClient = VaultClient
-				.newClientBuilder(VaultClient.AuthenticationType.OAUTH_DISCOVERY)
-				.withVaultClientId(oauthMap.get("vaultClientId")) //required
-				.withVaultDNS(oauthMap.get("vaultDNS"))
-				.withVaultUsername(oauthMap.get("vaultUsername"))
-				.withVaultOauthProfileId(oauthMap.get("vaultOauthProfileId")) //required
-				.withVaultOauthClientId(oauthMap.get("vaultOauthClientId")) //required
-				.withIdpPassword(oauthMap.get("idpPassword")) //required
-				.withIdpOauthScope(oauthMap.get("idpOauthScope")) //default = openid
-				.withValidation(true) //default = true
-				.withApiErrorLogging(true) //default = true
-				.withHttpTimeout(60) //default = 60
-				.build();
-
-		Assertions.assertTrue(vaultClient.validateSession());
-	}
-
-	@Test
+	@Order(5)
 	@DisplayName("Should successfully build a client with valid Oauth parameters")
 	public void testOauthDiscoveryWithIdpUserName() {
 		Map<String, String> oauthMap = getOauthTokenMap();
@@ -145,22 +138,23 @@ public class ClientBuilderTest {
 	}
 
 	@Test
+	@Order(6)
 	@DisplayName("Should return valid Discovery Response")
 	public void testAuthenticationTypeDiscovery() {
+		Map<String, String> oauthMap = getOauthTokenMap();
 		VaultClient vaultClient = VaultClient
 				.newClientBuilder(VaultClient.AuthenticationType.NO_AUTH)
-				.withVaultClientId("clientId")
+				.withVaultClientId(oauthMap.get("vaultClientId")) //required
 				.build();
 
 		DiscoveryResponse response = vaultClient.newRequest(AuthenticationRequest.class)
-//				.setVaultOAuthClientId("VeevaProfessionalServices")
-				.authenticationTypeDiscovery("vapil.test@sb-developersupport.com");
+				.authenticationTypeDiscovery(oauthMap.get("vaultUsername"));
 
 		Assertions.assertTrue(response.isSuccessful());
 	}
 
 	@Test
-	@Tag("SmokeTest")
+	@Order(7)
 	@DisplayName("Should successfully build a client with a valid username and password from a settings file")
 	public void testNewClientBuilderFromSettingsFileBasic() {
 		File basicSettingsFile = getBasicSettingsFile();
@@ -169,6 +163,7 @@ public class ClientBuilderTest {
 	}
 
 	@Test
+	@Order(8)
 	@DisplayName("Should successfully build a client with a session ID from a settings file")
 	public void testNewClientBuilderFromSettingsFileSessionId() {
 		File sessionSettingsFile = getSessionIdSettingsFile();
@@ -176,9 +171,8 @@ public class ClientBuilderTest {
 		Assertions.assertTrue(vaultClient.validateSession());
 	}
 
-	// Test Manually by getting an Oauth access token and putting it in the Oauth settings file
-	@Disabled
 	@Test
+	@Order(9)
 	@DisplayName("Should return a valid client when a valid OAuth access token is provided from a settings file")
 	public void testNewClientBuilderFromSettingsFileOauthToken() {
 		File oauthTokenSettingsFile = getOauthTokenSettingsFile();
@@ -187,14 +181,7 @@ public class ClientBuilderTest {
 	}
 
 	@Test
-	@DisplayName("Should return a valid client when valid OAuth parameters are provided from a settings file")
-	public void testNewClientBuilderFromSettingsFileOauthDiscovery() {
-		File oauthDiscoverySettingsFile = getOauthDiscoverySettingsFile();
-		VaultClient vaultClient = VaultClient.newClientBuilderFromSettings(oauthDiscoverySettingsFile).build();
-		Assertions.assertTrue(vaultClient.validateSession());
-	}
-
-	@Test
+	@Order(10)
 	@DisplayName("Should return a valid client when valid OAuth parameters are provided from a settings file")
 	public void testNewClientBuilderFromSettingsFileOauthDiscoveryIdpUsername() {
 		File oauthDiscoverySettingsFile = getOauthDiscoverySettingsFile();
@@ -203,7 +190,7 @@ public class ClientBuilderTest {
 	}
 
 	@Test
-	@Tag("SmokeTest")
+	@Order(11)
 	@DisplayName("Should return a valid client when valid auth parameters are passed as a json string")
 	public void testNewClientBuilderFromSettingsString() {
 		File basicSettingsFile = getBasicSettingsFile();
@@ -242,6 +229,12 @@ public class ClientBuilderTest {
 		return sessionIdNode;
 	}
 
+	private Map<String, String> getSessionIdSettingsMap() {
+		JsonNode sessionNode = getSessionIdSettingsNode();
+		Map<String, String> sessionIdMap = FileHelper.convertJsonNodeToMap(sessionNode);
+		return sessionIdMap;
+	}
+
 	private File getOauthDiscoverySettingsFile() {
 		String oauthDiscoverySettingsFilePath = SETTINGS_FILES_FOLDER + "settings_vapil_oauth_discovery.json";
 		File oauthDiscoverySettingsFile = FileHelper.getSettingsFile(oauthDiscoverySettingsFilePath);
@@ -264,5 +257,45 @@ public class ClientBuilderTest {
 		JsonNode oauthNode = getOauthTokenNode();
 		Map<String, String> oauthMap = FileHelper.convertJsonNodeToMap(oauthNode);
 		return oauthMap;
+	}
+
+	private String getOauthToken() {
+		Map<String, String> oAuthMap = getOauthTokenMap();
+
+		String grantType = oAuthMap.get("idpGrantType");
+		String username = oAuthMap.get("idpUsername");
+		String password = oAuthMap.get("idpPassword");
+		String scope = oAuthMap.get("idpOauthScope");
+		String clientId = oAuthMap.get("idpClientId");
+		String tokenUrl = oAuthMap.get("idpAccessTokenUrl");
+
+		try {
+			HttpRequestConnector request = new HttpRequestConnector(tokenUrl);
+			request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+			request.addBodyParam("grant_type", grantType);
+			request.addBodyParam("username", username);
+			request.addBodyParam("password", password);
+			request.addBodyParam("scope", scope);
+			request.addBodyParam("client_id", clientId);
+
+			HttpResponseConnector response = request.sendPost();
+			OauthTokenResponse tokenResponse = getBaseObjectMapper().readValue(response.getResponse(), OauthTokenResponse.class);
+			if (tokenResponse != null) {
+				return tokenResponse.getAccessToken();
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public ObjectMapper getBaseObjectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+		return objectMapper;
 	}
 }

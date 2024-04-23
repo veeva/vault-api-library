@@ -42,26 +42,6 @@ public class VaultObjectPageLayout extends VaultModel {
 
     public void setLastModifiedDate(String lastModifiedDate) { this.set("last_modified_date", lastModifiedDate); }
 
-    @JsonProperty("active")
-    public Boolean getActive() { return this.getBoolean("active"); }
-
-    public void setActive(Boolean active) { this.set("active", active); }
-
-    @JsonProperty("description")
-    public String getDescription() { return this.getString("description"); }
-
-    public void setDescription(String description) { this.set("description", description); }
-
-    @JsonProperty("default_layout")
-    public Boolean getDefaultLayout() { return this.getBoolean("default_layout"); }
-
-    public void setDefaultLayout(Boolean defaultLayout) { this.set("default_layout", defaultLayout); }
-
-    @JsonProperty("display_lifecycle_stages")
-    public Boolean getDisplayLifecycleStages() { return this.getBoolean("display_lifecycle_stages"); }
-
-    public void setDisplayLifecycleStages(Boolean displayLifecycleStages) { this.set("display_lifecycle_stages", displayLifecycleStages); }
-
     @JsonProperty("layout_rules")
     public List<PageLayoutRule> getLayoutRules() { return (List<PageLayoutRule>) this.get("layout_rules"); }
 
@@ -80,11 +60,6 @@ public class VaultObjectPageLayout extends VaultModel {
 
         public void setEvaluationOrder(Integer evaluationOrder) { this.set("evaluation_order", evaluationOrder); }
 
-        @JsonProperty("status")
-        public String getStatus() { return this.getString("status"); }
-
-        public void setStatus(String status) { this.set("status", status); }
-
         @JsonProperty("fields_to_hide")
         public List<String> getFieldsToHide() { return this.getListString("fields_to_hide"); }
 
@@ -99,31 +74,6 @@ public class VaultObjectPageLayout extends VaultModel {
         public List<String> getControlsToHide() { return this.getListString("controls_to_hide"); }
 
         public void setControlsToHide(List<String> controlsToHide) { this.set("controls_to_hide", controlsToHide); }
-
-        @JsonProperty("hide_layout")
-        public Boolean getHideLayout() { return this.getBoolean("hide_layout"); }
-
-        public void setHideLayout(Boolean hideLayout) { this.set("hide_layout", hideLayout); }
-
-        @JsonProperty("hidden_pages")
-        public List<String> getHiddenPages() { return this.getListString("hidden_pages"); }
-
-        public void setHiddenPages(List<String> hiddenPages) { this.set("hidden_pages", hiddenPages); }
-
-        @JsonProperty("displayed_as_readonly_fields")
-        public List<String> getDisplayedAsReadonlyFields() { return this.getListString("displayed_as_readonly_fields"); }
-
-        public void setDisplayedAsReadonlyFields(List<String> displayedAsReadonlyFields) { this.set("displayed_as_readonly_fields", displayedAsReadonlyFields); }
-
-        @JsonProperty("displayed_as_required_fields")
-        public List<String> getDisplayedAsRequiredFields() { return this.getListString("displayed_as_required_fields"); }
-
-        public void setDisplayedAsRequiredFields(List<String> displayedAsRequiredFields) { this.set("displayed_as_required_fields", displayedAsRequiredFields); }
-
-        @JsonProperty("focus_on_layout")
-        public String getFocusOnLayout() { return this.getString("focus_on_layout"); }
-
-        public void setFocusOnLayout(String focusOnLayout) { this.set("focus_on_layout", focusOnLayout); }
 
         @JsonProperty("expression")
         public String getExpression() { return this.getString("expression"); }

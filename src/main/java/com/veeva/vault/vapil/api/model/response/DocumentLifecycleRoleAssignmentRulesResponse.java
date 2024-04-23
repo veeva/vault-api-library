@@ -38,7 +38,7 @@ public class DocumentLifecycleRoleAssignmentRulesResponse extends VaultResponse 
 			return true;
 		else {
 			for (VaultResponse response : responses) {
-				if (response.hasErrors())
+				if (!response.isSuccessful())
 					return true;
 			}
 		}

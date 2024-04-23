@@ -3,8 +3,7 @@ package com.veeva.vault.vapil.extension;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.FileStagingItemResponse;
 import com.veeva.vault.vapil.api.request.FileStagingRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
@@ -13,7 +12,7 @@ import java.nio.file.Files;
 
 public class FileStagingHelper {
 
-    private static Logger log = LoggerFactory.getLogger(FileStagingHelper.class);
+    private static Logger log = Logger.getLogger(FileStagingHelper.class);
     static final String TEST_FILE_LOCAL_PATH = FileHelper.getPathTestFile();
     static final String LOADER_FILE_LOCAL_PATH = FileHelper.getPathLoaderFile();
     static final String TEST_FILE_FSS_PATH = "/vapil_test_document.docx";

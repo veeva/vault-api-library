@@ -9,207 +9,74 @@ package com.veeva.vault.vapil.api.request;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.model.response.DelegatedSessionResponse;
+import com.veeva.vault.vapil.api.model.response.DelegationsResponse;
+import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("AuthenticationRequestTest")
 @Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DisplayName("Authentication request should")
+@DisplayName("Authentication request")
 public class AuthenticationRequestTest {
 
-	private static final String BASIC_SETTINGS_FILE_NAME = "settings_vapil_basic.json";
-	private static JsonNode basicSettingsNode;
+	private static final String basicSettingsFilePath = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "settings_files" + File.separator + "settings_vapil_basic.json";
+	private static File basicSettingsFile;
+	private static Map<String, String> basicMap;
 	private static VaultClient vaultClient;
 
 	@BeforeAll
 	static void setup(VaultClient client) {
 		vaultClient = client;
-		assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 
-		File settingsFile = FileHelper.getSettingsFile(BASIC_SETTINGS_FILE_NAME);
-		basicSettingsNode = FileHelper.readSettingsFile(settingsFile);
+		basicSettingsFile = FileHelper.getSettingsFile(basicSettingsFilePath);
+		JsonNode basicNode = FileHelper.readSettingsFile(basicSettingsFile);
+		basicMap = FileHelper.convertJsonNodeToMap(basicNode);
+	}
+	@Test
+	@DisplayName("Should successfully build a client from a valid username and password")
+	public void testLoginWithUsernameAndPassword() {
+		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+				.login(basicMap.get("vaultUsername"), basicMap.get("vaultPassword"));
+
+		assertTrue(response.isSuccessful());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully authenticate using a valid username and password")
-	class TestLogin {
-		AuthenticationResponse loginResponse = null;
 
-		@Test
-		@Order(1)
-		public void testRequest() {
-			loginResponse = vaultClient.newRequest(AuthenticationRequest.class)
-					.login(basicSettingsNode.get("vaultUsername").asText(), basicSettingsNode.get("vaultPassword").asText());
+	@Test
+	@DisplayName("Should successfully validate a session user")
+	public void testValidateSessionUser() {
+		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+				.validateSessionUser();
 
-			assertNotNull(loginResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(loginResponse.isSuccessful());
-			assertNotNull(loginResponse.getSessionId());
-			assertNotNull(loginResponse.getVaultId());
-			assertNotNull(loginResponse.getUserId());
-			assertNotNull(loginResponse.getVaultIds());
-			for (AuthenticationResponse.Vault vault : loginResponse.getVaultIds()) {
-				assertNotNull(vault.getId());
-				assertNotNull(vault.getName());
-				assertNotNull(vault.getUrl());
-			}
-		}
+		assertTrue(response.isSuccessful());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully refresh a session duration")
-	class TestKeepAlive {
-		VaultResponse keepAliveResponse = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			keepAliveResponse = vaultClient.newRequest(AuthenticationRequest.class)
-					.sessionKeepAlive();
-
-			assertNotNull(keepAliveResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertEquals("SUCCESS", keepAliveResponse.getResponseStatus());
-		}
+	@Test
+	@DisplayName("Should successfully refresh a session duration")
+	public void testSessionKeepAlive() {
+		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+						.sessionKeepAlive();
+		assertTrue(response.isSuccessful());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve API versions")
-	class TestRetrieveApiVersions {
-		ApiVersionResponse retrieveApiVersionsResponse = null;
+	@Test
+	@DisplayName("Should successfully retrieve API versions")
+	public void testRetrieveApiVersions() {
+		VaultResponse response = vaultClient.newRequest(AuthenticationRequest.class)
+				.retrieveApiVersions();
 
-		@Test
-		@Order(1)
-		public void testRequest() {
-			retrieveApiVersionsResponse = vaultClient.newRequest(AuthenticationRequest.class)
-					.retrieveApiVersions();
-
-			assertNotNull(retrieveApiVersionsResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertEquals("SUCCESS", retrieveApiVersionsResponse.getResponseStatus());
-			assertNotNull(retrieveApiVersionsResponse.getValues());
-		}
+		assertTrue(response.isSuccessful());
 	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully validate a session user")
-	class TestValidateSessionUser {
-		VaultResponse validateSessionUserResponse = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			validateSessionUserResponse = vaultClient.newRequest(AuthenticationRequest.class)
-					.validateSessionUser();
-
-			assertNotNull(validateSessionUserResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(validateSessionUserResponse.isSuccessful());
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully return a valid Discovery Response")
-	class TestAuthenticationTypeDiscovery {
-
-		private DiscoveryResponse authenticationTypeDiscoveryResponse = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			VaultClient vaultClient = VaultClient
-					.newClientBuilder(VaultClient.AuthenticationType.NO_AUTH)
-					.withVaultClientId(basicSettingsNode.get("vaultClientId").asText())
-					.build();
-
-			DiscoveryResponse response = vaultClient.newRequest(AuthenticationRequest.class)
-					.authenticationTypeDiscovery(basicSettingsNode.get("vaultUsername").asText());
-
-			assertTrue(response != null);
-			authenticationTypeDiscoveryResponse = response;
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertEquals("SUCCESS", authenticationTypeDiscoveryResponse.getResponseStatus());
-		}
-	}
-
-//	TODO: Test in GA after release
-	@Nested
-	@Disabled
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully end a session")
-	class TestEndSession {
-
-		private VaultResponse endSessionResponse = null;
-		private VaultClient client = null;
-		private String TEST_SETTINGS_FILE_NAME = "settings_vapil_dev.json";
-
-		@BeforeAll
-		public void setup() {
-			File settingsFile = FileHelper.getSettingsFile(TEST_SETTINGS_FILE_NAME);
-
-			client = VaultClient.newClientBuilderFromSettings(settingsFile).build();
-
-			assertNotNull(client.getAuthenticationResponse());
-			assertTrue(client.validateSession());
-		}
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			endSessionResponse = client.newRequest(AuthenticationRequest.class)
-					.endSession();
-
-			assertNotNull(endSessionResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(endSessionResponse.isSuccessful());
-		}
-	}
-
 
 	@Nested
 	@Disabled("Sandbox Snapshots do not retain Delegated User Access Configuration. Config is lost after refresh. Test Manually")
@@ -224,7 +91,6 @@ public class AuthenticationRequestTest {
 
 			assertTrue(response.isSuccessful());
 		}
-
 		@Test
 		@DisplayName("Test initiate delegated session")
 		public void testInitiateDelegatedSession() {

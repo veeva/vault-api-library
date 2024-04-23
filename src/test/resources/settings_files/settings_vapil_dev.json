@@ -1,0 +1,17 @@
+{
+    "authenticationType": "BASIC",
+    "idpOauthAccessToken": "",
+    "idpOauthScope": "openid",
+    "idpUsername": "",
+    "idpPassword": "",
+    "vaultUsername": "eric.matelyan@sb-developersupport.dev",
+    "vaultPassword": "V33v@v@u1",
+    "vaultDNS": "sb-developersupport-dev-test.vaultdev.com",
+    "vaultSessionId": "0C3B9E127DFCAC43B3817C40825DD676CB77EB42556BFBE9CEC1644C534EC7C1A2AFF3520A865F6BA0B608BFA9433BB52B33060A89B75CF707F4643653DD4AF0",
+    "vaultClientId": "veeva-vault-devsupport-client-vapil",
+    "vaultOauthClientId": "",
+    "vaultOauthProfileId": "_0cf6c32f-4dd9-4dd1-877f-73ca1735d221",
+    "logApiErrors": true,
+    "httpTimeout": 60,
+    "validateSession": true
+}

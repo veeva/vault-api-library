@@ -19,18 +19,17 @@ import com.veeva.vault.vapil.api.model.response.UserResponse;
 import com.veeva.vault.vapil.api.model.response.UserRetrieveResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
 
 /**
  * Users
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#users">https://developer.veevavault.com/api/24.1/#users</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.2/#users">https://developer.veevavault.com/api/23.2/#users</a>
  */
-public class UserRequest extends VaultRequest<UserRequest> {
-	private static Logger log = LoggerFactory.getLogger(UserRequest.class);
+public class UserRequest extends VaultRequest {
+	private static Logger log = Logger.getLogger(UserRequest.class);
 
 	//API Endpoints
 	private static final String URL_METADATA = "/metadata/objects/users";
@@ -85,7 +84,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return MetaDataUserResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-user-metadata' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-user-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#retrieve-user-metadata' target='_blank'>https://developer.veevavault.com/api/23.2/#retrieve-user-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataUserResponse resp = vaultClient.newRequest(UserRequest.class).retrieveUserMetadata();</pre>
 	 * @vapil.response <pre>
@@ -124,7 +123,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-all-users' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-all-users</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#retrieve-all-users' target='_blank'>https://developer.veevavault.com/api/23.2/#retrieve-all-users</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .retrieveAllUsers();</pre>
@@ -190,7 +189,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-user' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#retrieve-user' target='_blank'>https://developer.veevavault.com/api/23.2/#retrieve-user</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(UserRequest.class).retrieveUser(userId);</pre>
 	 * @vapil.response <pre>
@@ -217,7 +216,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-single-user' target='_blank'>https://developer.veevavault.com/api/24.1/#create-single-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#create-single-user' target='_blank'>https://developer.veevavault.com/api/23.2/#create-single-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeForm()
@@ -240,7 +239,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-single-user' target='_blank'>https://developer.veevavault.com/api/24.1/#update-single-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#update-single-user' target='_blank'>https://developer.veevavault.com/api/23.2/#update-single-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeXForm()
@@ -266,7 +265,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users/{user_id}/password</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#change-your-password' target='_blank'>https://developer.veevavault.com/api/24.1/#change-your-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#change-your-password' target='_blank'>https://developer.veevavault.com/api/23.2/#change-your-password</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(UserRequest.class).changePassword(userId, oldPass, newPass);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());
@@ -295,7 +294,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/{id}/permissions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-user-permissions' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-user-permissions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#retrieve-user-permissions' target='_blank'>https://developer.veevavault.com/api/23.2/#retrieve-user-permissions</a>
 	 * @vapil.request <pre>
 	 * UserPermissionResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .retrieveUserPermissions(userId);</pre>
@@ -329,7 +328,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/users/{user_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#disable-user' target='_blank'>https://developer.veevavault.com/api/24.1/#disable-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#disable-user' target='_blank'>https://developer.veevavault.com/api/23.2/#disable-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setDomainAsTrue()
@@ -357,7 +356,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-multiple-users' target='_blank'>https://developer.veevavault.com/api/24.1/#create-multiple-users</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#create-multiple-users' target='_blank'>https://developer.veevavault.com/api/23.2/#create-multiple-users</a>
 	 * @vapil.request <pre>
 	 * UserBulkResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeCsv()
@@ -395,7 +394,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-multiple-users' target='_blank'>https://developer.veevavault.com/api/24.1/#update-multiple-users</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#update-multiple-users' target='_blank'>https://developer.veevavault.com/api/23.2/#update-multiple-users</a>
 	 * @vapil.request <pre>
 	 * UserBulkResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeCsv()
@@ -434,7 +433,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users/{user_id}/vault_membership/{vault_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-vault-membership' target='_blank'>https://developer.veevavault.com/api/24.1/#update-vault-membership</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.2/#update-vault-membership' target='_blank'>https://developer.veevavault.com/api/23.2/#update-vault-membership</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeXForm()

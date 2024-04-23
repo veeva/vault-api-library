@@ -35,7 +35,7 @@ public class DocumentBulkResponse extends VaultResponse {
 			return true;
 		else {
 			for (DocumentResponse documentResponse : documentResponses) {
-				if (documentResponse.hasErrors())
+				if (!documentResponse.isSuccessful())
 					return true;
 			}
 		}

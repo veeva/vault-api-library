@@ -1,13 +1,12 @@
 package com.veeva.vault.vapil.extension;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
 public class TestRunHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestRunHelper.class);
+    private static final Logger LOGGER = Logger.getLogger(TestRunHelper.class);
     private final static String WINDOWS_HOME = "HOMEPATH";
     private final static String MAC_HOME = "HOME";
     private final static String VAPIL_PATH = "/.vapil";

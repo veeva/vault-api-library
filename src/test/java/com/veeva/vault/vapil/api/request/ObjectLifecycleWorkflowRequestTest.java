@@ -22,6 +22,7 @@ class ObjectLifecycleWorkflowRequestTest {
     static final String OBJECT_NAME = "vapil_test_object__c";
     static final String MULTI_RECORD_WORKFLOW_NAME = "Objectworkflow.vapil_test_object_workflow__c";
     static final String WORKFLOW_ACTION_NAME = "Objectlifecyclestateuseraction.vapil_test_object__c.active_state__c.start_vapil_test_object_workflow_useract__c";
+    static final String DELETE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathDeleteObjectRecordsCsv();
     static List<String> recordIds = new ArrayList<>();
     private static VaultClient vaultClient;
 
@@ -31,28 +32,28 @@ class ObjectLifecycleWorkflowRequestTest {
         vaultClient = client;
         Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 
-//        ObjectRecordBulkResponse response = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
-//
-//        Assertions.assertTrue(response.isSuccessful());
-//        for (ObjectRecordResponse objectRecordResponse : response.getData()) {
-//            Assertions.assertNotNull(objectRecordResponse.getData().getId());
-//            recordIds.add(objectRecordResponse.getData().getId());
-//        }
+        ObjectRecordBulkResponse response = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+
+        Assertions.assertTrue(response.isSuccessful());
+        for (ObjectRecordResponse objectRecordResponse : response.getData()) {
+            Assertions.assertNotNull(objectRecordResponse.getData().getId());
+            recordIds.add(objectRecordResponse.getData().getId());
+        }
     }
 
     @AfterAll
     static void teardown() throws IOException {
-//        ObjectRecordBulkResponse response = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
-//        Assertions.assertTrue(response.isSuccessful());
-//
-//        boolean allSuccessful = true;
-//        for (ObjectRecordResponse recordResponse : response.getData()) {
-//            if (!recordResponse.isSuccessful()) {
-//                allSuccessful = false;
-//            }
-//        }
-//
-//        Assertions.assertTrue(allSuccessful);
+        ObjectRecordBulkResponse response = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+        Assertions.assertTrue(response.isSuccessful());
+
+        boolean allSuccessful = true;
+        for (ObjectRecordResponse recordResponse : response.getData()) {
+            if (!recordResponse.isSuccessful()) {
+                allSuccessful = false;
+            }
+        }
+
+        Assertions.assertTrue(allSuccessful);
     }
 
     @Order(1)
@@ -162,73 +163,5 @@ class ObjectLifecycleWorkflowRequestTest {
         assertTrue(resp.isSuccessful());
         assertNotNull(resp.getData().getRecordId());
         assertNotNull(resp.getData().getWorkflowId());
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully initiate a user action on multiple object records")
-    class TestInitiateObjectActionOnMultipleRecords {
-
-        ObjectRecordActionBulkResponse initiateObjectActionOnMultipleRecordsResponse = null;
-        List<String> recordIds = new ArrayList<>();
-        List<Integer> workflowIds = new ArrayList<>();
-
-        @BeforeAll
-        public void setup() throws InterruptedException, IOException {
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
-            assertTrue(createResponse.isSuccessful());
-
-            for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
-                assertTrue(objectRecordResponse.isSuccessful());
-                recordIds.add(objectRecordResponse.getData().getId());
-            }
-        }
-
-        @AfterAll
-        public void teardown() throws IOException {
-            for (String recordId : recordIds) {
-                ObjectWorkflowResponse workflowResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
-                        .retrieveWorkflows(OBJECT_NAME, recordId, null);
-
-                assertTrue(workflowResponse.isSuccessful());
-                workflowIds.add(workflowResponse.getData().get(0).getId());
-            }
-
-            for (Integer workflowId : workflowIds) {
-                VaultResponse actionResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
-                                .initiateWorkflowAction(workflowId, "cancel");
-
-                assertTrue(actionResponse.isSuccessful());
-            }
-
-            ObjectRecordBulkResponse deleteResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
-            assertTrue(deleteResponse.isSuccessful());
-        }
-
-        @Test
-        @Order(1)
-        void testRequest() {
-            Set<String> recordIdSet = new HashSet<>();
-            for (String recordId : recordIds) {
-                recordIdSet.add(recordId);
-            }
-
-            initiateObjectActionOnMultipleRecordsResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
-                    .initiateObjectActionOnMultipleRecords(OBJECT_NAME, recordIdSet, WORKFLOW_ACTION_NAME);
-
-            Assertions.assertNotNull(initiateObjectActionOnMultipleRecordsResponse);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(initiateObjectActionOnMultipleRecordsResponse.isSuccessful());
-            assertNotNull(initiateObjectActionOnMultipleRecordsResponse.getData());
-
-            for (ObjectRecordAttachmentResponse objectResponse : initiateObjectActionOnMultipleRecordsResponse.getData()) {
-                Assertions.assertTrue(objectResponse.isSuccessful());
-            }
-        }
     }
 }

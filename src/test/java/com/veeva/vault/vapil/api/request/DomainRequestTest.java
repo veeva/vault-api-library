@@ -1,7 +1,6 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.response.DiscoveryResponse;
 import com.veeva.vault.vapil.api.model.response.DomainResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import org.junit.jupiter.api.*;
@@ -46,31 +45,5 @@ public class DomainRequestTest {
                 .retrieveDomains();
         assertTrue(resp.isSuccessful());
         assertEquals(SUCCESS_STATUS, resp.getResponseStatus());
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully set and return Reference ID Header")
-    class TestSetHeaderReferenceId {
-
-        private VaultResponse response = null;
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DomainRequest.class)
-                    .setHeaderReferenceId("test")
-                    .retrieveDomains();
-
-            assertTrue(response != null);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertEquals(response.getHeaderReferenceId(), "test");
-        }
     }
 }

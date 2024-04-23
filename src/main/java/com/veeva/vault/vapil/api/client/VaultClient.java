@@ -25,10 +25,9 @@ import com.veeva.vault.vapil.api.model.response.ApiVersionResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import com.veeva.vault.vapil.api.request.AuthenticationRequest;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
+import org.apache.log4j.Logger;
 
 import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all Vault integration calls where a Vault session is established via:<br>
@@ -41,13 +40,13 @@ import org.slf4j.LoggerFactory;
  * passing in the request class to instantiate.
  */
 public class VaultClient {
-	private static Logger log = LoggerFactory.getLogger(VaultClient.class);
+	private static Logger log = Logger.getLogger(VaultClient.class);
 
 	/**
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v24.1";
+	public static final String VAULT_API_VERSION = "v23.3";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter
@@ -265,8 +264,6 @@ public class VaultClient {
 	}
 
 	/**
-	 * Returns the session ID from the Vault client's auth response.
-	 *
 	 * @return The Vault session id from an Authentication Response
 	 */
 	public String getSessionId() {
@@ -274,21 +271,16 @@ public class VaultClient {
 	}
 
 	/**
-	 * Check if the Vault client has an auth response with a session ID.
-	 *
-	 * @return true if the Vault Client has an auth response with a session id.
+	 * @return True if the session id has been set
 	 */
 	public boolean hasSessionId() {
 		return authenticationResponse != null && authenticationResponse.getSessionId() != null && !authenticationResponse.getSessionId().isEmpty();
 	}
 
 	/**
-	 * Returns the user ID from the Vault client's auth response.
-	 *
-	 * Note that this will return null if VaultConnection was instantiated with an existing
+	 * @return The user id for the authenticated user. Note that this will
+	 * return null if VaultConnection was instantiated with an existing
 	 * Vault session (since an authentication call was not performed).
-	 *
-	 * @return The user id for the authenticated user
 	 */
 	public String getUserId() {
 		return authenticationResponse == null ? null : authenticationResponse.getUserId();
@@ -356,7 +348,7 @@ public class VaultClient {
 	 * from the request and the response must equal. If the session or vaultDNS
 	 * is not valid, the current sessionId will be cleared and an error logged.
 	 *
-	 * @return true if the session is valid.
+	 * @return true/false
 	 */
 	public boolean validateSession() {
 		boolean isValid = false;
@@ -491,7 +483,7 @@ public class VaultClient {
 
 	public static class Builder extends VaultModel {
 
-		private static Logger log = LoggerFactory.getLogger(Builder.class);
+		private static Logger log = Logger.getLogger(Builder.class);
 
 		private VaultClient.Settings settings;
 

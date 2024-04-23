@@ -8,31 +8,24 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 import java.io.*;
-import java.util.Properties;
 
 import static com.veeva.vault.vapil.api.client.VaultClient.AuthenticationType.BASIC;
 import static com.veeva.vault.vapil.api.client.VaultClient.AuthenticationType.SESSION_ID;
 
 public abstract class AbstractVaultClientParameterResolver implements ParameterResolver {
     private final static String VAPIL_SETTINGS_FILE = "settings_vapil_basic.json";
-    private final static String VAPIL_LR_SETTINGS_FILE = "settings_vapil_basic_lr.json";
     private File settingsFile;
     private VaultClient vaultClient;
     private String sessionId;
     private JsonNode rootNode;
 
-    public AbstractVaultClientParameterResolver() throws IOException {
+    public AbstractVaultClientParameterResolver() {
         initializeSettings();
         buildVaultClient();
     }
 
-    private void initializeSettings() throws IOException {
-        String vapilVersion = getVapilVersion();
-        if (vapilVersion.contains("BETA")) {
-            settingsFile = FileHelper.getSettingsFile(VAPIL_LR_SETTINGS_FILE);
-        } else {
-            settingsFile = FileHelper.getSettingsFile(VAPIL_SETTINGS_FILE);
-        }
+    private void initializeSettings() {
+        settingsFile = FileHelper.getSettingsFile(VAPIL_SETTINGS_FILE);
         rootNode = FileHelper.readSettingsFile(settingsFile);
         setSessionId();
     }
@@ -93,13 +86,6 @@ public abstract class AbstractVaultClientParameterResolver implements ParameterR
             default:
                 throw new IllegalArgumentException("Invalid authentication type: " + authType.getTypeName());
         }
-    }
-
-    public static String getVapilVersion() throws IOException {
-        Properties props = new Properties();
-        props.load(AbstractVaultClientParameterResolver.class.getClassLoader().getResourceAsStream("project.properties"));
-        String version = props.getProperty("version");
-        return version;
     }
 
     @Override

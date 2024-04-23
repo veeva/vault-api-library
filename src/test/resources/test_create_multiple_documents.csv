@@ -1,4 +1,0 @@
-file,name__v,type__v,subtype__v,classification__v,lifecycle__v,major_version_number__v,minor_version_number__v
-/test_create_file.txt,VAPIL Test Create Multiple Documents 1,VAPIL Test Doc Type,VAPIL Test Doc Subtype,VAPIL Test Doc Classification,General Lifecycle,0,1
-/test_create_file.txt,VAPIL Test Create Multiple Documents 2,VAPIL Test Doc Type,VAPIL Test Doc Subtype,VAPIL Test Doc Classification,General Lifecycle,0,1
-/test_create_file.txt,VAPIL Test Create Multiple Documents 3,VAPIL Test Doc Type,VAPIL Test Doc Subtype,VAPIL Test Doc Classification,General Lifecycle,0,1

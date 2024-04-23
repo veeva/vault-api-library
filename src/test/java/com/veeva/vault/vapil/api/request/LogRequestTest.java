@@ -8,7 +8,6 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.extension.DocumentRequestHelper;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -99,9 +98,7 @@ public class LogRequestTest {
 	}
 
 	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully Retrieve audit details: Document")
+	@DisplayName("successfully Retrieve audit details")
 	class testRetrieveAuditDetails {
 		@Test
 		@DisplayName("for specific dates of audit type: Document")
@@ -490,122 +487,6 @@ public class LogRequestTest {
 				os.write(response.getBinaryContent());
 			}
 			catch (IOException ignored){}
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve audit details: Object")
-	class TestRetrieveAuditDetailsObject {
-
-		private ObjectAuditResponse retrieveAuditDetailsResponse = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			retrieveAuditDetailsResponse = vaultClient.newRequest(LogRequest.class)
-					.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
-
-			assertNotNull(retrieveAuditDetailsResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(retrieveAuditDetailsResponse.isSuccessful());
-			AuditDetailsResponse.ResponseDetails details = retrieveAuditDetailsResponse.getResponseDetails();
-			assertNotNull(details);
-			assertNotNull(details.getOffset());
-			assertNotNull(details.getLimit());
-			assertNotNull(details.getSize());
-			assertNotNull(details.getTotal());
-
-			AuditDetailsResponse.ResponseDetails.DetailsObject detailsObject = details.getDetailsObject();
-			assertNotNull(detailsObject);
-			assertNotNull(detailsObject.getName());
-			assertNotNull(detailsObject.getUrl());
-			assertNotNull(detailsObject.getLabel());
-
-			List<ObjectAuditData> data = retrieveAuditDetailsResponse.getData();
-			assertNotNull(data);
-			for (ObjectAuditData objectAuditData : data) {
-				assertNotNull(objectAuditData.getId());
-				assertNotNull(objectAuditData.getTimestamp());
-				assertNotNull(objectAuditData.getUserName());
-				assertNotNull(objectAuditData.getFullName());
-				assertNotNull(objectAuditData.getAction());
-				assertNotNull(objectAuditData.getItem());
-//				assertNotNull(objectAuditData.getFieldName());
-//				assertNotNull(objectAuditData.getFieldLabel());
-//				assertNotNull(objectAuditData.getOldValue());
-//				assertNotNull(objectAuditData.getOldDisplayValue());
-//				assertNotNull(objectAuditData.getNewValue());
-//				assertNotNull(objectAuditData.getNewDisplayValue());
-				assertNotNull(objectAuditData.getRecordId());
-				assertNotNull(objectAuditData.getObjectName());
-				assertNotNull(objectAuditData.getObjectLabel());
-//				assertNotNull(objectAuditData.getWorkflowName());
-//				assertNotNull(objectAuditData.getTaskName());
-//				assertNotNull(objectAuditData.getVerdict());
-//				assertNotNull(objectAuditData.getReason());
-//				assertNotNull(objectAuditData.getCapacity());
-				assertNotNull(objectAuditData.getEventDescription());
-//				assertNotNull(objectAuditData.getOnBehalfOf());
-			}
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve audit details: System")
-	class TestRetrieveAuditDetailsSystem {
-
-		private SystemAuditResponse retrieveAuditDetailsResponse = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			retrieveAuditDetailsResponse = vaultClient.newRequest(LogRequest.class)
-					.retrieveAuditDetails(LogRequest.AuditTrailType.SYSTEM);
-
-			assertNotNull(retrieveAuditDetailsResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(retrieveAuditDetailsResponse.isSuccessful());
-			AuditDetailsResponse.ResponseDetails details = retrieveAuditDetailsResponse.getResponseDetails();
-			assertNotNull(details);
-			assertNotNull(details.getOffset());
-			assertNotNull(details.getLimit());
-			assertNotNull(details.getSize());
-			assertNotNull(details.getTotal());
-
-			AuditDetailsResponse.ResponseDetails.DetailsObject detailsObject = details.getDetailsObject();
-			assertNotNull(detailsObject);
-			assertNotNull(detailsObject.getName());
-			assertNotNull(detailsObject.getUrl());
-			assertNotNull(detailsObject.getLabel());
-
-			List<SystemAuditData> data = retrieveAuditDetailsResponse.getData();
-			assertNotNull(data);
-			for (SystemAuditData systemAuditData : data) {
-				assertNotNull(systemAuditData.getId());
-				assertNotNull(systemAuditData.getTimestamp());
-				assertNotNull(systemAuditData.getUserId());
-				assertNotNull(systemAuditData.getUserName());
-				assertNotNull(systemAuditData.getFullName());
-				assertNotNull(systemAuditData.getAction());
-				assertNotNull(systemAuditData.getItem());
-//				assertNotNull(systemAuditData.getFieldName());
-//				assertNotNull(systemAuditData.getOldValue());
-//				assertNotNull(systemAuditData.getNewValue());
-				assertNotNull(systemAuditData.getEventDescription());
-//				assertNotNull(systemAuditData.getOnBehalfOf());
-			}
 		}
 	}
 }

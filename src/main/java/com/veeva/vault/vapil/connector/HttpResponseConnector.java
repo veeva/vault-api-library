@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import okhttp3.Headers;
 import okhttp3.Response;
@@ -21,7 +20,7 @@ import okhttp3.ResponseBody;
  */
 public class HttpResponseConnector {
 
-	private static Logger log = LoggerFactory.getLogger(HttpResponseConnector.class);
+	private static Logger log = Logger.getLogger(HttpResponseConnector.class);
 
 	// Standard properties	
 	private Map<String, List<String>> headers;

@@ -3,9 +3,9 @@ package com.veeva.vault.vapil.extension;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.opencsv.CSVWriter;
+import com.veeva.vault.vapil.api.client.VaultClient;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.HashMap;
@@ -15,25 +15,28 @@ import java.util.Map;
 
 public class FileHelper {
 
-    static final String RESOURCES_FOLDER_DIRECTORY = "src" + File.separator + "test" + File.separator + "resources" + File.separator;
-    static final String SETTINGS_FILE_DIRECTORY = RESOURCES_FOLDER_DIRECTORY + File.separator + "settings_files";
+    static final String SETTINGS_FILE_DIRECTORY = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "settings_files";
     static final String TEST_FILE_PATH = "src" + File.separator + "test" +
             File.separator + "resources" + File.separator + "vapil_test_document.docx";
+    static final String RESUMABLE_UPLOAD_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "test_resumable_upload.txt";
     static final String LOADER_FILE_PATH = "src" + File.separator + "test" +
             File.separator + "resources" + File.separator + "loader_file.csv";
-
-    private static Logger log = LoggerFactory.getLogger(FileHelper.class);
+    static final String ANNOTATIONS_IMPORT_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "documents" + File.separator + "VAPIL Annotations Doc (Do Not Delete).pdf";
+    private static Logger log = Logger.getLogger(FileHelper.class);
 
     public static String getPathTestFile() {
         return TEST_FILE_PATH;
     }
-
-    public static String getPathResourcesFolder() {
-        return RESOURCES_FOLDER_DIRECTORY;
+    public static String getPathResumableUploadFile() {
+        return RESUMABLE_UPLOAD_FILE_PATH;
     }
-
     public static String getPathLoaderFile() {
         return LOADER_FILE_PATH;
+    }
+    public static String getPathAnnotationsImportFile() {
+        return ANNOTATIONS_IMPORT_FILE_PATH;
     }
     public static void createCsvFile(String filePath) {
         File csvFile = new File(filePath);
@@ -49,14 +52,11 @@ public class FileHelper {
     }
 
     public static void writeCsvFile(String csvPath, List<String[]> data) {
-        CsvMapper csvMapper = new CsvMapper();
-
-        try {
-            File outputFile = new File(csvPath);
-            csvMapper.writeValue(outputFile, data);
-            log.info("CSV file written successfully: " + csvPath);
+        try (CSVWriter writer = new CSVWriter(new FileWriter(csvPath))) {
+            writer.writeAll((data));
         } catch (IOException e) {
-            log.error("Error writing CSV file: " + csvPath, e);
+            log.error("Error writing CSV file: " + csvPath);
+            e.printStackTrace();
         }
     }
 

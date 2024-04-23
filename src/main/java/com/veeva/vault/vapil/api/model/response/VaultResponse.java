@@ -12,9 +12,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veeva.vault.vapil.api.model.VaultModel;
+import org.json.JSONObject;
 
 /**
  * Base Vault API response message
@@ -111,10 +110,6 @@ public class VaultResponse extends VaultModel {
 	 */
 	public static final String HTTP_HEADER_STATUS = "X-VaultAPI-Status";
 
-	/**
-	 * <b>X-VaultAPI-Status</b>
-	 */
-	public static final String HTTP_REFERENCE_ID = "X-VaultAPI-ReferenceId";
 
 
 	private byte[] binaryContent; // For requests that return binary data
@@ -127,9 +122,7 @@ public class VaultResponse extends VaultModel {
 	private String responseMessage;
 
 	/**
-	 * Determine if the response status equals WARNING.
-	 *
-	 * @return true if the response status equals WARNING
+	 * @return true if there was a warning response
 	 */
 	public boolean isWarning() {
 		if (this.responseStatus != null) {
@@ -139,9 +132,7 @@ public class VaultResponse extends VaultModel {
 	}
 
 	/**
-	 * Determine if the response status equals FAILURE.
-	 *
-	 * @return true if the response status equals FAILURE
+	 * @return true if there was a failure response
 	 */
 	public boolean isFailure() {
 		if (this.responseStatus != null) {
@@ -151,9 +142,7 @@ public class VaultResponse extends VaultModel {
 	}
 
 	/**
-	 * Determine if the response status equals SUCCESS.
-	 *
-	 * @return true if the response status equals SUCCESS
+	 * @return true if there was a successful response
 	 */
 	public boolean isSuccessful() {
 		if (this.responseStatus != null) {
@@ -183,7 +172,7 @@ public class VaultResponse extends VaultModel {
 	}
 
 	/**
-	 * Get the full response as a string.
+	 * Get the full response as a string
 	 *
 	 * @return The full response as a string
 	 */
@@ -198,14 +187,13 @@ public class VaultResponse extends VaultModel {
 	}
 
 	/**
-	 * Get the full response as a JSON Object.
+	 * Get the full response as a JSON Object
 	 *
 	 * @return The full response as a JSON Object
 	 */
 	@JsonIgnore
-	public JsonNode getResponseJSON() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.valueToTree(this.response);
+	public JSONObject getResponseJSON() {
+		return new JSONObject(this.response);
 	}
 
 	@JsonProperty("errors")
@@ -219,9 +207,9 @@ public class VaultResponse extends VaultModel {
 	}
 
 	/**
-	 * Determine if the response has errors.
+	 * Determine if errors exist in the API Response
 	 *
-	 * @return true if the response has errors
+	 * @return True if errors exist
 	 */
 	@JsonIgnore
 	public boolean hasErrors() {
@@ -239,9 +227,9 @@ public class VaultResponse extends VaultModel {
 	}
 
 	/**
-	 * Determine if the response has warnings.
+	 * Determine if warnings exist in the API Response
 	 *
-	 * @return true if the response has warnings
+	 * @return True if warnings exist
 	 */
 	@JsonIgnore
 	public boolean hasWarnings() {
@@ -331,13 +319,8 @@ public class VaultResponse extends VaultModel {
 		return getHeaderAsStringIgnoreCase(HTTP_HEADER_STATUS);
 	}
 
-	@JsonIgnore
-	public String getHeaderReferenceId() {
-		return getHeaderAsStringIgnoreCase(HTTP_REFERENCE_ID);
-	}
-
 	/**
-	 * For requests returning binary content.
+	 * For requests returning binary content
 	 *
 	 * @return Byte array for the returned binary content
 	 */
@@ -352,7 +335,7 @@ public class VaultResponse extends VaultModel {
 	}
 
 	/**
-	 * Return the file path For requests creating files.
+	 * Return the file path For requests creating files
 	 *
 	 * @return The file path of the created file
 	 */

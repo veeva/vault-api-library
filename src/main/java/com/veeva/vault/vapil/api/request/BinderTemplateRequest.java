@@ -20,9 +20,9 @@ import java.util.Map;
 /**
  * The Binder Template APIs retrieve information about Binder Templates
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#binder-templates">https://developer.veevavault.com/api/24.1/#binder-templates</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/23.3/#binder-templates">https://developer.veevavault.com/api/23.3/#binder-templates</a>
  */
-public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
+public class BinderTemplateRequest extends VaultRequest {
 	// API Endpoints
 	private static final String URL_BINDER_TEMPLATE_METADATA = "/metadata/objects/binders/templates";
 	private static final String URL_BINDER_TEMPLATE_NODE_METADATA = "/metadata/objects/binders/templates/bindernodes";
@@ -49,7 +49,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/binders/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-binder-template-metadata' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-binder-template-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-binder-template-metadata' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-binder-template-metadata</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateMetadataResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 				.retrieveBinderTemplateMetadata();</pre>
@@ -79,7 +79,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/binders/templates/bindernodes</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-binder-template-node-metadata' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-binder-template-node-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-binder-template-node-metadata' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-binder-template-node-metadata</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateMetadataResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 				.retrieveBinderTemplateNodeMetadata();</pre>
@@ -112,7 +112,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-binder-template-collection' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-binder-template-collection</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-binder-template-collection' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-binder-template-collection</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 				.retrieveBinderTemplateCollection();</pre>
@@ -143,7 +143,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/templates/{template_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-binder-template-attributes' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-binder-template-attributes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-binder-template-attributes' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-binder-template-attributes</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateResponse templates = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 				.retrieveBinderTemplateCollection();</pre>
@@ -180,7 +180,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/templates/{template_name}/bindernodes</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-binder-template-node-attributes' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-binder-template-node-attributes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#retrieve-binder-template-node-attributes' target='_blank'>https://developer.veevavault.com/api/23.3/#retrieve-binder-template-node-attributes</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateResponse resp = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * .retrieveBinderTemplateNodeAttributes(binderTemplateName);</pre>
@@ -216,7 +216,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-binder-template' target='_blank'>https://developer.veevavault.com/api/24.1/#create-binder-template</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-binder-template' target='_blank'>https://developer.veevavault.com/api/23.3/#create-binder-template</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 			.createBinderTemplate(template);</pre>
@@ -235,7 +235,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#bulk-create-binder-templates' target='_blank'>https://developer.veevavault.com/api/24.1/#bulk-create-binder-templates</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#bulk-create-binder-templates' target='_blank'>https://developer.veevavault.com/api/23.3/#bulk-create-binder-templates</a>
 	 * @vapil.request <pre>
 	 * <i>Prep a CSV string for testing</i>
 	 * StringBuilder csvText = new StringBuilder("name__v,label__v,type__v,subtype__v,classification__v,active__v\n");
@@ -315,7 +315,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/binders/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#bulk-update-binder-templates' target='_blank'>https://developer.veevavault.com/api/24.1/#bulk-update-binder-templates</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#bulk-update-binder-templates' target='_blank'>https://developer.veevavault.com/api/23.3/#bulk-update-binder-templates</a>
 	 */
 	public BinderTemplateBulkResponse bulkUpdateBinderTemplates() {
 		return bulkBinderOperation(HttpMethod.PUT, URL_BINDER_TEMPLATES);
@@ -330,7 +330,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/binders/templates/{template_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#delete-binder-template' target='_blank'>https://developer.veevavault.com/api/24.1/#delete-binder-template</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#delete-binder-template' target='_blank'>https://developer.veevavault.com/api/23.3/#delete-binder-template</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateResponse resp = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 				.deleteBinderTemplate(binderTemplateName);</pre>
@@ -358,7 +358,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders/templates/{template_name}/bindernodes</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-binder-template-node' target='_blank'>https://developer.veevavault.com/api/24.1/#create-binder-template-node</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-binder-template-node' target='_blank'>https://developer.veevavault.com/api/23.3/#create-binder-template-node</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 				.createBinderTemplateNode(binderTemplateName, templateNode);</pre>
@@ -391,7 +391,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateNodeBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders/templates/{template_name}/bindernodes</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-binder-template-node' target='_blank'>https://developer.veevavault.com/api/24.1/#create-binder-template-node</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#create-binder-template-node' target='_blank'>https://developer.veevavault.com/api/23.3/#create-binder-template-node</a>
 	 * @vapil.request <pre>
 	 *  <i>Example 1 - CSV as File</i>
 	 * BinderTemplateNodeBulkResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
@@ -433,7 +433,7 @@ public class BinderTemplateRequest extends VaultRequest<BinderTemplateRequest> {
 	 * @return BinderTemplateNodeBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/binders/templates/{template_name}/bindernodes</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#replace-binder-template-nodes' target='_blank'>https://developer.veevavault.com/api/24.1/#replace-binder-template-nodes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/23.3/#replace-binder-template-nodes' target='_blank'>https://developer.veevavault.com/api/23.3/#replace-binder-template-nodes</a>
 	 * @vapil.request <pre>
 	 * BinderTemplateNodeBulkResponse response = vaultClient.newRequest(BinderTemplateRequest.class)
 	 * 				.setInputPath(filePath)

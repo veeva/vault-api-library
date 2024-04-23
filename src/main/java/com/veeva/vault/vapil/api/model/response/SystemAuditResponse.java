@@ -85,50 +85,5 @@ public class SystemAuditResponse extends AuditDetailsResponse {
 		public void setUserId(String userId) {
 			this.set("user_id", userId);
 		}
-
-		@JsonProperty("user_name")
-		public String getUserName() {
-			return this.getString("user_name");
-		}
-
-		public void setUserName(String userName) {
-			this.set("user_name", userName);
-		}
-
-		@JsonProperty("full_name")
-		public String getFullName() {
-			return this.getString("full_name");
-		}
-
-		public void setFullName(String fullName) {
-			this.set("full_name", fullName);
-		}
-
-		@JsonProperty("timestamp")
-		public String getTimestamp() {
-			return this.getString("timestamp");
-		}
-
-		public void setTimestamp(String timestamp) {
-			this.set("timestamp", timestamp);
-		}
-
-		@JsonProperty("item")
-		public String getItem() {
-			return this.getString("item");
-		}
-
-		public void setItem(String item) {
-			this.set("item", item);
-		}
-
-		@JsonProperty("on_behalf_of")
-		public String getOnBehalfOf() {
-			return this.getString("on_behalf_of");
-		}
-
-		public void setOnBehalfOf(String onBehalfOf) {
-			this.set("on_behalf_of", onBehalfOf);
-		}
 	}
 }

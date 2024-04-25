@@ -354,7 +354,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 *
 	 * @param referenceId The reference id
 	 */
-	protected T setHeaderReferenceId(String referenceId) {
+	public T setHeaderReferenceId(String referenceId) {
 		this.referenceId = referenceId;
 		return (T) this;
 	}

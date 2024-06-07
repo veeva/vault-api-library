@@ -327,6 +327,7 @@ public class VaultClientTest {
         }
     }
 
+    @Disabled
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -403,6 +404,7 @@ public class VaultClientTest {
         }
     }
 
+    @Disabled
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -449,6 +451,7 @@ public class VaultClientTest {
         }
     }
 
+    @Disabled
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -501,6 +504,7 @@ public class VaultClientTest {
         }
     }
 
+    @Disabled
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)

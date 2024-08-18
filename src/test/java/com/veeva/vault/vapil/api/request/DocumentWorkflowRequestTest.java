@@ -33,9 +33,9 @@ public class DocumentWorkflowRequestTest {
 
 	@BeforeAll
 	static void setup(VaultClient vaultClient) throws IOException {
-		DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
-		Assertions.assertTrue(response.isSuccessful());
-		documents.add(String.valueOf(response.getDocument().getId()));
+		DocumentBulkResponse response = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
+		int docId = response.getData().get(0).getDocument().getId();
+		documents.add(String.valueOf(docId));
 	}
 
 	@AfterAll

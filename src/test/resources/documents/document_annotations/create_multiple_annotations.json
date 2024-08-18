@@ -1,0 +1,12 @@
+[ {
+  "type__sys" : "note__sys",
+  "document_version_id__sys" : "1221_0_1",
+  "color__sys" : "orange_dark__sys",
+  "comment__sys" : "VAPIL Test",
+  "placemark" : {
+    "type__sys" : "sticky__sys",
+    "page_number__sys" : 1,
+    "x_coordinate__sys" : 100,
+    "y_coordinate__sys" : 100
+  }
+} ]

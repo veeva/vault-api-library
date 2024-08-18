@@ -20,7 +20,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Picklist requests, including retrieval of Picklist meta-data
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#picklists">https://developer.veevavault.com/api/24.1/#picklists</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#picklists">https://developer.veevavault.com/api/24.2/#picklists</a>
  */
 public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	// API Endpoints
@@ -41,7 +41,7 @@ public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	 * @return PicklistResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/picklists</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-all-picklists' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-all-picklists</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-all-picklists' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-all-picklists</a>
 	 * @vapil.request <pre>
 	 * PicklistResponse resp = vaultClient.newRequest(PicklistRequest.class).retrieveAllPicklists();</pre>
 	 * @vapil.response <pre>
@@ -73,7 +73,7 @@ public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	 * @return PicklistValueResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/picklists/{picklist_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-picklist-values' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-picklist-values</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-picklist-values' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-picklist-values</a>
 	 * @vapil.request <pre>
 	 * PicklistValueResponse resp = vaultClient.newRequest(PicklistRequest.class).retrievePicklistValues(picklistName);</pre>
 	 * @vapil.response <pre>
@@ -97,7 +97,7 @@ public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	 * @return PicklistValueResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/picklists/{picklist_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-picklist-values' target='_blank'>https://developer.veevavault.com/api/24.1/#create-picklist-values</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-picklist-values' target='_blank'>https://developer.veevavault.com/api/24.2/#create-picklist-values</a>
 	 * @vapil.request <pre>
 	 * PicklistValueResponse resp = vaultClient.newRequest(PicklistRequest.class).createPicklistValues(picklistName, newPicklistValues);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());
@@ -129,7 +129,7 @@ public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	 * @return PicklistValueResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/picklists/{picklist_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-picklist-value-label' target='_blank'>https://developer.veevavault.com/api/24.1/#update-picklist-value-label</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-picklist-value-label' target='_blank'>https://developer.veevavault.com/api/24.2/#update-picklist-value-label</a>
 	 * @vapil.request <pre>
 	 * PicklistValueResponse resp = vaultClient.newRequest(PicklistRequest.class).updatePicklistValueLabel(picklistName, newPicklistValues);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());
@@ -167,7 +167,7 @@ public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	 * @return VaultResponse for ResponseStatus SUCCESS/FAILURE
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/picklists/{picklist_name}/{picklist_value_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-picklist-value' target='_blank'>https://developer.veevavault.com/api/24.1/#update-picklist-value</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-picklist-value' target='_blank'>https://developer.veevavault.com/api/24.2/#update-picklist-value</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(PicklistRequest.class).updatePicklistValue(picklistName, picklistValueName, status);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());
@@ -192,7 +192,7 @@ public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	 * @return VaultResponse for ResponseStatus SUCCESS/FAILURE
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/picklists/{picklist_name}/{picklist_value_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-picklist-value' target='_blank'>https://developer.veevavault.com/api/24.1/#update-picklist-value</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-picklist-value' target='_blank'>https://developer.veevavault.com/api/24.2/#update-picklist-value</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(PicklistRequest.class).updatePicklistValue(picklistName, picklistValueName, newName);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());
@@ -228,7 +228,7 @@ public class PicklistRequest extends VaultRequest<PicklistRequest> {
 	 * @return VaultResponse for ResponseStatus SUCCESS/FAILURE
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/picklists/{picklist_name}/{picklist_value_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#inactivate-picklist-value' target='_blank'>https://developer.veevavault.com/api/24.1/#inactivate-picklist-value</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#inactivate-picklist-value' target='_blank'>https://developer.veevavault.com/api/24.2/#inactivate-picklist-value</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(PicklistRequest.class).inactivatePicklistValue(picklistName, picklistValueName);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());

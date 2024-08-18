@@ -3,15 +3,10 @@ package com.veeva.vault.vapil.api.request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.ObjectRecord;
-import com.veeva.vault.vapil.api.model.response.ObjectRecordBulkResponse;
-import com.veeva.vault.vapil.api.model.response.ObjectRecordTypeResponse;
-import com.veeva.vault.vapil.api.model.response.QueryResponse;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import com.veeva.vault.vapil.api.model.common.ObjectRecordType;
+import com.veeva.vault.vapil.api.model.response.*;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import com.veeva.vault.vapil.extension.TestRunHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 import java.io.IOException;
@@ -19,33 +14,26 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+
+@Tag("ObjectRecordTypeTest")
+@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
-@Disabled
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Object Record Type Request should")
 public class ObjectRecordTypeTest {
 
-    @Test
-    void testRetrieveDetailsFromAllObjectTypes(VaultClient vaultClient) {
-        ObjectRecordTypeResponse resp = vaultClient.newRequest(ObjectRecordRequest.class).retrieveDetailsFromAllObjectTypes();
-        Assertions.assertTrue(resp.isSuccessful());
-        Assertions.assertNull(resp.getErrors());
-        Assertions.assertNotNull(resp.getData());
-        Assertions.assertNotEquals(0, resp.getData().size());
+    private static VaultClient vaultClient;
+
+    @BeforeAll
+    static void setup(VaultClient client) {
+        vaultClient = client;
+        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
     }
 
     @Test
-    void testRetrieveDetailsFromASpecificObject(VaultClient vaultClient) {
-        String objectName = "dataset_item__sys";
-        String objectType = "base__v";
-        ObjectRecordTypeResponse resp = vaultClient.newRequest(ObjectRecordRequest.class).retrieveDetailsFromASpecificObject(objectName, objectType);
-        Assertions.assertNotNull(resp);
-        Assertions.assertTrue(resp.isSuccessful());
-        Assertions.assertFalse(resp.hasErrors());
-        Assertions.assertNotNull(resp.getData());
-        Assertions.assertNotEquals(0, resp.getData().size());
-        //displayResults(resp, reporter);
-    }
-
-    @Test
+    @Disabled
     public void testCreateObject(VaultClient vaultClient) {
 
         List<ObjectRecord> objectRecords = new ArrayList<>();
@@ -75,6 +63,7 @@ public class ObjectRecordTypeTest {
     }
 
     @Test
+    @Disabled
     public void testChangeObjectType(VaultClient vaultClient) {
 
         List<ObjectRecord> objectRecords = new ArrayList<>();
@@ -164,6 +153,87 @@ public class ObjectRecordTypeTest {
         }
     }
 
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve details from all object types")
+    class TestRetrieveDetailsFromAllObjectTypes {
+        ObjectRecordTypeBulkResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(ObjectRecordRequest.class)
+                    .retrieveDetailsFromAllObjectTypes();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getResponseDetails());
+            assertNotNull(response.getResponseDetails().getSize());
+            assertNotNull(response.getResponseDetails().getTotal());
+            assertNotNull(response.getData());
+            for (ObjectRecordType objectRecordType : response.getData()) {
+                assertNotNull(objectRecordType.getName());
+                assertNotNull(objectRecordType.getObject());
+                assertNotNull(objectRecordType.getActive());
+                assertNotNull(objectRecordType.getLabel());
+                assertNotNull(objectRecordType.getLabelPlural());
+                assertNotNull(objectRecordType.getTypeFields());
+                for (ObjectRecordType.ObjectRecordTypeField field : objectRecordType.getTypeFields()) {
+                    assertNotNull(field.getName());
+                    assertNotNull(field.getSource());
+                    assertNotNull(field.getRequired());
+                }
+            }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve details from a specific object")
+    class TestRetrieveDetailsFromASpecificObject {
+        ObjectRecordTypeResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            String objectName = "dataset_item__sys";
+            String objectType = "base__v";
+            response = vaultClient.newRequest(ObjectRecordRequest.class)
+                    .setLocalized(true)
+                    .retrieveDetailsFromASpecificObject(objectName, objectType);
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getData());
+            assertNotNull(response.getData().getLocalizedData());
+            assertNotNull(response.getData().getLocalizedData().getLabel());
+            assertNotNull(response.getData().getLocalizedData().getLabelPlural());
+            assertNotNull(response.getData().getName());
+            assertNotNull(response.getData().getName());
+            assertNotNull(response.getData().getObject());
+            assertNotNull(response.getData().getActive());
+            assertNotNull(response.getData().getLabel());
+            assertNotNull(response.getData().getLabelPlural());
+            assertNotNull(response.getData().getTypeFields());
+            for (ObjectRecordType.ObjectRecordTypeField field : response.getData().getTypeFields()) {
+                assertNotNull(field.getName());
+                assertNotNull(field.getSource());
+                assertNotNull(field.getRequired());
+            }
+        }
+    }
 
     /*private static void displayResults(ObjectRecordTypeResponse resp, TestReporter reporter) {
 

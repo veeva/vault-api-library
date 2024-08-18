@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Tag("BinderRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -44,9 +47,8 @@ public class BinderRequestTest {
         vaultClient = client;
         Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 
-        DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
-        Assertions.assertTrue(response.isSuccessful());
-        docId = response.getDocument().getId();
+        DocumentBulkResponse response = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
+        docId = response.getData().get(0).getDocument().getId();
     }
 
     @AfterAll
@@ -221,7 +223,7 @@ public class BinderRequestTest {
     @DisplayName("successfully add a document to a binder")
     public void testAddDocumentToBinder() {
         BinderSectionResponse response = vaultClient.newRequest(BinderRequest.class)
-                .addDocumentToBinder(binderIds.get(0), docId, "", BinderRequest.BindingRule.CURRENT);
+                .addDocumentToBinder(binderIds.get(0), docId);
 
         Assertions.assertTrue(response.isSuccessful());
         Assertions.assertNotNull(response.getId());
@@ -463,6 +465,73 @@ public class BinderRequestTest {
 
             Assertions.assertTrue(response.isSuccessful());
             Assertions.assertNotNull(response.getDocument().getId());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully add a document to a binder")
+    class TestAddDocumentToBinder {
+        BinderSectionResponse response = null;
+        List<Integer> docIds = new ArrayList<>();
+        List<Integer> binderIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+//            Create Document
+            DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
+            docId = createResponse.getData().get(0).getDocument().getId();
+
+//            Create Binder
+            Document doc = new Document();
+
+            doc.setName("VAPIL test create binder " + ZonedDateTime.now());
+            doc.setLifecycle(DOC_LIFECYCLE);
+            doc.setType(DOC_TYPE_LABEL);
+            doc.setSubtype(DOC_SUBTYPE_LABEL);
+            doc.setClassification(DOC_CLASSIFICATION_LABEL);
+
+            BinderResponse response = vaultClient.newRequest(BinderRequest.class)
+                    .createBinder(doc);
+
+            Assertions.assertTrue(response.isSuccessful());
+            Assertions.assertNotNull(response.getDocument().getId());
+            binderIds.add(response.getDocument().getId());
+        }
+
+        @AfterAll
+        public void teardown() {
+            DocumentResponse deleteDocResponse = vaultClient.newRequest(DocumentRequest.class)
+                    .deleteSingleDocument(docIds.get(0));
+
+            assertTrue(deleteDocResponse.isSuccessful());
+
+            BinderResponse deleteBinderResponse = vaultClient.newRequest(BinderRequest.class)
+                    .deleteBinder(binderIds.get(0));
+
+            assertTrue(deleteBinderResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(BinderRequest.class)
+                    .setOrder(1)
+                    .setBindingRule(BinderRequest.BindingRule.DEFAULT)
+                    .setParentId("rootNode")
+                    .setMajorVersion(0)
+                    .setMinorVersion(1)
+                    .addDocumentToBinder(binderIds.get(0), docIds.get(0));
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getId());
         }
     }
 

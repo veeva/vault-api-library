@@ -13,7 +13,7 @@ import com.veeva.vault.vapil.api.model.VaultModel;
 import java.util.List;
 
 /**
- * Model for Document Annotation Reply Data
+ * Model for Document Annotation Reply Read Data
  */
 public class DocumentAnnotationReply extends VaultModel {
 	@JsonProperty("document_version_id__sys")

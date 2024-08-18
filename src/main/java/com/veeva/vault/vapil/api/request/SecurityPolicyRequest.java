@@ -9,7 +9,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * All Security Policy requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#retrieve-all-security-policies">https://developer.veevavault.com/api/24.1/#retrieve-all-security-policies</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#retrieve-all-security-policies">https://developer.veevavault.com/api/24.2/#retrieve-all-security-policies</a>
  */
 public class SecurityPolicyRequest extends VaultRequest<SecurityPolicyRequest> {
 	//API Endpoints
@@ -26,7 +26,7 @@ public class SecurityPolicyRequest extends VaultRequest<SecurityPolicyRequest> {
 	 * @return MetaDataSecurityPolicyResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/securitypolicies</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-security-policy-metadata' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-security-policy-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-security-policy-metadata' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-security-policy-metadata</a>
 	 * @vapil.request <pre>
 	 * SecurityPolicyRequest request = vaultClient.newRequest(SecurityPolicyRequest.class).retrieveSecurityPolicyMetaData();</pre>
 	 * @vapil.response <pre>System.out.println("Retrieving Security Policy Metadata");
@@ -62,7 +62,7 @@ public class SecurityPolicyRequest extends VaultRequest<SecurityPolicyRequest> {
 	 * @return SecurityPoliciesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/securitypolicies</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-all-security-policies' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-all-security-policies</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-all-security-policies' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-all-security-policies</a>
 	 * @vapil.request <pre>
 	 * SecurityPolicyRequest request = vaultClient.newRequest(SecurityPolicyRequest.class).retrieveAllSecurityPolicies();</pre>
 	 * @vapil.response <pre>System.out.println("Retrieving all Security policies");
@@ -91,7 +91,7 @@ public class SecurityPolicyRequest extends VaultRequest<SecurityPolicyRequest> {
 	 * @return SecurityPolicyResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/securitypolicies/{security_policy_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-security-policy' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-security-policy</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-security-policy' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-security-policy</a>
 	 * @vapil.request <pre>
 	 * SecurityPolicyRequest request = vaultClient.newRequest(SecurityPolicyRequest.class).retrieveSecurityPolicy(name);</pre>
 	 * @vapil.response <pre>System.out.println("Retrieving Security policy " + name);

@@ -39,7 +39,7 @@ public class DocumentLifecycleRequestTest {
 		vaultClient = client;
 		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 
-		DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient);
+		DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 3);
 
 		Assertions.assertTrue(createResponse.isSuccessful());
 

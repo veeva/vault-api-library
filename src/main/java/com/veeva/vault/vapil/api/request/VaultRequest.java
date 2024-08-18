@@ -353,6 +353,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * Reference ID is returned in the response headers of the returned Response class.
 	 *
 	 * @param referenceId The reference id
+	 * @return The request
 	 */
 	public T setHeaderReferenceId(String referenceId) {
 		this.referenceId = referenceId;

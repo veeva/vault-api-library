@@ -11,7 +11,10 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.metadata.DocumentField;
 import com.veeva.vault.vapil.api.model.response.*;
-import com.veeva.vault.vapil.extension.*;
+import com.veeva.vault.vapil.extension.DocumentRequestHelper;
+import com.veeva.vault.vapil.extension.FileHelper;
+import com.veeva.vault.vapil.extension.FileStagingHelper;
+import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -47,6 +50,7 @@ public class DocumentRequestTest {
     static final String UPDATE_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathUpdateMultipleDocuments();
     static final String DELETE_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathDeleteMultipleDocuments();
     static final String RECLASSIFY_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathReclassifyMultipleDocuments();
+    static final String UNDO_COLLAB_CHECKOUT_CSV_PATH = DocumentRequestHelper.getPathUndoCollabCheckout();
     static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
     private static VaultClient vaultClient;
 
@@ -70,7 +74,6 @@ public class DocumentRequestTest {
             response = vaultClient.newRequest(DocumentRequest.class)
                     .setHeaderReferenceId(referenceIdHeader)
                     .retrieveAllDocumentFields();
-
 
 
             Assertions.assertTrue(response.isSuccessful());
@@ -710,7 +713,7 @@ public class DocumentRequestTest {
 
         @AfterAll
         public void teardown() {
-            FileHelper.createCsvFile(DELETE_DOCUMENTS_CSV_PATH);
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
 
             List<String[]> data = new ArrayList<>();
             data.add(new String[]{"id"});
@@ -865,7 +868,7 @@ public class DocumentRequestTest {
 
         @AfterAll
         public void teardown() {
-            FileHelper.createCsvFile(DELETE_DOCUMENTS_CSV_PATH);
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
 
             List<String[]> data = new ArrayList<>();
             data.add(new String[]{"id"});
@@ -976,7 +979,7 @@ public class DocumentRequestTest {
 
         @AfterAll
         public void teardown() {
-            FileHelper.createCsvFile(DELETE_DOCUMENTS_CSV_PATH);
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
 
             List<String[]> data = new ArrayList<>();
             data.add(new String[]{"id"});
@@ -1207,7 +1210,7 @@ public class DocumentRequestTest {
                 docIds.add(documentResponse.getDocument().getId());
             }
 
-            FileHelper.createCsvFile(DELETE_DOCUMENTS_CSV_PATH);
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
 
 //            Write Headers and data to CSV file
             List<String[]> deleteData = new ArrayList<>();
@@ -1338,8 +1341,8 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
-//			Create objects
-            DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient);
+//			Create documents
+            DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 3);
             assertTrue(createResponse.isSuccessful());
 
             for (DocumentResponse documentResponse : createResponse.getData()) {
@@ -1383,6 +1386,49 @@ public class DocumentRequestTest {
             assertTrue(updateMultipleDocumentsResponse.hasWarnings());
             assertFalse(updateMultipleDocumentsResponse.hasErrors());
             assertNull(updateMultipleDocumentsResponse.getErrors());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve deleted document IDs")
+    @Disabled("Collaborative Authoring can only be started from UI. Enable first, then " +
+            "test this manually")
+    class TestUndoCollaborativeAuthoringCheckout {
+        DocumentCollaborativeCheckoutResponse response = null;
+        VaultClient vaultClient = null;
+
+        @BeforeAll
+        public void setup() throws InterruptedException, IOException {
+            vaultClient = VaultClient.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
+                    .withVaultDNS("veeva-vaultprod.veevavault.com")
+                    .withVaultClientId("veeva-vault-devsupport-client-vapil")
+                    .withVaultSessionId("51755BC6B8211084A93668C883024532358CC3E556A04DEA6430852D96A320C6355E94AF91A6CD3CDEC265C507CFF71A9E3C7395496056B803E3F331C9039F2F")
+                    .build();
+
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(UNDO_COLLAB_CHECKOUT_CSV_PATH)
+                    .undoCollaborativeAuthoringCheckout();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+
+            for (DocumentCollaborativeCheckoutResponse.UndoCheckoutResponse response : response.getData()) {
+                assertNotNull(response.getId());
+                assertNotNull(response.getResponseStatus());
+                assertNotNull(response.getResponseMessage());
+            }
         }
     }
 }

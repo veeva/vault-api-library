@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Users
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#users">https://developer.veevavault.com/api/24.1/#users</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#users">https://developer.veevavault.com/api/24.2/#users</a>
  */
 public class UserRequest extends VaultRequest<UserRequest> {
 	private static Logger log = LoggerFactory.getLogger(UserRequest.class);
@@ -39,6 +39,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	private static final String URL_USER_CHANGE_PASSWORD = "/objects/users/{user_id}/password";
 	private static final String URL_USER_VAULT_MEMBERSHIP = "/objects/users/{user_id}/vault_membership/{vault_id}";
 	private static final String URL_USER_PERMISSIONS = "/objects/users/{user_id}/permissions";
+	private static final String URL_LICENSE_USAGE = "/objects/licenses";
 
 	// query string parameters for user retrieval
 	private static final String HTTP_QUERYSTRING_VAULTS = "vaults";
@@ -85,7 +86,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return MetaDataUserResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-user-metadata' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-user-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-user-metadata' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-user-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataUserResponse resp = vaultClient.newRequest(UserRequest.class).retrieveUserMetadata();</pre>
 	 * @vapil.response <pre>
@@ -124,7 +125,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-all-users' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-all-users</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-all-users' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-all-users</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .retrieveAllUsers();</pre>
@@ -190,7 +191,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-user' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-user' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-user</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(UserRequest.class).retrieveUser(userId);</pre>
 	 * @vapil.response <pre>
@@ -217,7 +218,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-single-user' target='_blank'>https://developer.veevavault.com/api/24.1/#create-single-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-single-user' target='_blank'>https://developer.veevavault.com/api/24.2/#create-single-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeForm()
@@ -240,7 +241,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-single-user' target='_blank'>https://developer.veevavault.com/api/24.1/#update-single-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-single-user' target='_blank'>https://developer.veevavault.com/api/24.2/#update-single-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeXForm()
@@ -266,7 +267,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users/{user_id}/password</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#change-your-password' target='_blank'>https://developer.veevavault.com/api/24.1/#change-your-password</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#change-your-password' target='_blank'>https://developer.veevavault.com/api/24.2/#change-your-password</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(UserRequest.class).changePassword(userId, oldPass, newPass);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());
@@ -295,7 +296,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/{id}/permissions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-user-permissions' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-user-permissions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-user-permissions' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-user-permissions</a>
 	 * @vapil.request <pre>
 	 * UserPermissionResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .retrieveUserPermissions(userId);</pre>
@@ -329,7 +330,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/users/{user_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#disable-user' target='_blank'>https://developer.veevavault.com/api/24.1/#disable-user</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#disable-user' target='_blank'>https://developer.veevavault.com/api/24.2/#disable-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setDomainAsTrue()
@@ -357,7 +358,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#create-multiple-users' target='_blank'>https://developer.veevavault.com/api/24.1/#create-multiple-users</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-multiple-users' target='_blank'>https://developer.veevavault.com/api/24.2/#create-multiple-users</a>
 	 * @vapil.request <pre>
 	 * UserBulkResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeCsv()
@@ -395,7 +396,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-multiple-users' target='_blank'>https://developer.veevavault.com/api/24.1/#update-multiple-users</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-multiple-users' target='_blank'>https://developer.veevavault.com/api/24.2/#update-multiple-users</a>
 	 * @vapil.request <pre>
 	 * UserBulkResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeCsv()
@@ -434,7 +435,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users/{user_id}/vault_membership/{vault_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#update-vault-membership' target='_blank'>https://developer.veevavault.com/api/24.1/#update-vault-membership</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-vault-membership' target='_blank'>https://developer.veevavault.com/api/24.2/#update-vault-membership</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeXForm()
@@ -450,6 +451,44 @@ public class UserRequest extends VaultRequest<UserRequest> {
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 
 		return send(HttpMethod.PUT, request, VaultResponse.class);
+	}
+
+	/**
+	 * <b>Retrieve Application License Usage</b>
+	 * <p>
+	 * Retrieve your current license usage compared to the licenses that your organization has purchased.
+	 * This information is similar to the information displayed in the Vault UI from Admin &gt; Settings &gt; General Settings.
+	 *
+	 * @return UserLicenseUsageResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/objects/licenses</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-application-license-usage' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-application-license-usage</a>
+	 * @vapil.request <pre>
+	 * UserLicenseUsageResponse response = vaultClient.newRequest(UserRequest.class)
+	 * 		.retrieveApplicationLicenseUsage();
+	 * </pre>
+	 * @vapil.response <pre>
+	 * for (Application application : response.getApplications()) {
+	 * 		System.out.println(("--------Application--------"));
+	 * 		System.out.println("Application Name = " + application.getApplicationName());
+	 * 		System.out.println(("--------Full License--------"));
+	 * 		System.out.println("Licensed = " + application.getUserLicensing().getFullLicense().getLicensed());
+	 * 		System.out.println("Used = " + application.getUserLicensing().getFullLicense().getUsed());
+	 * 		System.out.println(("--------Read Only License--------"));
+	 * 		System.out.println("Licensed = " + application.getUserLicensing().getReadOnlyLicense().getLicensed());
+	 * 		System.out.println("Used = " + application.getUserLicensing().getReadOnlyLicense().getUsed());
+	 * 		System.out.println(("--------External License--------"));
+	 * 		System.out.println("Licensed = " + application.getUserLicensing().getExternalLicense().getLicensed());
+	 * 		System.out.println("Used = " + application.getUserLicensing().getExternalLicense().getUsed());
+	 * }
+	 * </pre>
+	 */
+	public UserLicenseUsageResponse retrieveApplicationLicenseUsage() {
+		String url = vaultClient.getAPIEndpoint(URL_LICENSE_USAGE);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		return send(HttpMethod.GET, request, UserLicenseUsageResponse.class);
 	}
 
 	/**

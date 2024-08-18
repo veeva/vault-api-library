@@ -7,13 +7,22 @@
  */
 package com.veeva.vault.vapil.api.request;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.response.DocumentAnnotationResponse;
 import com.veeva.vault.vapil.api.model.common.DocumentAnnotation;
 import com.veeva.vault.vapil.api.model.common.DocumentAnnotationReply;
 import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.model.response.DocumentAnnotationPlacemarkTypeMetadataResponse.PlacemarkTypeMetadata;
+import com.veeva.vault.vapil.api.model.response.DocumentAnnotationPlacemarkTypeMetadataResponse.PlacemarkTypeMetadata.PlacemarkField;
+import com.veeva.vault.vapil.api.model.response.DocumentAnnotationReferenceTypeMetadataResponse.ReferenceTypeMetadata;
+import com.veeva.vault.vapil.api.model.response.DocumentAnnotationReferenceTypeMetadataResponse.ReferenceTypeMetadata.ReferenceField;
+import com.veeva.vault.vapil.api.model.response.DocumentAnnotationTypeMetadataResponse.AnnotationTypeMetadata;
+import com.veeva.vault.vapil.extension.DocumentAnnotationRequestHelper;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
@@ -22,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,39 +40,27 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(VaultClientParameterResolver.class)
 @DisplayName("Document annotation request should")
 public class DocumentAnnotationRequestTest {
-    static final String DELETE_ANNOTATIONS_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "delete_annotations.csv";
-    static final String ANNOTATIONS_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "VAPIL Annotations Doc (Do Not Delete).pdf";
-    static final int DOC_ID = 876;
-    static final int MAJOR_VERSION = 0;
-    static final int MINOR_VERSION = 1;
+    static final String DELETE_ANNOTATIONS_FILE_PATH = DocumentAnnotationRequestHelper.getDeleteAnnotationsFilePath();
+    static final String UPDATE_ANNOTATIONS_FILE_PATH = DocumentAnnotationRequestHelper.getUpdateAnnotationsFilePath();
+    static final String ANNOTATED_DOC_FILE_PATH = DocumentAnnotationRequestHelper.getAnnotatedDocFilePath();
+    static final String CREATE_ANNOTATIONS_FILE_PATH = DocumentAnnotationRequestHelper.getCreateAnnotationsFilePath();
+    static final String ADD_REPLIES_FILE_PATH = DocumentAnnotationRequestHelper.getAddRepliesFilePath();
     private static Integer docId;
     private static Integer majorVersionNumber;
     private static Integer minorVersionNumber;
     private static VaultClient vaultClient;
 
     @BeforeAll
-    static void setup(VaultClient client) {
+    static void setup(VaultClient client) throws IOException {
         vaultClient = client;
         assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 
 //		Retrieve "VAPIL Annotations Doc" ID
-        DocumentsResponse documentBulkResponse = vaultClient.newRequest(DocumentRequest.class)
-                .retrieveAllDocuments();
+        QueryResponse.QueryResult queryResult = DocumentAnnotationRequestHelper.getAnnotationsDoc(vaultClient);
 
-        assertTrue(documentBulkResponse.isSuccessful());
-
-        for (DocumentsResponse.DocumentNode doc : documentBulkResponse.getDocuments()) {
-            if (doc.getDocument().getName().contains("VAPIL Annotations Doc")) {
-                docId = doc.getDocument().getId();
-                majorVersionNumber = doc.getDocument().getMajorVersionNumber();
-                minorVersionNumber = doc.getDocument().getMinorVersionNumber();
-                break;
-            }
-        }
-
-        Assertions.assertNotNull(docId);
-        Assertions.assertNotNull(majorVersionNumber);
-        Assertions.assertNotNull(minorVersionNumber);
+        docId = queryResult.getInteger("id");
+        majorVersionNumber = queryResult.getInteger("major_version_number__v");
+        minorVersionNumber = queryResult.getInteger("minor_version_number__v");
     }
 
 //    @Test
@@ -75,9 +73,9 @@ public class DocumentAnnotationRequestTest {
 
     @Test
     public void testImportDocumentVersionAnnotationsFromPdf() {
-        DocumentAnnotationResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                .setInputPath(ANNOTATIONS_FILE_PATH)
-                .importDocumentVersionAnnotationsFromPdf(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
+        DocumentAnnotationImportResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                .setInputPath(ANNOTATED_DOC_FILE_PATH)
+                .importDocumentVersionAnnotationsFromPdf(docId, majorVersionNumber, minorVersionNumber);
         assertTrue(response.isSuccessful());
     }
 
@@ -116,7 +114,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             exportDocumentAnnotationsToPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATIONS_FILE_PATH)
+                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
                     .exportDocumentAnnotationsToPdf(docId);
 
             assertNotNull(exportDocumentAnnotationsToPdfResponse);
@@ -126,7 +124,7 @@ public class DocumentAnnotationRequestTest {
         @Order(2)
         public void testResponse() {
             assertEquals("application/pdf;charset=UTF-8", exportDocumentAnnotationsToPdfResponse.getHeaderContentType());
-            assertEquals(ANNOTATIONS_FILE_PATH, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
+            assertEquals(ANNOTATED_DOC_FILE_PATH, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
         }
     }
 
@@ -165,7 +163,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             exportDocumentAnnotationsToPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATIONS_FILE_PATH)
+                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
                     .exportDocumentVersionAnnotationsToPdf(docId, majorVersionNumber, minorVersionNumber);
 
             assertNotNull(exportDocumentAnnotationsToPdfResponse);
@@ -175,7 +173,7 @@ public class DocumentAnnotationRequestTest {
         @Order(2)
         public void testResponse() {
             assertEquals("application/pdf;charset=UTF-8", exportDocumentAnnotationsToPdfResponse.getHeaderContentType());
-            assertEquals(ANNOTATIONS_FILE_PATH, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
+            assertEquals(ANNOTATED_DOC_FILE_PATH, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
         }
     }
 
@@ -185,12 +183,12 @@ public class DocumentAnnotationRequestTest {
     @DisplayName("successfully import annotations from a PDF to a document")
     class TestImportDocumentAnnotationsFromPdf {
 
-        DocumentAnnotationResponse importDocumentAnnotationsFromPdfResponse;
+        DocumentAnnotationImportResponse importDocumentAnnotationsFromPdfResponse;
 
         @BeforeAll
         public void setup() {
             VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATIONS_FILE_PATH)
+                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
                     .exportDocumentAnnotationsToPdf(docId);
 
             assertNotNull(response);
@@ -201,7 +199,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             importDocumentAnnotationsFromPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setInputPath(ANNOTATIONS_FILE_PATH)
+                    .setInputPath(ANNOTATED_DOC_FILE_PATH)
                     .importDocumentAnnotationsFromPdf(docId);
 
             assertNotNull(importDocumentAnnotationsFromPdfResponse);
@@ -223,12 +221,12 @@ public class DocumentAnnotationRequestTest {
     @DisplayName("successfully import annotations from a PDF to a document version")
     class TestImportDocumentVersionAnnotationsFromPdf {
 
-        DocumentAnnotationResponse importDocumentVersionAnnotationsFromPdfResponse;
+        DocumentAnnotationImportResponse importDocumentVersionAnnotationsFromPdfResponse;
 
         @BeforeAll
         public void setup() {
             VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATIONS_FILE_PATH)
+                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
                     .exportDocumentVersionAnnotationsToPdf(docId, majorVersionNumber, minorVersionNumber);
 
             assertNotNull(response);
@@ -239,7 +237,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             importDocumentVersionAnnotationsFromPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setInputPath(ANNOTATIONS_FILE_PATH)
+                    .setInputPath(ANNOTATED_DOC_FILE_PATH)
                     .importDocumentVersionAnnotationsFromPdf(docId, majorVersionNumber, minorVersionNumber);
 
             assertNotNull(importDocumentVersionAnnotationsFromPdfResponse);
@@ -256,12 +254,474 @@ public class DocumentAnnotationRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve annotation type metadata")
+    class TestRetrieveAnnotationTypeMetadata {
+
+        DocumentAnnotationTypeMetadataResponse retrieveAnnotationTypeMetadataResponse;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            retrieveAnnotationTypeMetadataResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .retrieveAnnotationTypeMetadata(DocumentAnnotationRequest.AnnotationType.NOTE);
+
+            assertNotNull(retrieveAnnotationTypeMetadataResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(retrieveAnnotationTypeMetadataResponse.isSuccessful());
+            DocumentAnnotationTypeMetadataResponse.AnnotationTypeMetadata data = retrieveAnnotationTypeMetadataResponse.getData();
+            assertNotNull(data);
+            assertNotNull(data.getName());
+            assertNotNull(data.getAllowsReplies());
+            assertNotNull(data.getAllowedPlacemarkTypes());
+//            assertNotNull(data.getAllowedReferenceTypes());
+            List<AnnotationTypeMetadata.AnnotationField> fieldList = data.getFields();
+            assertNotNull(fieldList);
+            for (AnnotationTypeMetadata.AnnotationField field : fieldList) {
+                assertNotNull(field.getName());
+                assertNotNull(field.getType());
+                assertNotNull(field.getSystemManaged());
+//                assertNotNull(field.getValueSet());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve annotation placemark type metadata")
+    class TestRetrieveAnnotationPlacemarkTypeMetadata {
+
+        DocumentAnnotationPlacemarkTypeMetadataResponse retrieveAnnotationPlacemarkTypeMetadataResponse;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            retrieveAnnotationPlacemarkTypeMetadataResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .retrieveAnnotationPlacemarkTypeMetadata(DocumentAnnotationRequest.PlacemarkType.TEXT);
+
+            assertNotNull(retrieveAnnotationPlacemarkTypeMetadataResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(retrieveAnnotationPlacemarkTypeMetadataResponse.isSuccessful());
+            PlacemarkTypeMetadata data = retrieveAnnotationPlacemarkTypeMetadataResponse.getData();
+            assertNotNull(data);
+            assertNotNull(data.getName());
+            List<PlacemarkField> fieldList = data.getFields();
+            assertNotNull(fieldList);
+            for (PlacemarkField field : fieldList) {
+                assertNotNull(field.getName());
+                assertNotNull(field.getType());
+                assertNotNull(field.getSystemManaged());
+//                assertNotNull(field.getValueSet());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve annotation reference type metadata")
+    class TestRetrieveAnnotationReferenceTypeMetadata {
+
+        DocumentAnnotationReferenceTypeMetadataResponse retrieveAnnotationReferenceTypeMetadata;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            retrieveAnnotationReferenceTypeMetadata = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .retrieveAnnotationReferenceTypeMetadata(DocumentAnnotationRequest.ReferenceType.DOCUMENT);
+
+            assertNotNull(retrieveAnnotationReferenceTypeMetadata);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(retrieveAnnotationReferenceTypeMetadata.isSuccessful());
+            ReferenceTypeMetadata data = retrieveAnnotationReferenceTypeMetadata.getData();
+            assertNotNull(data);
+            assertNotNull(data.getName());
+            List<ReferenceField> fieldList = data.getFields();
+            assertNotNull(fieldList);
+            for (ReferenceField field : fieldList) {
+                assertNotNull(field.getName());
+                assertNotNull(field.getType());
+                assertNotNull(field.getSystemManaged());
+//                assertNotNull(field.getValueSet());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully create multiple annotations on a document, from a json string")
+    class TestCreateMultipleAnnotationsString {
+
+        DocumentAnnotationBulkResponse createMultipleAnnotationsResponse;
+        String jsonString;
+
+        @BeforeAll
+        public void setup() throws IOException {
+            DocumentAnnotationRequestHelper.writeCreateAnnotationsFile(vaultClient);
+            File jsonFile = new File(CREATE_ANNOTATIONS_FILE_PATH);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(jsonFile);
+            jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+        }
+
+        @AfterAll
+        public void teardown() {
+            List<String> docIds = new ArrayList<>();
+            List<String> annotationIds = new ArrayList<>();
+            for (DocumentAnnotationResponse annotation : createMultipleAnnotationsResponse.getData()) {
+                docIds.add(annotation.getDocumentVersionId());
+                annotationIds.add(annotation.getId());
+            }
+
+            DocumentAnnotationBulkResponse deleteAnnotationsResponse = DocumentAnnotationRequestHelper.deleteAnnotations(vaultClient, docIds, annotationIds);
+            assertTrue(deleteAnnotationsResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            createMultipleAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .setJson(jsonString)
+                    .createMultipleAnnotations();
+
+            assertNotNull(createMultipleAnnotationsResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(createMultipleAnnotationsResponse.isSuccessful());
+            List<DocumentAnnotationResponse> data = createMultipleAnnotationsResponse.getData();
+            assertNotNull(data);
+            for (DocumentAnnotationResponse annotation : data) {
+                assertTrue(annotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(annotation.getDocumentVersionId());
+                assertNotNull(annotation.getGlobalVersionId());
+                assertNotNull(annotation.getId());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully create multiple annotations on a document, from a json file")
+    class TestCreateMultipleAnnotationsFile {
+
+        DocumentAnnotationBulkResponse createMultipleAnnotationsResponse;
+
+        @BeforeAll
+        public void setup() throws IOException {
+            DocumentAnnotationRequestHelper.writeCreateAnnotationsFile(vaultClient);
+        }
+
+        @AfterAll
+        public void teardown() {
+            List<String> docIds = new ArrayList<>();
+            List<String> annotationIds = new ArrayList<>();
+            for (DocumentAnnotationResponse annotation : createMultipleAnnotationsResponse.getData()) {
+                docIds.add(annotation.getDocumentVersionId());
+                annotationIds.add(annotation.getId());
+            }
+            DocumentAnnotationBulkResponse deleteAnnotationsResponse = DocumentAnnotationRequestHelper.deleteAnnotations(vaultClient, docIds, annotationIds);
+            assertTrue(deleteAnnotationsResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            createMultipleAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .setInputPath(CREATE_ANNOTATIONS_FILE_PATH)
+                    .createMultipleAnnotations();
+
+            assertNotNull(createMultipleAnnotationsResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(createMultipleAnnotationsResponse.isSuccessful());
+            List<DocumentAnnotationResponse> data = createMultipleAnnotationsResponse.getData();
+            assertNotNull(data);
+            for (DocumentAnnotationResponse annotation : data) {
+                assertTrue(annotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(annotation.getDocumentVersionId());
+                assertNotNull(annotation.getGlobalVersionId());
+                assertNotNull(annotation.getId());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully add multiple replies to annotations on a document, from a json string")
+    class TestAddAnnotationRepliesString {
+
+        DocumentAnnotationBulkResponse addAnnotationRepliesResponse;
+        String jsonString;
+        List<String> docIds = new ArrayList<>();
+        List<String> annotationIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            DocumentAnnotationBulkResponse createMultipleAnnotationsResponse = DocumentAnnotationRequestHelper.createMultipleAnnotations(vaultClient);
+            assertTrue(createMultipleAnnotationsResponse.isSuccessful());
+
+            for (DocumentAnnotationResponse annotation : createMultipleAnnotationsResponse.getData()) {
+                docIds.add(annotation.getDocumentVersionId());
+                annotationIds.add(annotation.getId());
+            }
+
+            DocumentAnnotationRequestHelper.writeAddRepliesFile(vaultClient, docIds, annotationIds);
+            File jsonFile = new File(ADD_REPLIES_FILE_PATH);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(jsonFile);
+            jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+        }
+
+        @AfterAll
+        public void teardown() {
+            DocumentAnnotationBulkResponse deleteAnnotationsResponse = DocumentAnnotationRequestHelper.deleteAnnotations(vaultClient, docIds, annotationIds);
+            assertTrue(deleteAnnotationsResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            addAnnotationRepliesResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .setJson(jsonString)
+                    .addAnnotationReplies();
+
+            assertNotNull(addAnnotationRepliesResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(addAnnotationRepliesResponse.isSuccessful());
+            List<DocumentAnnotationResponse> data = addAnnotationRepliesResponse.getData();
+            assertNotNull(data);
+            for (DocumentAnnotationResponse annotation : data) {
+                assertTrue(annotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(annotation.getDocumentVersionId());
+                assertNotNull(annotation.getGlobalVersionId());
+                assertNotNull(annotation.getId());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully add multiple replies to annotations on a document, from a json file")
+    class TestAddAnnotationRepliesFile {
+
+        DocumentAnnotationBulkResponse addAnnotationRepliesResponse;
+        List<String> docIds = new ArrayList<>();
+        List<String> annotationIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            DocumentAnnotationBulkResponse createMultipleAnnotationsResponse = DocumentAnnotationRequestHelper.createMultipleAnnotations(vaultClient);
+            assertTrue(createMultipleAnnotationsResponse.isSuccessful());
+
+            for (DocumentAnnotationResponse annotation : createMultipleAnnotationsResponse.getData()) {
+                docIds.add(annotation.getDocumentVersionId());
+                annotationIds.add(annotation.getId());
+            }
+
+            DocumentAnnotationRequestHelper.writeAddRepliesFile(vaultClient, docIds, annotationIds);
+        }
+
+        @AfterAll
+        public void teardown() {
+            DocumentAnnotationBulkResponse deleteAnnotationsResponse = DocumentAnnotationRequestHelper.deleteAnnotations(vaultClient, docIds, annotationIds);
+            assertTrue(deleteAnnotationsResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            addAnnotationRepliesResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .setInputPath(ADD_REPLIES_FILE_PATH)
+                    .addAnnotationReplies();
+
+            assertNotNull(addAnnotationRepliesResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(addAnnotationRepliesResponse.isSuccessful());
+            List<DocumentAnnotationResponse> data = addAnnotationRepliesResponse.getData();
+            assertNotNull(data);
+            for (DocumentAnnotationResponse annotation : data) {
+                assertTrue(annotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(annotation.getDocumentVersionId());
+                assertNotNull(annotation.getGlobalVersionId());
+                assertNotNull(annotation.getId());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully update multiple annotations on a document, from a json string")
+    class TestUpdateAnnotationsString {
+
+        DocumentAnnotationBulkResponse updateAnnotationsResponse;
+        String jsonString;
+        List<String> docIds = new ArrayList<>();
+        List<String> annotationIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            DocumentAnnotationBulkResponse createMultipleAnnotationsResponse = DocumentAnnotationRequestHelper.createMultipleAnnotations(vaultClient);
+            assertTrue(createMultipleAnnotationsResponse.isSuccessful());
+
+            for (DocumentAnnotationResponse annotation : createMultipleAnnotationsResponse.getData()) {
+                docIds.add(annotation.getDocumentVersionId());
+                annotationIds.add(annotation.getId());
+            }
+
+            DocumentAnnotationRequestHelper.writeUpdateAnnotationsFile(vaultClient, docIds, annotationIds);
+            File jsonFile = new File(UPDATE_ANNOTATIONS_FILE_PATH);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(jsonFile);
+            jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+        }
+
+        @AfterAll
+        public void teardown() {
+            DocumentAnnotationBulkResponse deleteAnnotationsResponse = DocumentAnnotationRequestHelper.deleteAnnotations(vaultClient, docIds, annotationIds);
+            assertTrue(deleteAnnotationsResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            updateAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .setJson(jsonString)
+                    .updateAnnotations();
+
+            assertNotNull(updateAnnotationsResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(updateAnnotationsResponse.isSuccessful());
+            List<DocumentAnnotationResponse> data = updateAnnotationsResponse.getData();
+            assertNotNull(data);
+            for (DocumentAnnotationResponse annotation : data) {
+                assertTrue(annotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(annotation.getDocumentVersionId());
+                assertNotNull(annotation.getGlobalVersionId());
+                assertNotNull(annotation.getId());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully update multiple annotations on a document, from a json file")
+    class TestUpdateAnnotationsFile {
+
+        DocumentAnnotationBulkResponse updateAnnotationsResponse;
+        List<String> docIds = new ArrayList<>();
+        List<String> annotationIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            DocumentAnnotationBulkResponse createMultipleAnnotationsResponse = DocumentAnnotationRequestHelper.createMultipleAnnotations(vaultClient);
+            assertTrue(createMultipleAnnotationsResponse.isSuccessful());
+
+            for (DocumentAnnotationResponse annotation : createMultipleAnnotationsResponse.getData()) {
+                docIds.add(annotation.getDocumentVersionId());
+                annotationIds.add(annotation.getId());
+            }
+
+            DocumentAnnotationRequestHelper.writeUpdateAnnotationsFile(vaultClient, docIds, annotationIds);
+        }
+
+        @AfterAll
+        public void teardown() {
+            DocumentAnnotationBulkResponse deleteAnnotationsResponse = DocumentAnnotationRequestHelper.deleteAnnotations(vaultClient, docIds, annotationIds);
+            assertTrue(deleteAnnotationsResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            updateAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .setInputPath(UPDATE_ANNOTATIONS_FILE_PATH)
+                    .updateAnnotations();
+
+            assertNotNull(updateAnnotationsResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(updateAnnotationsResponse.isSuccessful());
+            List<DocumentAnnotationResponse> data = updateAnnotationsResponse.getData();
+            assertNotNull(data);
+            for (DocumentAnnotationResponse annotation : data) {
+                assertTrue(annotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(annotation.getDocumentVersionId());
+                assertNotNull(annotation.getGlobalVersionId());
+                assertNotNull(annotation.getId());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully read annotations from a document by ID")
     class TestReadAnnotationsByDocumentVersionAndType {
 
         DocumentAnnotationReadResponse readAnnotationsByDocumentVersionAndTypeResponse;
+        Integer docId;
+        Integer majorVersionNumber;
+        Integer minorVersionNumber;
+
+        @BeforeAll
+        public void setup() {
+            QueryResponse.QueryResult queryResult = DocumentAnnotationRequestHelper.getAnnotationsDoc(vaultClient);
+
+            docId = queryResult.getInteger("id");
+            majorVersionNumber = queryResult.getInteger("major_version_number__v");
+            minorVersionNumber = queryResult.getInteger("minor_version_number__v");
+        }
 
         @Test
         @Order(1)
@@ -316,6 +776,7 @@ public class DocumentAnnotationRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully read annotations from a document by ID using paginated URL")
@@ -362,6 +823,7 @@ public class DocumentAnnotationRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully read annotations from a document by annotation ID")
@@ -429,6 +891,7 @@ public class DocumentAnnotationRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully read replies from a parent annotation")
@@ -487,6 +950,7 @@ public class DocumentAnnotationRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully read replies from a parent annotation using paginated URL")
@@ -544,12 +1008,28 @@ public class DocumentAnnotationRequestTest {
     }
 
     @Nested
-    @Disabled("Annotations can't be created dynamically. Create annotation, update CSV file and run this test manually")
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully delete annotations from CSV file")
     class TestDeleteAnnotationsCsv {
-        DocumentAnnotationDeleteResponse deleteAnnotationsResponse;
+        DocumentAnnotationBulkResponse deleteAnnotationsResponse;
+
+        @BeforeAll
+        public void setup() throws IOException {
+            DocumentAnnotationBulkResponse createMultipleAnnotationsResponse = DocumentAnnotationRequestHelper.createMultipleAnnotations(vaultClient);
+
+//            Write Headers and data to CSV file
+            List<String[]> updateData = new ArrayList<>();
+            updateData.add(new String[]{"id__sys", "document_version_id__sys"});
+
+            for (DocumentAnnotationResponse annotation : createMultipleAnnotationsResponse.getData()) {
+                assertTrue(annotation.getResponseStatus().equals("SUCCESS"));
+                updateData.add(new String[]{annotation.getId(), annotation.getDocumentVersionId()});
+            }
+
+            FileHelper.writeCsvFile(DELETE_ANNOTATIONS_FILE_PATH, updateData);
+        }
 
         @Test
         @Order(1)
@@ -567,22 +1047,22 @@ public class DocumentAnnotationRequestTest {
         public void testResponse() {
             assertTrue(deleteAnnotationsResponse.isSuccessful());
             assertNotNull(deleteAnnotationsResponse.getData());
-            for (DocumentAnnotationDeleteResponse.DeletedAnnotation deletedAnnotation : deleteAnnotationsResponse.getData()) {
-                assertNotNull(deletedAnnotation.getDocumentId());
-                assertNotNull(deletedAnnotation.getMajorVersion());
-                assertNotNull(deletedAnnotation.getMinorVersion());
-                assertNotNull(deletedAnnotation.getAnnotationId());
+            for (DocumentAnnotationResponse deletedAnnotation : deleteAnnotationsResponse.getData()) {
+                assertTrue(deletedAnnotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(deletedAnnotation.getId());
+                assertNotNull(deletedAnnotation.getDocumentVersionId());
+                assertNotNull(deletedAnnotation.getGlobalVersionId());
             }
         }
     }
 
     @Nested
-    @Disabled("Annotations can't be created dynamically. Create annotation, update CSV file and run this test manually")
+    @Disabled
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully delete annotations from CSV bytes")
     class TestDeleteAnnotationsCsvBytes {
-        DocumentAnnotationDeleteResponse deleteAnnotationsResponse;
+        DocumentAnnotationBulkResponse deleteAnnotationsResponse;
 
         @Test
         @Order(1)
@@ -601,22 +1081,22 @@ public class DocumentAnnotationRequestTest {
         public void testResponse() {
             assertTrue(deleteAnnotationsResponse.isSuccessful());
             assertNotNull(deleteAnnotationsResponse.getData());
-            for (DocumentAnnotationDeleteResponse.DeletedAnnotation deletedAnnotation : deleteAnnotationsResponse.getData()) {
-                assertNotNull(deletedAnnotation.getDocumentId());
-                assertNotNull(deletedAnnotation.getMajorVersion());
-                assertNotNull(deletedAnnotation.getMinorVersion());
-                assertNotNull(deletedAnnotation.getAnnotationId());
+            for (DocumentAnnotationResponse deletedAnnotation : deleteAnnotationsResponse.getData()) {
+                assertTrue(deletedAnnotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(deletedAnnotation.getId());
+                assertNotNull(deletedAnnotation.getDocumentVersionId());
+                assertNotNull(deletedAnnotation.getGlobalVersionId());
             }
         }
     }
 
     @Nested
-    @Disabled("Annotations can't be created dynamically. Create annotation and run this test manually")
+    @Disabled
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully delete annotations from Json")
     class TestDeleteAnnotationsJson {
-        DocumentAnnotationDeleteResponse deleteAnnotationsResponse;
+        DocumentAnnotationBulkResponse deleteAnnotationsResponse;
         String requestString;
 
         @BeforeAll
@@ -648,12 +1128,36 @@ public class DocumentAnnotationRequestTest {
         public void testResponse() {
             assertTrue(deleteAnnotationsResponse.isSuccessful());
             assertNotNull(deleteAnnotationsResponse.getData());
-            for (DocumentAnnotationDeleteResponse.DeletedAnnotation deletedAnnotation : deleteAnnotationsResponse.getData()) {
-                assertNotNull(deletedAnnotation.getDocumentId());
-                assertNotNull(deletedAnnotation.getMajorVersion());
-                assertNotNull(deletedAnnotation.getMinorVersion());
-                assertNotNull(deletedAnnotation.getAnnotationId());
+            for (DocumentAnnotationResponse deletedAnnotation : deleteAnnotationsResponse.getData()) {
+                assertTrue(deletedAnnotation.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(deletedAnnotation.getId());
+                assertNotNull(deletedAnnotation.getDocumentVersionId());
+                assertNotNull(deletedAnnotation.getGlobalVersionId());
             }
+        }
+    }
+
+    @Nested
+    @Disabled
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve doc version notes as CSV")
+    class TestRetrieveDocumentVersionNotesAsCSV {
+        VaultResponse retrieveDocumentVersionNotesAsCsvResponse;
+
+        @Test
+        @Order(1)
+        public void testRequest() throws IOException {
+            retrieveDocumentVersionNotesAsCsvResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                            .retrieveDocumentVersionNotesAsCSV(1221, 0, 1);
+
+            assertNotNull(retrieveDocumentVersionNotesAsCsvResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(retrieveDocumentVersionNotesAsCsvResponse.isSuccessful());
         }
     }
 }

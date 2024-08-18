@@ -20,33 +20,33 @@ public class ObjectRecordRequestHelper {
     static final String MERGE_OBJECTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "merge_object_records.csv";
 
     public static String getPathCreateObjectRecordsCsv() {
-        FileHelper.createCsvFile(CREATE_OBJECTS_CSV_PATH);
+        FileHelper.createFile(CREATE_OBJECTS_CSV_PATH);
         return CREATE_OBJECTS_CSV_PATH;
     }
 
     public static String getPathUpdateObjectRecordsCsv() {
-        FileHelper.createCsvFile(UPDATE_OBJECTS_CSV_PATH);
+        FileHelper.createFile(UPDATE_OBJECTS_CSV_PATH);
         return UPDATE_OBJECTS_CSV_PATH;
     }
 
     public static String getPathDeleteObjectRecordsCsv() {
-        FileHelper.createCsvFile(DELETE_OBJECTS_CSV_PATH);
+        FileHelper.createFile(DELETE_OBJECTS_CSV_PATH);
         return DELETE_OBJECTS_CSV_PATH;
     }
 
     public static String getPathCreateSingleObjectRecordCsv() {
-        FileHelper.createCsvFile(CREATE_SINGLE_OBJECT_CSV_PATH);
+        FileHelper.createFile(CREATE_SINGLE_OBJECT_CSV_PATH);
         return CREATE_SINGLE_OBJECT_CSV_PATH;
     }
 
     public static String getPathMergeObjectRecordsCsv() {
-        FileHelper.createCsvFile(MERGE_OBJECTS_CSV_PATH);
+        FileHelper.createFile(MERGE_OBJECTS_CSV_PATH);
         return MERGE_OBJECTS_CSV_PATH;
     }
 
     public static ObjectRecordBulkResponse createObjectRecords(VaultClient vaultClient) throws IOException {
 //        Create CSV File
-        FileHelper.createCsvFile(CREATE_OBJECTS_CSV_PATH);
+        FileHelper.createFile(CREATE_OBJECTS_CSV_PATH);
 
         List<String[]> data = new ArrayList<>();
         data.add(new String[]{"name__v", "description__c"});
@@ -68,7 +68,7 @@ public class ObjectRecordRequestHelper {
     }
 
     public static ObjectRecordBulkResponse deleteObjectRecords(VaultClient vaultClient, List<String> recordIds) throws IOException {
-        FileHelper.createCsvFile(DELETE_OBJECTS_CSV_PATH);
+        FileHelper.createFile(DELETE_OBJECTS_CSV_PATH);
 
         List<String[]> data = new ArrayList<>();
         data.add(new String[]{"id"});

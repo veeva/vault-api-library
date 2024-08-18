@@ -56,9 +56,8 @@ public class LogRequestTest {
 		vaultClient = client;
 		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 
-		DocumentResponse response = DocumentRequestHelper.createSingleDocument(vaultClient);
-		Assertions.assertTrue(response.isSuccessful());
-		docId = response.getDocument().getId();
+		DocumentBulkResponse response = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
+		docId = response.getData().get(0).getDocument().getId();
 	}
 
 	@AfterAll
@@ -102,7 +101,7 @@ public class LogRequestTest {
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully Retrieve audit details: Document")
-	class testRetrieveAuditDetails {
+	class TestRetrieveAuditDetails {
 		@Test
 		@DisplayName("for specific dates of audit type: Document")
 		public void testRetrieveDocumentAuditDetails() {
@@ -326,7 +325,7 @@ public class LogRequestTest {
 
 	@Nested
 	@DisplayName("retrieve email notification history")
-	class testRetrieveEmailNotificationHistory {
+	class TestRetrieveEmailNotificationHistory {
 		@Test
 		@DisplayName("with no query parameters successfully")
 		void noQueryParameters() {
@@ -481,7 +480,7 @@ public class LogRequestTest {
 		// so safest to set to null in case another call set this value
 		VaultResponse response = vaultClient.newRequest(LogRequest.class)
 				.setLogFormat(LogRequest.LogFormatType.LOGFILE)
-				.setOutputPath(null)
+//				.setOutputPath(null)
 				.downloadSdkRuntimeLog(date);
 
 		Assertions.assertTrue(response.isSuccessful());
@@ -504,7 +503,9 @@ public class LogRequestTest {
 		@Test
 		@Order(1)
 		public void testRequest() {
+			HashSet<String> objects = new HashSet<>(Arrays.asList("vapil_test_object__c","perf_stats__v"));
 			retrieveAuditDetailsResponse = vaultClient.newRequest(LogRequest.class)
+					.setObjects(objects)
 					.retrieveAuditDetails(LogRequest.AuditTrailType.OBJECT);
 
 			assertNotNull(retrieveAuditDetailsResponse);

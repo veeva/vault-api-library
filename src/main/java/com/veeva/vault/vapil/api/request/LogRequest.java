@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * The Audit APIs retrieve information about audits and audit types
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#logs">https://developer.veevavault.com/api/24.1/#logs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#logs">https://developer.veevavault.com/api/24.2/#logs</a>
  */
 public class LogRequest extends VaultRequest<LogRequest> {
 	// API Endpoints
@@ -40,6 +40,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	private static final String PARAM_FORMAT_RESULT = "format_result";
 	private static final String PARAM_LIMIT = "limit";
 	private static final String PARAM_EVENT = "events";
+	private static final String PARAM_OBJECT = "objects";
 
 	// API Request Parameters for api_usage request
 	private static final String PARAM_DATE = "date";
@@ -63,6 +64,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	// Builder Parameters for the api_usage request
 	private String logFormat;
 	private String outputPath;
+	private Set<String> objects;
 	private Set<String> events;
 
 	private LogRequest() {
@@ -88,7 +90,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return AuditTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-audit-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-audit-types</a>
 	 * @vapil.request <pre>
 	 * AuditTypesResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditTypes();</pre>
@@ -114,7 +116,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return AuditMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-audit-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-audit-metadata</a>
 	 * @vapil.request <pre>
 	 * AuditMetadataResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);</pre>
@@ -158,7 +160,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-audit-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-audit-details</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
@@ -333,6 +335,11 @@ public class LogRequest extends VaultRequest<LogRequest> {
 			request.addQueryParam(PARAM_EVENT, eventsList);
 		}
 
+		if (objects != null && !objects.isEmpty()) {
+			String objectsList = objects.stream().collect(Collectors.joining(","));
+			request.addQueryParam(PARAM_OBJECT, objectsList);
+		}
+
 		request.addQueryParam(PARAM_LIMIT, limit);
 
 		//special case, if all dates, then return jobcreateresponse
@@ -379,7 +386,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return DocumentAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-complete-audit-history-for-a-single-document</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -460,7 +467,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return ObjectAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-complete-audit-history-for-a-single-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
@@ -541,7 +548,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/notifications/histories</pre>
-	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/24.1/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-email-notification-histories</a>
+	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/24.2/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-email-notification-histories</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - EmailNotificationHistoryResponse</i>
 	 * EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
@@ -656,7 +663,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/api_usage?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-daily-api-usage</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-daily-api-usage</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -716,20 +723,17 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/runtime?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/24.1/#download-sdk-runtime-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/24.2/#download-sdk-runtime-log</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 				.setLogDate(date)
 	 * 				.setOutputPath(outputFilePath.toString())
-	 * 				.downloadSdkRuntimeLog();</pre>
+	 * 				.downloadSdkRuntimeLog(date);</pre>
 	 * @vapil.request <pre>
 	 * <i>Example 2 - To buffer</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 				.setLogDate(date)
 	 * 				.setLogFormat(LogRequest.LogFormatType.LOGFILE)
-	 * 				.setOutputPath(null)
-	 * 				.downloadSdkRuntimeLog();</pre>
+	 * 				.downloadSdkRuntimeLog(date);</pre>
 	 * @vapil.response <pre>
 	 * <i>Example 2 - To buffer</i>
 	 * if (response.getResponseStatus().equals(VaultResponse.HTTP_RESPONSE_SUCCESS)) {
@@ -979,6 +983,17 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 */
 	public LogRequest setEvents(Set<String> events) {
 		this.events = events;
+		return this;
+	}
+
+	/**
+	 * Specify object names when retrieving object audit trails
+	 *
+	 * @param objects Comma-separated list of one or more objects
+	 * @return The Request
+	 */
+	public LogRequest setObjects(Set<String> objects) {
+		this.objects = objects;
 		return this;
 	}
 }

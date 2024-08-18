@@ -8,6 +8,7 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.model.response.DomainResponse;
+import com.veeva.vault.vapil.api.model.response.DomainsResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
@@ -15,7 +16,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Retrieve Domain specific information
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.1/#domain-information">https://developer.veevavault.com/api/24.1/#domain-information</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#domain-information">https://developer.veevavault.com/api/24.2/#domain-information</a>
  */
 public class DomainRequest extends VaultRequest<DomainRequest> {
 
@@ -38,18 +39,21 @@ public class DomainRequest extends VaultRequest<DomainRequest> {
 	 * @return DomainResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/domain</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-domain-information' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-domain-information</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-domain-information' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-domain-information</a>
 	 * @vapil.request <pre>
 	 * DomainResponse resp = vaultClient.newRequest(DomainRequest.class)
 	 * 		.setIncludeApplications(includeApplication)
 	 * 		.retrieveDomainInformation();</pre>
 	 * @vapil.response <pre>
-	 * System.out.println("Domain Name = " + resp.getDomain().getDomainName());
-	 * System.out.println("Domain Type = " + resp.getDomain().getDomainType());
-	 *
-	 * for (DomainVault v : resp.getDomain().getVaults()) {
-	 * 	System.out.println("Name = " + v.getVaultName() + ", Id = " + v.getId());
-	 * }</pre>
+	 * System.out.println("Domain Name = " + response.getDomain().getDomainName());
+	 * System.out.println("Domain Type = " + response.getDomain().getDomainType());
+	 * for (DomainResponse.Domain.DomainVault vault : response.getDomain().getVaults()) {
+	 * 		System.out.println(("--------Vault--------"));
+	 * 		System.out.println("Id = " + vault.getId());
+	 * 		System.out.println("Name = " + vault.getVaultName());
+	 * 		System.out.println("Status = " + vault.getVaultStatus());
+	 * }
+	 * </pre>
 	 */
 	public DomainResponse retrieveDomainInformation() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DOMAIN));
@@ -67,18 +71,26 @@ public class DomainRequest extends VaultRequest<DomainRequest> {
 	 * including the domain of the current vault. This endpoint can
 	 * be used for non-domain admins.
 	 *
-	 * @return DomainResponse
+	 * @return DomainsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/domains</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.1/#retrieve-domains' target='_blank'>https://developer.veevavault.com/api/24.1/#retrieve-domains</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-domains' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-domains</a>
 	 * @vapil.request <pre>
-	 * DomainResponse resp = vaultClient.newRequest(DomainRequest.class)
-	 * 		.retrieveDomains();</pre>
+	 * DomainsResponse response = vaultClient.newRequest(DomainRequest.class)
+	 * 		.retrieveDomains();
+	 * </pre>
+	 * @vapil.response <pre>
+	 * for (DomainsResponse.Domain domain : response.getDomains()) {
+	 * 		System.out.println(("--------Domain--------"));
+	 * 		System.out.println("Name = " + domain.getName());
+	 * 		System.out.println("Type = " + domain.getType());
+	 * }
+	 * </pre>
 	 */
-	public VaultResponse retrieveDomains() {
+	public DomainsResponse retrieveDomains() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DOMAINS));
 
-		return send(HttpMethod.GET, request, VaultResponse.class);
+		return send(HttpMethod.GET, request, DomainsResponse.class);
 	}
 
 	/*

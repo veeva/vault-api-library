@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Model for Document Annotation Data
+ * Model for Document Annotation Read Data
  */
 public class DocumentAnnotation extends VaultModel {
 	@JsonProperty("document_version_id__sys")

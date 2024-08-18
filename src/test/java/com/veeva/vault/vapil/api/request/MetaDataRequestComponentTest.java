@@ -8,13 +8,20 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.common.ComponentRecord;
 import com.veeva.vault.vapil.api.model.common.ComponentType;
+import com.veeva.vault.vapil.api.model.metadata.VaultObjectPageLayout;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.extension.JobStatusHelper;
 import com.veeva.vault.vapil.extension.MdlHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("MetadataRequestComponentTest")
 @ExtendWith(VaultClientParameterResolver.class)
@@ -182,24 +189,6 @@ public class MetaDataRequestComponentTest {
 		}
 	}
 
-	@Test
-	@DisplayName("successfully retrieve all records for a specific component type")
-	public void testRetrieveComponentRecords() {
-		MetaDataComponentTypeBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveComponentRecords("Picklist");
-
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getData());
-	}
-
-	@Test
-	@DisplayName("successfully retrieve metadata of a specific component record as JSON or XML")
-	public void testRetrieveComponentRecordXmlJson() {
-		MetaDataComponentRecordResponse response = vaultClient.newRequest(MetaDataRequest.class)
-				.retrieveComponentRecordXmlJson("Picklist", "language__v");
-
-		Assertions.assertTrue(response.isSuccessful());
-		Assertions.assertNotNull(response.getData());
-	}
 
 	@Test
 	@DisplayName("successfully retrieve metadata of a specific component record as MDL")
@@ -209,5 +198,63 @@ public class MetaDataRequestComponentTest {
 
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully retrieve all records for a specific component type")
+	class TestComponentRecordCollection {
+		MetaDataComponentTypeBulkResponse response = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			response = vaultClient.newRequest(MetaDataRequest.class)
+							.retrieveComponentRecords("Objectvalidation.vapil_test_object__c");
+
+			assertNotNull(response);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(response.isSuccessful());
+			List<ComponentType> data = response.getData();
+			assertNotNull(data);
+			for (ComponentType componentType : data) {
+				assertNotNull(componentType.getName());
+				assertNotNull(componentType.getLabel());
+				assertNotNull(componentType.getActive());
+			}
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully retrieve metadata of a specific component record as JSON or XML")
+	class TestRetrieveComponentRecordXmlJson {
+		MetaDataComponentRecordResponse response = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			response = vaultClient.newRequest(MetaDataRequest.class)
+					.retrieveComponentRecordXmlJson("Doctype", "vapil_test_doc_type__c");
+
+			assertNotNull(response);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(response.isSuccessful());
+			ComponentRecord data = response.getData();
+			assertNotNull(data);
+			assertNotNull(data.getName());
+			assertNotNull(data.getActive());
+			assertNotNull(data.getLabel());
+		}
 	}
 }

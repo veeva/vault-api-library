@@ -16,9 +16,11 @@ import com.veeva.vault.vapil.api.model.response.UserPermissionResponse.UserPermi
 import com.veeva.vault.vapil.api.model.response.UserPermissionResponse.UserPermissions.PermissionSet;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.UserRequestHelper;
+import com.veeva.vault.vapil.api.model.response.UserLicenseUsageResponse.Application;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +58,7 @@ public class UserRequestTest {
     @BeforeAll
     static void setup(VaultClient client) {
         vaultClient = client;
-        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+        assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
         vaultId = vaultClient.getAuthenticationResponse().getHeaderVaultId();
     }
 
@@ -405,7 +407,52 @@ public class UserRequestTest {
                 }
             }
         }
+    }
 
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve application license usage")
+    class TestRetrieveApplicationLicenseUsage {
 
+        private UserLicenseUsageResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(UserRequest.class)
+                            .retrieveApplicationLicenseUsage();
+
+            assertTrue(response != null);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getDocCount().getLicensed());
+            assertNotNull(response.getDocCount().getUsed());
+            List<Application> applications = response.getApplications();
+            assertNotNull(applications);
+            for (Application application : applications) {
+                assertNotNull(application.getApplicationName());
+                assertNotNull(application.getUserLicensing());
+
+                Application.UserLicensing.FullLicense fullLicense = application.getUserLicensing().getFullLicense();
+                assertNotNull(fullLicense.getLicensed());
+                assertNotNull(fullLicense.getUsed());
+                assertNotNull(fullLicense.getShared());
+
+                Application.UserLicensing.ReadOnlyLicense readOnlyLicense = application.getUserLicensing().getReadOnlyLicense();
+                assertNotNull(readOnlyLicense.getLicensed());
+                assertNotNull(readOnlyLicense.getUsed());
+                assertNotNull(readOnlyLicense.getShared());
+
+                Application.UserLicensing.ExternalLicense externalLicense = application.getUserLicensing().getExternalLicense();
+                assertNotNull(externalLicense.getLicensed());
+                assertNotNull(externalLicense.getUsed());
+                assertNotNull(externalLicense.getShared());
+            }
+        }
     }
 }

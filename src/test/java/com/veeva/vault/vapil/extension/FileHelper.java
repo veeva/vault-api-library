@@ -35,15 +35,15 @@ public class FileHelper {
     public static String getPathLoaderFile() {
         return LOADER_FILE_PATH;
     }
-    public static void createCsvFile(String filePath) {
-        File csvFile = new File(filePath);
-        if (csvFile.exists()) {
-            csvFile.delete();
+    public static void createFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
         }
         try {
-            csvFile.createNewFile();
+            file.createNewFile();
         } catch (IOException e) {
-            log.error("Error creating CSV file: " + filePath);
+            log.error("Error creating file: " + filePath);
             e.printStackTrace();
         }
     }

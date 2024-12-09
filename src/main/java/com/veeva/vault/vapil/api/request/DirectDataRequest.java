@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  * <li>Download Direct Data File</li>
  * </ul>
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#direct-data">https://developer.veevavault.com/api/24.2/#direct-data</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#direct-data">https://developer.veevavault.com/api/24.3/#direct-data</a>
  */
 
 public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
@@ -42,7 +42,7 @@ public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
      *
      * @return DirectDataResponse
      * @vapil.api <pre> GET /api/{version}/services/directdata/files </pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-available-direct-data-files' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-available-direct-data-files</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-available-direct-data-files' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-available-direct-data-files</a>
      * @vapil.request <pre>
      * ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneId.of("UTC"));
      * ZonedDateTime stopTime = currentDateTime.toLocalDate().atStartOfDay(ZoneId.of("UTC"));
@@ -96,7 +96,7 @@ public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
      * @param name The name of the Direct Data file to download.
      * @return VaultResponse
      * @vapil.api <pre> GET /api/{version}/services/directdata/files/{name} </pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#download-direct-data-file' target='_blank'>https://developer.veevavault.com/api/24.2/#download-direct-data-file</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#download-direct-data-file' target='_blank'>https://developer.veevavault.com/api/24.3/#download-direct-data-file</a>
      * @vapil.request <pre>
      * VaultResponse response = vaultClient.newRequest(DirectDataRequest.class)
      *      .downloadDirectDataFile(fileName);

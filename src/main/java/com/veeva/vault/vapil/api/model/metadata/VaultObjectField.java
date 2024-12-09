@@ -395,6 +395,24 @@ public class VaultObjectField extends VaultModel {
 		this.set("value_format", valueFormat);
 	}
 
+	@JsonProperty("subtype")
+	public String getSubtype() {
+		return this.getString("subtype");
+	}
+
+	public void setSubtype(String subtype) {
+		this.set("subtype", subtype);
+	}
+
+	@JsonProperty("format_mask")
+	public String getFormatMask() {
+		return this.getString("format_mask");
+	}
+
+	public void setFormatMask(String formatMask) {
+		this.set("format_mask", formatMask);
+	}
+
 	@JsonProperty("unique")
 	public Boolean getUnique() {
 		return this.getBoolean("unique");

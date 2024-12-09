@@ -5,7 +5,6 @@ import com.veeva.vault.vapil.api.model.common.ObjectRecord;
 import com.veeva.vault.vapil.api.model.common.PackageLog;
 import com.veeva.vault.vapil.api.model.common.PackageStep;
 import com.veeva.vault.vapil.api.model.response.*;
-import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.JobStatusHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +12,6 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -348,6 +346,64 @@ public class ConfigurationMigrationRequestTest {
                 assertNotNull(packageStep.getDeploymentStatus());
             }
 
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully enable configuration mode")
+    class TestEnableConfigurationMode {
+
+        private VaultResponse enableConfigurationModeResponse = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            enableConfigurationModeResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
+                    .enableConfigurationMode();
+
+            assertNotNull(enableConfigurationModeResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(enableConfigurationModeResponse.isSuccessful());
+            assertNotNull(enableConfigurationModeResponse.getResponseMessage());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully disable configuration mode")
+    class TestDisableConfigurationMode {
+
+        private VaultResponse disableConfigurationModeResponse = null;
+
+        @BeforeAll
+        public void setup() {
+            VaultResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
+                    .enableConfigurationMode();
+
+            assertTrue(response.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            disableConfigurationModeResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
+                    .disableConfigurationMode();
+
+            assertNotNull(disableConfigurationModeResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(disableConfigurationModeResponse.isSuccessful());
+            assertNotNull(disableConfigurationModeResponse.getResponseMessage());
         }
     }
 }

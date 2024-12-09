@@ -102,7 +102,7 @@ public class DomainRequestTest {
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(DomainRequest.class)
-                    .setHeaderReferenceId("test")
+                    .setHeaderReferenceId("test-reference-id")
                     .retrieveDomains();
 
             assertTrue(response != null);
@@ -112,7 +112,32 @@ public class DomainRequestTest {
         @Order(2)
         public void testResponse() {
             assertTrue(response.isSuccessful());
-            assertEquals(response.getHeaderReferenceId(), "test");
+            assertEquals(response.getHeaderReferenceId(), "test-reference-id");
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully set request level Client ID Header")
+    class TestSetHeaderRequestClientId {
+
+        private VaultResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DomainRequest.class)
+                    .setHeaderClientId("test-request-client-id")
+                    .retrieveDomains();
+
+            assertTrue(response != null);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
         }
     }
 }

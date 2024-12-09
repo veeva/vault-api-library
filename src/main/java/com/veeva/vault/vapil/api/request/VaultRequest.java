@@ -45,6 +45,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	public static final String HTTP_HEADER_VAULT_CLIENT_ID = "X-VaultAPI-ClientID";
 	public static final String HTTP_HEADER_REFERENCE_ID = "X-VaultAPI-ReferenceId";
 	protected String referenceId;
+	protected String requestClientId;
 
 	private static Logger log = LoggerFactory.getLogger(VaultRequest.class);
 
@@ -327,7 +328,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 			request.addHeaderParam(HTTP_HEADER_AUTHORIZATION, vaultClient.getSessionId());
 
 		// Add the client id 
-		String vaultClientId = vaultClient.getVaultClientId();
+		String vaultClientId = this.requestClientId==null? vaultClient.getVaultClientId():this.requestClientId;
 
 		if (vaultClientId != null)
 			request.addHeaderParam(HTTP_HEADER_VAULT_CLIENT_ID, vaultClientId);
@@ -352,11 +353,41 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * This method is implemented for all Request classes. When set in the request, the
 	 * Reference ID is returned in the response headers of the returned Response class.
 	 *
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/docs/#reference-id' target='_blank'>https://developer.veevavault.com/docs/#reference-id</a>
+	 * @vapil.request <pre>
+	 * VaultResponse response = vaultClient.newRequest(DomainRequest.class)
+	 * 		.setHeaderReferenceId("test-reference-id")
+	 * 		.retrieveDomains();
+	 * </pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Reference ID: " + response.getHeaderReferenceId());
+	 * </pre>
+	 *
 	 * @param referenceId The reference id
 	 * @return The request
 	 */
 	public T setHeaderReferenceId(String referenceId) {
 		this.referenceId = referenceId;
+		return (T) this;
+	}
+
+	/**
+	 * Abstract method to set a Client ID header for individual API requests.
+	 * This method is implemented for all Request classes. When set on a request, it overrides
+	 * the client ID set on the Vault Client.
+	 *
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/docs/#client-id' target='_blank'>https://developer.veevavault.com/docs/#client-id</a>
+	 * @vapil.request <pre>
+	 * VaultResponse response = vaultClient.newRequest(DomainRequest.class)
+	 * 		.setHeaderClientId("test-request-client-id")
+	 * 		.retrieveDomains();
+	 * </pre>
+	 *
+	 * @param clientId The client id
+	 * @return The request
+	 */
+	public T setHeaderClientId(String clientId) {
+		this.requestClientId = clientId;
 		return (T) this;
 	}
 }

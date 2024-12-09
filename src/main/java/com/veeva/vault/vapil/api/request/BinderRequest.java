@@ -26,10 +26,10 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Binder Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#binders">https://developer.veevavault.com/api/24.2/#binders</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#binders">https://developer.veevavault.com/api/24.3/#binders</a>
  * <p>
  * <i>Covered in other classes for ease of use:</i><br>
- * <a href="https://developer.veevavault.com/api/24.2/#binder-templates">https://developer.veevavault.com/api/24.2/#binder-templates</a>
+ * <a href="https://developer.veevavault.com/api/24.3/#binder-templates">https://developer.veevavault.com/api/24.3/#binder-templates</a>
  */
 public class BinderRequest extends VaultRequest<BinderRequest> {
 
@@ -85,7 +85,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/{binder_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Setting Depth</i>
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
@@ -140,7 +140,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/{binder_id}/versions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-all-binder-versions' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-all-binder-versions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-all-binder-versions' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-all-binder-versions</a>
 	 * @vapil.request <pre>
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 			.retrieveAllBinderVersions(binderId);</pre>
@@ -173,7 +173,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/{binder_id}/versions/(major_version}/{minor_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder-version' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder-version' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder-version</a>
 	 * @vapil.request <pre>BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 			.setDepth(depthAll)
 	 * 			.retrieveBinderVersion(binderId, majorVersion, minorVersion);	</pre>
@@ -209,7 +209,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#create-binder</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#create-binder</a>
 	 * @vapil.request <pre>
 	 * Document doc = new Document();
 	 *
@@ -249,7 +249,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-binder-from-template' target='_blank'>https://developer.veevavault.com/api/24.2/#create-binder-from-template</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-binder-from-template' target='_blank'>https://developer.veevavault.com/api/24.3/#create-binder-from-template</a>
 	 * @vapil.request <pre>
 	 * resp = vaultClient.newRequest(BinderRequest.class)
 	 * 			.createBinderFromTemplate(doc, "example_binder_template__c");</pre>
@@ -280,7 +280,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders/{binder_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-binder-version' target='_blank'>https://developer.veevavault.com/api/24.2/#create-binder-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-binder-version' target='_blank'>https://developer.veevavault.com/api/24.3/#create-binder-version</a>
 	 * @vapil.request <pre>
 	 * resp = vaultClient.newRequest(BinderRequest.class)
 	 * .createBinderVersion(resp.getDocument().getId());</pre>
@@ -310,7 +310,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/binders/{binder_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binder</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binder</a>
 	 * @vapil.request <pre>
 	 * resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.updateBinder(binderId, doc);</pre>
@@ -345,7 +345,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/binders/{binder_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binder</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binder</a>
 	 * @vapil.request <pre>
 	 * doc.setType("Artwork");
 	 * doc.setLifecycle("Artwork LC");
@@ -378,7 +378,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param binderId The id of the binder (document)
 	 * @return BinderResponse
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#refresh-binder-auto-filing' target='_blank'>https://developer.veevavault.com/api/24.2/#refresh-binder-auto-filing</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#refresh-binder-auto-filing' target='_blank'>https://developer.veevavault.com/api/24.3/#refresh-binder-auto-filing</a>
 	 */
 	public BinderResponse refreshBinderAutoFiling(int binderId) {
 		String url = vaultClient.getAPIEndpoint(URL_BINDER_ACTION)
@@ -402,7 +402,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param doc          Document fields for the binder
 	 * @return BinderResponse
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binder-version' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binder-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binder-version' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binder-version</a>
 	 * @vapil.request <pre>
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 			.updateBinderVersion(binderId, majorVersion, minorVersion, doc);</pre>
@@ -428,7 +428,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param binderId The id of the binder (document)
 	 * @return BinderResponse
 	 * @vapil.api <pre>DELETE /api/{version}/objects/binders/{binder_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#delete-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#delete-binder</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#delete-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#delete-binder</a>
 	 * @vapil.request <pre>
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.deleteBinder(binderId);</pre>
@@ -454,7 +454,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param minorVersion The minor version of the binder (document)
 	 * @return BinderResponse
 	 * @vapil.api <pre>DELETE /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#delete-binder-version' target='_blank'>https://developer.veevavault.com/api/24.2/#delete-binder-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#delete-binder-version' target='_blank'>https://developer.veevavault.com/api/24.3/#delete-binder-version</a>
 	 * @vapil.request <pre>
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.deleteBinderVersion(binderId, majorVersion, minorVersion);</pre>
@@ -482,7 +482,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param binderId The id of the binder (document)
 	 * @return BinderResponse
 	 * @vapil.api <pre>GET /api/{version}/objects/binders/{binder_id}/sections</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder-sections</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder-sections</a>
 	 * @vapil.request <pre>
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 			.retrieveBinderSections(binderId);</pre>
@@ -526,7 +526,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param sectionId The section id (also referred to as "node_id" in the API documentation)
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>GET /api/{version}/objects/binders/{binder_id}/sections/{section_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder-sections</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder-sections</a>
 	 */
 	public BinderSectionResponse retrieveBinderSections(int binderId, String sectionId) {
 		String url = vaultClient.getAPIEndpoint(URL_BINDER_SECTION_ID)
@@ -555,7 +555,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}/sections/{section_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder-version-section' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder-version-section</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder-version-section' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder-version-section</a>
 	 * @vapil.request <pre>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 			.retrieveBinderVersionSections(binderId, majorVersion, minorVersion, sectionId);</pre>
@@ -594,7 +594,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param binderSection Properties of the BinderSection, with name__v as the only required field
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/sections</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-binder-section' target='_blank'>https://developer.veevavault.com/api/24.2/#create-binder-section</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-binder-section' target='_blank'>https://developer.veevavault.com/api/24.3/#create-binder-section</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1</i>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class)
@@ -639,7 +639,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param binderSection Properties of the BinderSection, with name__v as the only required field
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/sections/{node_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binder-section' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binder-section</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binder-section' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binder-section</a>
 	 * @vapil.request <pre>
 	 * binderSection.setName("Changed Name");
 	 *
@@ -668,7 +668,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param sectionId The section id (also referred to as "node_id" in the API documentation
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>DELETE /api/{version}/objects/binders/{binder_id}/sections/{section_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#delete-binder-section' target='_blank'>https://developer.veevavault.com/api/24.2/#delete-binder-section</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#delete-binder-section' target='_blank'>https://developer.veevavault.com/api/24.3/#delete-binder-section</a>
 	 * @vapil.request <pre>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * .deleteBinderSection(binderId, resp.getId());</pre>
@@ -694,7 +694,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param docId        The id of the document being added to the binder
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#add-document-to-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#add-document-to-bindern</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#add-document-to-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#add-document-to-bindern</a>
 	 * @vapil.request <pre>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class).addDocumentToBinder(binderId, docId, parentId, majorVersion, minorVersion);</pre>
 	 * @vapil.response <pre>
@@ -729,7 +729,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param parentId  Value of the new parent node to move the document to a different section or from a section to the binder's root node
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/documents/{section_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#move-document-to-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#move-document-to-bindern</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#move-document-to-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#move-document-to-bindern</a>
 	 * @vapil.request <pre>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 			.moveDocumentInBinder(binderId, sectionId, parentId);</pre>
@@ -759,7 +759,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param order     Enter a number reflecting the new position of the document within the binder or section
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/documents/{section_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#move-document-to-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#move-document-to-bindern</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#move-document-to-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#move-document-to-bindern</a>
 	 * @vapil.request <pre>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.moveDocumentInBinder(binderId, sectionId, parentId, order);</pre>
@@ -786,7 +786,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param sectionId The section (node) id to be removed
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>DELETE /api/{version}/objects/binders/{binder_id}/documents/{section_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#remove-document-from-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#remove-document-from-bindern</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#remove-document-from-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#remove-document-from-bindern</a>
 	 * @vapil.request <pre>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.removeDocumentFromBinder(binderId, sectionId);</pre>
@@ -813,7 +813,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param minorVersion The minor version of the binder (document)
 	 * @return DocumentRelationshipRetrieveResponse
 	 * @vapil.api <pre>GET /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}/relationships</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder-relationship</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder-relationship</a>
 	 * @vapil.request <pre>
 	 * DocumentRelationshipRetrieveResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.retrieveBinderRelationship(binderId, majorVersion, minorVersion);</pre>
@@ -856,7 +856,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param relationshipId The binder relationship id field value.
 	 * @return DocumentRelationshipRetrieveResponse
 	 * @vapil.api <pre>GET /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}/relationships/{relationship_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder-relationship</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder-relationship</a>
 	 * @vapil.request <pre>
 	 * System.out.println("\n****** Retrieve Binder Relationships (Single) ******\n");
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
@@ -905,7 +905,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 *                           </ul>
 	 * @return DocumentRelationshipResponse, with the getId method returning the resulting id from the created relationship
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}/relationships</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.2/#create-binder-relationship</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.3/#create-binder-relationship</a>
 	 * @vapil.request <pre>
 	 * System.out.println("\n****** Create Binder Relationships ******\n");
 	 * DocumentRelationship binderRelationship = new DocumentRelationship();
@@ -942,7 +942,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param relationshipId The binder relationship id field value.
 	 * @return DocumentRelationshipResponse
 	 * @vapil.api <pre>DELETE /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}/relationships/{relationship_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#delete-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.2/#delete-binder-relationship</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#delete-binder-relationship' target='_blank'>https://developer.veevavault.com/api/24.3/#delete-binder-relationship</a>
 	 * @vapil.request <pre>
 	 * DocumentRelationshipResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 					.deleteBinderRelationship(binderId, majorVersion, minorVersion, relationshipId);</pre>
@@ -973,7 +973,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param binderId The id of the binder (document)
 	 * @return JobCreateResponse Contains the Job Id to monitor status and results
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/actions/export</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#export-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#export-binder</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#export-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#export-binder</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.exportBinder(binderId);</pre>
@@ -1019,7 +1019,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param minorVersion The minor version of the binder (document)
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}/actions/export</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#export-binder' target='_blank'>https://developer.veevavault.com/api/24.2/#export-binder</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#export-binder' target='_blank'>https://developer.veevavault.com/api/24.3/#export-binder</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.exportBinder(binderId, majorVersion, minorVersion);</pre>
@@ -1067,7 +1067,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param sectionIds Set of ids to export, either the section or document node
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/actions/export</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#export-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.2/#export-binder-sections</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#export-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.3/#export-binder-sections</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.exportBinderSections(binderId, sectionIds);</pre>
@@ -1109,7 +1109,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param sectionIds   Set of ids to export, either the section or document node
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>POST /api/{version}/objects/binders/{binder_id}/versions/{major_version}/{minor_version}/actions/export</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#export-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.2/#export-binder-sections</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#export-binder-sections' target='_blank'>https://developer.veevavault.com/api/24.3/#export-binder-sections</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.exportBinderSections(binderId, majorVersion, minorVersion, sectionIds);</pre>
@@ -1148,7 +1148,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param jobId The id value of the requested export job
 	 * @return BinderExportResponse
 	 * @vapil.api <pre>GET /api/{version}/objects/binders/actions/export/{job_id}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-binder-export-results' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-binder-export-results</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-binder-export-results' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-binder-export-results</a>
 	 * @vapil.request <pre>
 	 * BinderExportResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.retrieveBinderExportResults(jobId);</pre>
@@ -1188,7 +1188,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 *                            do not have a binding rule specified
 	 * @return BinderResponse The resulting response contains status and the binder id
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/binding_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binding-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binding-rules</a>
 	 * @vapil.request <pre>
 	 * BinderResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.updateBindingRule(binderId, bindingRule, bindingRuleOverride);</pre>
@@ -1228,7 +1228,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 *                            do not have a binding rule specified
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/sections/{node_id}/binding_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binder-section-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binder-section-binding-rule</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binder-section-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binder-section-binding-rule</a>
 	 * @vapil.request <pre>
 	 * BinderSectionResponse resp = vaultClient.newRequest(BinderRequest.class)
 	 * 				.updateBinderSectionBindingRule(binderId, sectionId, bindingRule, bindingRuleOverride);</pre>
@@ -1262,7 +1262,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 *                    </ul>
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/documents/{node_id}/binding_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binder-document-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binder-document-binding-rule</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binder-document-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binder-document-binding-rule</a>
 	 */
 	public BinderSectionResponse updateBinderDocumentBindingRule(int binderId, String sectionId, String bindingRule) {
 		String url = vaultClient.getAPIEndpoint(URL_BINDER_BINDING_RULE_DOCUMENT)
@@ -1291,7 +1291,7 @@ public class BinderRequest extends VaultRequest<BinderRequest> {
 	 * @param minorVersion If the binding_rule is specific, then this is required and indicates the minor version of the document to be linked
 	 * @return BinderSectionResponse
 	 * @vapil.api <pre>PUT /api/{version}/objects/binders/{binder_id}/documents/{node_id}/binding_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-binder-document-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.2/#update-binder-document-binding-rule</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-binder-document-binding-rule' target='_blank'>https://developer.veevavault.com/api/24.3/#update-binder-document-binding-rule</a>
 	 */
 	public BinderSectionResponse updateBinderDocumentBindingRule(int binderId, String sectionId, String bindingRule, int majorVersion, int minorVersion) {
 		String url = vaultClient.getAPIEndpoint(URL_BINDER_BINDING_RULE_DOCUMENT)

@@ -8,7 +8,7 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.common.Document;
+import com.veeva.vault.vapil.api.model.common.SdkProfilingSession;
 import com.veeva.vault.vapil.extension.DocumentRequestHelper;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -47,7 +48,8 @@ public class LogRequestTest {
 			LogRequest.AuditTrailType.SYSTEM));
 
 	private static String USER__SYS = "user__sys";
-	private static String VAPIL_USER_ID = "17042915";
+	private static String VAPIL_USER_ID = "14105917";
+	private static String PROFILING_SESSION_NAME = "vapil_test_profiling_session__c";
 	private static int docId;
 	private static VaultClient vaultClient;
 
@@ -607,6 +609,219 @@ public class LogRequestTest {
 				assertNotNull(systemAuditData.getEventDescription());
 //				assertNotNull(systemAuditData.getOnBehalfOf());
 			}
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully retrieve all sdk profiling sessions in the Vault")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestRetrieveAllProfilingSessions {
+
+		private SdkProfilingSessionBulkResponse retrieveAllProfilingSessionsResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			retrieveAllProfilingSessionsResponse = vaultClient.newRequest(LogRequest.class)
+					.retrieveAllProfilingSessions();
+
+			assertNotNull(retrieveAllProfilingSessionsResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(retrieveAllProfilingSessionsResponse.isSuccessful());
+
+			assertNotNull(retrieveAllProfilingSessionsResponse.getData());
+			List<SdkProfilingSession> sessions = retrieveAllProfilingSessionsResponse.getData();
+			for (SdkProfilingSession session : sessions) {
+				assertNotNull(session.getId());
+				assertNotNull(session.getLabel());
+				assertNotNull(session.getName());
+//			assertNotNull(session.getDescription());
+				assertNotNull(session.getStatus());
+//			assertNotNull(session.getUserId());
+				assertNotNull(session.getCreatedDate());
+				assertNotNull(session.getExpirationDate());
+			}
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully retrieve an sdk profiling session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestRetrieveProfilingSession {
+
+		private SdkProfilingSessionResponse retrieveProfilingSessionResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			retrieveProfilingSessionResponse = vaultClient.newRequest(LogRequest.class)
+					.retrieveProfilingSession(PROFILING_SESSION_NAME);
+
+			assertNotNull(retrieveProfilingSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(retrieveProfilingSessionResponse.isSuccessful());
+			assertNotNull(retrieveProfilingSessionResponse.getData());
+			assertNotNull(retrieveProfilingSessionResponse.getData().getId());
+			assertNotNull(retrieveProfilingSessionResponse.getData().getLabel());
+			assertNotNull(retrieveProfilingSessionResponse.getData().getName());
+//			assertNotNull(retrieveProfilingSessionResponse.getData().getDescription());
+			assertNotNull(retrieveProfilingSessionResponse.getData().getStatus());
+//			assertNotNull(retrieveProfilingSessionResponse.getData().getUserId());
+			assertNotNull(retrieveProfilingSessionResponse.getData().getCreatedDate());
+			assertNotNull(retrieveProfilingSessionResponse.getData().getExpirationDate());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully create an sdk profiling session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestCreateProfilingSession {
+
+		private SdkProfilingSessionCreateResponse createProfilingSessionResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			long currentEpochTime = Instant.now().getEpochSecond();
+
+			createProfilingSessionResponse = vaultClient.newRequest(LogRequest.class)
+					.setUserId(VAPIL_USER_ID)
+					.setDescription("Vapil Test Description")
+					.createProfilingSession(String.format("VAPIL Test Profiling Session %d", currentEpochTime));
+
+			assertNotNull(createProfilingSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(createProfilingSessionResponse.isSuccessful());
+			assertNotNull(createProfilingSessionResponse.getData());
+			assertNotNull(createProfilingSessionResponse.getData().getId());
+			assertNotNull(createProfilingSessionResponse.getData().getName());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully end an sdk profiling session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestEndProfilingSession {
+
+		private VaultResponse endProfilingSessionResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			endProfilingSessionResponse = vaultClient.newRequest(LogRequest.class)
+					.endProfilingSession("test__c");
+
+			assertNotNull(endProfilingSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(endProfilingSessionResponse.isSuccessful());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully delete an sdk profiling session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestDeleteProfilingSession {
+
+		private VaultResponse deleteProfilingSession = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			deleteProfilingSession = vaultClient.newRequest(LogRequest.class)
+					.deleteProfilingSession("test__c");
+
+			assertNotNull(deleteProfilingSession);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(deleteProfilingSession.isSuccessful());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully download sdk profiling session results to a file")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestDownloadSdkProfilingSessionResultsFile {
+
+		private VaultResponse downloadProfilingSessionResults = null;
+		Path outputPath = Paths.get(System.getProperty("user.home"), "Downloads", "profiler_results.zip");
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			downloadProfilingSessionResults = vaultClient.newRequest(LogRequest.class)
+					.setOutputPath(outputPath.toString())
+					.downloadProfilingSessionResults(PROFILING_SESSION_NAME);
+
+			assertNotNull(downloadProfilingSessionResults);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(downloadProfilingSessionResults.isSuccessful());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully download sdk profiling session results bytes")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestDownloadSdkProfilingSessionResultsBytes {
+
+		private VaultResponse downloadProfilingSessionResults = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			downloadProfilingSessionResults = vaultClient.newRequest(LogRequest.class)
+					.downloadProfilingSessionResults(PROFILING_SESSION_NAME);
+
+			assertNotNull(downloadProfilingSessionResults);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertNotNull(downloadProfilingSessionResults.getBinaryContent());
 		}
 	}
 }

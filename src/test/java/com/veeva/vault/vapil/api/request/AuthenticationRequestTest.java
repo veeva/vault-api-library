@@ -172,7 +172,6 @@ public class AuthenticationRequestTest {
 		}
 	}
 
-//	TODO: Test in GA after release
 	@Nested
 	@Disabled
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)

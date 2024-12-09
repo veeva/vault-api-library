@@ -14,7 +14,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Document Events
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#document-signatures">https://developer.veevavault.com/api/24.2/#document-signatures</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#document-signatures">https://developer.veevavault.com/api/24.3/#document-signatures</a>
  */
 public class DocumentSignatureRequest extends VaultRequest<DocumentSignatureRequest> {
     // API Endpoints
@@ -33,7 +33,7 @@ public class DocumentSignatureRequest extends VaultRequest<DocumentSignatureRequ
      *
      * @vapil.api <pre>
      * GET /api/{version}/metadata/query/documents/relationships/document_signature__sysr</pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-document-event-types-and-subtypes' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-document-event-types-and-subtypes</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-document-event-types-and-subtypes' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-document-event-types-and-subtypes</a>
      * @vapil.request <pre>
      * DocumentSignatureMetadataResponse response = vaultClient.newRequest(DocumentSignatureRequest.class)
      *      .retrieveDocumentSignatureMetadata();
@@ -63,7 +63,7 @@ public class DocumentSignatureRequest extends VaultRequest<DocumentSignatureRequ
      *
      * @vapil.api <pre>
      * GET /api/{version}/metadata/query/archived_documents/relationships/document_signature__sysr</pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-archived-document-signature-metadata' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-archived-document-signature-metadata</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-archived-document-signature-metadata' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-archived-document-signature-metadata</a>
      * @vapil.request <pre>
      * DocumentSignatureMetadataResponse response = vaultClient.newRequest(DocumentSignatureRequest.class)
      *      .retrieveArchivedDocumentSignatureMetadata();

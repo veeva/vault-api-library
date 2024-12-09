@@ -15,12 +15,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -91,6 +90,7 @@ public class HttpRequestConnector {
 	private byte[] requestBinaryContent = null; // Request binary content
 	private String requestFile = null; // Request with only a file
 	private String requestRawString = null; // Request with only a string
+	private StreamRequest requestInputStream = null; // Request with only an input stream
 
 	/**
 	 * Constructor for an HTTP request to a given URL
@@ -289,6 +289,8 @@ public class HttpRequestConnector {
 				return getRequestBodyBinary();
 			case STRING:
 				return getRequestBodyString();
+			case STREAM:
+				return getRequestBodyInputStream();
 			default:
 				break;
 		}
@@ -390,6 +392,17 @@ public class HttpRequestConnector {
 		log.debug("RequestBody: Binary");
 
 		return RequestBody.create(requestBinaryContent, MediaType.parse(requestMediaType));
+	}
+
+	/**
+	 * Form the request body with an input stream
+	 *
+	 * @return The created RequestBody
+	 */
+	private RequestBody getRequestBodyInputStream() {
+		log.debug("RequestBody: Input Stream");
+
+		return requestInputStream;
 	}
 
 	/**
@@ -577,6 +590,18 @@ public class HttpRequestConnector {
 		addBodyParam(name, new BinaryFile(fileName, binaryContent));
 	}
 
+	/**
+	 * Add an inputStream to the request.
+	 *
+	 * @param mediaType         The media type
+	 * @param inputStream 		The inputStream
+	 */
+	public void addInputStream(String mediaType, InputStream inputStream) {
+		requestOption = RequestOption.STREAM;
+		requestMediaType = mediaType;
+		requestInputStream = new StreamRequest(mediaType, inputStream);
+	}
+
 	private void addParam(ParamType paramType, String name, Object value) {
 		switch (paramType) {
 			case QUERY:
@@ -650,7 +675,11 @@ public class HttpRequestConnector {
 		 * Form the request body with a multipart form
 		 * request, such as body params and a file
 		 */
-		MULTIPART
+		MULTIPART,
+		/**
+		 * Form the request body with an input stream
+		 */
+		STREAM
 	}
 
 	/**
@@ -674,6 +703,48 @@ public class HttpRequestConnector {
 
 		public byte[] getBinaryContent() {
 			return binaryContent;
+		}
+	}
+
+
+	/**
+	 * Handler class sending requests using an Input Stream
+	 */
+	public static final class StreamRequest extends RequestBody {
+		private final MediaType requestMediaType;
+		private final InputStream stream;
+
+		public StreamRequest (
+				final String requestMediaType,
+				final InputStream stream) {
+			this.requestMediaType = MediaType.parse(requestMediaType);
+			this.stream = stream;
+		}
+
+		@Override
+		public MediaType contentType () {
+			return requestMediaType;
+		}
+
+		@Override
+		public boolean isOneShot () {
+			return true;
+		}
+
+		@Override
+		public void writeTo(final BufferedSink bufferedSink) throws IOException {
+			try (InputStream inputStream = stream;
+				 OutputStream outputStream = bufferedSink.outputStream()) {
+
+				// Create a buffer to read/write data in chunks
+				byte[] buffer = new byte[8192];
+				int bytesRead;
+
+				// Read bytes from the InputStream and write them to the OutputStream
+				while ((bytesRead = inputStream.read(buffer)) != -1) {
+					outputStream.write(buffer, 0, bytesRead);
+				}
+			}
 		}
 	}
 

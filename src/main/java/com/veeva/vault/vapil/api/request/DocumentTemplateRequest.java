@@ -19,7 +19,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Document Template Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#document-templates">https://developer.veevavault.com/api/24.2/#document-templates</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#document-templates">https://developer.veevavault.com/api/24.3/#document-templates</a>
  */
 public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateRequest> {
 	// API Endpoints
@@ -48,7 +48,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplateMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-document-template-metadata' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-document-template-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-document-template-metadata' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-document-template-metadata</a>
 	 */
 	public DocumentTemplateMetadataResponse retrieveDocumentTemplateMetadata() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DOCUMENT_TEMPLATE_METADATA));
@@ -64,7 +64,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplatesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-document-template-collection' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-document-template-collection</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-document-template-collection' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-document-template-collection</a>
 	 * @vapil.request <pre>
 	 * DocumentTemplateMetadataResponse resp = vaultClient.newRequest(DocumentTemplateRequest.class)
 	 * 				.retrieveDocumentTemplateMetadata();</pre>
@@ -97,7 +97,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplateResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/templates/{template_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-document-template-attributes' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-document-template-attributes</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-document-template-attributes' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-document-template-attributes</a>
 	 * @vapil.request <pre>
 	 * DocumentTemplatesResponse respTemplates = vaultClient.newRequest(DocumentTemplateRequest.class)
 	 * 				.retrieveDocumentTemplateCollection();
@@ -139,7 +139,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/templates/{template_name}/file</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#download-document-template-file' target='_blank'>https://developer.veevavault.com/api/24.2/#download-document-template-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#download-document-template-file' target='_blank'>https://developer.veevavault.com/api/24.3/#download-document-template-file</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Download directly to file</i>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentTemplateRequest.class)
@@ -182,7 +182,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-single-document-template' target='_blank'>https://developer.veevavault.com/api/24.2/#create-single-document-template</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-single-document-template' target='_blank'>https://developer.veevavault.com/api/24.3/#create-single-document-template</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - From file</i>
 	 * DocumentTemplateResponse resp = vaultClient.newRequest(DocumentTemplateRequest.class)
@@ -223,7 +223,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplateBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#create-multiple-document-templates' target='_blank'>https://developer.veevavault.com/api/24.2/#create-multiple-document-templates</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-multiple-document-templates' target='_blank'>https://developer.veevavault.com/api/24.3/#create-multiple-document-templates</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - CSV as File</i>
 	 * DocumentTemplateBulkResponse resp = vaultClient.newRequest(DocumentTemplateRequest.class)
@@ -268,7 +268,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplateResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/templates/{template_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-single-document-template' target='_blank'>https://developer.veevavault.com/api/24.2/#update-single-document-template</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-single-document-template' target='_blank'>https://developer.veevavault.com/api/24.3/#update-single-document-template</a>
 	 * @vapil.request <pre>
 	 * DocumentTemplateResponse response = vaultClient.newRequest(DocumentTemplateRequest.class)
 	 * 				.updateSingleDocumentTemplate(DOCUMENT_TEMPLATE_NAME1, documentTemplate);</pre>
@@ -299,7 +299,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplateBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/templates</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#update-multiple-document-templates' target='_blank'>https://developer.veevavault.com/api/24.2/#update-multiple-document-templates</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-multiple-document-templates' target='_blank'>https://developer.veevavault.com/api/24.3/#update-multiple-document-templates</a>
 	 * @vapil.request <pre>See {@link #createMultipleDocumentTemplates()} for example requests (replace "createMultipleDocumentTemplates" with "updateMultipleDocumentTemplates")</pre>
 	 * @vapil.response <pre>See {@link #createMultipleDocumentTemplates()} for example responses (replace "createMultipleDocumentTemplates" with "updateMultipleDocumentTemplates")</pre>
 	 */
@@ -316,7 +316,7 @@ public class DocumentTemplateRequest extends VaultRequest<DocumentTemplateReques
 	 * @return DocumentTemplateResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/templates/{template_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#delete-basic-document-template' target='_blank'>https://developer.veevavault.com/api/24.2/#delete-basic-document-template</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#delete-basic-document-template' target='_blank'>https://developer.veevavault.com/api/24.3/#delete-basic-document-template</a>
 	 * @vapil.request <pre>
 	 * DocumentTemplateResponse response = vaultClient.newRequest(DocumentTemplateRequest.class)
 	 * 				.deleteBasicDocumentTemplate(DOCUMENT_TEMPLATE_NAME1);</pre>

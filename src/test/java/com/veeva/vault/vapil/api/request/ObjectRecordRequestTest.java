@@ -19,8 +19,7 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -639,6 +638,118 @@ public class ObjectRecordRequestTest {
                 assertNotNull(mergeSet.getDuplicateRecordId());
                 assertNotNull(mergeSet.getMainRecordId());
                 assertNotNull(mergeSet.getStatus());
+            }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully create object records from a csv file")
+    class TestCreateObjectRecordsCsv {
+
+        ObjectRecordBulkResponse createObjectRecordsResponse = null;
+        List<String> recordIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws InterruptedException, IOException {
+            List<String[]> data = new ArrayList<>();
+            data.add(new String[]{"name__v", "description__c"});
+            for (int i = 0; i < 500; i++) {
+                String name = "VAPIL Test Create Object " + ZonedDateTime.now() + " " + i;
+                String description = "VAPIL Test";
+                data.add(new String[]{name, description});
+            }
+
+            FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+            ObjectRecordBulkResponse deleteResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            createObjectRecordsResponse = vaultClient.newRequest(ObjectRecordRequest.class)
+                    .setContentTypeCsv()
+                    .setInputPath(CREATE_OBJECTS_CSV_PATH)
+                    .setMigrationMode(true)
+                    .setNoTriggers(true)
+                    .createObjectRecords(OBJECT_NAME);
+
+            assertNotNull(createObjectRecordsResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(createObjectRecordsResponse.isSuccessful());
+            assertNotNull(createObjectRecordsResponse.getData());
+            for (ObjectRecordResponse objectRecordResponse : createObjectRecordsResponse.getData()) {
+                assertTrue(objectRecordResponse.isSuccessful());
+                assertNotNull(objectRecordResponse.getData().getId());
+                assertNotNull(objectRecordResponse.getData().getUrl());
+                recordIds.add(objectRecordResponse.getData().getId());
+            }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully create object records from an input stream")
+    class TestCreateObjectRecordsStream {
+
+        ObjectRecordBulkResponse createObjectRecordsResponse = null;
+        List<String> recordIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws InterruptedException, IOException {
+            List<String[]> data = new ArrayList<>();
+            data.add(new String[]{"name__v", "description__c"});
+            for (int i = 0; i < 5; i++) {
+                String name = "VAPIL Test Create Object " + ZonedDateTime.now() + " " + i;
+                String description = "VAPIL Test";
+                data.add(new String[]{name, description});
+            }
+
+            FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+            ObjectRecordBulkResponse deleteResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws FileNotFoundException {
+            File file = new File(CREATE_OBJECTS_CSV_PATH);
+            InputStream inputStream = new FileInputStream(file);
+
+
+            createObjectRecordsResponse = vaultClient.newRequest(ObjectRecordRequest.class)
+                    .setContentTypeCsv()
+                    .setInputStream(inputStream)
+                    .createObjectRecords(OBJECT_NAME);
+
+            assertNotNull(createObjectRecordsResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(createObjectRecordsResponse.isSuccessful());
+            assertNotNull(createObjectRecordsResponse.getData());
+            for (ObjectRecordResponse objectRecordResponse : createObjectRecordsResponse.getData()) {
+                assertTrue(objectRecordResponse.isSuccessful());
+                assertNotNull(objectRecordResponse.getData().getId());
+                assertNotNull(objectRecordResponse.getData().getUrl());
+                recordIds.add(objectRecordResponse.getData().getId());
             }
         }
     }

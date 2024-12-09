@@ -22,7 +22,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * The API allows you to retrieve, manage, and initiate document
  * workflows.
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#retrieve-all-document-workflows">https://developer.veevavault.com/api/24.2/#retrieve-all-document-workflows</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#retrieve-all-document-workflows">https://developer.veevavault.com/api/24.3/#retrieve-all-document-workflows</a>
  */
 public class DocumentWorkflowRequest extends VaultRequest<DocumentWorkflowRequest> {
 
@@ -56,7 +56,7 @@ public class DocumentWorkflowRequest extends VaultRequest<DocumentWorkflowReques
 	 * @return DocumentWorkflowResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-all-document-workflows' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-all-document-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-all-document-workflows' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-all-document-workflows</a>
 	 * @vapil.request <pre>
 	 * DocumentWorkflowResponse resp = vaultClient.newRequest(DocumentWorkflowRequest.class)
 	 * 				.retrieveAllDocumentWorkflows();</pre>
@@ -90,7 +90,7 @@ public class DocumentWorkflowRequest extends VaultRequest<DocumentWorkflowReques
 	 * @return DocumentWorkflowDetailsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/actions/{workflow_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-document-workflow-details' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-document-workflow-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-document-workflow-details' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-document-workflow-details</a>
 	 * @vapil.request <pre>
 	 * DocumentWorkflowDetailsResponse resp = vaultClient.newRequest(DocumentWorkflowRequest.class)
 	 * 				.retrieveDocumentWorkflowDetails(workflowName);</pre>
@@ -147,7 +147,7 @@ public class DocumentWorkflowRequest extends VaultRequest<DocumentWorkflowReques
 	 * @return InitiateDocumentWorkflowResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/actions/{workflow_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#initiate-document-workflow' target='_blank'>https://developer.veevavault.com/api/24.2/#initiate-document-workflow</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#initiate-document-workflow' target='_blank'>https://developer.veevavault.com/api/24.3/#initiate-document-workflow</a>
 	 * @vapil.request <pre>
 	 * InitiateDocumentWorkflowResponse resp = vaultClient.newRequest(DocumentWorkflowRequest.class)
 	 * 						.initiateDocumentWorkflow(workflowName, documents,participantName,description);</pre>

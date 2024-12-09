@@ -2,6 +2,9 @@ package com.veeva.vault.vapil.extension;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.veeva.vault.vapil.api.client.VaultClient;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
@@ -95,11 +98,22 @@ public abstract class AbstractVaultClientParameterResolver implements ParameterR
         }
     }
 
-    public static String getVapilVersion() throws IOException {
-        Properties props = new Properties();
-        props.load(AbstractVaultClientParameterResolver.class.getClassLoader().getResourceAsStream("project.properties"));
-        String version = props.getProperty("version");
-        return version;
+//    public static String getVapilVersion() throws IOException {
+//        Properties props = new Properties();
+//        props.load(AbstractVaultClientParameterResolver.class.getClassLoader().getResourceAsStream("project.properties"));
+//        String version = props.getProperty("version");
+//        return version;
+//    }
+
+    public static String getVapilVersion() {
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        try (FileReader fileReader = new FileReader("pom.xml")) {
+            Model model = reader.read(fileReader);
+            return model.getVersion(); // This will return the version specified in the pom.xml
+        } catch (IOException | XmlPullParserException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

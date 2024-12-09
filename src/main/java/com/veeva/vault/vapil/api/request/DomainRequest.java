@@ -16,7 +16,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Retrieve Domain specific information
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#domain-information">https://developer.veevavault.com/api/24.2/#domain-information</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#domain-information">https://developer.veevavault.com/api/24.3/#domain-information</a>
  */
 public class DomainRequest extends VaultRequest<DomainRequest> {
 
@@ -39,7 +39,7 @@ public class DomainRequest extends VaultRequest<DomainRequest> {
 	 * @return DomainResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/domain</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-domain-information' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-domain-information</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-domain-information' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-domain-information</a>
 	 * @vapil.request <pre>
 	 * DomainResponse resp = vaultClient.newRequest(DomainRequest.class)
 	 * 		.setIncludeApplications(includeApplication)
@@ -74,7 +74,7 @@ public class DomainRequest extends VaultRequest<DomainRequest> {
 	 * @return DomainsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/domains</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-domains' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-domains</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-domains' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-domains</a>
 	 * @vapil.request <pre>
 	 * DomainsResponse response = vaultClient.newRequest(DomainRequest.class)
 	 * 		.retrieveDomains();

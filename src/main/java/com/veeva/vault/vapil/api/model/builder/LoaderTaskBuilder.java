@@ -143,6 +143,11 @@ public class LoaderTaskBuilder {
 		return this;
 	}
 
+	public LoaderTaskBuilder setNoTriggers(Boolean noTriggers) {
+		loaderTask.setNoTriggers(noTriggers);
+		return this;
+	}
+
 	public enum ObjectType {
 		DOCUMENTS("documents__v"),
 		DOCUMENT_ATTACHMENTS("document_attachments__v"),

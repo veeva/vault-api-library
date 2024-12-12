@@ -120,4 +120,13 @@ public class LoaderTask extends VaultModel {
 	public void setVqlCriteria(String vqlCriteria) {
 		this.set("vql_criteria__v", vqlCriteria);
 	}
+
+	@JsonProperty("notriggers")
+	public Boolean getNoTriggers() {
+		return getBoolean("notriggers");
+	}
+
+	public void setNoTriggers(Boolean noTriggers) {
+		this.set("notriggers", noTriggers);
+	}
 }

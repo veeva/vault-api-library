@@ -31,6 +31,9 @@ public class FileHelper {
     public static String getPathResourcesFolder() {
         return RESOURCES_FOLDER_DIRECTORY;
     }
+    public static String getPathLoaderFolder() {
+        return RESOURCES_FOLDER_DIRECTORY + File.separator + "loader";
+    }
 
     public static String getPathLoaderFile() {
         return LOADER_FILE_PATH;

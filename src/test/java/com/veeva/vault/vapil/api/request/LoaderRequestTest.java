@@ -1,6 +1,9 @@
 package com.veeva.vault.vapil.api.request;
 
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.common.Job;
 import com.veeva.vault.vapil.api.model.common.LoaderTask;
 import com.veeva.vault.vapil.api.model.builder.LoaderTaskBuilder;
@@ -9,11 +12,18 @@ import com.veeva.vault.vapil.extension.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("LoaderRequestTest")
 @ExtendWith(VaultClientParameterResolver.class)
@@ -28,7 +38,9 @@ public class LoaderRequestTest {
     static final String DOC_CLASSIFICATION_LABEL = "VAPIL Test Doc Classification";
     static final String DOC_LIFECYCLE = "VAPIL Test Doc Lifecycle";
     static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingLoaderFilePath();
-    static final String LOADER_FILE_CSV_PATH = FileHelper.getPathLoaderFile();
+    static final String OBJECT_NAME = "vapil_test_object__c";
+    static final String LOADER_FILE_OBJECTS_CSV_PATH = FileHelper.getPathLoaderFolder() + File.separator + "loader_object_records.csv";
+    static final String FILE_STAGING_LOADER_OBJECTS_CSV_PATH = FileStagingHelper.getPathFileStagingLoaderFolder() + "/loader_object_records.csv";
     static LoaderTask loaderTask;
     static int loadJobId;
     static int extractJobId;
@@ -41,28 +53,16 @@ public class LoaderRequestTest {
     static void setup(VaultClient client) throws IOException {
         vaultClient = client;
         Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
-
-        List<String[]> data = new ArrayList<>();
-        data.add(new String[]{"file", "name__v", "type__v", "subtype__v",
-                "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
-        for (int i = 0; i < 3; i++) {
-            String name = "VAPIL Loader " + ZonedDateTime.now() + " " + i;
-            data.add(new String[]{FILE_STAGING_FILE, name, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
-                    DOC_LIFECYCLE, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
-        }
-        FileHelper.writeCsvFile(LOADER_FILE_CSV_PATH, data);
-
-        FileStagingHelper.createLoaderFileOnFileStaging(vaultClient);
     }
 
-    @AfterAll
-    static void teardown() {
-        DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-        Assertions.assertTrue(response.isSuccessful());
-        for (DocumentResponse documentResponse : response.getData()) {
-            Assertions.assertTrue(documentResponse.isSuccessful());
-        }
-    }
+//    @AfterAll
+//    static void teardown() {
+//        DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
+//        Assertions.assertTrue(response.isSuccessful());
+//        for (DocumentResponse documentResponse : response.getData()) {
+//            Assertions.assertTrue(documentResponse.isSuccessful());
+//        }
+//    }
 
     @Test
     @Order(1)
@@ -318,5 +318,107 @@ public class LoaderRequestTest {
                 docIds.add(Integer.valueOf(docId));
             }
         }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully load object records")
+    class TestLoadDataObjectsRecords {
+        LoaderResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        int jobId;
+
+        @BeforeAll
+        public void setup() {
+            File file = new File(LOADER_FILE_OBJECTS_CSV_PATH);
+            FileStagingHelper.createFileOnFileStaging(vaultClient, file, FILE_STAGING_LOADER_OBJECTS_CSV_PATH, true);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Wait for job completion
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+            VaultResponse loadResultsResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoadSuccessLogResults(jobId, 1);
+            assertNotNull(loadResultsResponse);
+            assertTrue(loadResultsResponse.isSuccessful());
+
+//            Extract record ids from the CSV response
+            try {
+                recordIds = extractIdsFromCSV(loadResultsResponse.getBinaryContent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            assertNotNull(recordIds);
+
+//            Delete the records
+            ObjectRecordBulkResponse deleteRecordsResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteRecordsResponse.isSuccessful());
+            for (ObjectRecordResponse recordResponse : deleteRecordsResponse.getData()) {
+                assertTrue(recordResponse.isSuccessful());
+            }
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setAction(LoaderTaskBuilder.Action.CREATE)
+                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setObject(OBJECT_NAME)
+                    .setFile(FILE_STAGING_LOADER_OBJECTS_CSV_PATH)
+                    .setRecordMigrationMode(true)
+                    .setNoTriggers(true)
+                    .build();
+
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTask(loaderTask)
+                    .loadDataObjects();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getUrl());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getTasks());
+            for (LoaderTask task : response.getTasks()) {
+                assertNotNull(task.getTaskId());
+                assertNotNull(task.getAction());
+                assertNotNull(task.getObjectType());
+                assertNotNull(task.getFile());
+                assertNotNull(task.getRecordMigrationMode());
+                assertNotNull(task.getNoTriggers());
+            }
+
+            jobId = response.getJobId();
+        }
+    }
+
+    public static List<String> extractIdsFromCSV(byte[] bytes) throws IOException {
+        // Create InputStream from bytes
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+
+        // Initialize CsvMapper and schema
+        CsvMapper csvMapper = new CsvMapper();
+        CsvSchema schema = CsvSchema.emptySchema().withHeader(); // Assume the first row contains headers
+
+        // Parse the CSV and extract the "id" column
+        List<String> ids = new ArrayList<>();
+        csvMapper.readerFor(Map.class)
+                .with(schema)
+                .<Map<String, String>>readValues(inputStream)
+                .forEachRemaining(row -> {
+                    String id = row.get("id");
+                    if (id != null && !id.isEmpty()) {
+                        ids.add(id);
+                    }
+                });
+
+        return ids;
     }
 }

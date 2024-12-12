@@ -79,6 +79,30 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * POST /api/{version}/services/loader/load
 	 * </pre>
 	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#load-data-objects' target='_blank'>https://developer.veevavault.com/api/24.3/#load-data-objects</a>
+	 * @vapil.request <pre>
+	 * List&lt;LoaderTask&gt; loaderTasks = new ArrayList&lt;&gt;();
+	 * LoaderTask loaderTask = new LoaderTaskBuilder()
+	 * 		.setAction(LoaderTaskBuilder.Action.CREATE)
+	 * 		.setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+	 * 		.setObject(OBJECT_NAME)
+	 * 		.setFile(FILE_STAGING_LOADER_OBJECTS_CSV_PATH)
+	 * 		.setRecordMigrationMode(true)
+	 * 		.setNoTriggers(true)
+	 * 		.build();
+	 * loaderTasks.add(loaderTask);
+	 *
+	 * LoaderResponse response = vaultClient.newRequest(LoaderRequest.class)
+	 * 		.addLoaderTasks(loaderTasks)
+	 * 		.loadDataObjects();
+	 * </pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Job Id: " + response.getJobId());
+	 * for (LoaderTask task : response.getTasks()) {
+	 * 		System.out.println("***Loader Task***");
+	 * 		System.out.println("Task Id: " + task.getTaskId());
+	 * 		System.out.println("Object Type: " + task.getObjectType());
+	 * }
+	 * </pre>
 	 */
 	public LoaderResponse loadDataObjects() {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_LOADER_LOAD));

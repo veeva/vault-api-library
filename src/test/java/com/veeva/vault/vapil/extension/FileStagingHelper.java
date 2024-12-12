@@ -14,6 +14,7 @@ import java.nio.file.Files;
 public class FileStagingHelper {
 
     private static Logger log = LoggerFactory.getLogger(FileStagingHelper.class);
+    static final String FILE_STAGING_LOADER_FOLDER = "/loader";
     static final String TEST_FILE_LOCAL_PATH = FileHelper.getPathTestFile();
     static final String LOADER_FILE_LOCAL_PATH = FileHelper.getPathLoaderFile();
     static final String TEST_FILE_FSS_PATH = "/vapil_test_document.docx";
@@ -25,6 +26,29 @@ public class FileStagingHelper {
     public static String getPathFileStagingLoaderFilePath() {
         return LOADER_FILE_FSS_PATH;
     }
+    public static String getPathFileStagingLoaderFolder() { return FILE_STAGING_LOADER_FOLDER; }
+    public static void createFileOnFileStaging(
+            VaultClient vaultClient,
+            File file,
+            String loaderPath,
+            boolean overwrite
+    ) {
+        byte[] bytes = new byte[0];
+        try {
+            bytes = Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            log.error("Error reading file: " + TEST_FILE_LOCAL_PATH);
+            e.printStackTrace();
+        }
+
+        FileStagingItemResponse fileStagingResponse = vaultClient.newRequest(FileStagingRequest.class)
+                .setOverwrite(overwrite)
+                .setFile(file.getPath(), bytes)
+                .createFolderOrFile(FileStagingRequest.Kind.FILE, loaderPath);
+
+        Assertions.assertTrue(fileStagingResponse.isSuccessful());
+    }
+
     public static void createTestFileOnFileStaging(VaultClient vaultClient) {
         File testFile = new File(TEST_FILE_LOCAL_PATH);
         byte[] bytes = new byte[0];

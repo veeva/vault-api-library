@@ -5,19 +5,18 @@ import com.veeva.vault.vapil.api.model.common.ObjectRecord;
 import com.veeva.vault.vapil.api.model.common.PackageLog;
 import com.veeva.vault.vapil.api.model.common.PackageStep;
 import com.veeva.vault.vapil.api.model.response.*;
-import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.JobStatusHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //        Inbound Packages are saved as 'vault_package__v' records. These are system managed, and cannot be deleted.
 //        Inbound packages will have to be manually deleted through the UI after these tests are run
@@ -27,8 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Configuration Migration Request should")
 public class ConfigurationMigrationRequestTest {
 
-    private static final String RESOURCES_CONFIGURATION_MIGRATION_PATH = FileHelper.PATH_RESOURCES_FOLDER + "configuration_migration" + File.separator;
-    private static final String VAULT_CONFIG_REPORT_FILE_PATH = RESOURCES_CONFIGURATION_MIGRATION_PATH + "vault_configuration_report.zip";
     private static final String VPK_FILE_PATH = "src/test/resources/configuration_migration/inbound_package.vpk";
     private static final String OUTBOUND_PACKAGE_NAME = "PKG-0004";
     private static final String OUTBOUND_PACKAGE_ID = "0PO000000004001";
@@ -353,7 +350,6 @@ public class ConfigurationMigrationRequestTest {
     }
 
     @Nested
-    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully enable configuration mode")
@@ -379,7 +375,6 @@ public class ConfigurationMigrationRequestTest {
     }
 
     @Nested
-    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully disable configuration mode")
@@ -409,215 +404,6 @@ public class ConfigurationMigrationRequestTest {
         public void testResponse() {
             assertTrue(disableConfigurationModeResponse.isSuccessful());
             assertNotNull(disableConfigurationModeResponse.getResponseMessage());
-        }
-    }
-
-    @Nested
-    @Tag("SmokeTest")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully initiate a Vault Configuration Report job")
-    class TestVaultConfigurationReport {
-
-        private JobCreateResponse response = null;
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .vaultConfigurationReport();
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getJobId());
-            assertNotNull(response.getUrl());
-        }
-    }
-
-    @Nested
-    @Tag("SmokeTest")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve configuration report results as binary")
-    class TestRetrieveConfigurationReportResultsBinary {
-
-        private VaultResponse response = null;
-        private int jobId;
-
-        @BeforeAll
-        public void setup() {
-            JobCreateResponse jobCreateResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .vaultConfigurationReport();
-
-            assertTrue(jobCreateResponse.isSuccessful());
-            jobId = jobCreateResponse.getJobId();
-
-            assertTrue(JobStatusHelper.checkJobCompletion(vaultClient, jobId));
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .retrieveConfigurationReportResults(String.valueOf(jobId));
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getBinaryContent());
-        }
-    }
-
-    @Nested
-    @Tag("SmokeTest")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve configuration report results as file")
-    class TestRetrieveConfigurationReportResultsFile {
-
-        private VaultResponse response = null;
-        private int jobId;
-
-        @BeforeAll
-        public void setup() {
-            JobCreateResponse jobCreateResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .vaultConfigurationReport();
-
-            assertTrue(jobCreateResponse.isSuccessful());
-            jobId = jobCreateResponse.getJobId();
-
-            assertTrue(JobStatusHelper.checkJobCompletion(vaultClient, jobId));
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .setOutputPath(VAULT_CONFIG_REPORT_FILE_PATH)
-                    .retrieveConfigurationReportResults(String.valueOf(jobId));
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-        }
-    }
-
-    @Nested
-    @Tag("SmokeTest")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully query for vault_component__v definition")
-    class TestComponentDefinitionQueryComponent {
-
-        private ComponentQueryResponse response = null;
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            String vql = "SELECT id,name__v,component_name__v FROM vault_component__v";
-            response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                            .componentDefinitionQuery(vql);
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertFalse(response.hasErrors());
-            assertNotNull(response.getData());
-            for (ComponentQueryResponse.QueryResult queryResult : response.getData()) {
-                assertNotNull(queryResult.get("id"));
-                assertNotNull(queryResult.get("name__v"));
-                assertNotNull(queryResult.get("component_name__v"));
-            }
-        }
-    }
-
-    @Nested
-    @Tag("SmokeTest")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully query for vault_package_component__v definition")
-    class TestComponentDefinitionQueryPackageComponent {
-
-        private ComponentQueryResponse response = null;
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            String vql = "SELECT id,name__v,component_type__v FROM vault_package_component__v";
-            response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .componentDefinitionQuery(vql);
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertFalse(response.hasErrors());
-            assertNotNull(response.getData());
-            for (ComponentQueryResponse.QueryResult queryResult : response.getData()) {
-                assertNotNull(queryResult.get("id"));
-                assertNotNull(queryResult.get("name__v"));
-                assertNotNull(queryResult.get("component_type__v"));
-            }
-        }
-    }
-
-    @Nested
-    @Tag("SmokeTest")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully query page url for vault_component__v definition")
-    class TestComponentDefinitionQueryByPage {
-
-        private ComponentQueryResponse response = null;
-        private String nextPageUrl;
-
-        @BeforeAll
-        public void setup() {
-            response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .componentDefinitionQuery("SELECT id,name__v,component_name__v FROM vault_component__v");
-            assertNotNull(response);
-            assertFalse(response.hasErrors());
-            assertNotNull(response.getResponseDetails().getNextPage());
-            nextPageUrl = response.getResponseDetails().getNextPage();
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .componentDefinitionQueryByPage(nextPageUrl);
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertFalse(response.hasErrors());
-            assertNotNull(response.getData());
-            for (ComponentQueryResponse.QueryResult queryResult : response.getData()) {
-                assertNotNull(queryResult.get("id"));
-                assertNotNull(queryResult.get("name__v"));
-                assertNotNull(queryResult.get("component_name__v"));
-            }
         }
     }
 }

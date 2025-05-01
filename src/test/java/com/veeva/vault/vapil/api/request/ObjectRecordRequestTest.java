@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ObjectRecordRequestTest {
 
     static final String OBJECT_NAME = "vapil_test_object__c";
-    static final String OBJECT_NAME_PARENT = "vapil_test_parent_object__c";
     static final String CREATE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathCreateObjectRecordsCsv();
     static final String UPDATE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathUpdateObjectRecordsCsv();
     static final String DELETE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathDeleteObjectRecordsCsv();
@@ -752,116 +751,6 @@ public class ObjectRecordRequestTest {
                 assertNotNull(objectRecordResponse.getData().getUrl());
                 recordIds.add(objectRecordResponse.getData().getId());
             }
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully send a call that fails to create object records from a csv file")
-    class TestCreateObjectRecordsError {
-
-        ObjectRecordBulkResponse createObjectRecordsResponse = null;
-        List<String> recordIds = new ArrayList<>();
-
-        @BeforeAll
-        public void setup() throws InterruptedException, IOException {
-            List<String[]> data = new ArrayList<>();
-            data.add(new String[]{"name__v", "description__c"});
-            for (int i = 0; i < 2; i++) {
-                String name = "VAPIL Test Create Object " + ZonedDateTime.now() + " " + i;
-                String description = "VAPIL Test";
-                data.add(new String[]{name, description});
-            }
-
-            FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
-
-            // Create object
-            ObjectRecordBulkResponse createResponse = vaultClient.newRequest(ObjectRecordRequest.class)
-                    .setContentTypeCsv()
-                    .setInputPath(CREATE_OBJECTS_CSV_PATH)
-                    .createObjectRecords(OBJECT_NAME);
-            assertTrue(createResponse.isSuccessful());
-
-            for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
-                assertTrue(objectRecordResponse.isSuccessful());
-                recordIds.add(objectRecordResponse.getData().getId());
-            }
-        }
-
-        @AfterAll
-        public void teardown() throws IOException {
-            ObjectRecordBulkResponse deleteResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
-            assertTrue(deleteResponse.isSuccessful());
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            createObjectRecordsResponse = vaultClient.newRequest(ObjectRecordRequest.class)
-                    .setContentTypeCsv()
-                    .setInputPath(CREATE_OBJECTS_CSV_PATH)
-                    .createObjectRecords(OBJECT_NAME);
-
-            assertNotNull(createObjectRecordsResponse);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(createObjectRecordsResponse.isSuccessful());
-            assertNotNull(createObjectRecordsResponse.getData());
-            for (ObjectRecordResponse objectRecordResponse : createObjectRecordsResponse.getData()) {
-                assertTrue(objectRecordResponse.isFailure());
-                assertTrue(objectRecordResponse.hasErrors());
-            }
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully initiate roll-up field recalculation")
-    class TestRecalculateRollupFields {
-
-        VaultResponse response = null;
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(ObjectRecordRequest.class)
-                    .recalculateRollupFields(OBJECT_NAME_PARENT);
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve roll-up field recalculation status")
-    class TestRetrieveRollupFieldRecalculationStatus {
-
-        JobStatusResponse response = null;
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(ObjectRecordRequest.class)
-                    .retrieveRollupFieldRecalculationStatus(OBJECT_NAME_PARENT);
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getData().getStatus());
         }
     }
 

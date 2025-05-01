@@ -1,131 +1,71 @@
 package com.veeva.vault.vapil.extension;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.response.DocumentBulkResponse;
-import com.veeva.vault.vapil.api.model.response.QueryResponse;
+import com.veeva.vault.vapil.api.model.response.DocumentResponse;
 import com.veeva.vault.vapil.api.request.DocumentRequest;
-import com.veeva.vault.vapil.api.request.QueryRequest;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DocumentRequestHelper {
 
-    public static final String VAPIL_TEST_DOC_LIFECYCLE_LABEL = "VAPIL Test Doc Lifecycle";
-    public static final String VAPIL_TEST_DOC_LIFECYCLE_NAME = "vapil_test_doc_lifecycle__c";
-    public static final String VAPIL_TEST_DOC_TYPE_LABEL = "VAPIL Test Doc Type";
-    public static final String VAPIL_TEST_DOC_TYPE_NAME = "vapil_test_doc_type__c";
-    public static final String VAPIL_TEST_DOC_SUBTYPE_LABEL = "VAPIL Test Doc Subtype";
-    public static final String VAPIL_TEST_DOC_SUBTYPE_NAME = "vapil_test_doc_subtype__c";
-    public static final String VAPIL_TEST_DOC_CLASSIFICATION_LABEL = "VAPIL Test Doc Classification";
-    public static final String VAPIL_TEST_DOC_CLASSIFICATION_NAME = "vapil_test_doc_classification__c";
-    public static final String VAPIL_TEST_RECLASSIFY_TYPE_NAME = "vapil_test_reclassify_type__c";
-    public static final String VAPIL_TEST_RECLASSIFY_TYPE_LABEL = "VAPIL Test Reclassify Type";
+    static final int MAJOR_VERSION = 0;
+    static final int MINOR_VERSION = 1;
+    static final String DOC_LIFECYCLE = "VAPIL Test Doc Lifecycle";
+    static final String DOC_TYPE_LABEL = "VAPIL Test Doc Type";
+    static final String DOC_SUBTYPE_LABEL = "VAPIL Test Doc Subtype";
+    static final String DOC_CLASSIFICATION_LABEL = "VAPIL Test Doc Classification";
+    static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
+    static final String CREATE_DOCUMENTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "documents" + File.separator + "create_multiple_documents.csv";
+    static final String UPDATE_DOCUMENTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "documents" + File.separator + "update_multiple_documents.csv";
+    static final String DELETE_DOCUMENTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "documents" + File.separator + "delete_multiple_documents.csv";
+    static final String RECLASSIFY_DOCUMENTS_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "documents" + File.separator + "reclassify_multiple_documents.csv";
+    static final String UNDO_COLLAB_CHECKOUT_CSV_PATH = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "documents" + File.separator + "undo_collab_checkout.csv";
 
-    private static final int MAJOR_VERSION = 0;
-    private static final int MINOR_VERSION = 1;
-    private static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
+    public static String getPathCreateMultipleDocuments() {
+        FileHelper.createFile(CREATE_DOCUMENTS_CSV_PATH);
+        return CREATE_DOCUMENTS_CSV_PATH;
+    }
 
-    public static final String PATH_RESOURCES_DOCUMENTS_FOLDER = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents";
-    public static final String PATH_CREATE_MULTIPLE_DOCUMENTS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "create_multiple_documents.csv";
-    public static final String PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "update_multiple_documents.csv";
-    public static final String PATH_DELETE_MULTIPLE_DOCUMENTS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "delete_multiple_documents.csv";
-    public static final String PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "create_multiple_document_versions.csv";
-    public static final String PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "reclassify_multiple_documents.csv";
-    public static final String PATH_UNDO_COLLAB_CHECKOUT_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "undo_collab_checkout.csv";
-    public static final String PATH_UPDATE_MULTIPLE_RENDITIONS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "update_multiple_document_renditions.csv";
+    public static String getPathUpdateMultipleDocuments() {
+        FileHelper.createFile(UPDATE_DOCUMENTS_CSV_PATH);
+        return UPDATE_DOCUMENTS_CSV_PATH;
+    }
 
+    public static String getPathDeleteMultipleDocuments() {
+        FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
+        return DELETE_DOCUMENTS_CSV_PATH;
+    }
 
-    public static QueryResponse queryForDocId(VaultClient vaultClient) {
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT id, major_version_number__v, minor_version_number__v ");
-        query.append("FROM documents ");
-        query.append("WHERE binder__v = false ");
-        query.append("ORDER BY id ASC ");
-        query.append("MAXROWS 1");
+    public static String getPathReclassifyMultipleDocuments() {
+        FileHelper.createFile(RECLASSIFY_DOCUMENTS_CSV_PATH);
+        return RECLASSIFY_DOCUMENTS_CSV_PATH;
+    }
 
-        QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class)
-                .query(query.toString());
-
-        assertFalse(queryResponse.isFailure());
-        return queryResponse;
+    public static String getPathUndoCollabCheckout() {
+        return UNDO_COLLAB_CHECKOUT_CSV_PATH;
     }
 
     public static void writeToCreateMultipleDocumentsFile(int numOfDocuments) {
-        FileHelper.createFile(PATH_CREATE_MULTIPLE_DOCUMENTS_CSV);
+        FileHelper.createFile(CREATE_DOCUMENTS_CSV_PATH);
         List<String[]> data = new ArrayList<>();
         data.add(new String[]{"file", "name__v", "description__c", "type__v", "subtype__v",
                 "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
         for (int i = 0; i < numOfDocuments; i++) {
             String name = "VAPIL Test Create Multiple Documents " + ZonedDateTime.now() + " " + i;
             String description = "VAPIL Test";
-            data.add(new String[]{FILE_STAGING_FILE, name, description, VAPIL_TEST_DOC_TYPE_LABEL, VAPIL_TEST_DOC_SUBTYPE_LABEL, VAPIL_TEST_DOC_CLASSIFICATION_LABEL,
-                    VAPIL_TEST_DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
+            data.add(new String[]{FILE_STAGING_FILE, name, description, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
+                    DOC_LIFECYCLE, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
         }
 
-        FileHelper.writeCsvFile(PATH_CREATE_MULTIPLE_DOCUMENTS_CSV, data);
-    }
-
-    public static void writeToUpdateMultipleDocumentsFile(List<Integer> docIds) {
-        FileHelper.createFile(PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV);
-        String updatedTitle = "VAPIL Test Update multiple documents";
-
-        List<String[]> updateData = new ArrayList<>();
-        updateData.add(new String[]{"id", "title__v"});
-
-        for (int docId : docIds) {
-            updateData.add(new String[]{String.valueOf(docId), updatedTitle});
-        }
-
-        FileHelper.writeCsvFile(PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV, updateData);
-    }
-
-    public static void writeToDeleteMultipleDocumentsFile(List<Integer> docIds) {
-        FileHelper.createFile(PATH_DELETE_MULTIPLE_DOCUMENTS_CSV);
-
-        List<String[]> updateData = new ArrayList<>();
-        updateData.add(new String[]{"id"});
-
-        for (int docId : docIds) {
-            updateData.add(new String[]{String.valueOf(docId)});
-        }
-
-        FileHelper.writeCsvFile(PATH_DELETE_MULTIPLE_DOCUMENTS_CSV, updateData);
-    }
-
-    public static void writeToReclassifyMultipleDocumentsFile(List<Integer> docIds) {
-        List<String[]> reclassifyData = new ArrayList<>();
-        reclassifyData.add(new String[]{"id", "lifecycle__v", "type__v"});
-
-        for (int docId : docIds) {
-            reclassifyData.add(new String[]{String.valueOf(docId), VAPIL_TEST_DOC_LIFECYCLE_NAME, VAPIL_TEST_RECLASSIFY_TYPE_NAME});
-        }
-
-        FileHelper.writeCsvFile(PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV, reclassifyData);
-    }
-
-    public static void writeToUpdateMultipleDocumentVersionsFile(int docId) {
-        FileHelper.createFile(PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV);
-        List<String[]> data = new ArrayList<>();
-        data.add(new String[]{"file", "id", "name__v", "type__v", "subtype__v",
-                "classification__v", "lifecycle__v", "major_version_number__v", "minor_version_number__v", "status__v"});
-
-        for (int i=0; i<2 ; i++) {
-            String name = "VAPIL Test Create Multiple Document Versions " + i;
-            data.add(new String[]{
-                    FILE_STAGING_FILE, String.valueOf(docId),
-                    name, VAPIL_TEST_DOC_TYPE_LABEL,
-                    VAPIL_TEST_DOC_SUBTYPE_LABEL, VAPIL_TEST_DOC_CLASSIFICATION_LABEL,
-                    VAPIL_TEST_DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION),
-                    String.valueOf(i+2), "Draft"});
-        }
-
-        FileHelper.writeCsvFile(PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV, data);
+        FileHelper.writeCsvFile(CREATE_DOCUMENTS_CSV_PATH, data);
     }
 
     public static DocumentBulkResponse createMultipleDocuments(VaultClient vaultClient, int numOfDocuments) {
@@ -133,7 +73,7 @@ public class DocumentRequestHelper {
         writeToCreateMultipleDocumentsFile(numOfDocuments);
 
         DocumentBulkResponse createResponse = vaultClient.newRequest(DocumentRequest.class)
-                .setInputPath(PATH_CREATE_MULTIPLE_DOCUMENTS_CSV)
+                .setInputPath(CREATE_DOCUMENTS_CSV_PATH)
                 .createMultipleDocuments();
 
         assertTrue(createResponse.isSuccessful());
@@ -142,10 +82,18 @@ public class DocumentRequestHelper {
     }
 
     public static DocumentBulkResponse deleteDocuments(VaultClient vaultClient, List<Integer> docIds) {
-        writeToDeleteMultipleDocumentsFile(docIds);
+        FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
+
+        List<String[]> data = new ArrayList<>();
+        data.add(new String[]{"id"});
+        for (Integer docId : docIds) {
+            data.add(new String[]{String.valueOf(docId)});
+        }
+
+        FileHelper.writeCsvFile(DELETE_DOCUMENTS_CSV_PATH, data);
 
         DocumentBulkResponse deleteDocumentsResponse = vaultClient.newRequest(DocumentRequest.class)
-                .setInputPath(PATH_DELETE_MULTIPLE_DOCUMENTS_CSV)
+                .setInputPath(DELETE_DOCUMENTS_CSV_PATH)
                 .deleteMultipleDocuments();
 
         return deleteDocumentsResponse;

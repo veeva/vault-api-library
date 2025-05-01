@@ -1,7 +1,7 @@
 /**
  * HTTPS Client for the Vault API
  *
- * <h2>Authenticate with a Session ID</h2>
+ * <h3>Authenticate with a Session ID</h3>
  * <pre>
  *      VaultClient vaultClient = VaultClient
  *           .newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
@@ -20,7 +20,7 @@
  *      }
  * </pre>
  *
- * <h2>Authenticate with username and password</h2>
+ * <h3>Authenticate with username and password</h3>
  * <pre>
  *      VaultClient vaultClient = VaultClient
  *           .newClientBuilder(VaultClient.AuthenticationType.BASIC)
@@ -40,7 +40,7 @@
  *      }
  * </pre>
  *
- * <h2>Authenticate with a JSON settings file</h2>
+ * <h3>Authenticate with a JSON settings file</h3>
  * Example settings files can be found <a href="https://github.com/veeva/vault-api-library/tree/main/src/test/resources/settings_files">here</a>
  * <pre>
  *      File settingsFile = new File("settings.json");

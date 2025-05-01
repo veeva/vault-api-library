@@ -9,29 +9,31 @@ package com.veeva.vault.vapil.api.request;
 
 import java.util.Map;
 
-import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.model.common.DocumentRequestType;
+import com.veeva.vault.vapil.api.model.response.DocumentActionEntryCriteriaResponse;
+import com.veeva.vault.vapil.api.model.response.DocumentActionInitiateResponse;
+import com.veeva.vault.vapil.api.model.response.DocumentActionResponse;
+import com.veeva.vault.vapil.api.model.response.DocumentLifecycleDeleteOverrideRulesResponse;
+import com.veeva.vault.vapil.api.model.response.DocumentLifecycleRoleAssignmentResponse;
+import com.veeva.vault.vapil.api.model.response.DocumentLifecycleRoleAssignmentRulesResponse;
+import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 
 /**
  * Document Lifecycle requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.1/#document-lifecycle">https://developer.veevavault.com/api/25.1/#document-lifecycle</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#document-lifecycle">https://developer.veevavault.com/api/24.3/#document-lifecycle</a>
  */
 public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequest> {
 
 	// API Endpoints
-	private static final String URL_DOCUMENT_ACTION = "/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions";
-	private static final String URL_BINDER_ACTION = "/objects/binders/{id}/versions/{major_version}/{minor_version}/lifecycle_actions";
-	private static final String URL_ACTION_INITIATE_DOCS = "/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}";
-	private static final String URL_ACTION_INITIATE_BINDERS = "/objects/binders/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}";
-	private static final String URL_ACTION_MULTIPLE_DOCS = "/objects/documents/lifecycle_actions";
-	private static final String URL_ACTION_MULTIPLE_BINDERS = "/objects/binders/lifecycle_actions";
-	private static final String URL_ACTION_RETRIEVE_DOCUMENT_ENTRY_CRITERIA = "/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements";
-	private static final String URL_ACTION_RETRIEVE_BINDER_ENTRY_CRITERIA = "/objects/binders/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements";
+	private static final String URL_ACTION = "/objects/{documents_or_binders}/{id}/versions/{major_version}/{minor_version}/lifecycle_actions";
+	private static final String URL_ACTION_INITIATE = "/objects/{documents_or_binders}/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}";
+	private static final String URL_ACTION_MULTIPLE_DOCS_BINDERS = "/objects/{documents_or_binders}/lifecycle_actions";
+	private static final String URL_ACTION_RETRIEVE_ENTRY_CRITERIA = "/objects/{documents_or_binders}/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements";
 	private static final String URL_ACTION_DOWNLOAD_CONTROLLED_COPY_JOB_RESULT = "/objects/documents/actions/{lifecycle.state.action}/{job_id}/results";
-	private static final String URL_ACTION_INITIATE_MULTIPLE_DOCS = "/objects/documents/lifecycle_actions/{user_action_name}";
-	private static final String URL_ACTION_INITIATE_MULTIPLE_BINDERS = "/objects/binders/lifecycle_actions/{user_action_name}";
+	private static final String URL_ACTION_BULK_DOCUMENT_STATE_CHANGE = "/objects/{documents_or_binders}/lifecycle_actions/{user_action_name}";
 	private static final String URL_CREATE_OVERRIDE_RULES = "/configuration/role_assignment_rule";
 	private static final String URL_UPDATE_OVERRIDE_RULES = "/configuration/role_assignment_rule";
 	private static final String URL_DELETE_OVERRIDE_RULES = "/configuration/role_assignment_rule";
@@ -39,6 +41,8 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 
 	// API Request Param
 	private static final String PARAM_DOCIDS = "docIds";
+	private static final String PARAM_MAJORVERSION = "major_version";
+	private static final String PARAM_MINORVERSION = "minor_version";
 	private static final String PARAM_LIFECYCLE_NAME = "lifecycle";
 	private static final String PARAM_LIFECYCLE_STATE = "state";
 	private static final String PARAM_LIFECYCLE__V = "lifecycle__v";
@@ -62,36 +66,33 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	private DocumentLifecycleRequest() {
 	}
 
-
 	/**
-	 * <b>Retrieve Document User Actions</b>
+	 * <b>Retrieve User Actions</b>
 	 *
+	 * @param requestType        documents or binders
 	 * @param id                 document or binder id
 	 * @param majorVersionNumber major version number
 	 * @param minorVersionNumber major version number
 	 * @return DocumentActionResponse
 	 * @vapil.api <pre>
-	 * GET /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-document-user-actions' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-document-user-actions</a>
+	 * GET /api/{version}/objects/{documents_or_binders}/{id}/versions/{major_version}/{minor_version}/lifecycle_actions</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-user-actions' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-user-actions</a>
 	 * @vapil.request <pre>
-	 * DocumentActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.retrieveDocumentUserActions(docId, majorVersion, minorVersion);
-	 * </pre>
+	 * DocumentActionResponse resp = vaultClient.newRequest(DocumentLifecycleRequest.class).retrieveUserActions(
+	 * 				DocumentRequestType.DOCUMENTS, docId, majorVersion, minorVersion);</pre>
 	 * @vapil.response <pre>
-	 * for (DocumentActionResponse.LifecycleAction lifecycleAction : response.getLifecycleActions()) {
-	 * 		System.out.println("--------Lifecycle Action--------");
-	 * 		System.out.println("Name: " + lifecycleAction.getName());
-	 * 		System.out.println("Label: " + lifecycleAction.getLabel());
-	 * 		System.out.println("Lifecycle: " + lifecycleAction.getLifecycle());
-	 * 		System.out.println("Lifecycle Action Type: " + lifecycleAction.getLifecycleActionType());
-	 * 		System.out.println("State: " + lifecycleAction.getState());
-	 * 		System.out.println("Executable: " + lifecycleAction.getExecutable());
-	 * 		System.out.println("Entry Requirements: " + lifecycleAction.getEntryRequirements());
-	 * }
+	 * System.out.println("Status = " + resp.getResponseStatus());
+	 *
+	 * if (resp.isSuccessful()) {
+	 *   for (DocumentActionResponse.LifecycleAction action : resp.getLifecycleActions()) {
+	 *     System.out.println("Label = " + action.getLabel());
+	 *     System.out.println("Name = " + action.getName());
+	 *     }
+	 *   }
 	 * </pre>
 	 */
-	public DocumentActionResponse retrieveDocumentUserActions(int id, int majorVersionNumber, int minorVersionNumber) {
-		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ACTION)
+	public DocumentActionResponse retrieveUserActions(DocumentRequestType requestType, int id, int majorVersionNumber, int minorVersionNumber) {
+		String url = vaultClient.getAPIEndpoint(URL_ACTION).replace("{documents_or_binders}", requestType.getValue())
 				.replace("{id}", Integer.valueOf(id).toString())
 				.replace("{major_version}", Integer.valueOf(majorVersionNumber).toString())
 				.replace("{minor_version}", Integer.valueOf(minorVersionNumber).toString());
@@ -108,112 +109,30 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	}
 
 	/**
-	 * <b>Retrieve User Actions On Multiple Documents</b>
+	 * <b>Initiate User Action</b>
 	 *
-	 * @param docIds       Include a comma-separated list of document IDs,
-	 *                     major and minor version numbers. The document
-	 *                     docIds field values from which to retrieve the available
-	 *                     user actions. e.g. "docIds=22:0:1,21:1:0,20:1:0
-	 * @return DocumentActionResponse
-	 * @vapil.api <pre>
-	 * POST /api/{version}/objects/documents/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-user-actions-on-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-user-actions-on-multiple-documents</a>
-	 * @vapil.request <pre>
-	 * DocumentActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.retrieveUserActionsOnMultipleDocuments(docIds);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * for (DocumentActionResponse.LifecycleAction lifecycleAction : response.getLifecycleActions()) {
-	 * 		System.out.println("--------Lifecycle Action--------");
-	 * 		System.out.println("Name: " + lifecycleAction.getName());
-	 * 		System.out.println("Label: " + lifecycleAction.getLabel());
-	 * 		System.out.println("Lifecycle: " + lifecycleAction.getLifecycle());
-	 * 		System.out.println("Lifecycle Action Type: " + lifecycleAction.getLifecycleActionType());
-	 * 		System.out.println("State: " + lifecycleAction.getState());
-	 * 		System.out.println("Executable: " + lifecycleAction.getExecutable());
-	 * 		System.out.println("Entry Requirements: " + lifecycleAction.getEntryRequirements());
-	 * }
-	 * </pre>
-	 */
-	public DocumentActionResponse retrieveUserActionsOnMultipleDocuments(String docIds) {
-
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_MULTIPLE_DOCS);
-
-		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
-				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		if (docIds != null && docIds != "") {
-			request.addBodyParam(PARAM_DOCIDS, docIds);
-		}
-
-		return send(HttpMethod.POST, request, DocumentActionResponse.class);
-	}
-
-	/**
-	 * <b>Retrieve Document Entry Criteria.</b>
-	 *
-	 * @param id            The document id field value from which to
-	 *                      retrieve available user actions.
-	 * @param majorVersion  The major version number of the document.
-	 * @param minorVersion  The minor version number of the document.
-	 * @param lifecycleName The lifecycle name__v field value from which to retrieve
-	 *                      entry criteria. This is retrieved from the Retrieve User
-	 *                      Actions request above.
-	 * @return DocumentActionEntryCriteriaResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-document-entry-criteria' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-document-entry-criteria</a>
-	 * @vapil.request <pre>
-	 * DocumentActionEntryCriteriaResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.retrieveDocumentEntryCriteria(docId, majorVersion, minorVersion, userActionName);
-	 * </pre>
-	 * @vapil.response <pre>System.out.println("Status = " + resp.getResponseStatus());
-	 * for (DocumentActionEntryCriteriaResponse.Property property : response.getProperties()) {
-	 * 		System.out.println("--------Entry Criteria--------");
-	 * 		System.out.println("Name: " + property.getName());
-	 * 		System.out.println("Description: " + property.getDescription());
-	 * 		System.out.println("Editable: " + property.getEditable());
-	 * 		System.out.println("Type: " + property.getType());
-	 * }
-	 * </pre>
-	 */
-	public DocumentActionEntryCriteriaResponse retrieveDocumentEntryCriteria(int id, int majorVersion, int minorVersion, String lifecycleName) {
-
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_RETRIEVE_DOCUMENT_ENTRY_CRITERIA)
-				.replace("{id}", Integer.valueOf(id).toString())
-				.replace("{major_version}", Integer.valueOf(majorVersion).toString())
-				.replace("{minor_version}", Integer.valueOf(minorVersion).toString())
-				.replace("{name__v}", lifecycleName);
-
-		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
-				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		return send(HttpMethod.GET, request, DocumentActionEntryCriteriaResponse.class);
-	}
-
-	/**
-	 * <b>Initiate Document User Action</b>
-	 *
-	 * @param id                 document id
+	 * @param requestType        documents or binders
+	 * @param id                 document or binder id
 	 * @param majorVersionNumber major version number
 	 * @param minorVersionNumber major version number
 	 * @param userActionName     api name of the useraction
 	 * @return DocumentActionInitiateResponse
 	 * @vapil.api <pre>
-	 * PUT /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#initiate-document-user-action' target='_blank'>https://developer.veevavault.com/api/25.1/#initiate-document-user-action</a>
+	 * PUT /api/{version}/objects/{documents_or_binders}/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#initiate-user-action' target='_blank'>https://developer.veevavault.com/api/24.3/#initiate-user-action</a>
 	 * @vapil.request <pre>
-	 * DocumentActionInitiateResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.initiateDocumentUserAction(docId, majorVersion, minorVersion, userActionName);
-	 * </pre>
+	 * DocumentActionInitiateResponse resp = vaultClient.newRequest(DocumentLifecycleRequest.class).initiateUserAction(
+	 * 				DocumentRequestType.DOCUMENTS, docId, majorVersion, minorVersion, useraction);</pre>
 	 * @vapil.response <pre>
-	 * System.out.println("Id: " + response.getId());
+	 * System.out.println("Status = " + resp.getResponseStatus());
+	 *
+	 * if (resp.isSuccessful()) {
+	 *   System.out.println("id = " + resp.getId());
+	 *   }
 	 * </pre>
 	 */
-	public DocumentActionInitiateResponse initiateDocumentUserAction(int id, int majorVersionNumber, int minorVersionNumber, String userActionName) {
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_INITIATE_DOCS)
+	public DocumentActionInitiateResponse initiateUserAction(DocumentRequestType requestType, int id, int majorVersionNumber, int minorVersionNumber, String userActionName) {
+		String url = vaultClient.getAPIEndpoint(URL_ACTION_INITIATE).replace("{documents_or_binders}", requestType.getValue())
 				.replace("{id}", Integer.valueOf(id).toString())
 				.replace("{major_version}", Integer.valueOf(majorVersionNumber).toString())
 				.replace("{minor_version}", Integer.valueOf(minorVersionNumber).toString())
@@ -231,164 +150,101 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	}
 
 	/**
-	 * <b>Initiate Bulk Document User Actions</b>
+	 * <b>Retrieve user action multiple documents or binders</b>
 	 *
-	 * @param docIds         Include a comma-separated list of document
-	 *                       IDs, major and minor version numbers. The document docIds
-	 *                       field values from which to retrieve the
-	 *                       available user actions. e.g.
-	 *                       "docIds=22:0:1,21:1:0,20:1:0
-	 * @param userActionName The user action name__v field value. Find this value
-	 *                       with the Retrieve User Actions on Multiple Documents or
-	 *                       Binders endpoint.
-	 * @param lifecycleName  The name of the document lifecycle.
-	 * @param state          The current state of the document
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * PUT /api/{version}/objects/documents/lifecycle_actions/{user_action_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#initiate-bulk-document-user-actions' target='_blank'>https://developer.veevavault.com/api/25.1/#initiate-bulk-document-user-actions</a>
-	 * @vapil.request <pre>
-	 * VaultResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.initiateBulkDocumentUserActions(userActionName, docIds, lifecycle, state);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response: " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse initiateBulkDocumentUserActions(String userActionName, String docIds, String lifecycleName, String state) {
-
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_INITIATE_MULTIPLE_DOCS)
-				.replace("{user_action_name}", userActionName);
-
-		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
-				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		request.addBodyParam(PARAM_DOCIDS, docIds);
-		request.addBodyParam(PARAM_LIFECYCLE_NAME, lifecycleName);
-		request.addBodyParam(PARAM_LIFECYCLE_STATE, state);
-
-		return send(HttpMethod.PUT, request, VaultResponse.class);
-	}
-
-	/**
-	 * <b>Retrieve Binder User Actions</b>
-	 *
-	 * @param id                 document or binder id
-	 * @param majorVersionNumber major version number
-	 * @param minorVersionNumber major version number
-	 * @return BinderActionResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-binder-user-actions' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-binder-user-actions</a>
-	 * @vapil.request <pre>
-	 * BinderActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.retrieveBinderUserActions(binderId, majorVersion, minorVersion);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * for (BinderActionResponse.LifecycleAction lifecycleAction : response.getLifecycleActions()) {
-	 * 		System.out.println("--------Lifecycle Action--------");
-	 * 		System.out.println("Name: " + lifecycleAction.getName());
-	 * 		System.out.println("Label: " + lifecycleAction.getLabel());
-	 * 		System.out.println("Lifecycle: " + lifecycleAction.getLifecycle());
-	 * 		System.out.println("Lifecycle Action Type: " + lifecycleAction.getLifecycleActionType());
-	 * 		System.out.println("State: " + lifecycleAction.getState());
-	 * 		System.out.println("Executable: " + lifecycleAction.getExecutable());
-	 * 		System.out.println("Entry Requirements: " + lifecycleAction.getEntryRequirements());
-	 * }
-	 * </pre>
-	 */
-	public BinderActionResponse retrieveBinderUserActions(int id, int majorVersionNumber, int minorVersionNumber) {
-		String url = vaultClient.getAPIEndpoint(URL_BINDER_ACTION)
-				.replace("{id}", Integer.valueOf(id).toString())
-				.replace("{major_version}", Integer.valueOf(majorVersionNumber).toString())
-				.replace("{minor_version}", Integer.valueOf(minorVersionNumber).toString());
-
-		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
-				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		if (bodyParams != null && !bodyParams.isEmpty()) {
-			request.setBodyParams(bodyParams);
-		}
-
-		return send(HttpMethod.GET, request, BinderActionResponse.class);
-	}
-
-	/**
-	 * <b>Retrieve User Actions On Multiple Binders</b>
-	 *
-	 * @param binderIds       Include a comma-separated list of binder IDs,
-	 *                     major and minor version numbers. The document
+	 * @param requestType  documents or binders
+	 * @param docIds       Include a comma-separated list of document or binder IDs,
+	 *                     major and minor version numbers. The document or binder
 	 *                     docIds field values from which to retrieve the available
 	 *                     user actions. e.g. "docIds=22:0:1,21:1:0,20:1:0
-	 * @return BinderActionResponse
+	 * @param majorVersion The major version number of the document or binder.
+	 * @param minorVersion The minor version number of the document or binder.
+	 * @return DocumentActionResponse
 	 * @vapil.api <pre>
-	 * POST /api/{version}/objects/binders/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-user-actions-on-multiple-binders' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-user-actions-on-multiple-binders</a>
+	 * POST /api/{version}/objects/{documents_or_binders}/lifecycle_actions</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-user-actions-on-multiple-documents-or-binders' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-user-actions-on-multiple-documents-or-binders</a>
 	 * @vapil.request <pre>
-	 * BinderActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.retrieveUserActionsOnMultipleBinders(binderIds);
-	 * </pre>
+	 * DocumentActionResponse resp = vaultClient.newRequest(DocumentLifecycleRequest.class)
+	 * 				.retrieveUserActionsOnMultipleDocumentsBinders(DocumentRequestType.DOCUMENTS,
+	 * 						docIds, majorVersion, minorVersion);</pre>
 	 * @vapil.response <pre>
-	 * for (BinderActionResponse.LifecycleAction lifecycleAction : response.getLifecycleActions()) {
-	 * 		System.out.println("--------Lifecycle Action--------");
-	 * 		System.out.println("Name: " + lifecycleAction.getName());
-	 * 		System.out.println("Label: " + lifecycleAction.getLabel());
-	 * 		System.out.println("Lifecycle: " + lifecycleAction.getLifecycle());
-	 * 		System.out.println("Lifecycle Action Type: " + lifecycleAction.getLifecycleActionType());
-	 * 		System.out.println("State: " + lifecycleAction.getState());
-	 * 		System.out.println("Executable: " + lifecycleAction.getExecutable());
-	 * 		System.out.println("Entry Requirements: " + lifecycleAction.getEntryRequirements());
+	 * System.out.println("Status = " + resp.getResponseStatus());
+	 *
+	 * if (resp.isSuccessful()) {
+	 *   System.out.println("Successful ");
+	 *   List&lt;LifecycleAction&gt; list = resp.getLifecycleActions();
+	 *
+	 *   for (LifecycleAction lcAction : list) {
+	 *     System.out.println("Get Name:" + lcAction.getName());
+	 *     System.out.println("Get Label:" + lcAction.getLabel());
+	 *     System.out.println("Get Lifecycle:" + lcAction.getLifecycle());
+	 *     System.out.println("Get Lifecycle:" + lcAction.getLifecycleActionType());
+	 *     System.out.println("Get Lifecycle:" + lcAction.getState());
+	 *     System.out.println("Get Lifecycle:" + lcAction.getEntryRequirements());
+	 *     }
+	 *   }
 	 * }
 	 * </pre>
 	 */
-	public BinderActionResponse retrieveUserActionsOnMultipleBinders(String binderIds) {
+	public DocumentActionResponse retrieveUserActionsOnMultipleDocumentsBinders(DocumentRequestType requestType, String docIds, String majorVersion, String minorVersion) {
 
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_MULTIPLE_BINDERS);
+		String url = vaultClient.getAPIEndpoint(URL_ACTION_MULTIPLE_DOCS_BINDERS).replace("{documents_or_binders}",
+				requestType.getValue());
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
 				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 
-		if (binderIds != null && binderIds != "") {
-			request.addBodyParam(PARAM_DOCIDS, binderIds);
+		if (docIds != null && docIds != "") {
+			request.addBodyParam(PARAM_DOCIDS, docIds);
+		}
+		if (majorVersion != null) {
+			request.addBodyParam(PARAM_MAJORVERSION, majorVersion);
+		}
+		if (minorVersion != null) {
+			request.addBodyParam(PARAM_MINORVERSION, minorVersion);
 		}
 
-		return send(HttpMethod.POST, request, BinderActionResponse.class);
+		return send(HttpMethod.POST, request, DocumentActionResponse.class);
 	}
 
 	/**
-	 * <b>Retrieve Binder Entry Criteria.</b>
+	 * <b>Retrieve the entry criteria for a user action.</b>
 	 *
-	 * @param id            The binder id field value from which to
+	 * @param requestType   Choose to retrieve values for documents or binders.
+	 * @param id            The document or binder id field value from which to
 	 *                      retrieve available user actions.
-	 * @param majorVersion  The major version number of the binder.
-	 * @param minorVersion  The minor version number of the binder.
+	 * @param majorVersion  The major version number of the document or binder.
+	 * @param minorVersion  The minor version number of the document or binder.
 	 * @param lifecycleName The lifecycle name__v field value from which to retrieve
 	 *                      entry criteria. This is retrieved from the Retrieve User
 	 *                      Actions request above.
-	 * @return BinderActionEntryCriteriaResponse
+	 * @return DocumentActionEntryCriteriaResponse
 	 * @vapil.api <pre>
-	 * GET /api/{version}/objects/binders/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-binder-entry-criteria' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-binder-entry-criteria</a>
+	 * GET /api/{version}/objects/{documents_or_binders}/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-entry-criteria' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-entry-criteria</a>
 	 * @vapil.request <pre>
-	 * BinderActionEntryCriteriaResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.retrieveBinderEntryCriteria(binderId, majorVersion, minorVersion, userActionName);
-	 * </pre>
+	 * DocumentActionEntryCriteriaResponse resp = vaultClient.newRequest(DocumentLifecycleRequest.class)
+	 * 				.retrieveEntryCriteria(DocumentRequestType.DOCUMENTS, id, majorVersion,
+	 * 						minorVersion, lifecycleName);</pre>
 	 * @vapil.response <pre>System.out.println("Status = " + resp.getResponseStatus());
-	 * for (BinderActionEntryCriteriaResponse.Property property : response.getProperties()) {
-	 * 		System.out.println("--------Entry Criteria--------");
-	 * 		System.out.println("Name: " + property.getName());
-	 * 		System.out.println("Description: " + property.getDescription());
-	 * 		System.out.println("Editable: " + property.getEditable());
-	 * 		System.out.println("Type: " + property.getType());
+	 * if (resp.isSuccessful()) {
+	 *   System.out.println("Successful ");
+	 *   List&lt;Property&gt; properties = resp.getProperties();
+	 *
+	 *   for (Property property : properties) {
+	 *     System.out.println("Get Name:" + property.getName());
+	 *     System.out.println("Get Label:" + property.getDescription());
+	 *     System.out.println("Get Lifecycle:" + property.getScope());
+	 *     }
+	 *   }
 	 * }
 	 * </pre>
 	 */
-	public BinderActionEntryCriteriaResponse retrieveBinderEntryCriteria(int id, int majorVersion, int minorVersion, String lifecycleName) {
+	public DocumentActionEntryCriteriaResponse retrieveEntryCriteria(DocumentRequestType requestType, int id, int majorVersion, int minorVersion, String lifecycleName) {
 
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_RETRIEVE_BINDER_ENTRY_CRITERIA)
+		String url = vaultClient.getAPIEndpoint(URL_ACTION_RETRIEVE_ENTRY_CRITERIA)
+				.replace("{documents_or_binders}", requestType.getValue())
 				.replace("{id}", Integer.valueOf(id).toString())
 				.replace("{major_version}", Integer.valueOf(majorVersion).toString())
 				.replace("{minor_version}", Integer.valueOf(minorVersion).toString())
@@ -398,81 +254,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
 				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 
-		return send(HttpMethod.GET, request, BinderActionEntryCriteriaResponse.class);
-	}
-
-	/**
-	 * <b>Initiate Binder User Action</b>
-	 *
-	 * @param id                 binder id
-	 * @param majorVersionNumber major version number
-	 * @param minorVersionNumber major version number
-	 * @param userActionName     api name of the useraction
-	 * @return BinderActionInitiateResponse
-	 * @vapil.api <pre>
-	 * PUT /api/{version}/objects/binders/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#initiate-binder-user-action' target='_blank'>https://developer.veevavault.com/api/25.1/#initiate-binder-user-action</a>
-	 * @vapil.request <pre>
-	 * BinderActionInitiateResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.initiateBinderUserAction(binderId, majorVersion, minorVersion, userActionName);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Id: " + response.getId());
-	 * </pre>
-	 */
-	public BinderActionInitiateResponse initiateBinderUserAction(int id, int majorVersionNumber, int minorVersionNumber, String userActionName) {
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_INITIATE_BINDERS)
-				.replace("{id}", Integer.valueOf(id).toString())
-				.replace("{major_version}", Integer.valueOf(majorVersionNumber).toString())
-				.replace("{minor_version}", Integer.valueOf(minorVersionNumber).toString())
-				.replace("{name__v}", userActionName);
-
-		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
-				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		return send(HttpMethod.PUT, request, BinderActionInitiateResponse.class);
-	}
-
-	/**
-	 * <b>Initiate Bulk Binder User Actions</b>
-	 *
-	 * @param docIds         Include a comma-separated list of document
-	 *                       IDs, major and minor version numbers. The document docIds
-	 *                       field values from which to retrieve the
-	 *                       available user actions. e.g.
-	 *                       "docIds=22:0:1,21:1:0,20:1:0
-	 * @param userActionName The user action name__v field value. Find this value
-	 *                       with the Retrieve User Actions on Multiple Documents or
-	 *                       Binders endpoint.
-	 * @param lifecycleName  The name of the document lifecycle.
-	 * @param state          The current state of the document
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * PUT /api/{version}/objects/binders/lifecycle_actions/{user_action_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#initiate-bulk-binder-user-actions' target='_blank'>https://developer.veevavault.com/api/25.1/#initiate-bulk-binder-user-actions</a>
-	 * @vapil.request <pre>
-	 * VaultResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
-	 * 		.initiateBulkBinderUserActions(userActionName, binderIds, lifecycle, state);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response: " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse initiateBulkBinderUserActions(String userActionName, String docIds, String lifecycleName, String state) {
-
-		String url = vaultClient.getAPIEndpoint(URL_ACTION_INITIATE_MULTIPLE_BINDERS)
-				.replace("{user_action_name}", userActionName);
-
-		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
-				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		request.addBodyParam(PARAM_DOCIDS, docIds);
-		request.addBodyParam(PARAM_LIFECYCLE_NAME, lifecycleName);
-		request.addBodyParam(PARAM_LIFECYCLE_STATE, state);
-
-		return send(HttpMethod.PUT, request, VaultResponse.class);
+		return send(HttpMethod.GET, request, DocumentActionEntryCriteriaResponse.class);
 	}
 
 	/**
@@ -488,7 +270,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/actions/{lifecycle.state.action}/{job_id}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-controlled-copy-job-results' target='_blank'>https://developer.veevavault.com/api/25.1/#download-controlled-copy-job-results</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#download-controlled-copy-job-results' target='_blank'>https://developer.veevavault.com/api/24.3/#download-controlled-copy-job-results</a>
 	 */
 	public VaultResponse downloadControlledCopyJobResult(String lifecycleStateAction, int jobId) {
 
@@ -503,12 +285,54 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	}
 
 	/**
+	 * <b>Bulk Document State Change. </b>
+	 *
+	 * @param requestType    documents or binders
+	 * @param docIds         Include a comma-separated list of document or binder
+	 *                       IDs, major and minor version numbers. The document or
+	 *                       binder docIds field values from which to retrieve the
+	 *                       available user actions. e.g.
+	 *                       "docIds=22:0:1,21:1:0,20:1:0
+	 * @param userActionName The user action name__v field value. Find this value
+	 *                       with the Retrieve User Actions on Multiple Documents or
+	 *                       Binders endpoint.
+	 * @return VaultResponse
+	 * @vapil.api <pre>
+	 * PUT /api/{version}/objects/{documents_or_binders}/lifecycle_actions/{user_action_name}</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#bulk-document-state-change' target='_blank'>https://developer.veevavault.com/api/24.3/#bulk-document-state-change</a>
+	 */
+	public VaultResponse initiateBulkUserActions(DocumentRequestType requestType,
+												 String userActionName,
+												 String docIds) {
+
+		String url = vaultClient.getAPIEndpoint(URL_ACTION_BULK_DOCUMENT_STATE_CHANGE)
+				.replace("{documents_or_binders}", requestType.getValue())
+				.replace("{user_action_name}", userActionName);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
+				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+
+		if (docIds != null && docIds != "") {
+			request.addBodyParam(PARAM_DOCIDS, docIds);
+		}
+		if (lifecycleName != null && lifecycleName != null) {
+			request.addBodyParam(PARAM_LIFECYCLE_NAME, lifecycleName);
+		}
+		if (documentState != null && documentState != null) {
+			request.addBodyParam(PARAM_LIFECYCLE_STATE, documentState);
+		}
+
+		return send(HttpMethod.PUT, request, VaultResponse.class);
+	}
+
+	/**
 	 * <b>Retrieve Lifecycle Role Assignment Rules (Default &amp; Override)</b>
 	 *
 	 * @return DocumentLifecycleRoleAssignmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-lifecycle-role-assignment-rules-default-amp-override' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-lifecycle-role-assignment-rules-default-amp-override</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-lifecycle-role-assignment-rules-default-amp-override' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-lifecycle-role-assignment-rules-default-amp-override</a>
 	 * @vapil.request <pre>
 	 * DocumentLifecycleRoleAssignmentResponse resp = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 				.setLifecycleName("general_lifecycle1__c").setRoleName("all_users__v")
@@ -587,7 +411,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return LifecycleRoleAssignmentRulesResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#create-override-rules' target='_blank'>https://developer.veevavault.com/api/25.1/#create-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#create-override-rules' target='_blank'>https://developer.veevavault.com/api/24.3/#create-override-rules</a>
 	 * @vapil.request <pre>
 	 * .newRequest(DocumentLifecycleRequest.class).setInputPath(csvFilePath).createOverrideRules();</pre>
 	 * @vapil.response <pre>System.out.println(bulkPathResponse.getResponse());
@@ -639,7 +463,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return LifecycleRoleAssignmentRulesResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/25.1/#update-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/24.3/#update-override-rules</a>
 	 * @vapil.request <pre>
 	 * .newRequest(DocumentLifecycleRequest.class).setInputPath(csvFilePath).updateOverrideRules();</pre>
 	 * @vapil.response <pre>System.out.println(updateOverrideRulesResponse.getResponse());
@@ -686,7 +510,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentLifecycleDeleteOverrideRulesResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/25.1/#update-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/24.3/#update-override-rules</a>
 	 * @vapil.request <pre>
 	 * .newRequest(DocumentLifecycleRequest.class)
 	 * 					.deleteOverrideRules(lifecycle, role);</pre>
@@ -740,7 +564,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentLifecycleDeleteOverrideRulesResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-override-rules' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#delete-override-rules' target='_blank'>https://developer.veevavault.com/api/24.3/#delete-override-rules</a>
 	 */
 	public DocumentLifecycleDeleteOverrideRulesResponse deleteOverrideRules() {
 		String url = vaultClient.getAPIEndpoint(URL_DELETE_OVERRIDE_RULES);

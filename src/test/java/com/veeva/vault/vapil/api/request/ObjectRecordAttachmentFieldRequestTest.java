@@ -78,7 +78,7 @@ public class ObjectRecordAttachmentFieldRequestTest {
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
-                    .setOutputPath(FileHelper.PATH_RESOURCES_FOLDER + TEST_DOWNLOAD_FILE_NAME)
+                    .setOutputPath(FileHelper.getPathResourcesFolder() + TEST_DOWNLOAD_FILE_NAME)
                     .downloadAttachmentFieldFile(OBJECT_NAME, recordId, ATTACHMENT_FIELD_NAME);
 
             assertNotNull(response);
@@ -128,7 +128,7 @@ public class ObjectRecordAttachmentFieldRequestTest {
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
-                    .setOutputPath(FileHelper.PATH_RESOURCES_FOLDER + TEST_DOWNLOAD_FILES_NAME)
+                    .setOutputPath(FileHelper.getPathResourcesFolder() + TEST_DOWNLOAD_FILES_NAME)
                     .downloadAllAttachmentFieldFiles(OBJECT_NAME, recordId);
 
             assertNotNull(response);
@@ -153,7 +153,7 @@ public class ObjectRecordAttachmentFieldRequestTest {
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
-                    .setInputPath(FileHelper.PATH_RESOURCES_FOLDER + TEST_DOWNLOAD_FILE_NAME)
+                    .setInputPath(FileHelper.getPathResourcesFolder() + TEST_DOWNLOAD_FILE_NAME)
                     .updateAttachmentFieldFile(OBJECT_NAME, recordId, ATTACHMENT_FIELD_NAME);
 
             assertNotNull(response);
@@ -184,7 +184,7 @@ public class ObjectRecordAttachmentFieldRequestTest {
         @Test
         @Order(1)
         public void testRequest() throws IOException {
-            File file = new File(FileHelper.PATH_RESOURCES_FOLDER + TEST_DOWNLOAD_FILE_NAME);
+            File file = new File(FileHelper.getPathResourcesFolder() + TEST_DOWNLOAD_FILE_NAME);
             byte[] bytesArray = Files.readAllBytes(file.toPath());
             response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
                     .setBinaryFile("test_binary_file.txt", bytesArray)

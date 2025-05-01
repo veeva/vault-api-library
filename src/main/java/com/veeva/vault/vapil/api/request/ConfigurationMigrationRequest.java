@@ -10,8 +10,6 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,23 +18,20 @@ import java.util.List;
 /**
  * Configuration Migration
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.1/#configuration-migration">https://developer.veevavault.com/api/25.1/#configuration-migration</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.3/#configuration-migration">https://developer.veevavault.com/api/24.3/#configuration-migration</a>
  */
 public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMigrationRequest> {
-	private static Logger log = LoggerFactory.getLogger(QueryRequest.class);
 
 	// API Endpoints
 	private static final String URL_PACKAGE = "/services/package";
 	private static final String URL_PACKAGE_DEPLOY = "/vobject/vault_package__v/{package_id}/actions/deploy";
 	private static final String URL_PACKAGE_DEPLOY_RESULTS = "/vobject/vault_package__v/{package_id}/actions/deploy/results";
 	private static final String URL_PACKAGE_IMPORT_RESULTS = "/vobject/vault_package__v/{package_id}/actions/import/results";
-	private static final String URL_COMPONENT_QUERY = "/query/components";
 	private static final String URL_OUTBOUND_PACKAGE_DEPENDENCIES = "/vobjects/outbound_package__v/{package_id}/dependencies";
 	private static final String URL_VALIDATE = "/services/package/actions/validate";
 	private static final String URL_VALIDATE_INBOUND = "/services/vobject/vault_package__v/{package_id}/actions/validate";
 	private static final String URL_VAULT_COMPARE = "/objects/vault/actions/compare";
 	private static final String URL_VAULT_CONFIG = "/objects/vault/actions/configreport";
-	private static final String URL_VAULT_CONFIG_RESULTS = "/objects/vault/actions/configReport/{job_id}/report";
 	private static final String URL_CONFIG_MODE_ENABLE = "/services/configuration_mode/actions/enable";
 	private static final String URL_CONFIG_MODE_DISABLE = "/services/configuration_mode/actions/disable";
 
@@ -54,7 +49,6 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	private ResultsType resultsType;
 	private Boolean suppressEmptyResults;
 	private String inputPath;
-	private String outputPath;
 
 	private ConfigurationMigrationRequest() {
 	}
@@ -66,7 +60,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/package</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#export-package' target='_blank'>https://developer.veevavault.com/api/25.1/#export-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#export-package' target='_blank'>https://developer.veevavault.com/api/24.3/#export-package</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.exportPackage(packageName);</pre>
@@ -96,7 +90,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/services/package</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#import-package' target='_blank'>https://developer.veevavault.com/api/25.1/#import-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#import-package' target='_blank'>https://developer.veevavault.com/api/24.3/#import-package</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - File</i>
 	 * PackageResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
@@ -137,7 +131,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobject/vault_package__v/{package_id}/actions/deploy</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#deploy-package' target='_blank'>https://developer.veevavault.com/api/25.1/#deploy-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#deploy-package' target='_blank'>https://developer.veevavault.com/api/24.3/#deploy-package</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.deployPackage(packageId);</pre>
@@ -167,7 +161,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return PackageDeploymentResultsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobject/vault_package__v/{package_id}/actions/deploy/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-package-deploy-results' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-package-deploy-results</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-package-deploy-results' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-package-deploy-results</a>
 	 * @vapil.request <pre>
 	 * PackageDeploymentResultsResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.retrievePackageDeployResults(packageId);</pre>
@@ -249,7 +243,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @vapil.api <pre>
 	 *     GET /api/{version}/vobject/outbound_package__v/{package_id}/dependencies
 	 * </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-outbound-package-dependencies' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-outbound-package-dependencies</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#retrieve-outbound-package-dependencies' target='_blank'>https://developer.veevavault.com/api/24.3/#retrieve-outbound-package-dependencies</a>
 	 * @vapil.request <pre>
 	 *     OutboundPackageDependenciesResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 *     					.retrieveOutboundPackageDependencies(packageId);
@@ -275,7 +269,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/vault/actions/compare</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#vault-compare' target='_blank'>https://developer.veevavault.com/api/25.1/#vault-compare</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#vault-compare' target='_blank'>https://developer.veevavault.com/api/24.3/#vault-compare</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.setResultsType(ConfigurationMigrationRequest.ResultsType.COMPLETE)
@@ -334,7 +328,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/vault/actions/configreport</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#vault-configuration-report' target='_blank'>https://developer.veevavault.com/api/25.1/#vault-configuration-report</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#vault-configuration-report' target='_blank'>https://developer.veevavault.com/api/24.3/#vault-configuration-report</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 				.setIncludeVaultSettings(true)
@@ -343,8 +337,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * 				.setSuppressEmptyResults(true)
 	 * 				.setComponentsType(componentTypes)
 	 * 				.setOutputFormat(ConfigurationMigrationRequest.OutputFormat.EXCEL)
-	 * 				.vaultConfigurationReport();
-	 * </pre>
+	 * 				.vaultConfigurationReport();</pre>
 	 * @vapil.response <pre>
 	 * System.out.println("Status = " + resp.getResponseStatus());
 	 * if (resp.isSuccessful()) {
@@ -354,8 +347,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 *   for (JobCreateResponse.Warning warning : resp.getWarnings()) {
 	 *     System.out.println("Type = " + warning.getMessage() + ", Message = " + warning.getMessage());
 	 *   }
-	 * }
-	 * </pre>
+	 * }</pre>
 	 */
 	public JobCreateResponse vaultConfigurationReport() {
 		String url = vaultClient.getAPIEndpoint(URL_VAULT_CONFIG);
@@ -391,147 +383,12 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	}
 
 	/**
-	 * Retrieve Configuration Report Results
-	 *
-	 * @param jobId The job id of the configuration report
-	 *
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/objects/vault/actions/configreport/{job_id}/report</pre>
-	 * @vapil.vaultlink <a href='TODO' target='_blank'>TODO</a>
-	 * @vapil.request <pre>
-	 * <i>Example 1 - Binary</i>
-	 * VaultResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-	 * 		.retrieveConfigurationReportResults(String.valueOf(jobId));
-	 *
-	 * <i>Example 2 - File</i>
-	 * VaultResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-	 * 		.setOutputPath(outputPath)
-	 * 		.retrieveConfigurationReportResults(String.valueOf(jobId));
-	 * </pre>
-	 * @vapil.response <pre>
-	 * <i>Example 1 - Binary</i>
-	 * System.out.println("Response Status: " + response.getResponseStatus());
-	 * byte[] fileContent = response.getBinaryContent();
-	 *
-	 * <i>Example 2 - To File</i>
-	 * System.out.println("Response Status: " + response.getResponseStatus());
-	 * System.out.println("Output Path: " + response.getOutputFilePath());
-	 * </pre>
-	 */
-	public VaultResponse retrieveConfigurationReportResults(String jobId) {
-		String url = vaultClient.getAPIEndpoint(URL_VAULT_CONFIG_RESULTS)
-				.replace("{job_id}", jobId);
-
-		HttpRequestConnector request = new HttpRequestConnector(url);
-
-		if (outputPath != null) {
-			return sendToFile(HttpMethod.GET, request, outputPath, VaultResponse.class);
-		} else {
-			return sendReturnBinary(HttpMethod.GET, request, VaultResponse.class);
-		}
-	}
-
-	/**
-	 * <b>Component Definition Query</b>
-	 * <p>
-	 * Perform a Vault query request. Subsequent queries and pagination
-	 * are needed to retrieve the full result set if the total records returned exceed the "pagesize"
-	 * parameter in the response. See {@link #componentDefinitionQueryByPage(String)} (String)}.
-	 * <p>
-	 * Returned records can be retrieved via the "getData" method in the response.
-	 *
-	 * @param vql The fully formed query string
-	 * @return ComponentQueryResponse
-	 * @vapil.api <pre>
-	 * POST /api/{version}/query/components</pre>
-	 * @vapil.vaultlink <a href='TODO' target='_blank'>TODO</a>
-	 * @vapil.request <pre>
-	 * <i>Example 1 - Vault Component</i>
-	 * String vql = "SELECT id,name__v,component_name__v FROM vault_component__v";
-	 * ComponentQueryResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-	 * 		.componentDefinitionQuery(vql);
-	 *
-	 * <i>Example 2 - Vault Package Component</i>
-	 * String vql = "SELECT id,name__v,component_type__v FROM vault_package_component__v";
-	 * ComponentQueryResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-	 * 		.componentDefinitionQuery(vql);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * <i>Example 1 - Vault Component</i>
-	 * for (ComponentQueryResponse.QueryResult queryResult : response.getData()) {
-	 *     System.out.println("----Vault Component----");
-	 *     System.out.println("ID: " + queryResult.get("id"));
-	 *     System.out.println("Name: " + queryResult.get("name__v"));
-	 *     System.out.println("Component Name: " + queryResult.get("component_name__v"));
-	 * }
-	 *
-	 * <i>Example 2 - Vault Package Component</i>
-	 * for (ComponentQueryResponse.QueryResult queryResult : response.getData()) {
-	 * 		System.out.println("----Vault Package Component----");
-	 * 		System.out.println("ID: " + queryResult.get("id"));
-	 * 		System.out.println("Name: " + queryResult.get("name__v"));
-	 * 		System.out.println("Component Type: " + queryResult.get("component_type__v"));
-	 * }
-	 * </pre>
-	 */
-	public ComponentQueryResponse componentDefinitionQuery(String vql) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_COMPONENT_QUERY));
-
-		request.addBodyParam("q", vql);
-		log.info("Query = " + vql);
-
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		return send(HttpMethod.POST, request, ComponentQueryResponse.class);
-	}
-
-	/**
-	 * <b>Component Definition Query</b>
-	 * <p>
-	 * Perform a paginated component query based on the URL from a previous query (previous_page or next_page in the response details).
-	 * <p>
-	 *
-	 * @param pageUrl The URL from the previous_page or next_page parameter
-	 * @return ComponentQueryResponse
-	 * @vapil.api <pre>
-	 * <i>Example component query url format</i>
-	 * POST /api/v25.1/query/components/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx?pagesize=1000{@literal &}pageoffset=1000
-	 * </pre>
-	 * @vapil.vaultlink <a href='TODO' target='_blank'>TODO</a>
-	 * @vapil.request <pre>
-	 * ComponentQueryResponse componentQueryResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-	 * 		.componentDefinitionQuery("SELECT id,name__v,component_name__v FROM vault_component__v");
-	 *
-	 * ComponentQueryResponse nextPageResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-	 * 		.componentDefinitionQueryByPage(componentQueryResponse.getResponseDetails().getNextPage());
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Total Results: " + nextPageResponse.getResponseDetails().getTotal());
-	 * System.out.println("Page Offset: " + nextPageResponse.getResponseDetails().getPageOffset());
-	 *
-	 * for (ComponentQueryResponse.QueryResult queryResult : nextPageResponse.getData()) {
-	 * 		System.out.println("----Vault Component----");
-	 * 		System.out.println("ID: " + queryResult.get("id"));
-	 * 		System.out.println("Name: " + queryResult.get("name__v"));
-	 * 		System.out.println("Component Name: " + queryResult.get("component_name__v"));
-	 * }
-	 * </pre>
-	 */
-	public ComponentQueryResponse componentDefinitionQueryByPage(String pageUrl) {
-		// Manipulate the URL for passing in the exact URL from next_page or previous_page
-		String url = vaultClient.getPaginationEndpoint(pageUrl);
-		HttpRequestConnector request = new HttpRequestConnector(url);
-		return send(HttpMethod.POST, request, ComponentQueryResponse.class);
-	}
-
-	/**
 	 * <b>Validate Package</b>
 	 *
 	 * @return ValidatePackageResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/package/actions/validate</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#validate-package' target='_blank'>https://developer.veevavault.com/api/25.1/#validate-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#validate-package' target='_blank'>https://developer.veevavault.com/api/24.3/#validate-package</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - File</i>
 	 * ValidatePackageResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
@@ -573,7 +430,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return ValidatePackageResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/vobject/vault_package__v/{package_id}/actions/validate</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#validate-inbound-package' target='_blank'>https://developer.veevavault.com/api/25.1/#validate-inbound-package</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#validate-inbound-package' target='_blank'>https://developer.veevavault.com/api/24.3/#validate-inbound-package</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - File</i>
 	 * ValidatePackageResponse resp = vaultClient.newRequest(ConfigurationMigrationRequest.class)
@@ -602,7 +459,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/configuration_mode/actions/enable</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#enable-configuration-mode' target='_blank'>https://developer.veevavault.com/api/25.1/#enable-configuration-mode</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#enable-configuration-mode' target='_blank'>https://developer.veevavault.com/api/24.3/#enable-configuration-mode</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 		.enableConfigurationMode();
@@ -627,7 +484,7 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/configuration_mode/actions/disable</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#disable-configuration-mode' target='_blank'>https://developer.veevavault.com/api/25.1/#disable-configuration-mode</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.3/#disable-configuration-mode' target='_blank'>https://developer.veevavault.com/api/24.3/#disable-configuration-mode</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
 	 * 		.disableConfigurationMode();
@@ -851,17 +708,6 @@ public class ConfigurationMigrationRequest extends VaultRequest<ConfigurationMig
 	 */
 	public ConfigurationMigrationRequest setSuppressEmptyResults(Boolean suppressEmptyResults) {
 		this.suppressEmptyResults = suppressEmptyResults;
-		return this;
-	}
-
-	/**
-	 * Specify source data in an output file
-	 *
-	 * @param outputPath Absolute path to the file for the response
-	 * @return The Request
-	 */
-	public ConfigurationMigrationRequest setOutputPath(String outputPath) {
-		this.outputPath = outputPath;
 		return this;
 	}
 

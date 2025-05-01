@@ -5,12 +5,12 @@
 
     <groupId>com.veeva.vault</groupId>
     <artifactId>vapil</artifactId>
-    <version>25.1.1</version>
+    <version>24.3.2</version>
 
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vapil.version>${project.version}</vapil.version>
     </properties>

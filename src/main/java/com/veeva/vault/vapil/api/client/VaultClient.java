@@ -47,7 +47,7 @@ public class VaultClient {
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v25.1";
+	public static final String VAULT_API_VERSION = "v24.3";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter
@@ -59,7 +59,6 @@ public class VaultClient {
 	private String username;
 	private String password;
 	private String vaultClientId;
-	private boolean allowAllCertificates = false;
 	private boolean logApiErrors = true;
 
 	private AuthenticationResponse authenticationResponse = null;
@@ -169,19 +168,6 @@ public class VaultClient {
 	 */
 	protected void setVaultClientId(String vaultClientId) {
 		this.vaultClientId = vaultClientId;
-	}
-
-	/**
-	 * Allow Vault Client to trust all certificates
-	 *
-	 * @param allowAllCertificates true/false
-	 */
-	public void setAllowAllCertificates(boolean allowAllCertificates) {
-		this.allowAllCertificates = allowAllCertificates;
-	}
-
-	public boolean getAllowAllCertificates() {
-		return allowAllCertificates;
 	}
 
 	/**
@@ -550,10 +536,6 @@ public class VaultClient {
 				HttpRequestConnector.setGlobalTimeout(settings.getHttpTimeout());
 			}
 
-			if (settings.getAllowAllCertificates()) {
-				HttpRequestConnector.setAllowAllCertificates(settings.getAllowAllCertificates());
-			}
-
 			//create a generic auth request and response
 			AuthenticationRequest authRequest = vaultClient.newRequest(AuthenticationRequest.class);
 			if (settings.getAuthenticationType() == AuthenticationType.NO_AUTH) {
@@ -826,16 +808,6 @@ public class VaultClient {
 			this.settings.setVaultUsername(vaultUsername);
 			return this;
 		}
-
-		/**
-		 * Allow Vault Client to trust all certificates
-		 * @param allowAllCertificates true/false
-		 * @return {@link Builder}
-		 */
-		public Builder withAllowAllCertificates(boolean allowAllCertificates) {
-			this.settings.setAllowAllCertificates(allowAllCertificates);
-			return this;
-		}
 	}
 
 	public static class Settings extends VaultModel {
@@ -977,15 +949,5 @@ public class VaultClient {
 			return true;
 		}
 		public void setValidateSession(Boolean validateSession) {this.set("validateSession", validateSession);}
-
-		public Boolean getAllowAllCertificates() {
-			Boolean allowAllCertificates = this.getBoolean("allowAllCertificates");
-			if (allowAllCertificates != null) {
-				return allowAllCertificates;
-			}
-			//default to false
-			return false;
-		}
-		public void setAllowAllCertificates(Boolean allowAllCertificates) {this.set("allowAllCertificates", allowAllCertificates);}
 	}
 }

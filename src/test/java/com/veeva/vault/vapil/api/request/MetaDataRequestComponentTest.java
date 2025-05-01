@@ -10,32 +10,29 @@ package com.veeva.vault.vapil.api.request;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.ComponentRecord;
 import com.veeva.vault.vapil.api.model.common.ComponentType;
+import com.veeva.vault.vapil.api.model.metadata.VaultObjectPageLayout;
 import com.veeva.vault.vapil.api.model.response.*;
-import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.JobStatusHelper;
-import com.veeva.vault.vapil.extension.MetadataRequestHelper;
+import com.veeva.vault.vapil.extension.MdlHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("MetadataRequestComponentTest")
-@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Metadata request should")
+@DisplayName("Metadata object request should")
 public class MetaDataRequestComponentTest {
 
-	private static final String PATH_MDL_RECREATE_SCRIPT = MetadataRequestHelper.PATH_MDL_RECREATE_SCRIPT;
-	private static final String PATH_MDL_ALTER_SCRIPT = MetadataRequestHelper.PATH_MDL_ALTER_SCRIPT;
-	private static final String RAW_OBJECT_NAME = "test_raw_object__c";
+	static final String MDL_RECREATE_SCRIPT = MdlHelper.getMdlRecreateScript();
+	static final String MDL_ALTER_SCRIPT = MdlHelper.getMdlAlterScript();
+	static final String MDL_DROP_SCRIPT = MdlHelper.getMdlDropScript();
+	static int jobId;
 	private static VaultClient vaultClient;
 
 	@BeforeAll
@@ -44,300 +41,163 @@ public class MetaDataRequestComponentTest {
 		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully execute an MDL Script")
-	class TestExecuteMdlScript {
-		MdlExecuteResponse response = null;
-		String alterScript;
+	@AfterAll
+	static void teardown() {
+		VaultResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(MDL_DROP_SCRIPT)
+				.executeMDLScript();
 
-		@BeforeAll
-		public void setup() throws IOException {
-			File alterScriptFile = new File(PATH_MDL_ALTER_SCRIPT);
-			alterScript = new String(
-					Files.readAllBytes(alterScriptFile.toPath()), StandardCharsets.UTF_8);
-		}
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.setRequestString(alterScript)
-					.executeMDLScript();
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-
-			assertNotNull(response.getScriptExecution());
-			assertNotNull(response.getScriptExecution().getCode());
-			assertNotNull(response.getScriptExecution().getMessage());
-			assertNotNull(response.getScriptExecution().getWarnings());
-			assertNotNull(response.getScriptExecution().getFailures());
-			assertNotNull(response.getScriptExecution().getExceptions());
-			assertNotNull(response.getScriptExecution().getComponentsAffected());
-			assertNotNull(response.getScriptExecution().getExecutionTime());
-
-			List<MdlExecuteResponse.StatementExecution> statementExecutions = response.getStatementExecution();
-			assertNotNull(statementExecutions);
-			for (MdlExecuteResponse.StatementExecution statementExecution : statementExecutions) {
-				assertNotNull(statementExecution.getVault());
-				assertNotNull(statementExecution.getStatement());
-				assertNotNull(statementExecution.getCommand());
-				assertNotNull(statementExecution.getComponent());
-				assertNotNull(statementExecution.getMessage());
-				assertNotNull(statementExecution.getResponse());
-			}
-		}
+		Assertions.assertTrue(response.isSuccessful());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully execute an MDL Script asynchronously")
-	class TestExecuteMdlScriptAsynchronously {
-		JobCreateResponse response = null;
-		String alterScript;
-		int jobId;
+	@Test
+	@Order(1)
+	@DisplayName("successfully execute an MDL script on a Vault")
+	public void testExecuteMdlScript() {
+		VaultResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(MDL_RECREATE_SCRIPT)
+				.executeMDLScript();
 
-		@BeforeAll
-		public void setup() throws IOException {
-			File alterScriptFile = new File(PATH_MDL_ALTER_SCRIPT);
-			alterScript = new String(
-					Files.readAllBytes(alterScriptFile.toPath()), StandardCharsets.UTF_8);
-		}
-
-		@AfterAll
-		public void teardown() {
-			assertTrue(JobStatusHelper.checkMdlJobCompletion(vaultClient, jobId));
-		}
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.setRequestString(alterScript)
-					.executeMDLScriptAsynchronously();
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			assertNotNull(response.getJobId());
-			assertNotNull(response.getUrl());
-			jobId = response.getJobId();
-		}
+		Assertions.assertTrue(response.isSuccessful());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("unsuccessfully execute an MDL Script asynchronously")
-	class TestExecuteMdlScriptAsynchronouslyFailure {
-		JobCreateResponse response = null;
-		String alterScript = "ALTER Object vapil_test_object__c (" +
-				"MODIFY Field test_field__c (" +
-				"max_length(1000000000)" +
-				"));";
-		int jobId;
+	@Test
+	@Order(2)
+	@DisplayName("successfully start an asynchronous MDL script execution")
+	public void testExecuteMdlScriptAsynchronously() {
+		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(MDL_ALTER_SCRIPT)
+				.executeMDLScriptAsynchronously();
 
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.setRequestString(alterScript)
-					.executeMDLScriptAsynchronously();
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			assertNotNull(response.getJobId());
-			assertNotNull(response.getUrl());
-			jobId = response.getJobId();
-			assertFalse(JobStatusHelper.checkMdlJobCompletion(vaultClient, jobId));
-		}
+		Assertions.assertTrue(response.isSuccessful());
+		jobId = response.getJobId();
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve asynchronous MDL Script results")
-	class TestRetrieveAsynchronousMdlScriptResults {
-		MdlExecuteResponse response = null;
-		String alterScript;
-		int jobId;
+	@Test
+	@Order(3)
+	@DisplayName("successfully retrieve the results of an asynchronous MDL script execution")
+	public void testRetrieveAsynchronousMdlScriptResults() {
+		boolean status = JobStatusHelper.checkMdlJobCompletion(vaultClient, jobId);
+		Assertions.assertTrue(status);
 
-		@BeforeAll
-		public void setup() throws IOException {
-			File alterScriptFile = new File(PATH_MDL_ALTER_SCRIPT);
-			alterScript = new String(
-					Files.readAllBytes(alterScriptFile.toPath()), StandardCharsets.UTF_8);
+		MdlResponse jobResultResponse = vaultClient.newRequest(MetaDataRequest.class)
+				.retrieveAsynchronousMDLScriptResults(String.valueOf(jobId));
 
-			JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
-					.setRequestString(alterScript)
-					.executeMDLScriptAsynchronously();
-
-			assertNotNull(response);
-			assertTrue(response.isSuccessful());
-			jobId = response.getJobId();
-			assertTrue(JobStatusHelper.checkMdlJobCompletion(vaultClient, jobId));
-		}
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.retrieveAsynchronousMDLScriptResults(String.valueOf(jobId));
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-
-			assertNotNull(response.getScriptExecution());
-			assertNotNull(response.getScriptExecution().getCode());
-			assertNotNull(response.getScriptExecution().getMessage());
-			assertNotNull(response.getScriptExecution().getWarnings());
-			assertNotNull(response.getScriptExecution().getFailures());
-			assertNotNull(response.getScriptExecution().getExceptions());
-			assertNotNull(response.getScriptExecution().getComponentsAffected());
-			assertNotNull(response.getScriptExecution().getExecutionTime());
-
-			List<MdlExecuteResponse.StatementExecution> statementExecutions = response.getStatementExecution();
-			assertNotNull(statementExecutions);
-			for (MdlExecuteResponse.StatementExecution statementExecution : statementExecutions) {
-				assertNotNull(statementExecution.getVault());
-				assertNotNull(statementExecution.getStatement());
-				assertNotNull(statementExecution.getCommand());
-				assertNotNull(statementExecution.getComponent());
-				assertNotNull(statementExecution.getMessage());
-				assertNotNull(statementExecution.getResponse());
-			}
-		}
+		Assertions.assertTrue(jobResultResponse.isSuccessful());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve metadata of all component types in a Vault")
-	class TestRetrieveAllComponentMetadata {
-		MetaDataComponentTypeBulkResponse response = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.retrieveAllComponentMetadata();
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			List<ComponentType> data = response.getData();
-			assertNotNull(data);
-			for (ComponentType componentType : data) {
-				assertNotNull(componentType.getName());
-				assertNotNull(componentType.getLabel());
-				assertNotNull(componentType.getActive());
-			}
-		}
+	@Test
+	@DisplayName("successfully retrieve metadata of all component types a Vault")
+	public void testRetrieveAllComponentMetadata() {
+		MetaDataComponentTypeBulkResponse response = vaultClient.newRequest(MetaDataRequest.class).retrieveAllComponentMetadata();
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@Test
 	@DisplayName("successfully retrieve metadata of a specific component type")
-	class TestRetrieveComponentTypeMetadata {
-		MetaDataComponentTypeResponse response = null;
+	public void testRetrieveComponentTypeMetadata() {
+		MetaDataComponentTypeResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.retrieveComponentTypeMetadata("Tab");
+		Assertions.assertTrue(response.isSuccessful());
 
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.retrieveComponentTypeMetadata("Tab");
+		ComponentType comp = response.getData();
+		Assertions.assertNotNull(comp);
 
-			assertNotNull(response);
-		}
+		Assertions.assertNotNull(comp.getName());
+	}
 
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			ComponentType componentType = response.getData();
-			assertNotNull(componentType);
-			assertNotNull(componentType.getName());
-			assertNotNull(componentType.getClass());
-			assertNotNull(componentType.getActive());
+	@Test
+	@Disabled
+	public void testFailureAsynchMdlExecution() {
+		String mdl = "ALTER Object hvo_test_object__c (MODIFY Field test_field__c (max_length(1000000000)));";
+		System.out.println(mdl);
+		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(mdl)
+				.executeMDLScriptAsynchronously();
 
-			List<ComponentType.Attribute> attributes = componentType.getAttributes();
-			assertNotNull(attributes);
-			for (ComponentType.Attribute attribute : attributes) {
-				assertNotNull(attribute.getName());
-				assertNotNull(attribute.getType());
-				assertNotNull(attribute.getRequiredness());
-				assertNotNull(attribute.getEditable());
-			}
+		try {
+			Thread.sleep(5000);
+			MdlResponse jobResultResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.retrieveAsynchronousMDLScriptResults(response.getJobId().toString());
+
+			System.out.println(jobResultResponse.getResponseStatus());
+			Assertions.assertFalse(jobResultResponse.isSuccessful());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Assertions.assertTrue(false);
 		}
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@Disabled("Requires the job to be in 'IN_DEPLOYMENT' status. Test needs to be rewritten to handle")
-	@DisplayName("successfully deployment of a raw object")
-	class TestCancelRawObjectDeployment {
-		VaultResponse response = null;
-		String recreateScript;
-		int jobId;
+	@Test
+	@Disabled
+	public void testCancelHvoDeployment() {
+		String mdl = "ALTER Object hvo_test_object__c(\n" +
+				"    ADD Field test_picklist__c(\n" +
+				"      label('Test Picklist'),\n" +
+				"      type('Picklist'),\n" +
+				"      active(true),\n" +
+				"      required(false),\n" +
+				"      unique(false),\n" +
+				"      help_content(),\n" +
+				"      list_column(false),\n" +
+				"      order(11),\n" +
+				"      multi_value(false),\n" +
+				"      picklist('Picklist.test_picklist__c'),\n" +
+				"      no_copy(false),\n" +
+				"      lookup_relationship_name(),\n" +
+				"      lookup_source_field()\n" +
+				"    ),\n" +
+				"    ADD Field vapil_object__c(\n" +
+				"      label('Vapil Object'),\n" +
+				"      type('Object'),\n" +
+				"      active(true),\n" +
+				"      required(false),\n" +
+				"      unique(false),\n" +
+				"      help_content(),\n" +
+				"      list_column(false),\n" +
+				"      create_object_inline(false),\n" +
+				"      order(9),\n" +
+				"      object('vapil_test_import_validate__c'),\n" +
+				"      relationship_type('reference'),\n" +
+				"      relationship_outbound_name('vapil_object__cr'),\n" +
+				"      relationship_inbound_name('hvo_test_objects__cr'),\n" +
+				"      relationship_inbound_label('Test Objects'),\n" +
+				"      relationship_deletion('block'),\n" +
+				"      relationship_criteria(),\n" +
+				"      no_copy(false),\n" +
+				"      lookup_relationship_name(),\n" +
+				"      lookup_source_field(),\n" +
+				"      secure_relationship(false)\n" +
+				"    )\n" +
+				");";
+		System.out.println(mdl);
+		JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.setRequestString(mdl)
+				.executeMDLScriptAsynchronously();
+		System.out.println(response.getResponse());
 
-		@BeforeAll
-		public void setup() throws IOException, InterruptedException {
-			File recreateScriptFile = new File(PATH_MDL_RECREATE_SCRIPT);
-			recreateScript = new String(
-					Files.readAllBytes(recreateScriptFile.toPath()), StandardCharsets.UTF_8);
-
-			JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
-					.setRequestString(recreateScript)
-					.executeMDLScriptAsynchronously();
-
-			assertNotNull(response);
-			assertTrue(response.isSuccessful());
-			jobId = response.getJobId();
+		try {
 			Thread.sleep(1000);
-		}
+			VaultResponse cancelResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.cancelRawObjectDeployment("hvo_test_object__c");
 
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.cancelRawObjectDeployment(RAW_OBJECT_NAME);
-
-			assertNotNull(response);
+			Assertions.assertTrue(cancelResponse.isSuccessful());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Assertions.assertTrue(false);
 		}
+	}
 
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-		}
+
+	@Test
+	@DisplayName("successfully retrieve metadata of a specific component record as MDL")
+	public void testRetrieveComponentRecordMdl() {
+		MdlResponse response = vaultClient.newRequest(MetaDataRequest.class)
+				.retrieveComponentRecordMdl("Picklist", "language__v");
+
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getBinaryContent());
 	}
 
 	@Nested
@@ -351,7 +211,7 @@ public class MetaDataRequestComponentTest {
 		@Order(1)
 		public void testRequest() {
 			response = vaultClient.newRequest(MetaDataRequest.class)
-					.retrieveComponentRecords("Objectvalidation.vapil_test_object__c");
+							.retrieveComponentRecords("Objectvalidation.vapil_test_object__c");
 
 			assertNotNull(response);
 		}
@@ -395,32 +255,6 @@ public class MetaDataRequestComponentTest {
 			assertNotNull(data.getName());
 			assertNotNull(data.getActive());
 			assertNotNull(data.getLabel());
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve metadata of a specific component record as MDL")
-	class TestRetrieveComponentRecordMdl {
-		MdlResponse response = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(MetaDataRequest.class)
-					.retrieveComponentRecordMdl("Picklist", "language__v");
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			assertNotNull(response.getComponentType());
-			assertNotNull(response.getCommandType());
-			assertNotNull(response.getRecordName());
 		}
 	}
 }

@@ -19,13 +19,8 @@ import okio.BufferedSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.URLEncoder;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -61,41 +56,17 @@ public class HttpRequestConnector {
 	private static Logger log = LoggerFactory.getLogger(HttpRequestConnector.class);
 
 	private static int globalTimeout = 60;
-	private static boolean allowAllCertificates;
 
 	// Declare static to ensure single instance
 	private static OkHttpClient clientInstance = null;
 
 	private static OkHttpClient buildClient() {
-		OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+		return new OkHttpClient().newBuilder()
 				.callTimeout(globalTimeout, TimeUnit.MINUTES)
 				.connectTimeout(globalTimeout, TimeUnit.MINUTES)
 				.writeTimeout(globalTimeout, TimeUnit.MINUTES)
-				.readTimeout(globalTimeout, TimeUnit.MINUTES);
-
-		if (allowAllCertificates) {
-			try {
-				TrustManager[] trustAllCertificates = new TrustManager[]{
-						new X509TrustManager() {
-							public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-							public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-							public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-						}
-				};
-
-				SSLContext sslContext = SSLContext.getInstance("TLS");
-				sslContext.init(null, trustAllCertificates, new SecureRandom());
-
-				clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCertificates[0]);
-				clientBuilder.hostnameVerifier((hostname, session) -> true);
-
-				log.warn("OkHttpClient is set to trust all certificates. This poses a security risk.");
-			} catch (Exception e) {
-				log.error("Failed to allow all Certificates on OkHttp Client", e);
-			}
-		}
-
-		return clientBuilder.build();
+				.readTimeout(globalTimeout, TimeUnit.MINUTES)
+				.build();
 	}
 
 	private static OkHttpClient getClient() {
@@ -129,6 +100,7 @@ public class HttpRequestConnector {
 	public HttpRequestConnector(String url) {
 		this.url = url;
 		this.requestOption = RequestOption.EMPTY;
+
 	}
 
 	/**
@@ -784,27 +756,7 @@ public class HttpRequestConnector {
 	 * @param minutes Number of minutes before http timeout occurs
 	 */
 	public static void setGlobalTimeout(int minutes) {
-		if (clientInstance == null) {
-			log.info("Http Timeout = " + minutes);
-			globalTimeout = minutes;
-		} else {
-			log.warn("Cannot change Global Timeout setting after OkHttpClient has been initialized.");
-		}
-	}
-
-	/**
-	 * Turn on setting to allow all SSL Certificates. Default = false.
-	 * <p>&nbsp;</p>
-	 * Can only be set before any and all HTTP calls are first executed
-	 *
-	 * @param allowAllCerts True to allow all SSL Certificates
-	 */
-	public static void setAllowAllCertificates(boolean allowAllCerts) {
-		if (clientInstance == null) {
-			log.info("Allow all SSL Certificates = " + allowAllCerts);
-			allowAllCertificates = allowAllCerts;
-		} else {
-			log.warn("Cannot change Allow All Certificates setting after OkHttpClient has been initialized.");
-		}
+		log.info("Setting http timeout = "  + minutes);
+		globalTimeout = minutes;
 	}
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * The Audit APIs retrieve information about audits and audit types
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.1/#logs">https://developer.veevavault.com/api/25.1/#logs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/24.2/#logs">https://developer.veevavault.com/api/24.2/#logs</a>
  */
 public class LogRequest extends VaultRequest<LogRequest> {
 	// API Endpoints
@@ -32,14 +32,6 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	private static final String URL_AUDIT_DOCUMENT = "/objects/documents/{doc_id}/audittrail";
 	private static final String URL_AUDIT_OBJECT = "/vobjects/{object_name}/{object_record_id}/audittrail";
 	private static final String URL_EMAIL_NOTIFICATION_HISTORY = "/notifications/histories";
-	private static final String URL_PROFILING_SESSIONS = "/code/profiler";
-	private static final String URL_PROFILING_SESSION = "/code/profiler/{session_name}";
-	private static final String URL_PROFILING_SESSION_END = "/code/profiler/{session_name}/actions/end";
-	private static final String URL_PROFILING_SESSION_RESULTS = "/code/profiler/{session_name}/results";
-	private static final String URL_DEBUG_SESSION = "/logs/code/debug/{id}";
-	private static final String URL_DEBUG_SESSIONS = "/logs/code/debug";
-	private static final String URL_DEBUG_FILES = "/logs/code/debug/{id}/files";
-	private static final String URL_DEBUG_RESET = "/logs/code/debug/{id}/actions/reset";
 
 	// API Request Parameters for audit details request
 	private static final String PARAM_START_DATE = "start_date";
@@ -53,17 +45,6 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	// API Request Parameters for api_usage request
 	private static final String PARAM_DATE = "date";
 	private static final String PARAM_LOG_FORMAT = "log_format";
-
-	// API Request Parameters for SDK Profiling Session request
-	private static final String PARAM_LABEL = "label";
-	private static final String PARAM_USER_ID = "user_id";
-	private static final String PARAM_DESCRIPTION = "description";
-
-	// API Request Parameters for SDK Debug Session request
-	private static final String PARAM_INCLUDE_INACTIVE = "include_inactive";
-	private static final String PARAM_NAME = "name";
-	private static final String PARAM_LOG_LEVEL = "log_level";
-	private static final String PARAM_CLASS_FILTERS = "class_filters";
 
 	// Required date format for audit details request and retrieve email notification history request
 	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -85,15 +66,6 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	private String outputPath;
 	private Set<String> objects;
 	private Set<String> events;
-
-	// Builder Parameters for the SDK Profiling request
-	private String userId;
-	private String description;
-
-	// Builder Parameters for the SDK Debug Log request
-	private boolean includeInactive;
-	private String logLevel;
-	private Set<String> classFilters;
 
 	private LogRequest() {
 		// Defaults for the request
@@ -118,7 +90,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return AuditTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-audit-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-audit-types</a>
 	 * @vapil.request <pre>
 	 * AuditTypesResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditTypes();</pre>
@@ -144,7 +116,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return AuditMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-audit-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-audit-metadata</a>
 	 * @vapil.request <pre>
 	 * AuditMetadataResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);</pre>
@@ -188,7 +160,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-audit-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-audit-details</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
@@ -414,7 +386,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return DocumentAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-complete-audit-history-for-a-single-document</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -495,7 +467,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return ObjectAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-complete-audit-history-for-a-single-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-complete-audit-history-for-a-single-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
@@ -576,7 +548,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/notifications/histories</pre>
-	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/25.1/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-email-notification-histories</a>
+	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/24.2/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-email-notification-histories</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - EmailNotificationHistoryResponse</i>
 	 * EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
@@ -691,7 +663,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/api_usage?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-daily-api-usage</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/24.2/#retrieve-daily-api-usage</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -751,7 +723,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/runtime?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/25.1/#download-sdk-runtime-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/24.2/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/24.2/#download-sdk-runtime-log</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -790,396 +762,6 @@ public class LogRequest extends VaultRequest<LogRequest> {
 		}
 	}
 
-	/**
-	 * <b>Retrieve All Profiling Sessions</b>
-	 * <p>
-	 * List all SDK request profiling sessions in the currently authenticated Vault.
-	 *
-	 * @return SdkProfilingSessionBulkResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/code/profiler</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-profiling-session</a>
-	 * @vapil.request <pre>
-	 * SdkProfilingSessionBulkResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.retrieveAllProfilingSessions();
-	 * </pre>
-	 * @vapil.response <pre>
-	 * for (SdkProfilingSession session : response.getData()) {
-	 * 		System.out.println(("--------Profiling Session--------"));
-	 * 		System.out.println("ID = " + session.getId());
-	 * 		System.out.println("Name = " + session.getName());
-	 * 		System.out.println("Label = " + session.getLabel());
-	 * 		System.out.println("Status = " + session.getStatus());
-	 * }
-	 * </pre>
-	 */
-	public SdkProfilingSessionBulkResponse retrieveAllProfilingSessions() {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_PROFILING_SESSIONS));
-
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		return send(HttpMethod.GET, request, SdkProfilingSessionBulkResponse.class);
-	}
-
-	/**
-	 * <b>Retrieve Profiling Session</b>
-	 * <p>
-	 * Retrieve details about a specific SDK request profiling session.
-	 *
-	 * @param sessionName SDK Profiling Session name
-	 * @return SdkProfilingSessionResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/code/profiler/{session_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-profiling-session</a>
-	 * @vapil.request <pre>
-	 * SdkProfilingSessionResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.retrieveProfilingSession(PROFILING_SESSION_NAME);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("ID = " + response.getData().getId());
-	 * System.out.println("Name = " + response.getData().getName());
-	 * System.out.println("Label = " + response.getData().getLabel());
-	 * System.out.println("Status = " + response.getData().getStatus());
-	 * </pre>
-	 */
-	public SdkProfilingSessionResponse retrieveProfilingSession(String sessionName) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_PROFILING_SESSION)
-						.replace("{session_name}", sessionName));
-
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		return send(HttpMethod.GET, request, SdkProfilingSessionResponse.class);
-	}
-
-	/**
-	 * <b>Create Profiling Session</b>
-	 * <p>
-	 * Create a new SDK request profiling session.
-	 *
-	 * @param label SDK Profiling Session label
-	 * @return SdkProfilingSessionCreateResponse
-	 * @vapil.api <pre>
-	 * POST /api/{version}/code/profiler</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#create-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.1/#create-profiling-session</a>
-	 * @vapil.request <pre>
-	 * SdkProfilingSessionCreateResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.setUserId(USER_ID)
-	 * 		.setDescription("Vapil Test Description")
-	 * 		.createProfilingSession("VAPIL Test Profiling Session");
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("ID = " + response.getData().getId());
-	 * System.out.println("Name = " + response.getData().getName());
-	 * </pre>
-	 */
-	public SdkProfilingSessionCreateResponse createProfilingSession(String label) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_PROFILING_SESSIONS));
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
-
-		request.addBodyParam(PARAM_LABEL, label);
-
-		if (userId != null) {
-			request.addBodyParam(PARAM_USER_ID, userId);
-		}
-
-		if (description != null) {
-			request.addBodyParam(PARAM_DESCRIPTION, description);
-		}
-
-		return send(HttpMethod.POST, request, SdkProfilingSessionCreateResponse.class);
-	}
-
-	/**
-	 * <b>End Profiling Session</b>
-	 * <p>
-	 * Terminate a profiling session early. By default, profiling sessions run for either 20 minutes or up to 10,000 SDK requests, whichever comes first.
-	 *
-	 * @param sessionName SDK Profiling Session name
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * POST /api/{version}/code/profiler/{session_name}/actions/end</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#end-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.1/#end-profiling-session</a>
-	 * @vapil.request <pre>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.endProfilingSession(sessionName);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response Status = " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse endProfilingSession(String sessionName) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_PROFILING_SESSION_END)
-				.replace("{session_name}", sessionName));
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		return send(HttpMethod.POST, request, VaultResponse.class);
-	}
-
-	/**
-	 * <b>Delete Profiling Session</b>
-	 * <p>
-	 * Delete an inactive profiling session, which deletes the session and all data associated with the session. Inactive sessions have a status of complete__sys.
-	 *
-	 * @param sessionName SDK Profiling Session name
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * DELETE /api/{version}/code/profiler/{session_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-profiling-session</a>
-	 * @vapil.request <pre>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.deleteProfilingSession(sessionName);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response Status = " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse deleteProfilingSession(String sessionName) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_PROFILING_SESSION)
-				.replace("{session_name}", sessionName));
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		return send(HttpMethod.DELETE, request, VaultResponse.class);
-	}
-
-	/**
-	 * <b>Download Profiling Session Results</b>
-	 * <p>
-	 * Download the Profiler Log for a specific profiling session. A profiling session log is a CSV which contains one row for each SDK request, with a maximum of 100,000 rows.
-	 *
-	 * @param sessionName SDK Profiling Session name
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/code/profiler/{session_name}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-profiling-session-results' target='_blank'>https://developer.veevavault.com/api/25.1/#download-profiling-session-results</a>
-	 * @vapil.request <pre>
-	 * <i>Example 1 - Download to file</i>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.setOutputPath(outputPath.toString())
-	 * 		.downloadProfilingSessionResults(PROFILING_SESSION_NAME);
-	 * <br>
-	 * <i>Example 2 - Download to Bytes</i>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.downloadProfilingSessionResults(PROFILING_SESSION_NAME);
-	 *
-	 * byte[] bytes = response.getBinaryContent();
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response Status = " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse downloadProfilingSessionResults(String sessionName) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_PROFILING_SESSION_RESULTS)
-				.replace("{session_name}", sessionName));
-
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		if (outputPath != null && !outputPath.isEmpty()) {
-			return sendToFile(HttpMethod.GET, request, outputPath, VaultResponse.class);
-		} else {
-			return sendReturnBinary(HttpMethod.GET, request, VaultResponse.class);
-		}
-	}
-
-	/**
-	 * <b>Retrieve All Debug Logs</b>
-	 * <p>
-	 * Retrieve all debug log sessions in the authenticated Vault.
-	 *
-	 * @return SdkDebugSessionBulkResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/logs/code/debug</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-all-debug-logs' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-all-debug-logs</a>
-	 * @vapil.request <pre>
-	 * SdkDebugSessionBulkResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.setUserId(USER_ID)
-	 * 		.setIncludeInactive(true)
-	 * 		.retrieveAllDebugLogs();
-	 * </pre>
-	 * @vapil.response <pre>
-	 * for (SdkDebugSession session : response.getData()) {
-	 * 		System.out.println(("--------Debug Session--------"));
-	 * 		System.out.println("ID = " + session.getId());
-	 * 		System.out.println("Name = " + session.getName());
-	 * 		System.out.println("Status = " + session.getStatus());
-	 * }
-	 * </pre>
-	 */
-	public SdkDebugSessionBulkResponse retrieveAllDebugLogs() {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DEBUG_SESSIONS));
-
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		if (userId != null) {
-			request.addQueryParam(PARAM_USER_ID, userId);
-		}
-
-		if (includeInactive) {
-			request.addQueryParam(PARAM_INCLUDE_INACTIVE, includeInactive);
-		}
-
-		return send(HttpMethod.GET, request, SdkDebugSessionBulkResponse.class);
-	}
-
-	/**
-	 * <b>Retrieve Single Debug Log</b>
-	 * <p>
-	 * Given a debug log ID, retrieve details about this debug log.
-	 *
-	 * @param id SDK Debug Log ID
-	 * @return SdkDebugSessionResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/logs/code/debug/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-single-debug-log' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-single-debug-log</a>
-	 * @vapil.request <pre>
-	 * SdkDebugSessionResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.retrieveSingleDebugLog(debugLogId);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * SdkDebugSession session = response.getData();
-	 * System.out.println("ID = " + session.getId());
-	 * System.out.println("Name = " + session.getName());
-	 * System.out.println("Status = " + session.getStatus());
-	 * </pre>
-	 */
-	public SdkDebugSessionResponse retrieveSingleDebugLog(String id) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DEBUG_SESSION)
-				.replace("{id}", id));
-
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		return send(HttpMethod.GET, request, SdkDebugSessionResponse.class);
-	}
-
-	/**
-	 * <b>Download Debug Log Files</b>
-	 * <p>
-	 * Given a debug log ID, download all of this debug log’s files.
-	 *
-	 * @param id SDK Debug Log ID
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/logs/code/debug/{id}/files</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-debug-log-files' target='_blank'>https://developer.veevavault.com/api/25.1/#download-debug-log-files</a>
-	 * @vapil.request <pre>
-	 * <i>Example 1 - Download to file</i>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.setOutputPath(outputPath.toString())
-	 * 		.downloadDebugLogFiles(debugSessionId);
-	 * <br>
-	 * <i>Example 2 - Download to Bytes</i>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.downloadDebugLogFiles(debugSessionId);
-	 *
-	 * byte[] bytes = response.getBinaryContent();
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response Status = " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse downloadDebugLogFiles(String id) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DEBUG_FILES)
-				.replace("{id}", id));
-
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		if (outputPath != null && !outputPath.isEmpty()) {
-			return sendToFile(HttpMethod.GET, request, outputPath, VaultResponse.class);
-		} else {
-			return sendReturnBinary(HttpMethod.GET, request, VaultResponse.class);
-		}
-	}
-
-	/**
-	 * <b>Create Debug Log</b>
-	 * <p>
-	 * Create a new debug log session for a user.
-	 *
-	 * @param name The UI-friendly name for this debug log
-	 * @param userId The user who will trigger entries into this debug log
-	 * @return SdkDebugSessionCreateResponse
-	 * @vapil.api <pre>
-	 * POST /api/{version}/logs/code/debug</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#create-debug-log' target='_blank'>https://developer.veevavault.com/api/25.1/#create-debug-log</a>
-	 * @vapil.request <pre>
-	 * SdkDebugSessionCreateResponse createDebugLogResponse = vaultClient.newRequest(LogRequest.class)
-	 * 		.setLogLevel("info__sys")
-	 * 		.setClassFilters(classFilters)
-	 * 		.createDebugLog("VAPIL Test Debug", USER_ID);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("ID = " + createDebugLogResponse.getData().getId());
-	 * </pre>
-	 */
-	public SdkDebugSessionCreateResponse createDebugLog(String name, String userId) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DEBUG_SESSIONS));
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_MULTIPART_FORM);
-
-		request.addBodyParam(PARAM_NAME, name);
-		request.addBodyParam(PARAM_USER_ID, userId);
-
-		if (logLevel != null) {
-			request.addBodyParam(PARAM_LOG_LEVEL, logLevel);
-		}
-
-		if (classFilters != null && !classFilters.isEmpty()) {
-			String classFiltersList = classFilters.stream().collect(Collectors.joining(","));
-			request.addQueryParam(PARAM_CLASS_FILTERS, classFiltersList);
-		}
-
-		return send(HttpMethod.POST, request, SdkDebugSessionCreateResponse.class);
-	}
-
-	/**
-	 * <b>Reset Debug Log</b>
-	 * <p>
-	 * Given a debug log ID, delete all existing log files and reset the expiration date to 30 days from today.
-	 *
-	 * @param id SDK Debug Log ID
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * POST /api/{version}/logs/code/debug/{id}/actions/reset</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#reset-debug-log' target='_blank'>https://developer.veevavault.com/api/25.1/#reset-debug-log</a>
-	 * @vapil.request <pre>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.resetDebugLog(debugSessionId);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response Status = " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse resetDebugLog(String id) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DEBUG_RESET)
-				.replace("{id}", id));
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		return send(HttpMethod.POST, request, VaultResponse.class);
-	}
-
-	/**
-	 * <b>Delete Debug Log</b>
-	 * <p>
-	 * Given a debug log ID, delete this debug log and all log files.
-	 *
-	 * @param id SDK Debug Log ID
-	 * @return VaultResponse
-	 * @vapil.api <pre>
-	 * DELETE /api/{version}/logs/code/debug/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-debug-log' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-debug-log</a>
-	 * @vapil.request <pre>
-	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
-	 * 		.deleteDebugLog(debugSessionId);
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Response Status = " + response.getResponseStatus());
-	 * </pre>
-	 */
-	public VaultResponse deleteDebugLog(String id) {
-		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_DEBUG_SESSION)
-				.replace("{id}", id));
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-
-		return send(HttpMethod.DELETE, request, VaultResponse.class);
-	}
 
 	/**
 	 * Converts the date to the proper string format expected by the API
@@ -1412,61 +994,6 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 */
 	public LogRequest setObjects(Set<String> objects) {
 		this.objects = objects;
-		return this;
-	}
-
-	/**
-	 * Specify the user ID for SDK Profiling and Debug requests
-	 *
-	 * @param userId User ID
-	 * @return The Request
-	 */
-	public LogRequest setUserId(String userId) {
-		this.userId = userId;
-		return this;
-	}
-
-	/**
-	 * Specify an Admin-facing description of the session
-	 *
-	 * @param description description
-	 * @return The Request
-	 */
-	public LogRequest setDescription(String description) {
-		this.description = description;
-		return this;
-	}
-
-	/**
-	 * Specify whether to include inactive sessions in SDK Debug requests
-	 *
-	 * @param includeInactive Include inactive sessions in the response. Defaults to false.
-	 * @return The Request
-	 */
-	public LogRequest setIncludeInactive(boolean includeInactive) {
-		this.includeInactive = includeInactive;
-		return this;
-	}
-
-	/**
-	 * Specify log level for SDK Debug Log session.
-	 *
-	 * @param logLevel The level of error messages to capture in this log
-	 * @return The Request
-	 */
-	public LogRequest setLogLevel(String logLevel) {
-		this.logLevel = logLevel;
-		return this;
-	}
-
-	/**
-	 * Specify class filters when creating SDK debug log sessions
-	 *
-	 * @param classFilters Set of fully-qualified class names
-	 * @return The Request
-	 */
-	public LogRequest setClassFilters(Set<String> classFilters) {
-		this.classFilters = classFilters;
 		return this;
 	}
 }

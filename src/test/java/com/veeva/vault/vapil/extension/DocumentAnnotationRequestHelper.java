@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DocumentAnnotationRequestHelper {
 
-    static final String CREATE_ANNOTATIONS_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "create_multiple_annotations.json";
-    static final String UPDATE_ANNOTATIONS_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "update_annotations.json";
-    static final String DELETE_ANNOTATIONS_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "delete_annotations.csv";
-    static final String ADD_REPLIES_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "add_annotation_replies.json";
-    static final String ANNOTATED_DOC_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "VAPIL Annotations Doc (Do Not Delete).pdf";
+    static final String CREATE_ANNOTATIONS_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "create_multiple_annotations.json";
+    static final String UPDATE_ANNOTATIONS_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "update_annotations.json";
+    static final String DELETE_ANNOTATIONS_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "delete_annotations.csv";
+    static final String ADD_REPLIES_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "add_annotation_replies.json";
+    static final String ANNOTATED_DOC_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "VAPIL Annotations Doc (Do Not Delete).pdf";
 
     public static String getCreateAnnotationsFilePath() {
         return CREATE_ANNOTATIONS_FILE_PATH;

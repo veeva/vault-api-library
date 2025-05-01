@@ -1,19 +1,20 @@
 /*---------------------------------------------------------------------
- *	Copyright (c) 2021 Veeva Systems Inc.  All Rights Reserved.
- *	This code is based on pre-existing content developed and
- *	owned by Veeva Systems Inc. and may only be used in connection
- *	with the deliverable with which it was provided to Customer.
- *---------------------------------------------------------------------
- */
+*	Copyright (c) 2021 Veeva Systems Inc.  All Rights Reserved.
+*	This code is based on pre-existing content developed and
+*	owned by Veeva Systems Inc. and may only be used in connection
+*	with the deliverable with which it was provided to Customer.
+*---------------------------------------------------------------------
+*/
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.extension.DocumentRequestHelper;
 import com.veeva.vault.vapil.extension.FileHelper;
-import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +22,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("DocumentRenditionRequest")
 @ExtendWith(VaultClientParameterResolver.class)
@@ -30,359 +30,267 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Document rendition request should")
 public class DocumentRenditionRequestTest {
-    private static final int DOC_ID = 3;
-    private static final int MAJOR_VERSION = 0;
-    private static final int MINOR_VERSION = 1;
-    private static final String RENDITION_TYPE = "viewable_rendition__v";
-    private static final String PATH_UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV = DocumentRequestHelper.PATH_UPDATE_MULTIPLE_RENDITIONS_CSV;
-    private static VaultClient vaultClient = null;
+	static final int DOC_ID = 3;
+	static final int MAJOR_VERSION = 0;
+	static final int MINOR_VERSION = 1;
+	static final String RENDITION_TYPE = "viewable_rendition__v";
+	static final String UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV_PATH = FileHelper.getPathResourcesFolder() + File.separator + "documents" + File.separator
+			+ "document_renditions" + File.separator + "update_multiple_document_renditions.csv";
+	private static VaultClient vaultClient = null;
 
-    @BeforeAll
-    static void setup(VaultClient client) {
-        vaultClient = client;
-        assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
-    }
+	@BeforeAll
+	static void setup(VaultClient client) {
+		vaultClient = client;
+		assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
+	}
 
-    @Test // Test Manually
-    public void testAddMultipleDocumentRenditions(VaultClient vaultClient) {
-        String inputPath = "";
-        VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                .setInputPath(inputPath)
-                .setMigrationMode(true)
-                .addMultipleDocumentRenditions();
-        Assertions.assertTrue(response.isSuccessful());
-        Assertions.assertNotNull(response.getBinaryContent());
-    }
+	@Test // Test Manually
+	public void testAddMultipleDocumentRenditions(VaultClient vaultClient) {
+		String inputPath = "";
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setInputPath(inputPath)
+				.setMigrationMode(true)
+				.addMultipleDocumentRenditions();
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getBinaryContent());
+	}
 
 
-    @Test // Test Manually
-    public void testDeleteMultipleDocumentRenditions(VaultClient vaultClient) {
-        String inputPath = "";
-        VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                .setInputPath(inputPath)
-                .deleteMultipleDocumentRenditions();
-        Assertions.assertTrue(response.isSuccessful());
-        Assertions.assertNotNull(response.getBinaryContent());
+	@Test // Test Manually
+	public void testDeleteMultipleDocumentRenditions(VaultClient vaultClient) {
+		String inputPath = "";
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setInputPath(inputPath)
+				.deleteMultipleDocumentRenditions();
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getBinaryContent());
 
-    }
+	}
 
-    @Test // Test Manually
-    public void testAddSingleDocumentRendition(VaultClient vaultClient) {
-        String inputPath = "";
+	@Test
+	public void testRetrieveDocumentRenditions(VaultClient vaultClient) {
+		DocumentRenditionResponse response = vaultClient.newRequest(DocumentRenditionRequest.class).retrieveDocumentRenditions(DOC_ID);
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getRenditionTypes());
+	}
 
-        VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                .setInputPath(inputPath)
-                .addSingleDocumentRendition(DOC_ID, RENDITION_TYPE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
+	@Test
+	public void testRetrieveDocumentVersionRenditions(VaultClient vaultClient) {
+		DocumentRenditionResponse response = vaultClient
+				.newRequest(DocumentRenditionRequest.class)
+				.retrieveDocumentVersionRenditions(DOC_ID, MAJOR_VERSION, MINOR_VERSION);
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getRenditionTypes());
+	}
 
-    @Test // Test Manually
-    public void testUploadDocumentVersionRendition(VaultClient vaultClient) {
-        String inputPath = "";
+	@Test // Test Manually
+	public  void testDownloadDocumentRenditionFileLatestVersion(VaultClient vaultClient) {
+		String outputPath = "";
 
-        VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                .setInputPath(inputPath)
-                .uploadDocumentVersionRendition(DOC_ID, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setOutputPath(outputPath)
+				.downloadDocumentRenditionFile(DOC_ID, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-    @Test // Test Manually
-    public void testReplaceDocumentRendition(VaultClient vaultClient) {
-        String inputPath = "";
 
-        VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                .setInputPath(inputPath)
-                .replaceDocumentRendition(DOC_ID, RENDITION_TYPE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
+	@Test // Test Manually
+	public  void testDownloadDocumentRenditionFileSteadyState(VaultClient vaultClient) {
+		String outputPath = "";
 
-    @Test // Test Manually
-    public void testReplaceDocumentVersionRendition(VaultClient vaultClient) {
-        String inputPath = "";
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setOutputPath(outputPath)
+				.downloadDocumentRenditionFile(DOC_ID, RENDITION_TYPE, true);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-        VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                .setInputPath(inputPath)
-                .replaceDocumentVersionRendition(DOC_ID, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
+	@Test // Test Manually
+	public  void testDownloadDocumentVersionRenditionFile(VaultClient vaultClient) {
+		String outputPath = "";
 
-    @Test
-    public void testDeleteSingleDocumentRendition(VaultClient vaultClient) {
-        VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class).deleteSingleDocumentRendition(DOC_ID, RENDITION_TYPE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setOutputPath(outputPath)
+				.downloadDocumentVersionRenditionFile(DOC_ID, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-    @Test
-    public void testDeleteDocumentVersionRendition(VaultClient vaultClient) {
-        VaultResponse response = vaultClient
-                .newRequest(DocumentRenditionRequest.class)
-                .deleteDocumentVersionRendition(DOC_ID, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
-        Assertions.assertTrue(response.isSuccessful());
-    }
+	@Test // Test Manually
+	public void testAddSingleDocumentRendition(VaultClient vaultClient) {
+		String inputPath = "";
 
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve document renditions")
-    class TestRetrieveDocumentRenditions {
-        DocumentRenditionResponse response = null;
-        int docId;
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setInputPath(inputPath)
+				.addSingleDocumentRendition(DOC_ID, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-        @BeforeAll
-        public void setup() {
-//            Query for a document ID
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-        }
+	@Test // Test Manually
+	public  void testUploadDocumentVersionRendition(VaultClient vaultClient) {
+		String inputPath = "";
 
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                    .retrieveDocumentRenditions(docId);
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setInputPath(inputPath)
+				.uploadDocumentVersionRendition(DOC_ID, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-            assertNotNull(response);
-        }
+	@Test // Test Manually
+	public void testReplaceDocumentRendition(VaultClient vaultClient) {
+		String inputPath = "";
 
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            List<String> renditionTypes = response.getRenditionTypes();
-            assertNotNull(renditionTypes);
-            for (String renditionType : renditionTypes) {
-                assertNotNull(renditionType);
-            }
-            DocumentRenditionResponse.Renditions renditions = response.getRenditions();
-            assertNotNull(response.getRenditions());
-        }
-    }
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setInputPath(inputPath)
+				.replaceDocumentRendition(DOC_ID, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve document version renditions")
-    class TestRetrieveDocumentVersionRenditions {
-        DocumentRenditionResponse response = null;
-        int docId;
+	@Test // Test Manually
+	public void testReplaceDocumentVersionRendition(VaultClient vaultClient) {
+		String inputPath = "";
+		
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
+				.setInputPath(inputPath)
+				.replaceDocumentVersionRendition(DOC_ID, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-        @BeforeAll
-        public void setup() {
-//            Query for a document ID
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-        }
+	@Test
+	public void testDeleteSingleDocumentRendition(VaultClient vaultClient) {
+		VaultResponse response = vaultClient.newRequest(DocumentRenditionRequest.class).deleteSingleDocumentRendition(DOC_ID, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                    .retrieveDocumentVersionRenditions(docId, MAJOR_VERSION, MINOR_VERSION);
+	@Test
+	public void testDeleteDocumentVersionRendition(VaultClient vaultClient) {
+		VaultResponse response = vaultClient
+				.newRequest(DocumentRenditionRequest.class)
+				.deleteDocumentVersionRendition(DOC_ID, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
+		Assertions.assertTrue(response.isSuccessful());
+	}
 
-            assertNotNull(response);
-        }
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully update multiple document renditions from a csv file")
+	class TestUpdateMultipleDocumentRenditionsCsv {
 
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            List<String> renditionTypes = response.getRenditionTypes();
-            assertNotNull(renditionTypes);
-            for (String renditionType : renditionTypes) {
-                assertNotNull(renditionType);
-            }
-            DocumentRenditionResponse.Renditions renditions = response.getRenditions();
-            assertNotNull(response.getRenditions());
-        }
-    }
+		private DocumentRenditionBulkResponse updateMultipleDocumentRenditionsResponse = null;
+		private int docId = 0;
+		private int majorVersion = 0;
+		private int minorVersion = 1;
 
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully download document rendition file")
-    class TestDownloadDocumentRenditionFileToBytes {
-        VaultResponse response = null;
-        int docId;
+		@BeforeAll
+		public void setup() throws IOException {
+			DocumentsResponse retrieveResponse = vaultClient.newRequest(DocumentRequest.class)
+					.retrieveAllDocuments();
 
-        @BeforeAll
-        public void setup() {
-//            Query for a document ID
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-        }
+			assertTrue(retrieveResponse.isSuccessful());
+			for (DocumentsResponse.DocumentNode documentNode : retrieveResponse.getDocuments()) {
+				if (documentNode.getDocument().getName().contains("VAPIL Test Re-render (Do Not Delete)")) {
+					docId = documentNode.getDocument().getId();
+					majorVersion = documentNode.getDocument().getMajorVersionNumber();
+					minorVersion = documentNode.getDocument().getMinorVersionNumber();
+					break;
+				}
+			}
 
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                    .downloadDocumentRenditionFile(docId, RENDITION_TYPE);
+			VaultResponse deleteResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
+					.deleteSingleDocumentRendition(docId, "viewable_rendition__v");
 
-            assertNotNull(response);
-        }
+			assertTrue(deleteResponse.isSuccessful());
 
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getBinaryContent());
-        }
-    }
+			List<String[]> data = new ArrayList<>();
+			data.add(new String[]{"id", "major_version_number__v", "minor_version_number__v"});
+			data.add(new String[]{String.valueOf(docId), String.valueOf(majorVersion), String.valueOf(minorVersion)});
+			FileHelper.writeCsvFile(UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV_PATH, data);
+		}
 
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully download document version rendition file")
-    class TestDownloadDocumentVersionRenditionFileToBytes {
-        VaultResponse response = null;
-        int docId;
+		@Test
+		@Order(1)
+		public void testRequest() {
+			updateMultipleDocumentRenditionsResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
+					.setInputPath(UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV_PATH)
+					.updateMultipleDocumentRenditions();
 
-        @BeforeAll
-        public void setup() {
-//            Query for a document ID
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-        }
+			assertNotNull(updateMultipleDocumentRenditionsResponse);
+		}
 
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DocumentRenditionRequest.class)
-                    .downloadDocumentVersionRenditionFile(docId, MAJOR_VERSION, MINOR_VERSION, RENDITION_TYPE);
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(updateMultipleDocumentRenditionsResponse.isSuccessful());
+			assertNotNull(updateMultipleDocumentRenditionsResponse.getData());
+			for (DocumentRenditionBulkResponse.Rendition rendition : updateMultipleDocumentRenditionsResponse.getData()) {
+				assertTrue(rendition.getResponseStatus().equals("SUCCESS"));
+				assertNotNull(rendition.getId());
+				assertNotNull(rendition.getMajorVersionNumber());
+				assertNotNull(rendition.getMinorVersionNumber());
+			}
+		}
+	}
 
-            assertNotNull(response);
-        }
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully update multiple document renditions from bytes")
+	class TestUpdateMultipleDocumentRenditionsBytes {
 
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getBinaryContent());
-        }
-    }
+		private DocumentRenditionBulkResponse updateMultipleDocumentRenditionsResponse = null;
+		private int docId = 0;
+		private int majorVersion = 0;
+		private int minorVersion = 1;
 
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully update multiple document renditions from a csv file")
-    class TestUpdateMultipleDocumentRenditionsCsv {
+		@BeforeAll
+		public void setup() throws IOException {
+			DocumentsResponse retrieveResponse = vaultClient.newRequest(DocumentRequest.class)
+					.retrieveAllDocuments();
 
-        private DocumentRenditionBulkResponse updateMultipleDocumentRenditionsResponse = null;
-        private int docId = 0;
-        private int majorVersion = 0;
-        private int minorVersion = 1;
+			assertTrue(retrieveResponse.isSuccessful());
+			for (DocumentsResponse.DocumentNode documentNode : retrieveResponse.getDocuments()) {
+				if (documentNode.getDocument().getName().contains("VAPIL Test Re-render (Do Not Delete)")) {
+					docId = documentNode.getDocument().getId();
+					majorVersion = documentNode.getDocument().getMajorVersionNumber();
+					minorVersion = documentNode.getDocument().getMinorVersionNumber();
+					break;
+				}
+			}
 
-        @BeforeAll
-        public void setup() throws IOException {
-            DocumentsResponse retrieveResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .retrieveAllDocuments();
+			VaultResponse deleteResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
+					.deleteSingleDocumentRendition(docId, "viewable_rendition__v");
 
-            assertTrue(retrieveResponse.isSuccessful());
-            for (DocumentsResponse.DocumentNode documentNode : retrieveResponse.getDocuments()) {
-                if (documentNode.getDocument().getName().contains("VAPIL Test Re-render (Do Not Delete)")) {
-                    docId = documentNode.getDocument().getId();
-                    majorVersion = documentNode.getDocument().getMajorVersionNumber();
-                    minorVersion = documentNode.getDocument().getMinorVersionNumber();
-                    break;
-                }
-            }
+			assertTrue(deleteResponse.isSuccessful());
 
-            VaultResponse deleteResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
-                    .deleteSingleDocumentRendition(docId, "viewable_rendition__v");
+			List<String[]> data = new ArrayList<>();
+			data.add(new String[]{"id", "major_version_number__v", "minor_version_number__v"});
+			data.add(new String[]{String.valueOf(docId), String.valueOf(majorVersion), String.valueOf(minorVersion)});
+			FileHelper.writeCsvFile(UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV_PATH, data);
+		}
 
-            assertTrue(deleteResponse.isSuccessful());
+		@Test
+		@Order(1)
+		public void testRequest() throws IOException {
+			File csvFile = new File(UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV_PATH);
 
-            List<String[]> data = new ArrayList<>();
-            data.add(new String[]{"id", "major_version_number__v", "minor_version_number__v"});
-            data.add(new String[]{String.valueOf(docId), String.valueOf(majorVersion), String.valueOf(minorVersion)});
-            FileHelper.writeCsvFile(PATH_UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV, data);
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            updateMultipleDocumentRenditionsResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
-                    .setInputPath(PATH_UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV)
-                    .updateMultipleDocumentRenditions();
-
-            assertNotNull(updateMultipleDocumentRenditionsResponse);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(updateMultipleDocumentRenditionsResponse.isSuccessful());
-            assertNotNull(updateMultipleDocumentRenditionsResponse.getData());
-            for (DocumentRenditionBulkResponse.Rendition rendition : updateMultipleDocumentRenditionsResponse.getData()) {
-                assertTrue(rendition.getResponseStatus().equals("SUCCESS"));
-                assertNotNull(rendition.getId());
-                assertNotNull(rendition.getMajorVersionNumber());
-                assertNotNull(rendition.getMinorVersionNumber());
-            }
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully update multiple document renditions from bytes")
-    class TestUpdateMultipleDocumentRenditionsBytes {
-
-        private DocumentRenditionBulkResponse updateMultipleDocumentRenditionsResponse = null;
-        private int docId = 0;
-        private int majorVersion = 0;
-        private int minorVersion = 1;
-
-        @BeforeAll
-        public void setup() throws IOException {
-            DocumentsResponse retrieveResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .retrieveAllDocuments();
-
-            assertTrue(retrieveResponse.isSuccessful());
-            for (DocumentsResponse.DocumentNode documentNode : retrieveResponse.getDocuments()) {
-                if (documentNode.getDocument().getName().contains("VAPIL Test Re-render (Do Not Delete)")) {
-                    docId = documentNode.getDocument().getId();
-                    majorVersion = documentNode.getDocument().getMajorVersionNumber();
-                    minorVersion = documentNode.getDocument().getMinorVersionNumber();
-                    break;
-                }
-            }
-
-            VaultResponse deleteResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
-                    .deleteSingleDocumentRendition(docId, "viewable_rendition__v");
-
-            assertTrue(deleteResponse.isSuccessful());
-
-            List<String[]> data = new ArrayList<>();
-            data.add(new String[]{"id", "major_version_number__v", "minor_version_number__v"});
-            data.add(new String[]{String.valueOf(docId), String.valueOf(majorVersion), String.valueOf(minorVersion)});
-            FileHelper.writeCsvFile(PATH_UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV, data);
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() throws IOException {
-            File csvFile = new File(PATH_UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV);
-
-            updateMultipleDocumentRenditionsResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
+			updateMultipleDocumentRenditionsResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
 //					.setInputPath(UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV_PATH)
-                    .setBinaryFile(csvFile.getName(), Files.readAllBytes(csvFile.toPath()))
-                    .updateMultipleDocumentRenditions();
+					.setBinaryFile(csvFile.getName(), Files.readAllBytes(csvFile.toPath()))
+					.updateMultipleDocumentRenditions();
 
-            assertNotNull(updateMultipleDocumentRenditionsResponse);
-        }
+			assertNotNull(updateMultipleDocumentRenditionsResponse);
+		}
 
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(updateMultipleDocumentRenditionsResponse.isSuccessful());
-            assertNotNull(updateMultipleDocumentRenditionsResponse.getData());
-            for (DocumentRenditionBulkResponse.Rendition rendition : updateMultipleDocumentRenditionsResponse.getData()) {
-                assertTrue(rendition.getResponseStatus().equals("SUCCESS"));
-                assertNotNull(rendition.getId());
-                assertNotNull(rendition.getMajorVersionNumber());
-                assertNotNull(rendition.getMinorVersionNumber());
-            }
-        }
-    }
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(updateMultipleDocumentRenditionsResponse.isSuccessful());
+			assertNotNull(updateMultipleDocumentRenditionsResponse.getData());
+			for (DocumentRenditionBulkResponse.Rendition rendition : updateMultipleDocumentRenditionsResponse.getData()) {
+				assertTrue(rendition.getResponseStatus().equals("SUCCESS"));
+				assertNotNull(rendition.getId());
+				assertNotNull(rendition.getMajorVersionNumber());
+				assertNotNull(rendition.getMinorVersionNumber());
+			}
+		}
+	}
 }
 

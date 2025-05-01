@@ -15,17 +15,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.BufferedSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -61,41 +57,17 @@ public class HttpRequestConnector {
 	private static Logger log = LoggerFactory.getLogger(HttpRequestConnector.class);
 
 	private static int globalTimeout = 60;
-	private static boolean allowAllCertificates;
 
 	// Declare static to ensure single instance
 	private static OkHttpClient clientInstance = null;
 
 	private static OkHttpClient buildClient() {
-		OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+		return new OkHttpClient().newBuilder()
 				.callTimeout(globalTimeout, TimeUnit.MINUTES)
 				.connectTimeout(globalTimeout, TimeUnit.MINUTES)
 				.writeTimeout(globalTimeout, TimeUnit.MINUTES)
-				.readTimeout(globalTimeout, TimeUnit.MINUTES);
-
-		if (allowAllCertificates) {
-			try {
-				TrustManager[] trustAllCertificates = new TrustManager[]{
-						new X509TrustManager() {
-							public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-							public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-							public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-						}
-				};
-
-				SSLContext sslContext = SSLContext.getInstance("TLS");
-				sslContext.init(null, trustAllCertificates, new SecureRandom());
-
-				clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCertificates[0]);
-				clientBuilder.hostnameVerifier((hostname, session) -> true);
-
-				log.warn("OkHttpClient is set to trust all certificates. This poses a security risk.");
-			} catch (Exception e) {
-				log.error("Failed to allow all Certificates on OkHttp Client", e);
-			}
-		}
-
-		return clientBuilder.build();
+				.readTimeout(globalTimeout, TimeUnit.MINUTES)
+				.build();
 	}
 
 	private static OkHttpClient getClient() {
@@ -119,7 +91,6 @@ public class HttpRequestConnector {
 	private byte[] requestBinaryContent = null; // Request binary content
 	private String requestFile = null; // Request with only a file
 	private String requestRawString = null; // Request with only a string
-	private StreamRequest requestInputStream = null; // Request with only an input stream
 
 	/**
 	 * Constructor for an HTTP request to a given URL
@@ -129,6 +100,7 @@ public class HttpRequestConnector {
 	public HttpRequestConnector(String url) {
 		this.url = url;
 		this.requestOption = RequestOption.EMPTY;
+
 	}
 
 	/**
@@ -317,8 +289,6 @@ public class HttpRequestConnector {
 				return getRequestBodyBinary();
 			case STRING:
 				return getRequestBodyString();
-			case STREAM:
-				return getRequestBodyInputStream();
 			default:
 				break;
 		}
@@ -420,17 +390,6 @@ public class HttpRequestConnector {
 		log.debug("RequestBody: Binary");
 
 		return RequestBody.create(requestBinaryContent, MediaType.parse(requestMediaType));
-	}
-
-	/**
-	 * Form the request body with an input stream
-	 *
-	 * @return The created RequestBody
-	 */
-	private RequestBody getRequestBodyInputStream() {
-		log.debug("RequestBody: Input Stream");
-
-		return requestInputStream;
 	}
 
 	/**
@@ -618,18 +577,6 @@ public class HttpRequestConnector {
 		addBodyParam(name, new BinaryFile(fileName, binaryContent));
 	}
 
-	/**
-	 * Add an inputStream to the request.
-	 *
-	 * @param mediaType         The media type
-	 * @param inputStream 		The inputStream
-	 */
-	public void addInputStream(String mediaType, InputStream inputStream) {
-		requestOption = RequestOption.STREAM;
-		requestMediaType = mediaType;
-		requestInputStream = new StreamRequest(mediaType, inputStream);
-	}
-
 	private void addParam(ParamType paramType, String name, Object value) {
 		switch (paramType) {
 			case QUERY:
@@ -703,11 +650,7 @@ public class HttpRequestConnector {
 		 * Form the request body with a multipart form
 		 * request, such as body params and a file
 		 */
-		MULTIPART,
-		/**
-		 * Form the request body with an input stream
-		 */
-		STREAM
+		MULTIPART
 	}
 
 	/**
@@ -734,48 +677,6 @@ public class HttpRequestConnector {
 		}
 	}
 
-
-	/**
-	 * Handler class sending requests using an Input Stream
-	 */
-	public static final class StreamRequest extends RequestBody {
-		private final MediaType requestMediaType;
-		private final InputStream stream;
-
-		public StreamRequest (
-				final String requestMediaType,
-				final InputStream stream) {
-			this.requestMediaType = MediaType.parse(requestMediaType);
-			this.stream = stream;
-		}
-
-		@Override
-		public MediaType contentType () {
-			return requestMediaType;
-		}
-
-		@Override
-		public boolean isOneShot () {
-			return true;
-		}
-
-		@Override
-		public void writeTo(final BufferedSink bufferedSink) throws IOException {
-			try (InputStream inputStream = stream;
-				 OutputStream outputStream = bufferedSink.outputStream()) {
-
-				// Create a buffer to read/write data in chunks
-				byte[] buffer = new byte[8192];
-				int bytesRead;
-
-				// Read bytes from the InputStream and write them to the OutputStream
-				while ((bytesRead = inputStream.read(buffer)) != -1) {
-					outputStream.write(buffer, 0, bytesRead);
-				}
-			}
-		}
-	}
-
 	/**
 	 * Set the global timeout for the HTTP Client. Default = 60 minutes.
 	 * <p>&nbsp;</p>
@@ -784,27 +685,7 @@ public class HttpRequestConnector {
 	 * @param minutes Number of minutes before http timeout occurs
 	 */
 	public static void setGlobalTimeout(int minutes) {
-		if (clientInstance == null) {
-			log.info("Http Timeout = " + minutes);
-			globalTimeout = minutes;
-		} else {
-			log.warn("Cannot change Global Timeout setting after OkHttpClient has been initialized.");
-		}
-	}
-
-	/**
-	 * Turn on setting to allow all SSL Certificates. Default = false.
-	 * <p>&nbsp;</p>
-	 * Can only be set before any and all HTTP calls are first executed
-	 *
-	 * @param allowAllCerts True to allow all SSL Certificates
-	 */
-	public static void setAllowAllCertificates(boolean allowAllCerts) {
-		if (clientInstance == null) {
-			log.info("Allow all SSL Certificates = " + allowAllCerts);
-			allowAllCertificates = allowAllCerts;
-		} else {
-			log.warn("Cannot change Allow All Certificates setting after OkHttpClient has been initialized.");
-		}
+		log.info("Setting http timeout = "  + minutes);
+		globalTimeout = minutes;
 	}
 }

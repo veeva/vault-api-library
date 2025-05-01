@@ -107,7 +107,6 @@ public class VaultClientTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully build a client with a valid username and password")
-    @Disabled
     class TestAuthenticationTypeBasic {
         private JsonNode basicSettingsNode;
         private AuthenticationResponse authResponse = null;
@@ -130,7 +129,6 @@ public class VaultClientTest {
                     .withValidation(true)
                     .withApiErrorLogging(true)
                     .withHttpTimeout(60)
-                    .withAllowAllCertificates(basicSettingsNode.get("allowAllCertificates").asBoolean())
                     .build();
 
             assertNotNull(testClient.getAuthenticationResponse());

@@ -23,7 +23,7 @@ public class BulkTranslationRequestTest {
 
     private static VaultClient vaultClient;
     private static String BULK_IMPORT_TRANSLATION_FILE_NAME = "bulk_translation_test.csv";
-    private static String BULK_IMPORT_TRANSLATION_FILE_CSV_PATH = FileHelper.PATH_RESOURCES_FOLDER + "bulk_translation" + File.separator + BULK_IMPORT_TRANSLATION_FILE_NAME;
+    private static String BULK_IMPORT_TRANSLATION_FILE_CSV_PATH = FileHelper.getPathResourcesFolder() + "bulk_translation" + File.separator + BULK_IMPORT_TRANSLATION_FILE_NAME;
 
     @BeforeAll
     static void setup(VaultClient client) {

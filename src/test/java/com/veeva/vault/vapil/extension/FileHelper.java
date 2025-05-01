@@ -15,25 +15,25 @@ import java.util.Map;
 
 public class FileHelper {
 
-    public static final String PATH_RESOURCES_FOLDER = "src" + File.separator + "test" + File.separator + "resources" + File.separator;
-    static final String PATH_SETTINGS_FILES_FOLDER = PATH_RESOURCES_FOLDER + File.separator + "settings_files";
-    static final String PATH_TEST_FILE = PATH_RESOURCES_FOLDER + "vapil_test_document.docx";
-    static final String PATH_LOADER_FILE = PATH_RESOURCES_FOLDER + "loader_file.csv";
+    static final String RESOURCES_FOLDER_DIRECTORY = "src" + File.separator + "test" + File.separator + "resources" + File.separator;
+    static final String SETTINGS_FILE_DIRECTORY = RESOURCES_FOLDER_DIRECTORY + File.separator + "settings_files";
+    static final String TEST_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "vapil_test_document.docx";
+    static final String LOADER_FILE_PATH = "src" + File.separator + "test" +
+            File.separator + "resources" + File.separator + "loader_file.csv";
+
     private static Logger log = LoggerFactory.getLogger(FileHelper.class);
 
     public static String getPathTestFile() {
-        return PATH_TEST_FILE;
+        return TEST_FILE_PATH;
     }
 
-    public static String getPathLogsFolder() {
-        return PATH_RESOURCES_FOLDER + File.separator + "logs";
-    }
-    public static String getPathLoaderFolder() {
-        return PATH_RESOURCES_FOLDER + File.separator + "loader";
+    public static String getPathResourcesFolder() {
+        return RESOURCES_FOLDER_DIRECTORY;
     }
 
     public static String getPathLoaderFile() {
-        return PATH_LOADER_FILE;
+        return LOADER_FILE_PATH;
     }
     public static void createFile(String filePath) {
         File file = new File(filePath);
@@ -77,7 +77,7 @@ public class FileHelper {
     }
 
     public static File getSettingsFile(String fileName) {
-        String settingsFilePath = String.format("%s%s%s", PATH_SETTINGS_FILES_FOLDER, File.separator, fileName);
+        String settingsFilePath = String.format("%s%s%s", SETTINGS_FILE_DIRECTORY, File.separator, fileName);
         File settingsFile = new File(settingsFilePath);
         if (!settingsFile.exists()) {
             String errorMessage = String.format("JSON settings file '%s' not found", settingsFile.getAbsolutePath());

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("File Staging request should")
 public class FileStagingRequestTest {
-    static final String RESUMABLE_UPLOAD_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "test_resumable_upload.txt";
+    static final String RESUMABLE_UPLOAD_FILE_PATH = FileHelper.getPathResourcesFolder() + File.separator + "test_resumable_upload.txt";
     static final String TEST_FOLDER_FSS_NAME = "test_create_folder";
     static final String TEST_UPDATE_FOLDER_FSS_NAME = "test_update_folder";
     static final String TEST_FILE_FSS_NAME = "vapil_test_document.docx";
@@ -81,7 +81,6 @@ public class FileStagingRequestTest {
                 if (item.getKind().equals("file")) {
                     assertNotNull(item.getSize());
                     assertNotNull(item.getModifiedDate());
-                    assertNotNull(item.getFileContentMd5());
                 }
             }
         }
@@ -477,7 +476,7 @@ public class FileStagingRequestTest {
         @Order(1)
         public void testRequest() throws IOException {
             downloadResp = vaultClient.newRequest(FileStagingRequest.class)
-                    .setOutputPath(FileHelper.PATH_RESOURCES_FOLDER + TEST_DOWNLOAD_FILE_NAME)
+                    .setOutputPath(FileHelper.getPathResourcesFolder() + TEST_DOWNLOAD_FILE_NAME)
                     .downloadItemContent(TEST_FILE_FSS_NAME);
 
             assertNotNull(downloadResp);

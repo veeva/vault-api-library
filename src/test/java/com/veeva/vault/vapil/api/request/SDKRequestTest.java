@@ -25,7 +25,7 @@ import java.nio.file.Files;
 @Disabled
 public class SDKRequestTest {
 
-		final String CLASS_NAME = "com.veeva.vault.custom.entrypoints.triggers.record.TestObject";
+		final String CLASS_NAME = "com.veeva.vault.custom.triggers.HelloWorld";
 		final String SDK_FILE_NAME = "";
 		final String FILE_PATH = "";
 		final String PACKAGE_FILE_NAME = "";

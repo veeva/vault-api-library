@@ -12,7 +12,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.VaultModel;
-import com.veeva.vault.vapil.api.model.common.DocumentRetrieveAttachment;
 import com.veeva.vault.vapil.api.model.common.Renditions;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 
@@ -46,15 +45,6 @@ public class DocumentResponse extends VaultResponse {
 
 	public void setVersions(List<Version> versions) {
 		this.set("versions", versions);
-	}
-
-	@JsonProperty("attachments")
-	public List<DocumentRetrieveAttachment> getAttachments() {
-		return (List<DocumentRetrieveAttachment>) this.get("attachments");
-	}
-
-	public void setAttachments(List<DocumentRetrieveAttachment> attachments) {
-		this.set("attachments", attachments);
 	}
 
 	static public class Version extends VaultModel {

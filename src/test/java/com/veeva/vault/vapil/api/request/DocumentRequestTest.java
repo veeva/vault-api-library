@@ -9,10 +9,7 @@ package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.Document;
-import com.veeva.vault.vapil.api.model.common.DocumentRetrieveAttachment;
-import com.veeva.vault.vapil.api.model.common.Renditions;
 import com.veeva.vault.vapil.api.model.metadata.DocumentField;
-import com.veeva.vault.vapil.api.model.metadata.DocumentLock;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.extension.DocumentRequestHelper;
 import com.veeva.vault.vapil.extension.FileHelper;
@@ -26,9 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,29 +33,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Document request should")
 public class DocumentRequestTest {
-
-    private static final String DOC_LIFECYCLE_NAME = DocumentRequestHelper.VAPIL_TEST_DOC_LIFECYCLE_NAME;
-    private static final String DOC_LIFECYCLE_LABEL = DocumentRequestHelper.VAPIL_TEST_DOC_LIFECYCLE_LABEL;
-    private static final String DOC_TYPE_NAME = DocumentRequestHelper.VAPIL_TEST_DOC_TYPE_NAME;
-    private static final String DOC_TYPE_LABEL = DocumentRequestHelper.VAPIL_TEST_DOC_TYPE_LABEL;
-    private static final String DOC_SUBTYPE_NAME = DocumentRequestHelper.VAPIL_TEST_DOC_SUBTYPE_NAME;
-    private static final String DOC_SUBTYPE_LABEL = DocumentRequestHelper.VAPIL_TEST_DOC_SUBTYPE_LABEL;
-    private static final String DOC_CLASSIFICATION_NAME = DocumentRequestHelper.VAPIL_TEST_DOC_CLASSIFICATION_NAME;
-    private static final String DOC_CLASSIFICATION_LABEL = DocumentRequestHelper.VAPIL_TEST_DOC_CLASSIFICATION_LABEL;
-    private static final String DOC_RECLASSIFY_TYPE_NAME = DocumentRequestHelper.VAPIL_TEST_RECLASSIFY_TYPE_NAME;
-
-    private static final int MAJOR_VERSION = 0;
-    private static final int MINOR_VERSION = 1;
-    private static final String DOC_TEMPLATE = "vapil_test_doc_template__c";
-    private static final String DOC_STATUS_LABEL = "Draft";
-    private static final String PATH_TEST_FILE = FileHelper.getPathTestFile();
-    private static final String PATH_CREATE_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_CREATE_MULTIPLE_DOCUMENTS_CSV;
-    private static final String PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV;
-    private static final String PATH_DELETE_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_DELETE_MULTIPLE_DOCUMENTS_CSV;
-    private static final String PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV = DocumentRequestHelper.PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV;
-    private static final String PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV;
-    private static final String PATH_UNDO_COLLAB_CHECKOUT_CSV = DocumentRequestHelper.PATH_UNDO_COLLAB_CHECKOUT_CSV;
-    private static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
+    static final int MAJOR_VERSION = 0;
+    static final int MINOR_VERSION = 1;
+    static final String DOC_TYPE_NAME = "vapil_test_doc_type__c";
+    static final String DOC_SUBTYPE_NAME = "vapil_test_doc_subtype__c";
+    static final String DOC_CLASSIFICATION_NAME = "vapil_test_doc_classification__c";
+    static final String DOC_RECLASSIFY_TYPE_NAME = "vapil_test_reclassify_type__c";
+    static final String DOC_TYPE_LABEL = "VAPIL Test Doc Type";
+    static final String DOC_SUBTYPE_LABEL = "VAPIL Test Doc Subtype";
+    static final String DOC_CLASSIFICATION_LABEL = "VAPIL Test Doc Classification";
+    static final String DOC_TEMPLATE = "vapil_test_doc_template__c";
+    static final String DOC_LIFECYCLE_LABEL = "VAPIL Test Doc Lifecycle";
+    static final String DOC_LIFECYCLE_NAME = "vapil_test_doc_lifecycle__c";
+    static final String PATH_TEST_FILE = FileHelper.getPathTestFile();
+    static final String CREATE_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathCreateMultipleDocuments();
+    static final String UPDATE_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathUpdateMultipleDocuments();
+    static final String DELETE_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathDeleteMultipleDocuments();
+    static final String RECLASSIFY_DOCUMENTS_CSV_PATH = DocumentRequestHelper.getPathReclassifyMultipleDocuments();
+    static final String UNDO_COLLAB_CHECKOUT_CSV_PATH = DocumentRequestHelper.getPathUndoCollabCheckout();
+    static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
     private static VaultClient vaultClient;
 
     @BeforeAll
@@ -84,7 +75,9 @@ public class DocumentRequestTest {
                     .setHeaderReferenceId(referenceIdHeader)
                     .retrieveAllDocumentFields();
 
-            assertTrue(response.isSuccessful());
+
+            Assertions.assertTrue(response.isSuccessful());
+
             assertNotNull(response);
         }
 
@@ -115,37 +108,22 @@ public class DocumentRequestTest {
     @Disabled
     class TestRetrieveCommonDocumentFields {
         DocumentFieldResponse response = null;
-        Set<Integer> docIds = new HashSet<>();
 
         @BeforeAll
         public void setup() {
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docIds.add(queryResponse.getData().get(0).getInteger("id"));
+
         }
 
         @Test
         @Order(1)
         public void testRequest() {
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .retrieveCommonDocumentFields(docIds);
-            assertNotNull(response);
+
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(response.isSuccessful());
-            List<DocumentField> properties = response.getProperties();
-            for (DocumentField property : properties) {
-                assertNotNull(property.getName());
-                assertNotNull(property.getDisabled());
-                assertNotNull(property.getEditable());
-                assertNotNull(property.getHidden());
-                assertNotNull(property.getQueryable());
-                assertNotNull(property.getRequired());
-                assertNotNull(property.getSystemAttribute());
-                assertNotNull(property.getType());
-            }
+
         }
     }
 
@@ -196,39 +174,13 @@ public class DocumentRequestTest {
             assertTrue(response.isSuccessful());
             assertNotNull(response.getName());
             assertNotNull(response.getLabel());
+            assertNotNull(response.getProperties());
+            assertNotNull(response.getRenditions());
+            assertNotNull(response.getRelationshipTypes());
+            assertNotNull(response.getAvailableLifecycles());
 
-            List<DocumentField> properties = response.getProperties();
-            assertNotNull(properties);
-            for (DocumentField property : properties) {
-                assertNotNull(property.getName());
-                assertNotNull(property.getType());
-                assertNotNull(property.getRequired());
-                assertNotNull(property.getEditable());
-            }
-
-            List<String> renditions = response.getRenditions();
-            assertNotNull(renditions);
-            for (String rendition : renditions) {
-                assertNotNull(rendition);
-            }
-
-            List<DocumentClassificationResponse.RelationshipType> relationshipTypes = response.getRelationshipTypes();
-            assertNotNull(relationshipTypes);
-            for (DocumentClassificationResponse.RelationshipType relationshipType : relationshipTypes) {
-                assertNotNull(relationshipType.getLabel());
-                assertNotNull(relationshipType.getValue());
-            }
-
-            List<DocumentClassificationResponse.AvailableLifecycle> availableLifecycles = response.getAvailableLifecycles();
-            assertNotNull(availableLifecycles);
-            for (DocumentClassificationResponse.AvailableLifecycle availableLifecycle : availableLifecycles) {
-                assertNotNull(availableLifecycle.getLabel());
-                assertNotNull(availableLifecycle.getLabel());
-            }
-
-            List<DocumentTypeResponse.DocumentSubtype> subtypes = response.getSubtypes();
-            assertNotNull(subtypes);
-            for (DocumentTypeResponse.DocumentSubtype subtype : subtypes) {
+            assertNotNull(response.getSubtypes());
+            for (DocumentTypeResponse.DocumentSubtype subtype : response.getSubtypes()) {
                 assertNotNull(subtype.getLabel());
                 assertNotNull(subtype.getName());
                 assertNotNull(subtype.getValue());
@@ -256,39 +208,13 @@ public class DocumentRequestTest {
             assertTrue(response.isSuccessful());
             assertNotNull(response.getName());
             assertNotNull(response.getLabel());
+            assertNotNull(response.getProperties());
+            assertNotNull(response.getRenditions());
+            assertNotNull(response.getRelationshipTypes());
+            assertNotNull(response.getAvailableLifecycles());
 
-            List<DocumentField> properties = response.getProperties();
-            assertNotNull(properties);
-            for (DocumentField property : properties) {
-                assertNotNull(property.getName());
-                assertNotNull(property.getType());
-                assertNotNull(property.getRequired());
-                assertNotNull(property.getEditable());
-            }
-
-            List<String> renditions = response.getRenditions();
-            assertNotNull(renditions);
-            for (String rendition : renditions) {
-                assertNotNull(rendition);
-            }
-
-            List<DocumentClassificationResponse.RelationshipType> relationshipTypes = response.getRelationshipTypes();
-            assertNotNull(relationshipTypes);
-            for (DocumentClassificationResponse.RelationshipType relationshipType : relationshipTypes) {
-                assertNotNull(relationshipType.getLabel());
-                assertNotNull(relationshipType.getValue());
-            }
-
-            List<DocumentClassificationResponse.AvailableLifecycle> availableLifecycles = response.getAvailableLifecycles();
-            assertNotNull(availableLifecycles);
-            for (DocumentClassificationResponse.AvailableLifecycle availableLifecycle : availableLifecycles) {
-                assertNotNull(availableLifecycle.getLabel());
-                assertNotNull(availableLifecycle.getLabel());
-            }
-
-            List<DocumentSubtypeResponse.DocumentClassification> classifications = response.getClassifications();
-            assertNotNull(classifications);
-            for (DocumentSubtypeResponse.DocumentClassification classification : classifications) {
+            assertNotNull(response.getClassifications());
+            for (DocumentSubtypeResponse.DocumentClassification classification : response.getClassifications()) {
                 assertNotNull(classification.getLabel());
                 assertNotNull(classification.getName());
                 assertNotNull(classification.getValue());
@@ -319,39 +245,12 @@ public class DocumentRequestTest {
             assertTrue(response.isSuccessful());
             assertNotNull(response.getName());
             assertNotNull(response.getLabel());
-
-            List<DocumentField> properties = response.getProperties();
-            assertNotNull(properties);
-            for (DocumentField property : properties) {
-                assertNotNull(property.getName());
-                assertNotNull(property.getType());
-                assertNotNull(property.getRequired());
-                assertNotNull(property.getEditable());
-            }
-
-            List<String> renditions = response.getRenditions();
-            assertNotNull(renditions);
-            for (String rendition : renditions) {
-                assertNotNull(rendition);
-            }
-
-            List<DocumentClassificationResponse.RelationshipType> relationshipTypes = response.getRelationshipTypes();
-            assertNotNull(relationshipTypes);
-            for (DocumentClassificationResponse.RelationshipType relationshipType : relationshipTypes) {
-                assertNotNull(relationshipType.getLabel());
-                assertNotNull(relationshipType.getValue());
-            }
-
-            List<DocumentClassificationResponse.AvailableLifecycle> availableLifecycles = response.getAvailableLifecycles();
-            assertNotNull(availableLifecycles);
-            for (DocumentClassificationResponse.AvailableLifecycle availableLifecycle : availableLifecycles) {
-                assertNotNull(availableLifecycle.getLabel());
-                assertNotNull(availableLifecycle.getLabel());
-            }
-
-            List<DocumentClassificationResponse.Template> templates = response.getTemplates();
-            assertNotNull(templates);
-            for (DocumentClassificationResponse.Template template : templates) {
+            assertNotNull(response.getProperties());
+            assertNotNull(response.getRenditions());
+            assertNotNull(response.getRelationshipTypes());
+            assertNotNull(response.getAvailableLifecycles());
+            assertNotNull(response.getTemplates());
+            for (DocumentClassificationResponse.Template template : response.getTemplates()) {
                 assertNotNull(template.getName());
                 assertNotNull(template.getLabel());
                 assertNotNull(template.getKind());
@@ -415,8 +314,10 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
+            DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
+
+            docId = response.getDocuments().get(0).getDocument().getId();
         }
 
         @Test
@@ -431,19 +332,6 @@ public class DocumentRequestTest {
         @Order(2)
         public void testResponse() {
             assertTrue(response.isSuccessful());
-            Renditions renditions = response.getRenditions();
-            assertNotNull(renditions);
-
-            List<DocumentResponse.Version> versions = response.getVersions();
-            assertNotNull(versions);
-            for (DocumentResponse.Version version : versions) {
-                assertNotNull(version.getNumber());
-                assertNotNull(version.getValue());
-            }
-
-            List<DocumentRetrieveAttachment> attachments = response.getAttachments();
-            assertNotNull(attachments);
-
             Document document = response.getDocument();
             assertNotNull(document);
             assertNotNull(document.getId());
@@ -465,8 +353,10 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
+            DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
+
+            docId = response.getDocuments().get(0).getDocument().getId();
         }
 
         @Test
@@ -481,16 +371,13 @@ public class DocumentRequestTest {
         @Order(2)
         public void testResponse() {
             assertTrue(response.isSuccessful());
-            List<DocumentVersionResponse.Version> versions = response.getVersions();
-            assertNotNull(versions);
-            for (DocumentVersionResponse.Version version : versions) {
+            assertNotNull(response.getRenditions());
+            assertNotNull(response.getRenditions().getViewableRendition());
+            assertNotNull(response.getVersions());
+            for (DocumentVersionResponse.Version version : response.getVersions()) {
                 assertNotNull(version.getNumber());
                 assertNotNull(version.getValue());
             }
-
-            Renditions renditions = response.getRenditions();
-            assertNotNull(renditions);
-            assertNotNull(renditions.getViewableRendition());
         }
     }
 
@@ -509,10 +396,10 @@ public class DocumentRequestTest {
             DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
                     .retrieveAllDocuments();
 
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-            minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
-            majorVersion = queryResponse.getData().get(0).getInteger("major_version_number__v");
+            Document document = response.getDocuments().get(0).getDocument();
+            docId = document.getId();
+            minorVersion = document.getMinorVersionNumber();
+            majorVersion = document.getMajorVersionNumber();
         }
 
         @Test
@@ -527,16 +414,6 @@ public class DocumentRequestTest {
         @Order(2)
         public void testResponse() {
             assertTrue(response.isSuccessful());
-            Renditions renditions = response.getRenditions();
-            assertNotNull(renditions);
-
-            List<DocumentResponse.Version> versions = response.getVersions();
-            assertNotNull(versions);
-            for (DocumentResponse.Version version : versions) {
-                assertNotNull(version.getNumber());
-                assertNotNull(version.getValue());
-            }
-
             Document document = response.getDocument();
             assertNotNull(document);
             assertNotNull(document.getId());
@@ -558,8 +435,10 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
+            DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
+
+            docId = response.getDocuments().get(0).getDocument().getId();
         }
 
         @Test
@@ -593,10 +472,10 @@ public class DocumentRequestTest {
             DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
                     .retrieveAllDocuments();
 
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-            minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
-            majorVersion = queryResponse.getData().get(0).getInteger("major_version_number__v");
+            Document document = response.getDocuments().get(0).getDocument();
+            docId = document.getId();
+            minorVersion = document.getMinorVersionNumber();
+            majorVersion = document.getMajorVersionNumber();
         }
 
         @Test
@@ -735,41 +614,24 @@ public class DocumentRequestTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully create placeholder document")
     @Disabled
-    class TestCreateSingleDocumentContentPlaceholder {
-        DocumentResponse response = null;
-        List<Integer> docIds = new ArrayList<>();
+    class TestCreateContentPlaceholderDocument {
 
-        @AfterAll
-        public void teardown() {
-            DocumentBulkResponse deleteResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-            assertTrue(deleteResponse.isSuccessful());
+
+        @BeforeAll
+        public void setup() {
+
         }
 
         @Test
         @Order(1)
         public void testRequest() {
-            Document doc = new Document();
 
-            doc.setName("VAPIL test create single document: placeholder " + ZonedDateTime.now());
-            doc.setLifecycle(DOC_LIFECYCLE_LABEL);
-            doc.setType(DOC_TYPE_LABEL);
-            doc.setSubtype(DOC_SUBTYPE_LABEL);
-            doc.setClassification(DOC_CLASSIFICATION_LABEL);
-            doc.setTitle("VAPIL test create single document: placeholder");
-
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .createSingleDocument(doc);
-
-            assertNotNull(response);
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getDocument());
-            assertNotNull(response.getDocument().getId());
-            docIds.add(response.getDocument().getId());
+
         }
     }
 
@@ -778,73 +640,57 @@ public class DocumentRequestTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully create an unclassified document")
     @Disabled
-    class TestCreateSingleDocumentUnclassified {
-        DocumentResponse response = null;
-        List<Integer> docIds = new ArrayList<>();
+    class TestCreateUnclassifiedDocument {
 
-        @AfterAll
-        public void teardown() {
-            DocumentBulkResponse deleteResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-            assertTrue(deleteResponse.isSuccessful());
+
+        @BeforeAll
+        public void setup() {
+
         }
 
         @Test
         @Order(1)
         public void testRequest() {
-            Document doc = new Document();
 
-            doc.setName("VAPIL test create single document: unclassified " + ZonedDateTime.now());
-            doc.setLifecycle("unclassified__v");
-            doc.setType("undefined__v");
-            doc.setTitle("VAPIL test create single document: unclassified");
-
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .setInputPath(PATH_TEST_FILE)
-                    .createSingleDocument(doc);
-
-            assertNotNull(response);
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getDocument());
-            assertNotNull(response.getDocument().getId());
-            docIds.add(response.getDocument().getId());
+
         }
     }
-
-//    @Nested
-//    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//    @DisplayName("successfully create a crosslink document")
-//    @Disabled
-//    class TestCreateCrosslinkDocument {
-//
-//
-//        @BeforeAll
-//        public void setup() {
-//
-//        }
-//
-//        @Test
-//        @Order(1)
-//        public void testRequest() {
-//
-//        }
-//
-//        @Test
-//        @Order(2)
-//        public void testResponse() {
-//
-//        }
-//    }
 
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully create multiple documents from CSV")
+    @DisplayName("successfully create a crosslink document")
+    @Disabled
+    class TestCreateCrosslinkDocument {
+
+
+        @BeforeAll
+        public void setup() {
+
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully create multiple documents from CSV and file on staging server")
     class TestCreateMultipleDocumentsFile {
         DocumentBulkResponse response = null;
         List<Integer> docIds = new ArrayList<>();
@@ -852,24 +698,44 @@ public class DocumentRequestTest {
         @BeforeAll
         public void setup() {
             FileStagingHelper.createTestFileOnFileStaging(vaultClient);
-            DocumentRequestHelper.writeToCreateMultipleDocumentsFile(3);
+
+//            Write Headers and data to CSV file
+            List<String[]> data = new ArrayList<>();
+            data.add(new String[]{"file", "name__v", "type__v", "subtype__v",
+                    "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
+            for (int i = 0; i < 3; i++) {
+                String name = "VAPIL Test Create Multiple Documents " + ZonedDateTime.now() + " " + i;
+                data.add(new String[]{FILE_STAGING_FILE, name, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
+                        DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
+            }
+            FileHelper.writeCsvFile(CREATE_DOCUMENTS_CSV_PATH, data);
         }
 
         @AfterAll
         public void teardown() {
-            DocumentBulkResponse deleteDocumentsResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
 
-            assertTrue(deleteDocumentsResponse.isSuccessful());
-            for (DocumentResponse documentResponse : deleteDocumentsResponse.getData()) {
-                assertTrue(documentResponse.isSuccessful());
+            List<String[]> data = new ArrayList<>();
+            data.add(new String[]{"id"});
+
+            for (int docId : docIds) {
+                data.add(new String[]{String.valueOf(docId)});
             }
+
+            FileHelper.writeCsvFile(DELETE_DOCUMENTS_CSV_PATH, data);
+
+            DocumentBulkResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(DELETE_DOCUMENTS_CSV_PATH)
+                    .deleteMultipleDocuments();
+
+            assertTrue(response.isSuccessful());
         }
 
         @Test
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(DocumentRequest.class)
-                    .setInputPath(PATH_CREATE_MULTIPLE_DOCUMENTS_CSV)
+                    .setInputPath(CREATE_DOCUMENTS_CSV_PATH)
                     .createMultipleDocuments();
             assertNotNull(response);
         }
@@ -898,10 +764,21 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
-                docIds.add(documentResponse.getDocument().getId());
-            }
+            Document doc = new Document();
+
+            doc.setName("VAPIL test create single document " + ZonedDateTime.now());
+            doc.setLifecycle(DOC_LIFECYCLE_LABEL);
+            doc.setType(DOC_TYPE_LABEL);
+            doc.setSubtype(DOC_SUBTYPE_LABEL);
+            doc.setClassification(DOC_CLASSIFICATION_LABEL);
+            doc.setTitle("VAPIL test create single document");
+
+            DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(PATH_TEST_FILE)
+                    .createSingleDocument(doc);
+
+            assertTrue(response.isSuccessful());
+            docIds.add(response.getDocument().getId());
         }
 
         @AfterAll
@@ -915,6 +792,7 @@ public class DocumentRequestTest {
         @Test
         @Order(1)
         public void testRequest() {
+//		      Update Document
             int id = docIds.get(0);
             String updatedName = "VAPIL Test Update Single Document";
             Document doc = new Document();
@@ -938,6 +816,7 @@ public class DocumentRequestTest {
             assertTrue(response.isSuccessful());
             assertNotNull(response.getDocument());
             assertNotNull(response.getDocument().getId());
+            docIds.add(response.getDocument().getId());
         }
     }
 
@@ -951,19 +830,59 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-//            Create a document to update
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
+            FileStagingHelper.createTestFileOnFileStaging(vaultClient);
+
+//            Write Headers and data to CSV file
+            List<String[]> createData = new ArrayList<>();
+            createData.add(new String[]{"file", "name__v", "type__v", "subtype__v",
+                    "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
+            for (int i = 0; i < 3; i++) {
+                String name = "VAPIL Test Create Multiple Documents " + ZonedDateTime.now() + " " + i;
+                createData.add(new String[]{FILE_STAGING_FILE, name, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
+                        DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
+            }
+            FileHelper.writeCsvFile(CREATE_DOCUMENTS_CSV_PATH, createData);
+
+//		      Create multiple documents
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(CREATE_DOCUMENTS_CSV_PATH)
+                    .createMultipleDocuments();
+            Assertions.assertTrue(response.isSuccessful());
+            for (DocumentResponse documentResponse : response.getData()) {
+                Assertions.assertTrue(documentResponse.isSuccessful());
                 docIds.add(documentResponse.getDocument().getId());
             }
 
-//            Write Update Multiple Documents CSV
-            DocumentRequestHelper.writeToUpdateMultipleDocumentsFile(docIds);
+//            Write Headers and data to CSV file
+            String updatedTitle = "VAPIL Test Update multiple documents";
+
+            List<String[]> updateData = new ArrayList<>();
+            updateData.add(new String[]{"id", "title__v"});
+
+            for (int docId : docIds) {
+                updateData.add(new String[]{String.valueOf(docId), updatedTitle});
+            }
+
+            FileHelper.writeCsvFile(UPDATE_DOCUMENTS_CSV_PATH, updateData);
         }
 
         @AfterAll
         public void teardown() {
-            DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
+
+            List<String[]> data = new ArrayList<>();
+            data.add(new String[]{"id"});
+
+            for (int docId : docIds) {
+                data.add(new String[]{String.valueOf(docId)});
+            }
+
+            FileHelper.writeCsvFile(DELETE_DOCUMENTS_CSV_PATH, data);
+
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(DELETE_DOCUMENTS_CSV_PATH)
+                    .deleteMultipleDocuments();
+
             assertTrue(response.isSuccessful());
         }
 
@@ -971,7 +890,7 @@ public class DocumentRequestTest {
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(DocumentRequest.class)
-                    .setInputPath(PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV)
+                    .setInputPath(UPDATE_DOCUMENTS_CSV_PATH)
                     .updateMultipleDocuments();
             assertNotNull(response);
         }
@@ -992,100 +911,25 @@ public class DocumentRequestTest {
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("return status of WARNING when updating records with no changes")
-    class TestUpdateMultipleDocumentsWarning {
-
-        DocumentBulkResponse updateMultipleDocumentsResponse = null;
-        List<Integer> docIds = new ArrayList<>();
-
-        @BeforeAll
-        public void setup() throws InterruptedException, IOException {
-//			Create documents
-            DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 3);
-            assertTrue(createResponse.isSuccessful());
-
-            for (DocumentResponse documentResponse : createResponse.getData()) {
-                assertTrue(documentResponse.isSuccessful());
-                docIds.add(documentResponse.getDocument().getId());
-            }
-
-//			Write Update Multiple Documents CSV
-            DocumentRequestHelper.writeToUpdateMultipleDocumentsFile(docIds);
-
-//            Create first update
-            DocumentBulkResponse updateDocumentsResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .setContentTypeCsv()
-                    .setInputPath(PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV)
-                    .updateMultipleDocuments();
-
-            assertTrue(updateDocumentsResponse.isSuccessful());
-        }
-
-        @AfterAll
-        public void teardown() throws IOException {
-            DocumentBulkResponse deleteResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-            assertTrue(deleteResponse.isSuccessful());
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            updateMultipleDocumentsResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .setContentTypeCsv()
-                    .setInputPath(PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV)
-                    .updateMultipleDocuments();
-
-            assertNotNull(updateMultipleDocumentsResponse);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertFalse(updateMultipleDocumentsResponse.isSuccessful());
-            assertTrue(updateMultipleDocumentsResponse.hasWarnings());
-            assertFalse(updateMultipleDocumentsResponse.hasErrors());
-            assertNull(updateMultipleDocumentsResponse.getErrors());
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully reclassify a single document")
     @Disabled
     class TestReclassifySingleDocument {
-        DocumentResponse response = null;
-        List<Integer> docIds = new ArrayList<>();
 
         @BeforeAll
         public void setup() {
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
-                docIds.add(documentResponse.getDocument().getId());
-            }
+
         }
 
         @Test
         @Order(1)
         public void testRequest() {
-            int id = docIds.get(0);
-            Document doc = new Document();
 
-            doc.setId(id);
-            doc.setLifecycle(DOC_LIFECYCLE_LABEL);
-            doc.setType(DOC_RECLASSIFY_TYPE_NAME);
-
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .reclassifySingleDocument(doc);
-
-            assertNotNull(response);
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.get("id"));
+
         }
     }
 
@@ -1099,27 +943,65 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-//            Create documents
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
+            FileStagingHelper.createTestFileOnFileStaging(vaultClient);
+
+//            Write Headers and data to CSV file
+            List<String[]> createData = new ArrayList<>();
+            createData.add(new String[]{"file", "name__v", "type__v", "subtype__v",
+                    "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
+            for (int i = 0; i < 3; i++) {
+                String name = "VAPIL Test Create Multiple Documents " + ZonedDateTime.now() + " " + i;
+                createData.add(new String[]{FILE_STAGING_FILE, name, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
+                        DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
+            }
+            FileHelper.writeCsvFile(CREATE_DOCUMENTS_CSV_PATH, createData);
+
+//		      Create multiple documents
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(CREATE_DOCUMENTS_CSV_PATH)
+                    .createMultipleDocuments();
+            Assertions.assertTrue(response.isSuccessful());
+            for (DocumentResponse documentResponse : response.getData()) {
+                Assertions.assertTrue(documentResponse.isSuccessful());
                 docIds.add(documentResponse.getDocument().getId());
             }
 
 //            Write Headers and data to CSV file
-            DocumentRequestHelper.writeToReclassifyMultipleDocumentsFile(docIds);
+            List<String[]> reclassifyData = new ArrayList<>();
+            reclassifyData.add(new String[]{"id", "lifecycle__v", "type__v"});
+
+            for (int docId : docIds) {
+                reclassifyData.add(new String[]{String.valueOf(docId), DOC_LIFECYCLE_NAME, DOC_RECLASSIFY_TYPE_NAME});
+            }
+
+            FileHelper.writeCsvFile(RECLASSIFY_DOCUMENTS_CSV_PATH, reclassifyData);
         }
 
         @AfterAll
         public void teardown() {
-            DocumentBulkResponse deleteDocsResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-            assertTrue(deleteDocsResponse.isSuccessful());
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
+
+            List<String[]> data = new ArrayList<>();
+            data.add(new String[]{"id"});
+
+            for (int docId : docIds) {
+                data.add(new String[]{String.valueOf(docId)});
+            }
+
+            FileHelper.writeCsvFile(DELETE_DOCUMENTS_CSV_PATH, data);
+
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(DELETE_DOCUMENTS_CSV_PATH)
+                    .deleteMultipleDocuments();
+
+            assertTrue(response.isSuccessful());
         }
 
         @Test
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(DocumentRequest.class)
-                    .setInputPath(PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV)
+                    .setInputPath(RECLASSIFY_DOCUMENTS_CSV_PATH)
                     .reclassifyMultipleDocuments();
 
             assertNotNull(response);
@@ -1167,51 +1049,24 @@ public class DocumentRequestTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully create multiple document versions")
+    @Disabled
     class TestCreateMultipleDocumentVersions {
-        DocumentBulkResponse response = null;
-        List<Integer> docIds = new ArrayList<>();
 
         @BeforeAll
         public void setup() {
-//            Create a document
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
-            assertTrue(createDocumentsResponse.isSuccessful());
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
-                docIds.add(documentResponse.getDocument().getId());
-            }
 
-            DocumentRequestHelper.writeToUpdateMultipleDocumentVersionsFile(docIds.get(0));
-        }
-
-        @AfterAll
-        public void teardown() {
-            DocumentBulkResponse deleteDocumentsResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-            assertTrue(deleteDocumentsResponse.isSuccessful());
-            for (DocumentResponse documentResponse : deleteDocumentsResponse.getData()) {
-                assertTrue(documentResponse.isSuccessful());
-            }
         }
 
         @Test
         @Order(1)
         public void testRequest() {
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .setIdParam("id")
-                    .setMigrationMode(true)
-                    .setInputPath(PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV)
-                    .createMultipleDocumentVersions();
 
-            assertNotNull(response);
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getData());
-            for (DocumentResponse documentResponse : response.getData()) {
-                assertTrue(documentResponse.isSuccessful());
-            }
+
         }
     }
 
@@ -1364,11 +1219,21 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
-            assertTrue(createDocumentsResponse.isSuccessful());
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
-                docIds.add(documentResponse.getDocument().getId());
-            }
+            Document doc = new Document();
+
+            doc.setName("VAPIL test create single document " + ZonedDateTime.now());
+            doc.setLifecycle(DOC_LIFECYCLE_LABEL);
+            doc.setType(DOC_TYPE_LABEL);
+            doc.setSubtype(DOC_SUBTYPE_LABEL);
+            doc.setClassification(DOC_CLASSIFICATION_LABEL);
+            doc.setTitle("VAPIL test create single document");
+
+            DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(PATH_TEST_FILE)
+                    .createSingleDocument(doc);
+
+            assertTrue(response.isSuccessful());
+            docIds.add(response.getDocument().getId());
         }
 
         @Test
@@ -1395,26 +1260,51 @@ public class DocumentRequestTest {
     @DisplayName("successfully delete multiple documents from CSV")
     class TestDeleteMultipleDocuments {
         DocumentBulkResponse response = null;
-        List<Integer> docIds = new ArrayList<>();
 
         @BeforeAll
         public void setup() {
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 3);
-            assertTrue(createDocumentsResponse.isSuccessful());
+            FileStagingHelper.createTestFileOnFileStaging(vaultClient);
 
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
-                assertTrue(documentResponse.isSuccessful());
+//            Write Headers and data to CSV file
+            List<String[]> createData = new ArrayList<>();
+            createData.add(new String[]{"file", "name__v", "type__v", "subtype__v",
+                    "classification__v", "lifecycle__v", "major_version__v", "minor_version__v"});
+            for (int i = 0; i < 3; i++) {
+                String name = "VAPIL Test Create Multiple Documents " + ZonedDateTime.now() + " " + i;
+                createData.add(new String[]{FILE_STAGING_FILE, name, DOC_TYPE_LABEL, DOC_SUBTYPE_LABEL, DOC_CLASSIFICATION_LABEL,
+                        DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
+            }
+            FileHelper.writeCsvFile(CREATE_DOCUMENTS_CSV_PATH, createData);
+
+//		      Create multiple documents
+            List<Integer> docIds = new ArrayList<>();
+            DocumentBulkResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(CREATE_DOCUMENTS_CSV_PATH)
+                    .createMultipleDocuments();
+            Assertions.assertTrue(response.isSuccessful());
+            for (DocumentResponse documentResponse : response.getData()) {
+                Assertions.assertTrue(documentResponse.isSuccessful());
                 docIds.add(documentResponse.getDocument().getId());
             }
 
-            DocumentRequestHelper.writeToDeleteMultipleDocumentsFile(docIds);
+            FileHelper.createFile(DELETE_DOCUMENTS_CSV_PATH);
+
+//            Write Headers and data to CSV file
+            List<String[]> deleteData = new ArrayList<>();
+            deleteData.add(new String[]{"id"});
+
+            for (int docId : docIds) {
+                deleteData.add(new String[]{String.valueOf(docId)});
+            }
+
+            FileHelper.writeCsvFile(DELETE_DOCUMENTS_CSV_PATH, deleteData);
         }
 
         @Test
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(DocumentRequest.class)
-                    .setInputPath(PATH_DELETE_MULTIPLE_DOCUMENTS_CSV)
+                    .setInputPath(DELETE_DOCUMENTS_CSV_PATH)
                     .deleteMultipleDocuments();
             assertNotNull(response);
         }
@@ -1436,34 +1326,24 @@ public class DocumentRequestTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully delete a single document version")
+    @Disabled
     class TestDeleteSingleDocumentVersion {
-        DocumentResponse response = null;
-        List<Integer> docIds = new ArrayList<>();
 
         @BeforeAll
         public void setup() {
-            DocumentBulkResponse createDocumentsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
-            assertTrue(createDocumentsResponse.isSuccessful());
-            for (DocumentResponse documentResponse : createDocumentsResponse.getData()) {
-                docIds.add(documentResponse.getDocument().getId());
-            }
+
         }
 
         @Test
         @Order(1)
         public void testRequest() {
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .deleteSingleDocumentVersion(docIds.get(0), MAJOR_VERSION, MINOR_VERSION);
 
-            assertNotNull(response);
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getDocument());
-            assertNotNull(response.getDocument().getId());
+
         }
     }
 
@@ -1530,162 +1410,59 @@ public class DocumentRequestTest {
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve document lock metadata")
-    class TestRetrieveDocumentLockMetadata {
-        MetaDataDocumentLockResponse response = null;
+    @DisplayName("have no errors and return isSuccessful() = true when response type is WARNING")
+    class TestUpdateMultipleDocumentsWarning {
 
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .retrieveDocumentLockMetadata();
+        DocumentBulkResponse updateMultipleDocumentsResponse = null;
+        List<Integer> docIds = new ArrayList<>();
 
-            assertNotNull(response);
-        }
+        @BeforeAll
+        public void setup() throws InterruptedException, IOException {
+//			Create documents
+            DocumentBulkResponse createResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 3);
+            assertTrue(createResponse.isSuccessful());
 
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            List<DocumentLock> properties = response.getProperties();
-            assertNotNull(properties);
-            for (DocumentLock property : properties) {
-                assertNotNull(property.getName());
-                assertNotNull(property.getScope());
-                assertNotNull(property.getType());
-                assertNotNull(property.getSystemAttribute());
-                assertNotNull(property.getEditable());
-                assertNotNull(property.getSetOnCreateOnly());
-                assertNotNull(property.getDisabled());
-                assertNotNull(property.getObjectType());
-                assertNotNull(property.getLabel());
-                assertNotNull(property.getHidden());
+            for (DocumentResponse documentResponse : createResponse.getData()) {
+                assertTrue(documentResponse.isSuccessful());
+                docIds.add(documentResponse.getDocument().getId());
             }
-        }
-    }
 
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully create a document lock")
-    class TestCreateDocumentLock {
-        VaultResponse response = null;
-        int docId;
+            List<String[]> updateData = new ArrayList<>();
+            updateData.add(new String[]{"id", "description__c"});
 
-        @BeforeAll
-        public void setup() {
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
+            for (int i = 0; i < docIds.size(); i++) {
+                int id = docIds.get(i);
+                String description = "VAPIL Test";
+                updateData.add(new String[]{String.valueOf(id), description});
+            }
+
+            FileHelper.writeCsvFile(UPDATE_DOCUMENTS_CSV_PATH, updateData);
         }
 
         @AfterAll
-        public void teardown() {
-            VaultResponse deleteLockResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .deleteDocumentLock(docId);
-
-            assertTrue(deleteLockResponse.isSuccessful());
+        public void teardown() throws IOException {
+            DocumentBulkResponse deleteResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
+            assertTrue(deleteResponse.isSuccessful());
         }
 
         @Test
         @Order(1)
         public void testRequest() {
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .createDocumentLock(docId);
+            updateMultipleDocumentsResponse = vaultClient.newRequest(DocumentRequest.class)
+                    .setContentTypeCsv()
+                    .setInputPath(UPDATE_DOCUMENTS_CSV_PATH)
+                    .updateMultipleDocuments();
 
-            assertNotNull(response);
+            assertNotNull(updateMultipleDocumentsResponse);
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(response.isSuccessful());
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve document lock")
-    class TestRetrieveDocumentLock {
-        DocumentLockResponse response = null;
-        int docId;
-
-        @BeforeAll
-        public void setup() {
-//            Query for a document ID
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-
-//            Create a Document Lock
-            VaultResponse createLockResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .createDocumentLock(docId);
-
-            assertNotNull(createLockResponse);
-            assertTrue(createLockResponse.isSuccessful());
-        }
-
-        @AfterAll
-        public void teardown() {
-            VaultResponse deleteLockResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .deleteDocumentLock(docId);
-
-            assertTrue(deleteLockResponse.isSuccessful());
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .retrieveDocumentLock(docId);
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
-            assertNotNull(response.getLock());
-            assertNotNull(response.getLock().getLockedBy());
-            assertNotNull(response.getLock().getLockedDate());
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully delete document lock")
-    class TestDeleteDocumentLock {
-        VaultResponse response = null;
-        int docId;
-
-        @BeforeAll
-        public void setup() {
-//            Query for a document ID
-            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
-            docId = queryResponse.getData().get(0).getInteger("id");
-
-//            Create a Document Lock
-            VaultResponse createLockResponse = vaultClient.newRequest(DocumentRequest.class)
-                    .createDocumentLock(docId);
-
-            assertNotNull(createLockResponse);
-            assertTrue(createLockResponse.isSuccessful());
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            response = vaultClient.newRequest(DocumentRequest.class)
-                    .deleteDocumentLock(docId);
-
-            assertNotNull(response);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(response.isSuccessful());
+            assertFalse(updateMultipleDocumentsResponse.isSuccessful());
+            assertTrue(updateMultipleDocumentsResponse.hasWarnings());
+            assertFalse(updateMultipleDocumentsResponse.hasErrors());
+            assertNull(updateMultipleDocumentsResponse.getErrors());
         }
     }
 
@@ -1699,11 +1476,21 @@ public class DocumentRequestTest {
         DocumentCollaborativeCheckoutResponse response = null;
         VaultClient vaultClient = null;
 
+        @BeforeAll
+        public void setup() throws InterruptedException, IOException {
+            vaultClient = VaultClient.newClientBuilder(VaultClient.AuthenticationType.SESSION_ID)
+                    .withVaultDNS("veeva-vaultprod.veevavault.com")
+                    .withVaultClientId("veeva-vault-devsupport-client-vapil")
+                    .withVaultSessionId("51755BC6B8211084A93668C883024532358CC3E556A04DEA6430852D96A320C6355E94AF91A6CD3CDEC265C507CFF71A9E3C7395496056B803E3F331C9039F2F")
+                    .build();
+
+        }
+
         @Test
         @Order(1)
         public void testRequest() {
             response = vaultClient.newRequest(DocumentRequest.class)
-                    .setInputPath(PATH_UNDO_COLLAB_CHECKOUT_CSV)
+                    .setInputPath(UNDO_COLLAB_CHECKOUT_CSV_PATH)
                     .undoCollaborativeAuthoringCheckout();
 
             assertNotNull(response);

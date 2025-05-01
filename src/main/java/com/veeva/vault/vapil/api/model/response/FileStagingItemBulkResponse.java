@@ -87,15 +87,6 @@ public class FileStagingItemBulkResponse extends VaultResponse {
 		public void setModifiedDate(String modifiedDate) {
 			this.set("modified_date", modifiedDate);
 		}
-
-		@JsonProperty("file_content_md5")
-		public String getFileContentMd5() {
-			return getString("file_content_md5");
-		}
-
-		public void setFileContentMd5(String fileContentMd5) {
-			this.set("file_content_md5", fileContentMd5);
-		}
 	}
 
 	public static class ResponseDetails extends VaultModel {

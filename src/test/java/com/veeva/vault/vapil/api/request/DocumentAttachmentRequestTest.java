@@ -9,189 +9,52 @@ package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.DocumentAttachment;
-import com.veeva.vault.vapil.api.model.response.*;
-import org.junit.jupiter.api.*;
+import com.veeva.vault.vapil.api.model.response.DocumentAttachmentBulkResponse;
+import com.veeva.vault.vapil.api.model.response.DocumentAttachmentResponse;
+import com.veeva.vault.vapil.api.model.response.VaultResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@Tag("DocumentAttachmentRequestTest")
+@Tag("DocumentAttachment")
 @ExtendWith(VaultClientParameterResolver.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Document attachment request should")
+@Disabled
 public class DocumentAttachmentRequestTest {
+	final int DOC_ID = 9;
 
-	private static VaultClient vaultClient;
-	private static int docId;
-	private static int majorVersion;
-	private static int minorVersion;
-	private static int attachmentId;
-	private static int attachmentVersion;
-	
-	@BeforeAll
-	static void setup(VaultClient client) {
-		vaultClient = client;
-		Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
-
-//		Query for doc with Attachments
-		String query = "SELECT id, major_version_number__v, minor_version_number__v, " +
-				"(SELECT attachment_id__sys, attachment_version__sys FROM attachments__sysr) " +
-				"FROM documents WHERE id IN (SELECT document_id__sys FROM attachments__sysr) ORDER BY id ASC MAXROWS 1";
-		QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class).query(query);
-		assertFalse(queryResponse.isFailure());
-
-		docId = queryResponse.getData().get(0).getInteger("id");
-		majorVersion = queryResponse.getData().get(0).getInteger("major_version_number__v");
-		minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
-		attachmentId = queryResponse.getData().get(0).getSubQuery("attachments__sysr").getData().get(0).getInteger("attachment_id__sys");
-		attachmentVersion = queryResponse.getData().get(0).getSubQuery("attachments__sysr").getData().get(0).getInteger("attachment_version__sys");
+	@Test
+	public void testRetrieveDocumentAttachments(VaultClient vaultClient) {
+		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
+				.retrieveDocumentAttachments(DOC_ID);
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve document attachments")
-	class TestRetrieveDocumentAttachments {
-		DocumentAttachmentResponse response = null;
+	@Test
+	public void testRetrieveDocumentVersionAttachments(VaultClient vaultClient) {
+		int majorVersion = 0;
+		int minorVersion = 1;
 
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(DocumentAttachmentRequest.class)
-					.retrieveDocumentAttachments(docId);
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			List<DocumentAttachment> data = response.getData();
-			assertNotNull(data);
-
-			for (DocumentAttachment attachment : data) {
-				assertNotNull(attachment.getId());
-				assertNotNull(attachment.getFilename());
-				assertNotNull(attachment.getFormat());
-				assertNotNull(attachment.getSize());
-				assertNotNull(attachment.getMd5checksum());
-				assertNotNull(attachment.getVersion());
-				assertNotNull(attachment.getCreatedBy());
-//				assertNotNull(attachment.getCreatedDate());
-
-				List<DocumentAttachment.Version> versions = attachment.getVersions();
-				assertNotNull(versions);
-				for (DocumentAttachment.Version version : versions) {
-					assertNotNull(version.getVersion());
-					assertNotNull(version.getUrl());
-				}
-			}
-		}
+		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
+				.retrieveDocumentVersionAttachments(DOC_ID, majorVersion, minorVersion);
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
 	}
 
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve document version attachments")
-	class TestRetrieveDocumentVersionAttachments {
-		DocumentAttachmentResponse response = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(DocumentAttachmentRequest.class)
-					.retrieveDocumentVersionAttachments(docId, majorVersion, minorVersion);
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			List<DocumentAttachment> data = response.getData();
-			assertNotNull(data);
-
-			for (DocumentAttachment attachment : data) {
-				assertNotNull(attachment.getId());
-				assertNotNull(attachment.getFilename());
-				assertNotNull(attachment.getFormat());
-				assertNotNull(attachment.getSize());
-				assertNotNull(attachment.getMd5checksum());
-				assertNotNull(attachment.getVersion());
-				assertNotNull(attachment.getCreatedBy());
-//				assertNotNull(attachment.getCreatedDate());
-
-				List<DocumentAttachment.Version> versions = attachment.getVersions();
-				assertNotNull(versions);
-				for (DocumentAttachment.Version version : versions) {
-					assertNotNull(version.getVersion());
-					assertNotNull(version.getUrl());
-				}
-			}
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve document attachment versions")
-	class TestRetrieveDocumentAttachmentVersions {
-		DocumentAttachmentResponse response = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(DocumentAttachmentRequest.class)
-					.retrieveDocumentAttachmentVersions(docId, attachmentId);
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			List<DocumentAttachment> data = response.getData();
-			assertNotNull(data);
-
-			for (DocumentAttachment attachment : data) {
-				assertNotNull(attachment.getVersion());
-			}
-		}
-	}
-
-//	TODO: This endpoint has an optional parameter for attachment_version. Response differs if parameter is included or not.
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve document version attachment versions")
-	class TestRetrieveDocumentVersionAttachmentVersions {
-		DocumentAttachmentResponse response = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			response = vaultClient.newRequest(DocumentAttachmentRequest.class)
-					.retrieveDocumentVersionAttachmentVersions(docId, majorVersion, minorVersion, attachmentId);
-
-			assertNotNull(response);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(response.isSuccessful());
-			List<DocumentAttachment> data = response.getData();
-			assertNotNull(data);
-		}
+	@Test
+	public void testRetrieveDocumentAttachmentVersions(VaultClient vaultClient) {
+		int attachmentId = 10;
+		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
+				.retrieveDocumentAttachmentVersions(DOC_ID, attachmentId);
+		Assertions.assertTrue(response.isSuccessful());
+		Assertions.assertNotNull(response.getData());
 	}
 
 	@Test
@@ -201,7 +64,7 @@ public class DocumentAttachmentRequestTest {
 		int attachmentId = 10;
 		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.retrieveDocumentVersionAttachmentVersions(
-						docId,
+						DOC_ID,
 						majorVersion,
 						minorVersion,
 						attachmentId);
@@ -213,7 +76,7 @@ public class DocumentAttachmentRequestTest {
 	public void testRetrieveDocumentAttachmentMetadata(VaultClient vaultClient) {
 		int attachmentId = 10;
 		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
-				.retrieveDocumentAttachmentMetadata(docId, attachmentId);
+				.retrieveDocumentAttachmentMetadata(DOC_ID, attachmentId);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getDocumentAttachment());
 	}
@@ -224,7 +87,7 @@ public class DocumentAttachmentRequestTest {
 		int minorVersion = 1;
 		int attachmentId = 10;
 		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
-				.retrieveDocumentVersionAttachmentMetadata(docId, majorVersion, minorVersion, attachmentId);
+				.retrieveDocumentVersionAttachmentMetadata(DOC_ID, majorVersion, minorVersion, attachmentId);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getDocumentAttachment());
 	}
@@ -234,7 +97,7 @@ public class DocumentAttachmentRequestTest {
 		int attachmentId = 10;
 		int versionId = 1;
 		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
-				.retrieveDocumentAttachmentVersionMetadata(docId, attachmentId, versionId);
+				.retrieveDocumentAttachmentVersionMetadata(DOC_ID, attachmentId, versionId);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getDocumentAttachment());
 	}
@@ -247,7 +110,7 @@ public class DocumentAttachmentRequestTest {
 		int versionId = 1;
 		DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.retrieveDocumentVersionAttachmentVersionMetadata(
-						docId,
+						DOC_ID,
 						majorVersion,
 						minorVersion,
 						attachmentId,
@@ -262,7 +125,7 @@ public class DocumentAttachmentRequestTest {
 		int attachmentId = 10;
 		VaultResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.setOutputPath(null)
-				.downloadDocumentAttachment(docId, attachmentId);
+				.downloadDocumentAttachment(DOC_ID, attachmentId);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
@@ -274,7 +137,7 @@ public class DocumentAttachmentRequestTest {
 		int attachmentId = 10;
 		VaultResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.setOutputPath(null)
-				.downloadDocumentVersionAttachment(docId, majorVersion, minorVersion, attachmentId);
+				.downloadDocumentVersionAttachment(DOC_ID, majorVersion, minorVersion, attachmentId);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
@@ -285,7 +148,7 @@ public void testDownloadDocumentAttachmentVersion(VaultClient vaultClient) {
 		int versionId = 1;
 		VaultResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.setOutputPath(null)
-				.downloadDocumentAttachmentVersion(docId, attachmentId, versionId);
+				.downloadDocumentAttachmentVersion(DOC_ID, attachmentId, versionId);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
@@ -298,7 +161,7 @@ public void testDownloadDocumentAttachmentVersion(VaultClient vaultClient) {
 		int versionId = 1;
 		VaultResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.setOutputPath(null)
-				.downloadDocumentVersionAttachmentVersion(docId, majorVersion, minorVersion, attachmentId, versionId);
+				.downloadDocumentVersionAttachmentVersion(DOC_ID, majorVersion, minorVersion, attachmentId, versionId);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
@@ -307,7 +170,7 @@ public void testDownloadDocumentAttachmentVersion(VaultClient vaultClient) {
 	public void testDownloadAllDocumentAttachment(VaultClient vaultClient) {
 		VaultResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.setOutputPath(null)
-				.downloadAllDocumentAttachments(docId);
+				.downloadAllDocumentAttachments(DOC_ID);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
@@ -318,7 +181,7 @@ public void testDownloadDocumentAttachmentVersion(VaultClient vaultClient) {
 		int minorVersion = 1;
 		VaultResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 				.setOutputPath(null)
-				.downloadAllDocumentVersionAttachments(docId, majorVersion, minorVersion);
+				.downloadAllDocumentVersionAttachments(DOC_ID, majorVersion, minorVersion);
 		Assertions.assertTrue(response.isSuccessful());
 		Assertions.assertNotNull(response.getBinaryContent());
 	}
@@ -332,7 +195,7 @@ public void testDownloadDocumentAttachmentVersion(VaultClient vaultClient) {
 
 			DocumentAttachmentResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 					.setInputPath(csvFilePath)
-					.createDocumentAttachment(docId);
+					.createDocumentAttachment(DOC_ID);
 			System.out.println(response.getResponse());
 			if (response.isSuccessful()) {
 				DocumentAttachment attachment = response.getDocumentAttachment();

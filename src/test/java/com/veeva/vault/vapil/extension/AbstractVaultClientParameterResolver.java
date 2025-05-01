@@ -2,15 +2,13 @@ package com.veeva.vault.vapil.extension;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.veeva.vault.vapil.api.client.VaultClient;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 import java.io.*;
+import java.util.Properties;
 
 import static com.veeva.vault.vapil.api.client.VaultClient.AuthenticationType.BASIC;
 import static com.veeva.vault.vapil.api.client.VaultClient.AuthenticationType.SESSION_ID;
@@ -60,18 +58,14 @@ public abstract class AbstractVaultClientParameterResolver implements ParameterR
     private void buildVaultClient(VaultClient.AuthenticationType authType) {
         switch (authType.getTypeName()) {
             case "SESSION_ID":
-                VaultClient.Builder vaultClientBuilderSession = VaultClient
+                vaultClient = VaultClient
                         .newClientBuilder(SESSION_ID)
                         .withVaultDNS(rootNode.get("vaultDNS").asText())
                         .withVaultUsername(rootNode.get("vaultUsername").asText())
                         .withVaultPassword(rootNode.get("vaultPassword").asText())
                         .withVaultSessionId(rootNode.get("vaultSessionId").asText())
-                        .withVaultClientId(rootNode.get("vaultClientId").asText());
-
-                if (rootNode.get("allowAllCertificates") != null && rootNode.get("allowAllCertificates").asBoolean()) {
-                    vaultClientBuilderSession.withAllowAllCertificates(rootNode.get("allowAllCertificates").asBoolean());
-                }
-                vaultClient = vaultClientBuilderSession.build();
+                        .withVaultClientId(rootNode.get("vaultClientId").asText())
+                        .build();
 
                 // Build Vault Client from username/password if session ID is not valid
                 if (!vaultClient.getAuthenticationResponse().getResponseStatus().equals("SUCCESS")) {
@@ -80,18 +74,13 @@ public abstract class AbstractVaultClientParameterResolver implements ParameterR
                 break;
 
             case "BASIC":
-                VaultClient.Builder vaultClientBuilderBasic = VaultClient
+                vaultClient = VaultClient
                         .newClientBuilder(BASIC)
                         .withVaultDNS(rootNode.get("vaultDNS").asText())
                         .withVaultUsername(rootNode.get("vaultUsername").asText())
                         .withVaultPassword(rootNode.get("vaultPassword").asText())
-                        .withVaultClientId(rootNode.get("vaultClientId").asText());
-
-                if (rootNode.get("allowAllCertificates") != null && rootNode.get("allowAllCertificates").asBoolean()) {
-                    vaultClientBuilderBasic.withAllowAllCertificates(rootNode.get("allowAllCertificates").asBoolean());
-                }
-
-                vaultClient = vaultClientBuilderBasic.build();
+                        .withVaultClientId(rootNode.get("vaultClientId").asText())
+                        .build();
 
                 if (vaultClient.getAuthenticationResponse().getResponseStatus().equals("SUCCESS")) {
                     sessionId = vaultClient.getAuthenticationResponse().getSessionId();
@@ -106,22 +95,11 @@ public abstract class AbstractVaultClientParameterResolver implements ParameterR
         }
     }
 
-//    public static String getVapilVersion() throws IOException {
-//        Properties props = new Properties();
-//        props.load(AbstractVaultClientParameterResolver.class.getClassLoader().getResourceAsStream("project.properties"));
-//        String version = props.getProperty("version");
-//        return version;
-//    }
-
-    public static String getVapilVersion() {
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        try (FileReader fileReader = new FileReader("pom.xml")) {
-            Model model = reader.read(fileReader);
-            return model.getVersion(); // This will return the version specified in the pom.xml
-        } catch (IOException | XmlPullParserException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static String getVapilVersion() throws IOException {
+        Properties props = new Properties();
+        props.load(AbstractVaultClientParameterResolver.class.getClassLoader().getResourceAsStream("project.properties"));
+        String version = props.getProperty("version");
+        return version;
     }
 
     @Override

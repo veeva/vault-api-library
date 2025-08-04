@@ -169,28 +169,6 @@ public class ConfigurationMigrationRequestTest {
     }
 
     @Test
-    @Order(1)
-    @DisplayName("successfully import a VPK package")
-    public void testImportPackage() throws InterruptedException {
-        JobCreateResponse response = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                .setInputPath(VPK_FILE_PATH)
-                .importPackage();
-
-        Assertions.assertTrue(response.isSuccessful());
-        Assertions.assertNotNull(response.getUrl());
-        Assertions.assertNotNull(response.getJobId());
-        JobStatusHelper.checkJobCompletion(vaultClient, response.getJobId());
-        ObjectRecordCollectionResponse recordResponse = vaultClient.newRequest(ObjectRecordRequest.class)
-                .retrieveObjectRecordCollection("vault_package__v");
-        Assertions.assertTrue(recordResponse.isSuccessful());
-        Assertions.assertNotNull(recordResponse.getData());
-
-        List<ObjectRecord> records = recordResponse.getData();
-        packageId = records.get(records.size() - 1).getId();
-        Thread.sleep(10000);
-    }
-
-    @Test
     @Order(2)
     @DisplayName("successfully validate an inbound package")
     public void testValidateInboundPackage() {
@@ -269,88 +247,88 @@ public class ConfigurationMigrationRequestTest {
         Assertions.assertNotNull(responseDetails.getPackageStatus());
     }
 
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve package deploy results")
-    class TestRetrievePackageDeployResults {
-
-        private PackageDeploymentResultsResponse retrievePackageDeployResultsResponse = null;
-        private String packageId;
-
-        @BeforeAll
-        public void setup() throws IOException {
-//            Import Package
-            JobCreateResponse importResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .setInputPath(VPK_FILE_PATH)
-                    .importPackage();
-
-            Assertions.assertTrue(importResponse.isSuccessful());
-            JobStatusHelper.checkJobCompletion(vaultClient, importResponse.getJobId());
-
-//            Retrieve Package ID
-            ObjectRecordCollectionResponse recordResponse = vaultClient.newRequest(ObjectRecordRequest.class)
-                    .retrieveObjectRecordCollection("vault_package__v");
-            Assertions.assertTrue(recordResponse.isSuccessful());
-            Assertions.assertNotNull(recordResponse.getData());
-
-            List<ObjectRecord> records = recordResponse.getData();
-            packageId = records.get(records.size() - 1).getId();
-
-//            Deploy Package
-            JobCreateResponse deployResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .deployPackage(packageId);
-
-            Assertions.assertTrue(deployResponse.isSuccessful());
-            Assertions.assertNotNull(deployResponse.getJobId());
-            Assertions.assertNotNull(deployResponse.getUrl());
-            Assertions.assertTrue(JobStatusHelper.checkJobCompletion(vaultClient, deployResponse.getJobId()));
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            retrievePackageDeployResultsResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
-                    .retrievePackageDeployResults(packageId);
-
-            assertNotNull(retrievePackageDeployResultsResponse);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(retrievePackageDeployResultsResponse.isSuccessful());
-            PackageDeploymentResultsResponse.ResponseDetails responseDetails = retrievePackageDeployResultsResponse.getResponseDetails();
-            assertNotNull(responseDetails);
-            assertNotNull(responseDetails.getTotalSteps());
-            assertNotNull(responseDetails.getDeployedComponents());
-            assertNotNull(responseDetails.getDeployedWithWarnings());
-            assertNotNull(responseDetails.getDeployedWithFailures());
-            assertNotNull(responseDetails.getDeployedWithError());
-            assertNotNull(responseDetails.getFailed());
-            assertNotNull(responseDetails.getSkipped());
-            assertNotNull(responseDetails.getPackageStatus());
-
-            List<PackageLog> deploymentLog = responseDetails.getDeploymentLog();
-            assertNotNull(deploymentLog);
-            for (PackageLog packageLog : deploymentLog) {
-                assertNotNull(packageLog.getFilename());
-                assertNotNull(packageLog.getUrl());
-                assertNotNull(packageLog.getCreatedDate());
-            }
-
-            List<PackageStep> packageSteps = retrievePackageDeployResultsResponse.getPackageSteps();
-            assertNotNull(packageSteps);
-            for (PackageStep packageStep : packageSteps) {
-                assertNotNull(packageStep.getName());
-                assertNotNull(packageStep.getStepType());
-                assertNotNull(packageStep.getStepName());
-                assertNotNull(packageStep.getType());
-                assertNotNull(packageStep.getDeploymentStatus());
-            }
-
-        }
-    }
+//    retrieveObjectRecordCollection() was deprecated. Refactor to use VQL
+//    @Nested
+//    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//    @DisplayName("successfully retrieve package deploy results")
+//    class TestRetrievePackageDeployResults {
+//
+//        private PackageDeploymentResultsResponse retrievePackageDeployResultsResponse = null;
+//        private String packageId;
+//
+//        @BeforeAll
+//        public void setup() throws IOException {
+////            Import Package
+//            JobCreateResponse importResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
+//                    .setInputPath(VPK_FILE_PATH)
+//                    .importPackage();
+//
+//            Assertions.assertTrue(importResponse.isSuccessful());
+//            JobStatusHelper.checkJobCompletion(vaultClient, importResponse.getJobId());
+//
+////            Retrieve Package ID
+//            ObjectRecordCollectionResponse recordResponse = vaultClient.newRequest(ObjectRecordRequest.class)
+//                    .retrieveObjectRecordCollection("vault_package__v");
+//            Assertions.assertTrue(recordResponse.isSuccessful());
+//            Assertions.assertNotNull(recordResponse.getData());
+//
+//            List<ObjectRecord> records = recordResponse.getData();
+//            packageId = records.get(records.size() - 1).getId();
+//
+////            Deploy Package
+//            JobCreateResponse deployResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
+//                    .deployPackage(packageId);
+//
+//            Assertions.assertTrue(deployResponse.isSuccessful());
+//            Assertions.assertNotNull(deployResponse.getJobId());
+//            Assertions.assertNotNull(deployResponse.getUrl());
+//            Assertions.assertTrue(JobStatusHelper.checkJobCompletion(vaultClient, deployResponse.getJobId()));
+//        }
+//
+//        @Test
+//        @Order(1)
+//        public void testRequest() {
+//            retrievePackageDeployResultsResponse = vaultClient.newRequest(ConfigurationMigrationRequest.class)
+//                    .retrievePackageDeployResults(packageId);
+//
+//            assertNotNull(retrievePackageDeployResultsResponse);
+//        }
+//
+//        @Test
+//        @Order(2)
+//        public void testResponse() {
+//            assertTrue(retrievePackageDeployResultsResponse.isSuccessful());
+//            PackageDeploymentResultsResponse.ResponseDetails responseDetails = retrievePackageDeployResultsResponse.getResponseDetails();
+//            assertNotNull(responseDetails);
+//            assertNotNull(responseDetails.getTotalSteps());
+//            assertNotNull(responseDetails.getDeployedComponents());
+//            assertNotNull(responseDetails.getDeployedWithWarnings());
+//            assertNotNull(responseDetails.getDeployedWithFailures());
+//            assertNotNull(responseDetails.getDeployedWithError());
+//            assertNotNull(responseDetails.getFailed());
+//            assertNotNull(responseDetails.getSkipped());
+//            assertNotNull(responseDetails.getPackageStatus());
+//
+//            List<PackageLog> deploymentLog = responseDetails.getDeploymentLog();
+//            assertNotNull(deploymentLog);
+//            for (PackageLog packageLog : deploymentLog) {
+//                assertNotNull(packageLog.getFilename());
+//                assertNotNull(packageLog.getUrl());
+//                assertNotNull(packageLog.getCreatedDate());
+//            }
+//
+//            List<PackageStep> packageSteps = retrievePackageDeployResultsResponse.getPackageSteps();
+//            assertNotNull(packageSteps);
+//            for (PackageStep packageStep : packageSteps) {
+//                assertNotNull(packageStep.getName());
+//                assertNotNull(packageStep.getStepType());
+//                assertNotNull(packageStep.getStepName());
+//                assertNotNull(packageStep.getType());
+//                assertNotNull(packageStep.getDeploymentStatus());
+//            }
+//        }
+//    }
 
     @Nested
     @Tag("SmokeTest")

@@ -101,7 +101,7 @@ public class MetaDataRequestComponentTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully execute an MDL Script asynchronously")
 	class TestExecuteMdlScriptAsynchronously {
-		JobCreateResponse response = null;
+		MdlExecuteAsyncResponse response = null;
 		String alterScript;
 		int jobId;
 
@@ -133,6 +133,13 @@ public class MetaDataRequestComponentTest {
 			assertTrue(response.isSuccessful());
 			assertNotNull(response.getJobId());
 			assertNotNull(response.getUrl());
+			assertNotNull(response.getScriptExecution().getCode());
+			assertNotNull(response.getScriptExecution().getMessage());
+			assertNotNull(response.getScriptExecution().getWarnings());
+			assertNotNull(response.getScriptExecution().getFailures());
+			assertNotNull(response.getScriptExecution().getExceptions());
+			assertNotNull(response.getScriptExecution().getComponentsAffected());
+			assertNotNull(response.getScriptExecution().getExecutionTime());
 			jobId = response.getJobId();
 		}
 	}
@@ -142,7 +149,7 @@ public class MetaDataRequestComponentTest {
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("unsuccessfully execute an MDL Script asynchronously")
 	class TestExecuteMdlScriptAsynchronouslyFailure {
-		JobCreateResponse response = null;
+		MdlExecuteAsyncResponse response = null;
 		String alterScript = "ALTER Object vapil_test_object__c (" +
 				"MODIFY Field test_field__c (" +
 				"max_length(1000000000)" +
@@ -185,7 +192,7 @@ public class MetaDataRequestComponentTest {
 			alterScript = new String(
 					Files.readAllBytes(alterScriptFile.toPath()), StandardCharsets.UTF_8);
 
-			JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+			MdlExecuteAsyncResponse response = vaultClient.newRequest(MetaDataRequest.class)
 					.setRequestString(alterScript)
 					.executeMDLScriptAsynchronously();
 
@@ -314,7 +321,7 @@ public class MetaDataRequestComponentTest {
 			recreateScript = new String(
 					Files.readAllBytes(recreateScriptFile.toPath()), StandardCharsets.UTF_8);
 
-			JobCreateResponse response = vaultClient.newRequest(MetaDataRequest.class)
+			MdlExecuteAsyncResponse response = vaultClient.newRequest(MetaDataRequest.class)
 					.setRequestString(recreateScript)
 					.executeMDLScriptAsynchronously();
 

@@ -40,11 +40,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(VaultClientParameterResolver.class)
 @DisplayName("Document annotation request should")
 public class DocumentAnnotationRequestTest {
-    static final String DELETE_ANNOTATIONS_FILE_PATH = DocumentAnnotationRequestHelper.getDeleteAnnotationsFilePath();
-    static final String UPDATE_ANNOTATIONS_FILE_PATH = DocumentAnnotationRequestHelper.getUpdateAnnotationsFilePath();
-    static final String ANNOTATED_DOC_FILE_PATH = DocumentAnnotationRequestHelper.getAnnotatedDocFilePath();
-    static final String CREATE_ANNOTATIONS_FILE_PATH = DocumentAnnotationRequestHelper.getCreateAnnotationsFilePath();
-    static final String ADD_REPLIES_FILE_PATH = DocumentAnnotationRequestHelper.getAddRepliesFilePath();
+    private static final String PATH_DELETE_ANNOTATIONS_CSV = DocumentAnnotationRequestHelper.PATH_DELETE_ANNOTATIONS_CSV;
+    private static final String PATH_UPDATE_ANNOTATIONS_JSON = DocumentAnnotationRequestHelper.PATH_UPDATE_ANNOTATIONS_JSON;
+    private static final String PATH_ANNOTATED_DOC = DocumentAnnotationRequestHelper.PATH_ANNOTATED_DOC;
+    private static final String PATH_CREATE_ANNOTATIONS_JSON = DocumentAnnotationRequestHelper.PATH_CREATE_ANNOTATIONS_JSON;
+    private static final String PATH_ADD_REPLIES_JSON = DocumentAnnotationRequestHelper.PATH_ADD_REPLIES_JSON;
+
     private static Integer docId;
     private static Integer majorVersionNumber;
     private static Integer minorVersionNumber;
@@ -74,7 +75,7 @@ public class DocumentAnnotationRequestTest {
     @Test
     public void testImportDocumentVersionAnnotationsFromPdf() {
         DocumentAnnotationImportResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                .setInputPath(ANNOTATED_DOC_FILE_PATH)
+                .setInputPath(PATH_ANNOTATED_DOC)
                 .importDocumentVersionAnnotationsFromPdf(docId, majorVersionNumber, minorVersionNumber);
         assertTrue(response.isSuccessful());
     }
@@ -114,7 +115,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             exportDocumentAnnotationsToPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
+                    .setOutputPath(PATH_ANNOTATED_DOC)
                     .exportDocumentAnnotationsToPdf(docId);
 
             assertNotNull(exportDocumentAnnotationsToPdfResponse);
@@ -124,7 +125,7 @@ public class DocumentAnnotationRequestTest {
         @Order(2)
         public void testResponse() {
             assertEquals("application/pdf;charset=UTF-8", exportDocumentAnnotationsToPdfResponse.getHeaderContentType());
-            assertEquals(ANNOTATED_DOC_FILE_PATH, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
+            assertEquals(PATH_ANNOTATED_DOC, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
         }
     }
 
@@ -163,7 +164,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             exportDocumentAnnotationsToPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
+                    .setOutputPath(PATH_ANNOTATED_DOC)
                     .exportDocumentVersionAnnotationsToPdf(docId, majorVersionNumber, minorVersionNumber);
 
             assertNotNull(exportDocumentAnnotationsToPdfResponse);
@@ -173,7 +174,7 @@ public class DocumentAnnotationRequestTest {
         @Order(2)
         public void testResponse() {
             assertEquals("application/pdf;charset=UTF-8", exportDocumentAnnotationsToPdfResponse.getHeaderContentType());
-            assertEquals(ANNOTATED_DOC_FILE_PATH, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
+            assertEquals(PATH_ANNOTATED_DOC, exportDocumentAnnotationsToPdfResponse.getOutputFilePath());
         }
     }
 
@@ -188,7 +189,7 @@ public class DocumentAnnotationRequestTest {
         @BeforeAll
         public void setup() {
             VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
+                    .setOutputPath(PATH_ANNOTATED_DOC)
                     .exportDocumentAnnotationsToPdf(docId);
 
             assertNotNull(response);
@@ -199,7 +200,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             importDocumentAnnotationsFromPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setInputPath(ANNOTATED_DOC_FILE_PATH)
+                    .setInputPath(PATH_ANNOTATED_DOC)
                     .importDocumentAnnotationsFromPdf(docId);
 
             assertNotNull(importDocumentAnnotationsFromPdfResponse);
@@ -226,7 +227,7 @@ public class DocumentAnnotationRequestTest {
         @BeforeAll
         public void setup() {
             VaultResponse response = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setOutputPath(ANNOTATED_DOC_FILE_PATH)
+                    .setOutputPath(PATH_ANNOTATED_DOC)
                     .exportDocumentVersionAnnotationsToPdf(docId, majorVersionNumber, minorVersionNumber);
 
             assertNotNull(response);
@@ -237,7 +238,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             importDocumentVersionAnnotationsFromPdfResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setInputPath(ANNOTATED_DOC_FILE_PATH)
+                    .setInputPath(PATH_ANNOTATED_DOC)
                     .importDocumentVersionAnnotationsFromPdf(docId, majorVersionNumber, minorVersionNumber);
 
             assertNotNull(importDocumentVersionAnnotationsFromPdfResponse);
@@ -377,7 +378,7 @@ public class DocumentAnnotationRequestTest {
         @BeforeAll
         public void setup() throws IOException {
             DocumentAnnotationRequestHelper.writeCreateAnnotationsFile(vaultClient);
-            File jsonFile = new File(CREATE_ANNOTATIONS_FILE_PATH);
+            File jsonFile = new File(PATH_CREATE_ANNOTATIONS_JSON);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(jsonFile);
             jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
@@ -451,7 +452,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             createMultipleAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setInputPath(CREATE_ANNOTATIONS_FILE_PATH)
+                    .setInputPath(PATH_CREATE_ANNOTATIONS_JSON)
                     .createMultipleAnnotations();
 
             assertNotNull(createMultipleAnnotationsResponse);
@@ -495,7 +496,7 @@ public class DocumentAnnotationRequestTest {
             }
 
             DocumentAnnotationRequestHelper.writeAddRepliesFile(vaultClient, docIds, annotationIds);
-            File jsonFile = new File(ADD_REPLIES_FILE_PATH);
+            File jsonFile = new File(PATH_ADD_REPLIES_JSON);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(jsonFile);
             jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
@@ -566,7 +567,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             addAnnotationRepliesResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setInputPath(ADD_REPLIES_FILE_PATH)
+                    .setInputPath(PATH_ADD_REPLIES_JSON)
                     .addAnnotationReplies();
 
             assertNotNull(addAnnotationRepliesResponse);
@@ -610,7 +611,7 @@ public class DocumentAnnotationRequestTest {
             }
 
             DocumentAnnotationRequestHelper.writeUpdateAnnotationsFile(vaultClient, docIds, annotationIds);
-            File jsonFile = new File(UPDATE_ANNOTATIONS_FILE_PATH);
+            File jsonFile = new File(PATH_UPDATE_ANNOTATIONS_JSON);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(jsonFile);
             jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
@@ -681,7 +682,7 @@ public class DocumentAnnotationRequestTest {
         @Order(1)
         public void testRequest() {
             updateAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                    .setInputPath(UPDATE_ANNOTATIONS_FILE_PATH)
+                    .setInputPath(PATH_UPDATE_ANNOTATIONS_JSON)
                     .updateAnnotations();
 
             assertNotNull(updateAnnotationsResponse);
@@ -1028,7 +1029,7 @@ public class DocumentAnnotationRequestTest {
                 updateData.add(new String[]{annotation.getId(), annotation.getDocumentVersionId()});
             }
 
-            FileHelper.writeCsvFile(DELETE_ANNOTATIONS_FILE_PATH, updateData);
+            FileHelper.writeCsvFile(PATH_DELETE_ANNOTATIONS_CSV, updateData);
         }
 
         @Test
@@ -1036,7 +1037,7 @@ public class DocumentAnnotationRequestTest {
         public void testRequest() {
             deleteAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(DELETE_ANNOTATIONS_FILE_PATH)
+                    .setInputPath(PATH_DELETE_ANNOTATIONS_CSV)
                     .deleteAnnotations();
 
             assertNotNull(deleteAnnotationsResponse);
@@ -1067,7 +1068,7 @@ public class DocumentAnnotationRequestTest {
         @Test
         @Order(1)
         public void testRequest() throws IOException {
-            File csvFile = new File(DELETE_ANNOTATIONS_FILE_PATH);
+            File csvFile = new File(PATH_DELETE_ANNOTATIONS_CSV);
             deleteAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
                     .setContentTypeCsv()
                     .setBinaryFile(csvFile.getName(), Files.readAllBytes(csvFile.toPath()))
@@ -1134,30 +1135,6 @@ public class DocumentAnnotationRequestTest {
                 assertNotNull(deletedAnnotation.getDocumentVersionId());
                 assertNotNull(deletedAnnotation.getGlobalVersionId());
             }
-        }
-    }
-
-    @Nested
-    @Disabled
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully retrieve doc version notes as CSV")
-    class TestRetrieveDocumentVersionNotesAsCSV {
-        VaultResponse retrieveDocumentVersionNotesAsCsvResponse;
-
-        @Test
-        @Order(1)
-        public void testRequest() throws IOException {
-            retrieveDocumentVersionNotesAsCsvResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                            .retrieveDocumentVersionNotesAsCSV(1221, 0, 1);
-
-            assertNotNull(retrieveDocumentVersionNotesAsCsvResponse);
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(retrieveDocumentVersionNotesAsCsvResponse.isSuccessful());
         }
     }
 }

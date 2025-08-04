@@ -8,6 +8,7 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.common.AttachmentVersion;
 import com.veeva.vault.vapil.api.model.common.DocumentAttachment;
 import com.veeva.vault.vapil.api.model.response.*;
 import org.junit.jupiter.api.*;
@@ -17,6 +18,7 @@ import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,6 +56,7 @@ public class DocumentAttachmentRequestTest {
 	}
 
 	@Nested
+	@Tag("SmokeTest")
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully retrieve document attachments")
@@ -97,6 +100,7 @@ public class DocumentAttachmentRequestTest {
 	}
 
 	@Nested
+	@Tag("SmokeTest")
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully retrieve document version attachments")
@@ -140,11 +144,12 @@ public class DocumentAttachmentRequestTest {
 	}
 
 	@Nested
+	@Tag("SmokeTest")
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully retrieve document attachment versions")
 	class TestRetrieveDocumentAttachmentVersions {
-		DocumentAttachmentResponse response = null;
+		DocumentAttachmentVersionResponse response = null;
 
 		@Test
 		@Order(1)
@@ -159,11 +164,12 @@ public class DocumentAttachmentRequestTest {
 		@Order(2)
 		public void testResponse() {
 			assertTrue(response.isSuccessful());
-			List<DocumentAttachment> data = response.getData();
+			List<AttachmentVersion> data = response.getData();
 			assertNotNull(data);
 
-			for (DocumentAttachment attachment : data) {
+			for (AttachmentVersion attachment : data) {
 				assertNotNull(attachment.getVersion());
+				assertNotNull(attachment.getUrl());
 			}
 		}
 	}
@@ -191,6 +197,51 @@ public class DocumentAttachmentRequestTest {
 			assertTrue(response.isSuccessful());
 			List<DocumentAttachment> data = response.getData();
 			assertNotNull(data);
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully retrieve Deleted document Attachments")
+	@Tag("SmokeTest")
+	class TestRetrieveDeletedDocumentAttachments {
+		DocumentAttachmentDeletionResponse response = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			ZonedDateTime startDate = ZonedDateTime.now().minusDays(28);
+			ZonedDateTime endDate = ZonedDateTime.now();
+			response = vaultClient.newRequest(DocumentAttachmentRequest.class)
+					.setStartDate(startDate)
+					.setEndDate(endDate)
+					.retrieveDeletedDocumentAttachments();
+
+			assertNotNull(response);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(response.isSuccessful());
+
+			assertNotNull(response.getResponseDetails());
+			assertNotNull(response.getResponseDetails().getLimit());
+			assertNotNull(response.getResponseDetails().getSize());
+			assertNotNull(response.getResponseDetails().getTotal());
+			assertNotNull(response.getResponseDetails().getOffset());
+
+			assertNotNull(response.getData());
+			for (DocumentAttachmentDeletionResponse.DeleteDocumentAttachment attachment : response.getData()) {
+				assertNotNull(attachment.getDateDeleted());
+				assertNotNull(attachment.getDeletionType());
+				assertNotNull(attachment.getId());
+				assertNotNull(attachment.getGlobalId());
+//				assertNotNull(attachment.getExternalId());
+//				assertNotNull(attachment.getGlobalVersionId());
+				assertNotNull(attachment.getVersion());
+			}
 		}
 	}
 

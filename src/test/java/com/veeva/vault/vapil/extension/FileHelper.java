@@ -16,25 +16,18 @@ import java.util.Map;
 public class FileHelper {
 
     public static final String PATH_RESOURCES_FOLDER = "src" + File.separator + "test" + File.separator + "resources" + File.separator;
+    public static final String PATH_LOCAL_TEST_FILE = PATH_RESOURCES_FOLDER + "vapil_test_document.pdf";
     static final String PATH_SETTINGS_FILES_FOLDER = PATH_RESOURCES_FOLDER + File.separator + "settings_files";
-    static final String PATH_TEST_FILE = PATH_RESOURCES_FOLDER + "vapil_test_document.docx";
-    static final String PATH_LOADER_FILE = PATH_RESOURCES_FOLDER + "loader_file.csv";
-    private static Logger log = LoggerFactory.getLogger(FileHelper.class);
 
-    public static String getPathTestFile() {
-        return PATH_TEST_FILE;
-    }
+    private static Logger log = LoggerFactory.getLogger(FileHelper.class);
 
     public static String getPathLogsFolder() {
         return PATH_RESOURCES_FOLDER + File.separator + "logs";
     }
     public static String getPathLoaderFolder() {
-        return PATH_RESOURCES_FOLDER + File.separator + "loader";
+        return PATH_RESOURCES_FOLDER + File.separator + "vault_loader";
     }
 
-    public static String getPathLoaderFile() {
-        return PATH_LOADER_FILE;
-    }
     public static void createFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {

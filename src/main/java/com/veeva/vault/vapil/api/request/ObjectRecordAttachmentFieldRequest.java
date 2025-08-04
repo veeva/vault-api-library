@@ -7,7 +7,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector;
 /**
  * Object Record Attachment Field requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.1/#attachment-fields">https://developer.veevavault.com/api/25.1/#attachment-fields</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#attachment-fields">https://developer.veevavault.com/api/25.2/#attachment-fields</a>
  */
 public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecordAttachmentFieldRequest>{
 
@@ -30,7 +30,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return VaultResponse
      * @vapil.api <pre>
      * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachment_fields/{attachment_field_name}/file</pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-attachment-field-file' target='_blank'>https://developer.veevavault.com/api/25.1/#download-attachment-field-file</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-attachment-field-file' target='_blank'>https://developer.veevavault.com/api/25.2/#download-attachment-field-file</a>
      * @vapil.request <pre>
      * <i>Example 1 - Download Binary Content</i>
      * VaultResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
@@ -74,7 +74,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return ObjectRecordBulkResponse
      * @vapil.api <pre>
      * POST /api/{version}/vobjects/{object_name}/{object_record_id}/attachment_fields/{attachment_field_name}/file</pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#update-attachment-field-file' target='_blank'>https://developer.veevavault.com/api/25.1/#update-attachment-field-file</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#update-attachment-field-file' target='_blank'>https://developer.veevavault.com/api/25.2/#update-attachment-field-file</a>
      * @vapil.request <pre>
      * <i>Example 1 - Upload from input path</i>
      * ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
@@ -123,7 +123,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return VaultResponse
      * @vapil.api <pre>
      * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachment_fields/file</pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-all-attachment-field-files' target='_blank'>https://developer.veevavault.com/api/25.1/#download-all-attachment-field-files</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-all-attachment-field-files' target='_blank'>https://developer.veevavault.com/api/25.2/#download-all-attachment-field-files</a>
      * @vapil.request <pre>
      * <i>Example 1 - Download Binary Content</i>
      * VaultResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)

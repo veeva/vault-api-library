@@ -53,7 +53,7 @@ public class ObjectRecordTypeTest {
             ObjectRecordBulkResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeJson()
                     .setBinaryFile("file",mapper.writeValueAsBytes(objectRecords))
-                    .createObjectRecords("vapil_test_create__c");
+                    .createAndUpsertObjectRecords("vapil_test_create__c");
             Assertions.assertTrue(resp.isSuccessful());
             Assertions.assertNull(resp.getErrors());
             Assertions.assertTrue(resp.getData().stream().allMatch(VaultResponse::isSuccessful));
@@ -102,7 +102,7 @@ public class ObjectRecordTypeTest {
             ObjectRecordBulkResponse resp = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeJson()
                     .setBinaryFile("file",mapper.writeValueAsBytes(objectRecords))
-                    .createObjectRecords("vapil_test_change_obj_type__c");
+                    .createAndUpsertObjectRecords("vapil_test_change_obj_type__c");
             Assertions.assertTrue(resp.isSuccessful());
             Assertions.assertNull(resp.getErrors());
             Assertions.assertTrue(resp.getData().stream().allMatch(VaultResponse::isSuccessful));

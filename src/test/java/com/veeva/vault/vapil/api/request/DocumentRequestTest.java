@@ -53,14 +53,13 @@ public class DocumentRequestTest {
     private static final int MINOR_VERSION = 1;
     private static final String DOC_TEMPLATE = "vapil_test_doc_template__c";
     private static final String DOC_STATUS_LABEL = "Draft";
-    private static final String PATH_TEST_FILE = FileHelper.getPathTestFile();
+    private static final String PATH_TEST_FILE = FileHelper.PATH_LOCAL_TEST_FILE;
     private static final String PATH_CREATE_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_CREATE_MULTIPLE_DOCUMENTS_CSV;
     private static final String PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_UPDATE_MULTIPLE_DOCUMENTS_CSV;
     private static final String PATH_DELETE_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_DELETE_MULTIPLE_DOCUMENTS_CSV;
     private static final String PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV = DocumentRequestHelper.PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV;
     private static final String PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV;
     private static final String PATH_UNDO_COLLAB_CHECKOUT_CSV = DocumentRequestHelper.PATH_UNDO_COLLAB_CHECKOUT_CSV;
-    private static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
     private static VaultClient vaultClient;
 
     @BeforeAll
@@ -590,9 +589,6 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
-            DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
-                    .retrieveAllDocuments();
-
             QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
             docId = queryResponse.getData().get(0).getInteger("id");
             minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
@@ -638,6 +634,43 @@ public class DocumentRequestTest {
         @Order(2)
         public void testResponse() {
 
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully download the plain text of a specific document version")
+    class TestRetrieveDocumentVersionText {
+        VaultResponse response = null;
+        int docId;
+        int minorVersion;
+        int majorVersion;
+
+        @BeforeAll
+        public void setup() {
+            DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
+
+            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
+            docId = queryResponse.getData().get(0).getInteger("id");
+            minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
+            majorVersion = queryResponse.getData().get(0).getInteger("major_version_number__v");
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveDocumentVersionText(docId, majorVersion, minorVersion);
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertEquals("text/plain;charset=UTF-8", response.getHeaderContentType());
+            assertNotNull(response.getBinaryContent());
         }
     }
 
@@ -1265,7 +1298,7 @@ public class DocumentRequestTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully create a single document version from latest content")
-    class TestCreateSingleDocumentVersionFromtLatestContent {
+    class TestCreateSingleDocumentVersionFromLatestContent {
         DocumentResponse response = null;
         List<Integer> docIds = new ArrayList<>();
 

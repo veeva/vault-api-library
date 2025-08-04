@@ -9,6 +9,7 @@ package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.extension.DocumentRenditionRequestHelper;
 import com.veeva.vault.vapil.extension.DocumentRequestHelper;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
@@ -34,7 +35,8 @@ public class DocumentRenditionRequestTest {
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 1;
     private static final String RENDITION_TYPE = "viewable_rendition__v";
-    private static final String PATH_UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV = DocumentRequestHelper.PATH_UPDATE_MULTIPLE_RENDITIONS_CSV;
+    private static final String PATH_ADD_MULTIPLE_DOCUMENT_RENDITIONS_CSV = DocumentRenditionRequestHelper.PATH_ADD_MULTIPLE_RENDITIONS_CSV;
+    private static final String PATH_UPDATE_MULTIPLE_DOCUMENT_RENDITIONS_CSV = DocumentRenditionRequestHelper.PATH_UPDATE_MULTIPLE_RENDITIONS_CSV;
     private static VaultClient vaultClient = null;
 
     @BeforeAll
@@ -121,6 +123,7 @@ public class DocumentRenditionRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully retrieve document renditions")
@@ -159,6 +162,7 @@ public class DocumentRenditionRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully retrieve document version renditions")
@@ -197,6 +201,7 @@ public class DocumentRenditionRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully download document rendition file")
@@ -229,6 +234,7 @@ public class DocumentRenditionRequestTest {
     }
 
     @Nested
+    @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully download document version rendition file")
@@ -257,6 +263,67 @@ public class DocumentRenditionRequestTest {
         public void testResponse() {
             assertTrue(response.isSuccessful());
             assertNotNull(response.getBinaryContent());
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully add multiple document renditions from csv")
+    class TestAddMultipleDocumentRenditionsCsv {
+
+        private DocumentRenditionBulkResponse addMultipleDocumentRenditionsResponse = null;
+        private int docId = 0;
+
+        @BeforeAll
+        public void setup() throws IOException, InterruptedException {
+//            Create a document to use for the test
+            DocumentBulkResponse createDocsResponse = DocumentRequestHelper.createMultipleDocuments(vaultClient, 1);
+            assertTrue(createDocsResponse.isSuccessful());
+            docId = createDocsResponse.getData().get(0).getDocument().getId();
+
+            Thread.sleep(10000);
+
+//            Delete the viewable rendition
+            VaultResponse deleteResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
+                    .deleteSingleDocumentRendition(docId, "viewable_rendition__v");
+            assertTrue(deleteResponse.isSuccessful());
+
+//            Write the CSV file with the document ID
+            DocumentRenditionRequestHelper.writeToAddMultipleRenditionsFile(vaultClient, docId);
+        }
+
+        @AfterAll
+        public void teardown() {
+            List<Integer> docIds = new ArrayList<>();
+            docIds.add(docId);
+            DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
+            Assertions.assertTrue(response.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws IOException {
+            addMultipleDocumentRenditionsResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
+					.setInputPath(PATH_ADD_MULTIPLE_DOCUMENT_RENDITIONS_CSV)
+                    .setMigrationMode(true)
+                    .addMultipleDocumentRenditions();
+
+            assertNotNull(addMultipleDocumentRenditionsResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(addMultipleDocumentRenditionsResponse.isSuccessful());
+            assertNotNull(addMultipleDocumentRenditionsResponse.getData());
+            for (DocumentRenditionBulkResponse.Rendition rendition : addMultipleDocumentRenditionsResponse.getData()) {
+                assertTrue(rendition.getResponseStatus().equals("SUCCESS"));
+                assertNotNull(rendition.getId());
+                assertNotNull(rendition.getMajorVersionNumber());
+                assertNotNull(rendition.getMinorVersionNumber());
+            }
         }
     }
 

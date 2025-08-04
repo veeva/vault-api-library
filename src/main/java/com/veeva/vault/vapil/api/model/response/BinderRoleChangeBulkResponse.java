@@ -4,7 +4,10 @@ import com.veeva.vault.vapil.api.request.BinderRoleRequest;
 
 /**
  * Model for responses to bulk Document Role Requests
- * TODO
+ * <p>
+ * POST /api/{version}/objects/documents/roles/batch
+ * <br>
+ * DELETE /api/{version}/objects/documents/roles/batch
  * @see BinderRoleRequest#assignUsersAndGroupsToRolesOnMultipleBinders()
  * @see BinderRoleRequest#removeUsersAndGroupsFromRolesOnMultipleBinders()
  */

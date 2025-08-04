@@ -80,7 +80,11 @@ public class LoaderTaskBuilder {
 		CREATE("create"),
 		UPDATE("update"),
 		UPSERT("upsert"),
-		DELETE("delete");
+		DELETE("delete"),
+		CREATE_ATTACHMENTS("create_attachments"),
+		DELETE_ATTACHMENTS("delete_attachments"),
+		ASSIGN_ROLES("assign_roles"),
+		REMOVE_ROLES("remove_roles");
 
 		String apiName;
 

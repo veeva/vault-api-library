@@ -123,6 +123,11 @@ public class DirectDataResponse extends VaultResponse {
             this.set("filepart_details", filepartDetails);
         }
 
+        @JsonProperty("error")
+        public Error getError() {
+            return (Error) this.get("error");
+        }
+
         public static class FilePart extends VaultModel {
             @JsonProperty("name")
             public String getName() {
@@ -160,6 +165,14 @@ public class DirectDataResponse extends VaultResponse {
                 this.set("size", size);
             }
 
+            @JsonProperty("md5checksum")
+            public String getMd5Checksum() {
+                return getString("md5checksum");
+            }
+            public void setMd5Checksum(String md5Checksum) {
+                this.set("md5checksum", md5Checksum);
+            }
+
             @JsonProperty("url")
             public String getUrl() {
                 return getString("url");
@@ -167,6 +180,24 @@ public class DirectDataResponse extends VaultResponse {
 
             public void setUrl(String url) {
                 this.set("url", url);
+            }
+        }
+
+        public static class Error extends VaultModel {
+            @JsonProperty("next_retry")
+            public String getNextRetry() {
+                return getString("next_retry");
+            }
+            public void setNextRetry(String nextRetry) {
+                this.set("next_retry", nextRetry);
+            }
+
+            @JsonProperty("message")
+            public String getMessage() {
+                return getString("message");
+            }
+            public void setMessage(String message) {
+                this.set("message", message);
             }
         }
     }

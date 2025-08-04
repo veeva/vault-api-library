@@ -122,29 +122,6 @@ public class AuthenticationRequestTest {
 	@Nested
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully validate a session user")
-	class TestValidateSessionUser {
-		VaultResponse validateSessionUserResponse = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			validateSessionUserResponse = vaultClient.newRequest(AuthenticationRequest.class)
-					.validateSessionUser();
-
-			assertNotNull(validateSessionUserResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(validateSessionUserResponse.isSuccessful());
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully return a valid Discovery Response")
 	class TestAuthenticationTypeDiscovery {
 

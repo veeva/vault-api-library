@@ -18,28 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DocumentAnnotationRequestHelper {
 
-    static final String CREATE_ANNOTATIONS_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "create_multiple_annotations.json";
-    static final String UPDATE_ANNOTATIONS_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "update_annotations.json";
-    static final String DELETE_ANNOTATIONS_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "delete_annotations.csv";
-    static final String ADD_REPLIES_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "add_annotation_replies.json";
-    static final String ANNOTATED_DOC_FILE_PATH = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "VAPIL Annotations Doc (Do Not Delete).pdf";
-
-    public static String getCreateAnnotationsFilePath() {
-        return CREATE_ANNOTATIONS_FILE_PATH;
-    }
-    public static String getUpdateAnnotationsFilePath() {
-        return UPDATE_ANNOTATIONS_FILE_PATH;
-    }
-    public static String getAnnotatedDocFilePath() {
-        return ANNOTATED_DOC_FILE_PATH;
-    }
-    public static String getDeleteAnnotationsFilePath() {
-        return DELETE_ANNOTATIONS_FILE_PATH;
-    }
-
-    public static String getAddRepliesFilePath() {
-        return ADD_REPLIES_FILE_PATH;
-    }
+    public static final String PATH_CREATE_ANNOTATIONS_JSON = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "create_multiple_annotations.json";
+    public static final String PATH_UPDATE_ANNOTATIONS_JSON = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "update_annotations.json";
+    public static final String PATH_DELETE_ANNOTATIONS_CSV = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "delete_annotations.csv";
+    public static final String PATH_ADD_REPLIES_JSON = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "add_annotation_replies.json";
+    public static final String PATH_ANNOTATED_DOC = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents" + File.separator + "document_annotations" + File.separator + "VAPIL Annotations Doc (Do Not Delete).pdf";
 
 
     public static QueryResponse.QueryResult getAnnotationsDoc(VaultClient vaultClient) {
@@ -65,8 +48,8 @@ public class DocumentAnnotationRequestHelper {
         int minorVersionNumber = annotationsDoc.getInteger("minor_version_number__v");
         String docVersionId = docId + "_" + majorVersionNumber + "_" + minorVersionNumber;
 
-        FileHelper.createFile(CREATE_ANNOTATIONS_FILE_PATH);
-        File createAnnotationsFile = new File(CREATE_ANNOTATIONS_FILE_PATH);
+        FileHelper.createFile(PATH_CREATE_ANNOTATIONS_JSON);
+        File createAnnotationsFile = new File(PATH_CREATE_ANNOTATIONS_JSON);
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode rootNode = mapper.createArrayNode();
         ObjectNode annotationNode = mapper.createObjectNode();
@@ -85,8 +68,8 @@ public class DocumentAnnotationRequestHelper {
     }
 
     public static void writeAddRepliesFile(VaultClient vaultClient, List<String> docIds, List<String> annotationIds) throws IOException {
-        FileHelper.createFile(ADD_REPLIES_FILE_PATH);
-        File addRepliesFile = new File(ADD_REPLIES_FILE_PATH);
+        FileHelper.createFile(PATH_ADD_REPLIES_JSON);
+        File addRepliesFile = new File(PATH_ADD_REPLIES_JSON);
 
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode rootNode = mapper.createArrayNode();
@@ -109,8 +92,8 @@ public class DocumentAnnotationRequestHelper {
     }
 
     public static void writeUpdateAnnotationsFile(VaultClient vaultClient, List<String> docIds, List<String> annotationIds) throws IOException {
-        FileHelper.createFile(UPDATE_ANNOTATIONS_FILE_PATH);
-        File updateAnnotationsFile = new File(UPDATE_ANNOTATIONS_FILE_PATH);
+        FileHelper.createFile(PATH_UPDATE_ANNOTATIONS_JSON);
+        File updateAnnotationsFile = new File(PATH_UPDATE_ANNOTATIONS_JSON);
 
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode rootNode = mapper.createArrayNode();
@@ -131,7 +114,7 @@ public class DocumentAnnotationRequestHelper {
         writeCreateAnnotationsFile(vaultClient);
 
         DocumentAnnotationBulkResponse createMultipleAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
-                .setInputPath(CREATE_ANNOTATIONS_FILE_PATH)
+                .setInputPath(PATH_CREATE_ANNOTATIONS_JSON)
                 .createMultipleAnnotations();
 
         assertNotNull(createMultipleAnnotationsResponse);
@@ -140,7 +123,7 @@ public class DocumentAnnotationRequestHelper {
     }
 
     public static DocumentAnnotationBulkResponse deleteAnnotations(VaultClient vaultClient, List<String> docIds, List<String> annotationIds) {
-        FileHelper.createFile(DELETE_ANNOTATIONS_FILE_PATH);
+        FileHelper.createFile(PATH_DELETE_ANNOTATIONS_CSV);
 
         List<String[]> data = new ArrayList<>();
         data.add(new String[]{"id__sys", "document_version_id__sys"});
@@ -149,10 +132,10 @@ public class DocumentAnnotationRequestHelper {
             data.add(new String[]{annotationIds.get(i), docIds.get(i)});
         }
 
-        FileHelper.writeCsvFile(DELETE_ANNOTATIONS_FILE_PATH, data);
+        FileHelper.writeCsvFile(PATH_DELETE_ANNOTATIONS_CSV, data);
         DocumentAnnotationBulkResponse deleteAnnotationsResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
                 .setContentTypeCsv()
-                .setInputPath(DELETE_ANNOTATIONS_FILE_PATH)
+                .setInputPath(PATH_DELETE_ANNOTATIONS_CSV)
                 .deleteAnnotations();
 
         return deleteAnnotationsResponse;

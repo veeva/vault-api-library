@@ -78,6 +78,7 @@ public class DirectDataRequestTest {
                     assertNotNull(filepart.getFilename());
                     assertNotNull(filepart.getFilepart());
                     assertNotNull(filepart.getSize());
+                    assertNotNull(filepart.getMd5Checksum());
                     assertNotNull(filepart.getUrl());
                 }
             }

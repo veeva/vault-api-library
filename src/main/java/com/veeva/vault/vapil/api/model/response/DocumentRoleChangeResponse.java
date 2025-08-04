@@ -9,8 +9,10 @@ import java.util.*;
 
 /**
  * Model for responses to single Document Role Update and Delete requests
- *
- * TODO
+ * <p>
+ * POST /api/{version}/objects/documents/{doc_id}/roles
+ * <br>
+ * DELETE /api/{version}/objects/documents/{doc_id}/roles/{role_name_and_user_or_group}/{id}
  */
 public class DocumentRoleChangeResponse extends RoleChangeResponse {
 

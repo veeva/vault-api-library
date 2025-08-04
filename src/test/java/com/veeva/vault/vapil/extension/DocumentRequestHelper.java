@@ -29,7 +29,7 @@ public class DocumentRequestHelper {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 1;
-    private static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingTestFilePath();
+    private static final String PATH_FILE_STAGING_TEST_PDF = FileStagingHelper.PATH_FILE_STAGING_TEST_PDF;
 
     public static final String PATH_RESOURCES_DOCUMENTS_FOLDER = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "documents";
     public static final String PATH_CREATE_MULTIPLE_DOCUMENTS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "create_multiple_documents.csv";
@@ -38,7 +38,6 @@ public class DocumentRequestHelper {
     public static final String PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "create_multiple_document_versions.csv";
     public static final String PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "reclassify_multiple_documents.csv";
     public static final String PATH_UNDO_COLLAB_CHECKOUT_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "undo_collab_checkout.csv";
-    public static final String PATH_UPDATE_MULTIPLE_RENDITIONS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "update_multiple_document_renditions.csv";
 
 
     public static QueryResponse queryForDocId(VaultClient vaultClient) {
@@ -64,7 +63,7 @@ public class DocumentRequestHelper {
         for (int i = 0; i < numOfDocuments; i++) {
             String name = "VAPIL Test Create Multiple Documents " + ZonedDateTime.now() + " " + i;
             String description = "VAPIL Test";
-            data.add(new String[]{FILE_STAGING_FILE, name, description, VAPIL_TEST_DOC_TYPE_LABEL, VAPIL_TEST_DOC_SUBTYPE_LABEL, VAPIL_TEST_DOC_CLASSIFICATION_LABEL,
+            data.add(new String[]{PATH_FILE_STAGING_TEST_PDF, name, description, VAPIL_TEST_DOC_TYPE_LABEL, VAPIL_TEST_DOC_SUBTYPE_LABEL, VAPIL_TEST_DOC_CLASSIFICATION_LABEL,
                     VAPIL_TEST_DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION), String.valueOf(MINOR_VERSION)});
         }
 
@@ -118,7 +117,7 @@ public class DocumentRequestHelper {
         for (int i=0; i<2 ; i++) {
             String name = "VAPIL Test Create Multiple Document Versions " + i;
             data.add(new String[]{
-                    FILE_STAGING_FILE, String.valueOf(docId),
+                    PATH_FILE_STAGING_TEST_PDF, String.valueOf(docId),
                     name, VAPIL_TEST_DOC_TYPE_LABEL,
                     VAPIL_TEST_DOC_SUBTYPE_LABEL, VAPIL_TEST_DOC_CLASSIFICATION_LABEL,
                     VAPIL_TEST_DOC_LIFECYCLE_LABEL, String.valueOf(MAJOR_VERSION),

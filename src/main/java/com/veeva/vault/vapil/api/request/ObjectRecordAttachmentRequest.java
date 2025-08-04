@@ -8,18 +8,19 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
-import com.veeva.vault.vapil.api.model.response.MetaDataObjectResponse;
-import com.veeva.vault.vapil.api.model.response.ObjectRecordAttachmentResponse;
+import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Object Record Attachments requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.1/#object-record-attachments">https://developer.veevavault.com/api/25.1/#object-record-attachments</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#object-record-attachments">https://developer.veevavault.com/api/25.2/#object-record-attachments</a>
  */
 public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAttachmentRequest> {
 	private static Logger log = LoggerFactory.getLogger(ObjectRecordAttachmentRequest.class);
@@ -29,6 +30,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	private static final String URL_OBJ_REC_ATTACHMENT_FILE = "/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/file";
 	private static final String URL_OBJ_REC_ATTACHMENT_FILES = "/vobjects/{object_name}/{object_record_id}/attachments/file";
 	private static final String URL_OBJ_REC_ATTACHMENTS = "/vobjects/{object_name}/{object_record_id}/attachments";
+	private static final String URL_OBJ_REC_ATTACHMENTS_DELETIONS = "/objects/deletions/vobjects/{object_name}/attachments";
 	private static final String URL_OBJ_REC_ATTACHMENTS_BATCH = "/vobjects/{object_name}/attachments/batch";
 	private static final String URL_OBJ_REC_ATTACHMENT_VERSION = "/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/versions/{attachment_version}";
 	private static final String URL_OBJ_REC_ATTACHMENT_VERSION_FILE = "/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/versions/{attachment_version}/file";
@@ -39,6 +41,11 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 */
 	public static final String ID_PARAM = "idParam";
 
+	// API Request Parameters for audit details request
+	private static final String PARAM_START_DATE = "start_date";
+	private static final String PARAM_END_DATE = "end_date";
+	private static final String PARAM_LIMIT = "limit";
+
 	private HttpRequestConnector.BinaryFile binaryFile;
 	private String headerAccept = HttpRequestConnector.HTTP_CONTENT_TYPE_JSON;
 	;
@@ -47,6 +54,12 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	private String inputPath;
 	private String outputPath;
 	private String requestString; // For raw request
+	private ZonedDateTime startDate;
+	private ZonedDateTime endDate;
+	private Integer limit;
+
+	// Required date format for retrieve deleted object record attachments request
+	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 	private ObjectRecordAttachmentRequest() {
 	}
@@ -58,7 +71,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return Boolean indicating if the Object allows attachments. Null if error occurs
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/vobjects/{object_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#determine-if-attachments-are-enabled-on-an-object' target='_blank'>https://developer.veevavault.com/api/25.1/#determine-if-attachments-are-enabled-on-an-object</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#determine-if-attachments-are-enabled-on-an-object' target='_blank'>https://developer.veevavault.com/api/25.2/#determine-if-attachments-are-enabled-on-an-object</a>
 	 * @vapil.request <pre>
 	 * Boolean attachmentsEnabled = vaultClient.newRequest(ObjectRecordAttachmentRequest.class).attachmentsEnabled(objectName);</pre>
 	 * @vapil.response <pre>System.out.println("attachmentsEnabled = " + attachmentsEnabled);
@@ -81,7 +94,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachments</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachments' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachments' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachments</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordAttachmentResponse attachmentResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
 	 * 					.retrieveObjectRecordAttachments(objectName,recordId);</pre>
@@ -127,7 +140,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachment-metadata' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachment-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachment-metadata' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachment-metadata</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordAttachmentResponse metadataResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
 	 * 				.retrieveObjectRecordAttachmentMetadata(objectName,recordId,attachmentId);</pre>
@@ -171,37 +184,23 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @param objectName   Object name for the attachment
 	 * @param recordId     Object record id for the attachment
 	 * @param attachmentId attachment id
-	 * @return ObjectRecordAttachmentResponse
+	 * @return ObjectRecordAttachmentVersionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/versions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachment-versions' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachment-versions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachment-versions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachment-versions</a>
 	 * @vapil.request <pre>
-	 * ObjectRecordAttachmentResponse versionsResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
-	 * 					.retrieveObjectRecordAttachmentVersions(objectName,recordId,attachmentId);</pre>
+	 * ObjectRecordAttachmentVersionResponse response = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
+	 * 		.retrieveObjectRecordAttachmentVersions(OBJECT_NAME, recordId, attachmentId);
+	 * </pre>
 	 * @vapil.response <pre>
-	 * if (versionsResponse.getData() != null) {
-	 *     for (ObjectAttachment attachment : versionsResponse.getData()) {
-	 *
-	 *       System.out.println("------------------------------");
-	 *       System.out.println("CreatedDate " + attachment.getCreatedBy());
-	 *       System.out.println("Filename " + attachment.getFilename());
-	 *       System.out.println("Format " + attachment.getFormat());
-	 *       System.out.println("Id " + attachment.getId());
-	 *       System.out.println("Md5checksum " + attachment.getMd5checksum());
-	 *       System.out.println("Size " + attachment.getSize());
-	 *       System.out.println("Version " + attachment.getVersion());
-	 *
-	 *       if (attachment.getVersions() != null) {
-	 *         for (ObjectAttachment.Version version : attachment.getVersions()) {
-	 *           System.out.println("Url " + version.getUrl());
-	 *           System.out.println("Version " + version.getVersion());
-	 *           System.out.println("");
-	 *         }
-	 *       }
-	 *     }
-	 *  } </pre>
+	 * for (AttachmentVersion attachment : response.getData()) {
+	 * 		System.out.println("--------Attachment Version--------");
+	 * 		System.out.println("Version: " + attachment.getVersion());
+	 * 		System.out.println("URL: " + attachment.getUrl());
+	 * }
+	 * </pre>
 	 */
-	public ObjectRecordAttachmentResponse retrieveObjectRecordAttachmentVersions(String objectName, String recordId, int attachmentId) {
+	public ObjectRecordAttachmentVersionResponse retrieveObjectRecordAttachmentVersions(String objectName, String recordId, int attachmentId) {
 		String url = vaultClient.getAPIEndpoint(URL_OBJ_REC_ATTACHMENT_VERSIONS);
 		url = url.replace("{object_name}", objectName);
 		url = url.replace("{object_record_id}", recordId);
@@ -209,7 +208,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		return send(HttpMethod.GET, request, ObjectRecordAttachmentResponse.class);
+		return send(HttpMethod.GET, request, ObjectRecordAttachmentVersionResponse.class);
 	}
 
 	/**
@@ -222,7 +221,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/version/{attachment_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachment-version-metadata' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-object-record-attachment-version-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachment-version-metadata' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-object-record-attachment-version-metadata</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordAttachmentResponse versionMetadataResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
 	 * 				.retrieveObjectRecordAttachmentVersionMetadata(objectName,recordId,attachmentId,versionId);</pre>
@@ -262,6 +261,51 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	}
 
 	/**
+	 * Retrieve Deleted Object Record Attachments
+	 *
+	 * @param objectName Object name for the attachment
+	 * @return ObjectRecordAttachmentDeletionResponse
+	 * @vapil.api <pre>
+	 * GET /api/{version}/objects/deletions/vobjects/{object_name}/attachments</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-deleted-object-record-attachments' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-deleted-object-record-attachments</a>
+	 * @vapil.request <pre>
+	 * ObjectRecordAttachmentDeletionResponse response = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
+	 * 		.setStartDate(startDate)
+	 * 		.setEndDate(endDate)
+	 * 		.retrieveDeletedObjectRecordAttachments(OBJECT_NAME);
+	 * </pre>
+	 * @vapil.response <pre>
+	 * for (ObjectRecordAttachmentDeletionResponse.DeleteRecordAttachment attachment : response.getData()) {
+	 * 		System.out.println("--------Attachment--------");
+	 * 		System.out.println("Date Deleted = " + attachment.getDateDeleted());
+	 * 		System.out.println("Deletion Type = " + attachment.getDeletionType());
+	 * 		System.out.println("Id = " + attachment.getId());
+	 * 		System.out.println("Record Id = " + attachment.getRecordId());
+	 * }
+	 * </pre>
+	 */
+	public ObjectRecordAttachmentDeletionResponse retrieveDeletedObjectRecordAttachments(String objectName) {
+		String url = vaultClient.getAPIEndpoint(URL_OBJ_REC_ATTACHMENTS_DELETIONS);
+		url = url.replace("{object_name}", objectName);
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		if (startDate != null) {
+			request.addQueryParam(PARAM_START_DATE, getFormattedDate(startDate));
+		}
+
+		if (endDate != null) {
+			request.addQueryParam(PARAM_END_DATE, getFormattedDate(endDate));
+		}
+
+		if (limit != null) {
+			request.addQueryParam(PARAM_LIMIT, limit);
+		}
+
+		return send(HttpMethod.GET, request, ObjectRecordAttachmentDeletionResponse.class);
+	}
+
+	/**
 	 * Download Object Record Attachment File
 	 * <p>
 	 * Download the attachment and write the output to the buffer,
@@ -273,7 +317,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/file</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-object-record-attachment-file' target='_blank'>https://developer.veevavault.com/api/25.1/#download-object-record-attachment-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-object-record-attachment-file' target='_blank'>https://developer.veevavault.com/api/25.2/#download-object-record-attachment-file</a>
 	 * @vapil.request <pre>
 	 * VaultResponse VaultResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class).downloadObjectRecordAttachmentFile(
 	 * 					objectName,
@@ -332,7 +376,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/versions/{attachment_version}/file</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-object-record-attachment-version-file' target='_blank'>https://developer.veevavault.com/api/25.1/#download-object-record-attachment-version-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-object-record-attachment-version-file' target='_blank'>https://developer.veevavault.com/api/25.2/#download-object-record-attachment-version-file</a>
 	 * @vapil.request <i>Example 1</i>
 	 * <pre>
 	 * VaultResponse VaultResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
@@ -394,7 +438,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/file</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-all-object-record-attachment-files' target='_blank'>https://developer.veevavault.com/api/25.1/#download-all-object-record-attachment-files</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-all-object-record-attachment-files' target='_blank'>https://developer.veevavault.com/api/25.2/#download-all-object-record-attachment-files</a>
 	 * @vapil.request <i>Example 1</i>
 	 * <pre>
 	 * VaultResponse VaultResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class).downloadAllObjectRecordAttachmentFiles(
@@ -454,7 +498,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/{object_record_id}/attachments</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#create-object-record-attachment' target='_blank'>https://developer.veevavault.com/api/25.1/#create-object-record-attachment</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#create-object-record-attachment' target='_blank'>https://developer.veevavault.com/api/25.2/#create-object-record-attachment</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordAttachmentResponse createResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
 	 * 						.setInputPath(testFile.getAbsolutePath())
@@ -490,7 +534,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/attachments/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#create-multiple-object-record-attachments' target='_blank'>https://developer.veevavault.com/api/25.1/#create-multiple-object-record-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#create-multiple-object-record-attachments' target='_blank'>https://developer.veevavault.com/api/25.2/#create-multiple-object-record-attachments</a>
 	 */
 	public ObjectRecordAttachmentResponse createMultipleObjectRecordAttachments(String objectName) {
 		return sendObjectRecordAttachmentRequest(objectName,
@@ -508,7 +552,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}/versions/{attachment_version}?restore=true</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#restore-object-record-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.1/#restore-object-record-attachment-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#restore-object-record-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.2/#restore-object-record-attachment-version</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordAttachmentResponse restoreResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
 	 * 					.restoreObjectRecordAttachmentVersion(objectName,recordId,attachmentId,versionId);</pre>
@@ -538,7 +582,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#update-object-record-attachment-description' target='_blank'>https://developer.veevavault.com/api/25.1/#update-object-record-attachment-description</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#update-object-record-attachment-description' target='_blank'>https://developer.veevavault.com/api/25.2/#update-object-record-attachment-description</a>
 	 */
 	public ObjectRecordAttachmentResponse updateObjectRecordAttachmentDescription(String objectName, String recordId, int attachmentId, String description) {
 		String url = vaultClient.getAPIEndpoint(URL_OBJ_REC_ATTACHMENT);
@@ -561,7 +605,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/vobjects/{object_name}/attachments/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#update-multiple-object-record-attachment-descriptions' target='_blank'>https://developer.veevavault.com/api/25.1/#update-multiple-object-record-attachment-descriptions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#update-multiple-object-record-attachment-descriptions' target='_blank'>https://developer.veevavault.com/api/25.2/#update-multiple-object-record-attachment-descriptions</a>
 	 */
 	public ObjectRecordAttachmentResponse updateMultipleObjectRecordAttachments(String objectName) {
 		return sendObjectRecordAttachmentRequest(objectName,
@@ -578,7 +622,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-object-record-attachment' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-object-record-attachment</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-object-record-attachment' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-object-record-attachment</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordAttachmentResponse deleteResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
 	 * 				.deleteObjectRecordAttachment(objectName,recordId,attachmentId);</pre>
@@ -603,7 +647,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/vobjects/{object_name}/attachments/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-multiple-object-record-attachments' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-multiple-object-record-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-multiple-object-record-attachments' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-multiple-object-record-attachments</a>
 	 */
 	public ObjectRecordAttachmentResponse deleteMultipleObjectRecordAttachments(String objectName) {
 		return sendObjectRecordAttachmentRequest(objectName,
@@ -621,7 +665,7 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	 * @return ObjectRecordAttachmentResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/vobjects/{object_name}/{object_record_id}/attachments/{attachment_id}versions/{attachment_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-object-record-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-object-record-attachment-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-object-record-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-object-record-attachment-version</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordAttachmentResponse deleteResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
 	 * 				.deleteObjectRecordAttachmentVersion(objectName,recordId,attachmentId,versionId);</pre>
@@ -798,6 +842,51 @@ public class ObjectRecordAttachmentRequest extends VaultRequest<ObjectRecordAtta
 	public ObjectRecordAttachmentRequest setRequestString(String requestString) {
 		this.requestString = requestString;
 		return this;
+	}
+
+	/**
+	 * Specify a date (no more than 30 days past) after which Vault will look for deleted object record attachments.
+	 *
+	 * @param startDate start date
+	 * @return ObjectRecordAttachmentRequest
+	 */
+	public ObjectRecordAttachmentRequest setStartDate(ZonedDateTime startDate) {
+		this.startDate = startDate;
+		return this;
+	}
+
+	/**
+	 * Specify a date (no more than 30 days past) before which Vault will look for deleted object record attachments.
+	 *
+	 * @param endDate end date
+	 * @return ObjectRecordAttachmentRequest
+	 */
+	public ObjectRecordAttachmentRequest setEndDate(ZonedDateTime endDate) {
+		this.endDate = endDate;
+		return this;
+	}
+
+	/**
+	 * Paginate the results by specifying the maximum number of deleted attachments to display per page in the response.
+	 * <p>
+	 *
+	 * @param limit the size of the result set in the page
+	 * @return ObjectRecordAttachmentRequest
+	 */
+	public ObjectRecordAttachmentRequest setLimit(Integer limit) {
+		this.limit = limit;
+		return this;
+	}
+
+	/**
+	 * Converts the date to the proper string format expected by the API
+	 *
+	 * @param date        The date to convert
+	 * @return Formatted date as string
+	 */
+	private String getFormattedDate(ZonedDateTime date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+		return date.format(formatter);
 	}
 
 }

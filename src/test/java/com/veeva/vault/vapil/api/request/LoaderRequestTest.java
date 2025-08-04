@@ -1,9 +1,10 @@
 package com.veeva.vault.vapil.api.request;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.common.Document;
 import com.veeva.vault.vapil.api.model.common.Job;
 import com.veeva.vault.vapil.api.model.common.LoaderTask;
 import com.veeva.vault.vapil.api.model.builder.LoaderTaskBuilder;
@@ -17,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,16 +31,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Loader Request should")
 public class LoaderRequestTest {
 
-    static final int MAJOR_VERSION = 0;
-    static final int MINOR_VERSION = 1;
-    static final String DOC_TYPE_LABEL = "VAPIL Test Doc Type";
-    static final String DOC_SUBTYPE_LABEL = "VAPIL Test Doc Subtype";
-    static final String DOC_CLASSIFICATION_LABEL = "VAPIL Test Doc Classification";
-    static final String DOC_LIFECYCLE = "VAPIL Test Doc Lifecycle";
-    static final String FILE_STAGING_FILE = FileStagingHelper.getPathFileStagingLoaderFilePath();
-    static final String OBJECT_NAME = "vapil_test_object__c";
-    static final String LOADER_FILE_OBJECTS_CSV_PATH = FileHelper.getPathLoaderFolder() + File.separator + "loader_object_records.csv";
-    static final String FILE_STAGING_LOADER_OBJECTS_CSV_PATH = FileStagingHelper.getPathFileStagingLoaderFolder() + "/loader_object_records.csv";
+    private static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
+    private static final String PATH_LOAD_OBJECT_RECORDS_CSV = LoaderRequestHelper.PATH_LOAD_OBJECT_RECORDS_CSV;
+    private static final String PATH_LOAD_CREATE_ATTACHMENTS_CSV = LoaderRequestHelper.PATH_LOAD_CREATE_ATTACHMENTS_CSV;
+    private static final String PATH_LOAD_DELETE_ATTACHMENTS_CSV = LoaderRequestHelper.PATH_LOAD_DELETE_ATTACHMENTS_CSV;
+    private static final String PATH_LOAD_ASSIGN_ROLES_CSV = LoaderRequestHelper.PATH_LOAD_ASSIGN_ROLES_CSV;
+    private static final String PATH_LOAD_REMOVE_ROLES_CSV = LoaderRequestHelper.PATH_LOAD_REMOVE_ROLES_CSV;
+
+    private static final String PATH_FILE_STAGING_LOADER_LOAD_OBJECT_RECORDS_CSV = String.format("%s/%s",
+            FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_OBJECT_RECORDS_CSV);
+    private static final String PATH_FILE_STAGING_LOADER_LOAD_CREATE_ATTACHMENTS_CSV = String.format("%s/%s",
+            FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_CREATE_ATTACHMENTS_CSV);
+    private static final String PATH_FILE_STAGING_LOADER_LOAD_DELETE_ATTACHMENTS_CSV = String.format("%s/%s",
+            FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_DELETE_ATTACHMENTS_CSV);
+    private static final String PATH_FILE_STAGING_LOADER_LOAD_ASSIGN_ROLES_CSV = String.format("%s/%s",
+            FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_ASSIGN_ROLES_CSV);
+    private static final String PATH_FILE_STAGING_LOADER_LOAD_REMOVE_ROLES_CSV = String.format("%s/%s",
+            FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_REMOVE_ROLES_CSV);
+
     static LoaderTask loaderTask;
     static int loadJobId;
     static int extractJobId;
@@ -68,17 +76,16 @@ public class LoaderRequestTest {
     @Order(1)
     @DisplayName("successfully create a loader job and load a set of data files")
     public void testLoadDataObjects() throws InterruptedException {
-        String jsonString = "[\n" +
-                "  {\n" +
-                "    \"object_type\": \"documents__v\",\n" +
-                "    \"action\": \"create\",\n" +
-                "    \"file\": \"loader_file.csv\",\n" +
-                "    \"order\": 1\n" +
-                "  }\n" +
-                "]";
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode jsonArray = mapper.createArrayNode();
+        jsonArray.addObject()
+                .put("object_type", "documents__v")
+                .put("action", "create")
+                .put("file", PATH_FILE_STAGING_LOADER_LOAD_OBJECT_RECORDS_CSV)
+                .put("order", 1);
 
         LoaderResponse loadResponse = vaultClient.newRequest(LoaderRequest.class)
-                .setJson(jsonString)
+                .setJson(jsonArray.toString())
                 .loadDataObjects();
 
         Assertions.assertTrue(loadResponse.isSuccessful());
@@ -331,8 +338,8 @@ public class LoaderRequestTest {
 
         @BeforeAll
         public void setup() {
-            File file = new File(LOADER_FILE_OBJECTS_CSV_PATH);
-            FileStagingHelper.createFileOnFileStaging(vaultClient, file, FILE_STAGING_LOADER_OBJECTS_CSV_PATH, true);
+            File file = new File(PATH_LOAD_OBJECT_RECORDS_CSV);
+            FileStagingHelper.createFileOnFileStaging(vaultClient, file, PATH_FILE_STAGING_LOADER_LOAD_OBJECT_RECORDS_CSV, true);
         }
 
         @AfterAll
@@ -367,7 +374,7 @@ public class LoaderRequestTest {
                     .setAction(LoaderTaskBuilder.Action.CREATE)
                     .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
                     .setObject(OBJECT_NAME)
-                    .setFile(FILE_STAGING_LOADER_OBJECTS_CSV_PATH)
+                    .setFile(PATH_FILE_STAGING_LOADER_LOAD_OBJECT_RECORDS_CSV)
                     .setRecordMigrationMode(true)
                     .setNoTriggers(true)
                     .build();
@@ -393,6 +400,335 @@ public class LoaderRequestTest {
                 assertNotNull(task.getFile());
                 assertNotNull(task.getRecordMigrationMode());
                 assertNotNull(task.getNoTriggers());
+            }
+
+            jobId = response.getJobId();
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully create attachments for object records")
+    class TestLoadDataCreateAttachments {
+        LoaderResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        int jobId;
+
+        @BeforeAll
+        public void setup() throws IOException {
+//            Create a record to attach the file to
+            ObjectRecordBulkResponse createRecordsResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
+            assertTrue(createRecordsResponse.isSuccessful());
+            assertTrue(createRecordsResponse.getData().get(0).isSuccessful());
+            recordIds.add(createRecordsResponse.getData().get(0).getData().getId());
+
+//            Write to CSV File
+            LoaderRequestHelper.writeToLoadCreateAttachmentsFile(recordIds);
+
+//            Upload the CSV file to File Staging
+            File file = new File(PATH_LOAD_CREATE_ATTACHMENTS_CSV);
+            FileStagingHelper.createFileOnFileStaging(vaultClient, file, PATH_FILE_STAGING_LOADER_LOAD_CREATE_ATTACHMENTS_CSV, true);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Wait for job completion
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+            VaultResponse loadResultsResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoadSuccessLogResults(jobId, 1);
+            assertNotNull(loadResultsResponse);
+            assertTrue(loadResultsResponse.isSuccessful());
+
+//            Delete the records
+            ObjectRecordBulkResponse deleteRecordsResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteRecordsResponse.isSuccessful());
+            for (ObjectRecordResponse recordResponse : deleteRecordsResponse.getData()) {
+                assertTrue(recordResponse.isSuccessful());
+            }
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setAction(LoaderTaskBuilder.Action.CREATE_ATTACHMENTS)
+                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setObject(OBJECT_NAME)
+                    .setFile(PATH_FILE_STAGING_LOADER_LOAD_CREATE_ATTACHMENTS_CSV)
+                    .build();
+
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTask(loaderTask)
+                    .loadDataObjects();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getUrl());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getTasks());
+            for (LoaderTask task : response.getTasks()) {
+                assertNotNull(task.getTaskId());
+                assertNotNull(task.getAction());
+                assertNotNull(task.getObjectType());
+                assertNotNull(task.getFile());
+            }
+
+            jobId = response.getJobId();
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully delete attachments from object records")
+    class TestLoadDataDeleteAttachments {
+        LoaderResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        List<Integer> attachmentIds = new ArrayList<>();
+        int jobId;
+
+        @BeforeAll
+        public void setup() throws IOException {
+//            Create a record to attach the file to
+            ObjectRecordBulkResponse createRecordsResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
+            assertTrue(createRecordsResponse.isSuccessful());
+            assertTrue(createRecordsResponse.getData().get(0).isSuccessful());
+            recordIds.add(createRecordsResponse.getData().get(0).getData().getId());
+
+//            Create an attachment for the record
+            ObjectRecordAttachmentResponse createAttachmentResponse = vaultClient.newRequest(ObjectRecordAttachmentRequest.class)
+                    .setInputPath(FileHelper.PATH_LOCAL_TEST_FILE)
+                    .createObjectRecordAttachment(OBJECT_NAME, recordIds.get(0));
+            assertTrue(createAttachmentResponse.isSuccessful());
+            attachmentIds.add(createAttachmentResponse.getData().get(0).getId());
+
+//            Write to CSV File
+            LoaderRequestHelper.writeToLoadDeleteAttachmentsFile(recordIds, attachmentIds);
+
+//            Upload the CSV file to File Staging
+            File file = new File(PATH_LOAD_DELETE_ATTACHMENTS_CSV);
+            FileStagingHelper.createFileOnFileStaging(vaultClient, file, PATH_FILE_STAGING_LOADER_LOAD_DELETE_ATTACHMENTS_CSV, true);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Wait for job completion
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+            VaultResponse loadResultsResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoadSuccessLogResults(jobId, 1);
+            assertNotNull(loadResultsResponse);
+            assertTrue(loadResultsResponse.isSuccessful());
+
+//            Delete the records
+            ObjectRecordBulkResponse deleteRecordsResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteRecordsResponse.isSuccessful());
+            for (ObjectRecordResponse recordResponse : deleteRecordsResponse.getData()) {
+                assertTrue(recordResponse.isSuccessful());
+            }
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setAction(LoaderTaskBuilder.Action.DELETE_ATTACHMENTS)
+                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setObject(OBJECT_NAME)
+                    .setFile(PATH_FILE_STAGING_LOADER_LOAD_DELETE_ATTACHMENTS_CSV)
+                    .build();
+
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTask(loaderTask)
+                    .loadDataObjects();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getUrl());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getTasks());
+            for (LoaderTask task : response.getTasks()) {
+                assertNotNull(task.getTaskId());
+                assertNotNull(task.getAction());
+                assertNotNull(task.getObjectType());
+                assertNotNull(task.getFile());
+            }
+
+            jobId = response.getJobId();
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully assign roles to object records")
+    class TestLoadDataAssignRoles {
+        LoaderResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        int jobId;
+
+        @BeforeAll
+        public void setup() throws IOException {
+//            Create a record to assign roles to
+            ObjectRecordBulkResponse createRecordsResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
+            assertTrue(createRecordsResponse.isSuccessful());
+            assertTrue(createRecordsResponse.getData().get(0).isSuccessful());
+            recordIds.add(createRecordsResponse.getData().get(0).getData().getId());
+
+//            Write to CSV File
+            LoaderRequestHelper.writeToLoadAssignRolesFile(recordIds, vaultClient.getAuthenticationResponse().getUserId());
+
+//            Upload the CSV file to File Staging
+            File file = new File(PATH_LOAD_ASSIGN_ROLES_CSV);
+            FileStagingHelper.createFileOnFileStaging(vaultClient, file, PATH_FILE_STAGING_LOADER_LOAD_ASSIGN_ROLES_CSV, true);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Wait for job completion
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+            VaultResponse loadResultsResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoadSuccessLogResults(jobId, 1);
+            assertNotNull(loadResultsResponse);
+            assertTrue(loadResultsResponse.isSuccessful());
+
+//            Delete the records
+            ObjectRecordBulkResponse deleteRecordsResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteRecordsResponse.isSuccessful());
+            for (ObjectRecordResponse recordResponse : deleteRecordsResponse.getData()) {
+                assertTrue(recordResponse.isSuccessful());
+            }
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setAction(LoaderTaskBuilder.Action.ASSIGN_ROLES)
+                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setObject(OBJECT_NAME)
+                    .setFile(PATH_FILE_STAGING_LOADER_LOAD_ASSIGN_ROLES_CSV)
+                    .build();
+
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTask(loaderTask)
+                    .loadDataObjects();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getUrl());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getTasks());
+            for (LoaderTask task : response.getTasks()) {
+                assertNotNull(task.getTaskId());
+                assertNotNull(task.getAction());
+                assertNotNull(task.getObjectType());
+                assertNotNull(task.getFile());
+            }
+
+            jobId = response.getJobId();
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully remove roles from object records")
+    class TestLoadDataRemoveRoles {
+        LoaderResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        int jobId;
+
+        @BeforeAll
+        public void setup() throws IOException {
+//            Create a record to assign roles to
+            ObjectRecordBulkResponse createRecordsResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
+            assertTrue(createRecordsResponse.isSuccessful());
+            assertTrue(createRecordsResponse.getData().get(0).isSuccessful());
+            recordIds.add(createRecordsResponse.getData().get(0).getData().getId());
+
+//            Assign a role to the record
+            String csvStringTemplate = """
+            id,viewer__v.users
+            %s,%s
+            """;
+            String csvString = String.format(csvStringTemplate, recordIds.get(0), vaultClient.getAuthenticationResponse().getUserId());
+
+            ObjectRecordRoleChangeResponse assignRoleResponse = vaultClient.newRequest(ObjectRecordRequest.class)
+                    .setContentTypeCsv()
+                    .setRequestString(csvString)
+                    .assignUsersAndGroupsToRolesOnObjectRecords(OBJECT_NAME);
+            assertTrue(assignRoleResponse.isSuccessful());
+
+//            Write to CSV File
+            LoaderRequestHelper.writeToLoadRemoveRolesFile(recordIds, vaultClient.getAuthenticationResponse().getUserId());
+
+//            Upload the CSV file to File Staging
+            File file = new File(PATH_LOAD_REMOVE_ROLES_CSV);
+            FileStagingHelper.createFileOnFileStaging(vaultClient, file, PATH_FILE_STAGING_LOADER_LOAD_REMOVE_ROLES_CSV, true);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Wait for job completion
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+            VaultResponse loadResultsResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoadSuccessLogResults(jobId, 1);
+            assertNotNull(loadResultsResponse);
+            assertTrue(loadResultsResponse.isSuccessful());
+
+//            Delete the records
+            ObjectRecordBulkResponse deleteRecordsResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteRecordsResponse.isSuccessful());
+            for (ObjectRecordResponse recordResponse : deleteRecordsResponse.getData()) {
+                assertTrue(recordResponse.isSuccessful());
+            }
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setAction(LoaderTaskBuilder.Action.REMOVE_ROLES)
+                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setObject(OBJECT_NAME)
+                    .setFile(PATH_FILE_STAGING_LOADER_LOAD_REMOVE_ROLES_CSV)
+                    .build();
+
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTask(loaderTask)
+                    .loadDataObjects();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getUrl());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getTasks());
+            for (LoaderTask task : response.getTasks()) {
+                assertNotNull(task.getTaskId());
+                assertNotNull(task.getAction());
+                assertNotNull(task.getObjectType());
+                assertNotNull(task.getFile());
             }
 
             jobId = response.getJobId();

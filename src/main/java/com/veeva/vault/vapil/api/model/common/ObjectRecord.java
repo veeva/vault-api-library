@@ -132,4 +132,20 @@ public class ObjectRecord extends VaultModel {
 	public void setUrl(String url) {
 		this.set("url", url);
 	}
+
+	@JsonProperty("event")
+	public String getEvent() {
+		return getString("event");
+	}
+	public void setEvent(String event) {
+		this.set("event", event);
+	}
+
+	@JsonProperty("id_param_value")
+	public String getIdParamValue() {
+		return getString("id_param_value");
+	}
+	public void setIdParamValue(String idParamValue) {
+		this.set("id_param_value", idParamValue);
+	}
 }

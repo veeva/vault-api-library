@@ -16,7 +16,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Document Rendition requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.1/#document-renditions">https://developer.veevavault.com/api/25.1/#document-renditions</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#document-renditions">https://developer.veevavault.com/api/25.2/#document-renditions</a>
  */
 public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequest> {
 	/**
@@ -47,6 +47,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	private String requestString; // For raw request
 	private Boolean largeSizeAsset;
 	private Boolean migrationMode;
+	private String headerAccept = HttpRequestConnector.HTTP_CONTENT_TYPE_JSON;
 
 	private DocumentRenditionRequest() {
 		this.migrationMode = false;
@@ -59,7 +60,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return DocumentRenditionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/renditions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-document-renditions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-document-renditions</a>
 	 * @vapil.request <pre>
 	 * DocumentRenditionResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class).retrieveDocumentRenditions(docId);</pre>
 	 * @vapil.response <pre>
@@ -103,7 +104,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return DocumentRenditionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/renditions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#retrieve-document-version-renditions' target='_blank'>https://developer.veevavault.com/api/25.1/#retrieve-document-version-renditions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-document-version-renditions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-document-version-renditions</a>
 	 * @vapil.request <pre>
 	 * DocumentRenditionResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class).retrieveDocumentVersionRenditions(docId, majorVersion, minorVersion);</pre>
 	 * @vapil.response <pre>
@@ -139,7 +140,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-document-rendition-file' target='_blank'>https://developer.veevavault.com/api/25.1/#download-document-rendition-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-document-rendition-file' target='_blank'>https://developer.veevavault.com/api/25.2/#download-document-rendition-file</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class)
 	 * 				.setOutputPath(inputPath.replace(".pdf", "1.pdf"))
@@ -183,7 +184,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-document-rendition-file' target='_blank'>https://developer.veevavault.com/api/25.1/#download-document-rendition-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-document-rendition-file' target='_blank'>https://developer.veevavault.com/api/25.2/#download-document-rendition-file</a>
 	 */
 	public VaultResponse downloadDocumentRenditionFile(int docId, String renditionType, Boolean steadyState) {
 		String url = vaultClient.getAPIEndpoint(URL_DOC_RENDITION_TYPE);
@@ -213,7 +214,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#download-document-version-rendition-file' target='_blank'>https://developer.veevavault.com/api/25.1/#download-document-version-rendition-file</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-document-version-rendition-file' target='_blank'>https://developer.veevavault.com/api/25.2/#download-document-version-rendition-file</a>
 	 */
 	public VaultResponse downloadDocumentVersionRenditionFile(int docId, int majorVersion, int minorVersion, String renditionType) {
 		String url = vaultClient.getAPIEndpoint(URL_DOC_RENDITION_TYPE_VERSION);
@@ -239,7 +240,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/renditions/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#add-multiple-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.1/#add-multiple-document-renditions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#add-multiple-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.2/#add-multiple-document-renditions</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class)
 	 * 				.setInputPath(inputPath)
@@ -247,12 +248,12 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @vapil.response <pre>System.out.println(new String(resp.getBinaryContent()));
 	 * </pre>
 	 */
-	public VaultResponse addMultipleDocumentRenditions() {
+	public DocumentRenditionBulkResponse addMultipleDocumentRenditions() {
 		String url = vaultClient.getAPIEndpoint(URL_DOC_RENDITION_BATCH);
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_CSV);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_CSV);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, headerAccept);
 
 		if (largeSizeAsset != null)
 			request.addQueryParam("largeSizeAsset", largeSizeAsset);
@@ -269,11 +270,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 		if (migrationMode != null)
 			request.addHeaderParam(HTTP_HEADER_VAULT_MIGRATION_MODE, migrationMode);
 
-		if (outputPath != null) {
-			return sendToFile(HttpMethod.POST, request, outputPath, VaultResponse.class);
-		} else {
-			return sendReturnBinary(HttpMethod.POST, request, VaultResponse.class);
-		}
+		return send(HttpMethod.POST, request, DocumentRenditionBulkResponse.class);
 	}
 
 	/**
@@ -286,7 +283,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#add-single-document-rendition' target='_blank'>https://developer.veevavault.com/api/25.1/#add-single-document-rendition</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#add-single-document-rendition' target='_blank'>https://developer.veevavault.com/api/25.2/#add-single-document-rendition</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class)
 	 * 				.setInputPath(inputPath)
@@ -321,7 +318,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#upload-document-version-rendition' target='_blank'>https://developer.veevavault.com/api/25.1/#upload-document-version-rendition</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#upload-document-version-rendition' target='_blank'>https://developer.veevavault.com/api/25.2/#upload-document-version-rendition</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class)
 	 * 				.setInputPath(inputPath)
@@ -356,7 +353,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/{doc_id}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#replace-document-rendition' target='_blank'>https://developer.veevavault.com/api/25.1/#replace-document-rendition</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#replace-document-rendition' target='_blank'>https://developer.veevavault.com/api/25.2/#replace-document-rendition</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class)
 	 * 				.setInputPath(inputPath)
@@ -396,7 +393,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#replace-document-version-rendition' target='_blank'>https://developer.veevavault.com/api/25.1/#replace-document-version-rendition</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#replace-document-version-rendition' target='_blank'>https://developer.veevavault.com/api/25.2/#replace-document-version-rendition</a>
 	 */
 	public VaultResponse replaceDocumentVersionRendition(int docId, int majorVersion, int minorVersion, String renditionType) {
 		String url = vaultClient.getAPIEndpoint(URL_DOC_RENDITION_TYPE_VERSION);
@@ -425,7 +422,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/renditions/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-multiple-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-multiple-document-renditions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-multiple-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-multiple-document-renditions</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class)
 	 * 				.setInputPath(inputPath)
@@ -469,7 +466,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{document_id}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-single-document-rendition' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-single-document-rendition</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-single-document-rendition' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-single-document-rendition</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class).deleteSingleDocumentRendition(docId, renditionType);</pre>
 	 * @vapil.response <pre>System.out.println("Status = " + resp.isSuccessful());
@@ -491,7 +488,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return DocumentRenditionBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/batch/actions/rerender</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#update-multiple-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.1/#update-multiple-document-renditions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#update-multiple-document-renditions' target='_blank'>https://developer.veevavault.com/api/25.2/#update-multiple-document-renditions</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - CSV input</i>
 	 * DocumentRenditionBulkResponse response = vaultClient.newRequest(DocumentRenditionRequest.class)
@@ -538,7 +535,7 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/renditions/{rendition_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.1/#delete-document-version-rendition' target='_blank'>https://developer.veevavault.com/api/25.1/#delete-document-version-rendition</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-document-version-rendition' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-document-version-rendition</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(DocumentRenditionRequest.class).deleteDocumentVersionRendition(docId, majorVersion, minorVersion, renditionType);</pre>
 	 * @vapil.response <pre>System.out.println("Status = " + resp.isSuccessful());
@@ -639,6 +636,16 @@ public class DocumentRenditionRequest extends VaultRequest<DocumentRenditionRequ
 	 */
 	public DocumentRenditionRequest setMigrationMode(Boolean migrationMode) {
 		this.migrationMode = migrationMode;
+		return this;
+	}
+
+	/**
+	 * Set the Header Accept to return CSV
+	 *
+	 * @return The Request
+	 */
+	public DocumentRenditionRequest setAcceptCSV() {
+		this.headerAccept = HttpRequestConnector.HTTP_CONTENT_TYPE_CSV;
 		return this;
 	}
 }

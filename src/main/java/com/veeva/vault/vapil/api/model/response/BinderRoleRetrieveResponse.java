@@ -5,8 +5,10 @@ import com.veeva.vault.vapil.api.request.DocumentRoleRequest;
 
 /**
  * Model for responses to Binder Role GET requests
- *
- * TODO: add endpoints
+ * <p>
+ * GET /api/{version}/objects/binders/{binder_id}/roles
+ * <br>
+ * GET /api/{version}/objects/binders/{binder_id}/roles/{role_name}
  */
 public class BinderRoleRetrieveResponse extends RoleRetrieveResponse {
 

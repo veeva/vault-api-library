@@ -37,12 +37,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Object record request should")
 public class ObjectRecordRequestTest {
 
-    static final String OBJECT_NAME = "vapil_test_object__c";
-    static final String OBJECT_NAME_PARENT = "vapil_test_parent_object__c";
-    static final String CREATE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathCreateObjectRecordsCsv();
-    static final String UPDATE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathUpdateObjectRecordsCsv();
-    static final String DELETE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathDeleteObjectRecordsCsv();
-    static final String MERGE_OBJECTS_CSV_PATH = ObjectRecordRequestHelper.getPathMergeObjectRecordsCsv();
+    static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
+    static final String OBJECT_NAME_PARENT = ObjectRecordRequestHelper.OBJECT_NAME_PARENT;
+    static final String PATH_CREATE_OBJECT_RECORDS_CSV = ObjectRecordRequestHelper.PATH_CREATE_OBJECT_RECORDS_CSV;
+    static final String PATH_UPDATE_OBJECT_RECORDS_CSV = ObjectRecordRequestHelper.PATH_UPDATE_OBJECT_RECORDS_CSV;
+    static final String PATH_DELETE_OBJECT_RECORDS_CSV = ObjectRecordRequestHelper.PATH_DELETE_OBJECT_RECORDS_CSV;
+    static final String PATH_MERGE_OBJECT_RECORDS_CSV = ObjectRecordRequestHelper.PATH_MERGE_OBJECT_RECORDS_CSV;
+
     static List<String> recordIds = new ArrayList<>();
     private static VaultClient vaultClient;
 
@@ -65,13 +66,13 @@ public class ObjectRecordRequestTest {
             data.add(new String[]{name});
         }
 
-        FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
+        FileHelper.writeCsvFile(PATH_CREATE_OBJECT_RECORDS_CSV, data);
 
 //		Create Objects
         ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
                 .setContentTypeCsv()
-                .setInputPath(CREATE_OBJECTS_CSV_PATH)
-                .createObjectRecords(OBJECT_NAME);
+                .setInputPath(PATH_CREATE_OBJECT_RECORDS_CSV)
+                .createAndUpsertObjectRecords(OBJECT_NAME);
 
         Assertions.assertTrue(response.isSuccessful());
         for (ObjectRecordResponse objectRecordResponse : response.getData()) {
@@ -94,14 +95,14 @@ public class ObjectRecordRequestTest {
             data.add(new String[]{name});
         }
 
-        FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
+        FileHelper.writeCsvFile(PATH_CREATE_OBJECT_RECORDS_CSV, data);
 
 //		Create object records
         ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
                 .setContentTypeCsv()
                 .setAcceptCSV()
-                .setInputPath(CREATE_OBJECTS_CSV_PATH)
-                .createObjectRecords(OBJECT_NAME);
+                .setInputPath(PATH_CREATE_OBJECT_RECORDS_CSV)
+                .createAndUpsertObjectRecords(OBJECT_NAME);
 
         Assertions.assertTrue(response.isSuccessful());
         for (ObjectRecordResponse objectRecordResponse : response.getData()) {
@@ -141,32 +142,17 @@ public class ObjectRecordRequestTest {
             updateData.add(new String[]{id, updateName});
         }
 
-        FileHelper.writeCsvFile(UPDATE_OBJECTS_CSV_PATH, updateData);
+        FileHelper.writeCsvFile(PATH_UPDATE_OBJECT_RECORDS_CSV, updateData);
 
 //		Update Object
         ObjectRecordBulkResponse updateResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                 .setContentTypeCsv()
-                .setInputPath(UPDATE_OBJECTS_CSV_PATH)
+                .setInputPath(PATH_UPDATE_OBJECT_RECORDS_CSV)
                 .updateObjectRecords(OBJECT_NAME);
 
         Assertions.assertTrue(updateResponse.isSuccessful());
         for (ObjectRecordResponse response : updateResponse.getData()) {
             Assertions.assertTrue(response.isSuccessful());
-        }
-    }
-
-    @Test
-    @Order(5)
-    @DisplayName("successfully retrieve object record collection")
-    public void testRetrieveObjectRecordCollection() {
-
-        ObjectRecordCollectionResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
-                .retrieveObjectRecordCollection(OBJECT_NAME);
-
-        if (response.isPaginated()) {
-            ObjectRecordCollectionResponse paginatedResponse = vaultClient.newRequest(ObjectRecordRequest.class)
-                    .retrieveObjectRecordCollectionByPage(response.getResponseDetails().getNextPage());
-            Assertions.assertTrue(paginatedResponse.isSuccessful());
         }
     }
 
@@ -181,12 +167,12 @@ public class ObjectRecordRequestTest {
             deleteData.add(new String[]{recordIds.get(i)});
         }
 
-        FileHelper.writeCsvFile(DELETE_OBJECTS_CSV_PATH, deleteData);
+        FileHelper.writeCsvFile(PATH_DELETE_OBJECT_RECORDS_CSV, deleteData);
 
 //		Delete Object
         ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
                 .setContentTypeCsv()
-                .setInputPath(DELETE_OBJECTS_CSV_PATH)
+                .setInputPath(PATH_DELETE_OBJECT_RECORDS_CSV)
                 .deleteObjectRecords(OBJECT_NAME);
 
         Assertions.assertTrue(response.isSuccessful());
@@ -201,7 +187,7 @@ public class ObjectRecordRequestTest {
 
         ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
                 .setContentTypeCsv()
-                .createObjectRecords("person__sys");
+                .createAndUpsertObjectRecords("person__sys");
 
         Assertions.assertNull(response);
     }
@@ -218,7 +204,7 @@ public class ObjectRecordRequestTest {
                 .setIdParam(idParam)
                 .setInputPath(inputPath)
                 .setUnchangedFieldBehavior(ObjectRecordRequest.UnchangedFieldBehaviorType.IGNORESETONCREATEONLY)
-                .createObjectRecords(objectName);
+                .createAndUpsertObjectRecords(objectName);
 
         Assertions.assertTrue(response.isSuccessful());
         Assertions.assertNotNull(response.getResponse());
@@ -235,7 +221,7 @@ public class ObjectRecordRequestTest {
                 .setContentTypeCsv()
                 .setMigrationMode(true)
                 .setInputPath(inputPath)
-                .createObjectRecords(objectName);
+                .createAndUpsertObjectRecords(objectName);
 
         Assertions.assertTrue(response.isSuccessful());
         Assertions.assertNotNull(response.getResponse());
@@ -256,7 +242,7 @@ public class ObjectRecordRequestTest {
         ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
                 .setContentTypeJson()
                 .setRequestString(requestString)
-                .createObjectRecords(objectName);
+                .createAndUpsertObjectRecords(objectName);
 
         Assertions.assertTrue(response.isSuccessful());
         Assertions.assertNotNull(response.getResponse());
@@ -279,7 +265,7 @@ public class ObjectRecordRequestTest {
 
         ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordRequest.class)
                 .setBodyParams(bodyParams)
-                .createObjectRecords(objectName);
+                .createAndUpsertObjectRecords(objectName);
 
         Assertions.assertTrue(response.isSuccessful());
         Assertions.assertNotNull(response.getResponse());
@@ -354,8 +340,8 @@ public class ObjectRecordRequestTest {
 
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
-//			Create 2 objects to merge
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+//			Create 2 records to merge
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 2);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
@@ -366,7 +352,7 @@ public class ObjectRecordRequestTest {
             List<String[]> data = new ArrayList<>();
             data.add(new String[]{"duplicate_record_id", "main_record_id"});
             data.add(new String[]{String.valueOf(recordIds.get(0)), String.valueOf(recordIds.get(1))});
-            FileHelper.writeCsvFile(MERGE_OBJECTS_CSV_PATH, data);
+            FileHelper.writeCsvFile(PATH_MERGE_OBJECT_RECORDS_CSV, data);
         }
 
         @AfterAll
@@ -380,7 +366,7 @@ public class ObjectRecordRequestTest {
         public void testRequest() {
             initiateRecordMergeResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(MERGE_OBJECTS_CSV_PATH)
+                    .setInputPath(PATH_MERGE_OBJECT_RECORDS_CSV)
                     .initiateRecordMerge(OBJECT_NAME);
 
             assertNotNull(initiateRecordMergeResponse);
@@ -410,8 +396,8 @@ public class ObjectRecordRequestTest {
 
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
-//			Create 2 objects to merge
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+//			Create 2 records to merge
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 2);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
@@ -467,8 +453,8 @@ public class ObjectRecordRequestTest {
 
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
-//			Create 2 objects to merge
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+//			Create 2 records to merge
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 2);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
@@ -479,7 +465,7 @@ public class ObjectRecordRequestTest {
             List<String[]> data = new ArrayList<>();
             data.add(new String[]{"duplicate_record_id", "main_record_id"});
             data.add(new String[]{String.valueOf(recordIds.get(0)), String.valueOf(recordIds.get(1))});
-            FileHelper.writeCsvFile(MERGE_OBJECTS_CSV_PATH, data);
+            FileHelper.writeCsvFile(PATH_MERGE_OBJECT_RECORDS_CSV, data);
         }
 
         @AfterAll
@@ -491,7 +477,7 @@ public class ObjectRecordRequestTest {
         @Test
         @Order(1)
         public void testRequest() throws IOException {
-            File csvFile = new File(MERGE_OBJECTS_CSV_PATH);
+            File csvFile = new File(PATH_MERGE_OBJECT_RECORDS_CSV);
             byte[] csvBytes = Files.readAllBytes(csvFile.toPath());
 
             initiateRecordMergeResponse = vaultClient.newRequest(ObjectRecordRequest.class)
@@ -525,8 +511,8 @@ public class ObjectRecordRequestTest {
 
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
-//			Create 2 objects to merge
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+//			Create 2 records to merge
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 2);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
@@ -537,12 +523,12 @@ public class ObjectRecordRequestTest {
             List<String[]> data = new ArrayList<>();
             data.add(new String[]{"duplicate_record_id", "main_record_id"});
             data.add(new String[]{String.valueOf(recordIds.get(0)), String.valueOf(recordIds.get(1))});
-            FileHelper.writeCsvFile(MERGE_OBJECTS_CSV_PATH, data);
+            FileHelper.writeCsvFile(PATH_MERGE_OBJECT_RECORDS_CSV, data);
 
 //            Initiate record merge
             ObjectRecordMergeJobResponse mergeResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(MERGE_OBJECTS_CSV_PATH)
+                    .setInputPath(PATH_MERGE_OBJECT_RECORDS_CSV)
                     .initiateRecordMerge(OBJECT_NAME);
             assertTrue(mergeResponse.isSuccessful());
             jobId = mergeResponse.getData().getJobId();
@@ -586,8 +572,8 @@ public class ObjectRecordRequestTest {
 
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
-//			Create 2 objects to merge
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+//			Create 2 records to merge
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 2);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
@@ -598,12 +584,12 @@ public class ObjectRecordRequestTest {
             List<String[]> data = new ArrayList<>();
             data.add(new String[]{"duplicate_record_id", "main_record_id"});
             data.add(new String[]{String.valueOf(recordIds.get(0)), String.valueOf(recordIds.get(1))});
-            FileHelper.writeCsvFile(MERGE_OBJECTS_CSV_PATH, data);
+            FileHelper.writeCsvFile(PATH_MERGE_OBJECT_RECORDS_CSV, data);
 
 //            Initiate record merge
             ObjectRecordMergeJobResponse mergeResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(MERGE_OBJECTS_CSV_PATH)
+                    .setInputPath(PATH_MERGE_OBJECT_RECORDS_CSV)
                     .initiateRecordMerge(OBJECT_NAME);
             assertTrue(mergeResponse.isSuccessful());
             jobId = mergeResponse.getData().getJobId();
@@ -662,7 +648,7 @@ public class ObjectRecordRequestTest {
                 data.add(new String[]{name, description});
             }
 
-            FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
+            FileHelper.writeCsvFile(PATH_CREATE_OBJECT_RECORDS_CSV, data);
         }
 
         @AfterAll
@@ -676,10 +662,10 @@ public class ObjectRecordRequestTest {
         public void testRequest() {
             createObjectRecordsResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(CREATE_OBJECTS_CSV_PATH)
+                    .setInputPath(PATH_CREATE_OBJECT_RECORDS_CSV)
                     .setMigrationMode(true)
                     .setNoTriggers(true)
-                    .createObjectRecords(OBJECT_NAME);
+                    .createAndUpsertObjectRecords(OBJECT_NAME);
 
             assertNotNull(createObjectRecordsResponse);
         }
@@ -717,7 +703,7 @@ public class ObjectRecordRequestTest {
                 data.add(new String[]{name, description});
             }
 
-            FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
+            FileHelper.writeCsvFile(PATH_CREATE_OBJECT_RECORDS_CSV, data);
         }
 
         @AfterAll
@@ -729,14 +715,14 @@ public class ObjectRecordRequestTest {
         @Test
         @Order(1)
         public void testRequest() throws FileNotFoundException {
-            File file = new File(CREATE_OBJECTS_CSV_PATH);
+            File file = new File(PATH_CREATE_OBJECT_RECORDS_CSV);
             InputStream inputStream = new FileInputStream(file);
 
 
             createObjectRecordsResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
                     .setInputStream(inputStream)
-                    .createObjectRecords(OBJECT_NAME);
+                    .createAndUpsertObjectRecords(OBJECT_NAME);
 
             assertNotNull(createObjectRecordsResponse);
         }
@@ -774,13 +760,13 @@ public class ObjectRecordRequestTest {
                 data.add(new String[]{name, description});
             }
 
-            FileHelper.writeCsvFile(CREATE_OBJECTS_CSV_PATH, data);
+            FileHelper.writeCsvFile(PATH_CREATE_OBJECT_RECORDS_CSV, data);
 
             // Create object
             ObjectRecordBulkResponse createResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(CREATE_OBJECTS_CSV_PATH)
-                    .createObjectRecords(OBJECT_NAME);
+                    .setInputPath(PATH_CREATE_OBJECT_RECORDS_CSV)
+                    .createAndUpsertObjectRecords(OBJECT_NAME);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
@@ -800,8 +786,8 @@ public class ObjectRecordRequestTest {
         public void testRequest() {
             createObjectRecordsResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(CREATE_OBJECTS_CSV_PATH)
-                    .createObjectRecords(OBJECT_NAME);
+                    .setInputPath(PATH_CREATE_OBJECT_RECORDS_CSV)
+                    .createAndUpsertObjectRecords(OBJECT_NAME);
 
             assertNotNull(createObjectRecordsResponse);
         }
@@ -877,7 +863,7 @@ public class ObjectRecordRequestTest {
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
 //			Create objects
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 2);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
@@ -894,7 +880,7 @@ public class ObjectRecordRequestTest {
                 updateData.add(new String[]{id, description});
             }
 
-            FileHelper.writeCsvFile(UPDATE_OBJECTS_CSV_PATH, updateData);
+            FileHelper.writeCsvFile(PATH_UPDATE_OBJECT_RECORDS_CSV, updateData);
         }
 
         @AfterAll
@@ -908,7 +894,7 @@ public class ObjectRecordRequestTest {
         public void testRequest() {
             updateObjectRecordsResponse = vaultClient.newRequest(ObjectRecordRequest.class)
                     .setContentTypeCsv()
-                    .setInputPath(UPDATE_OBJECTS_CSV_PATH)
+                    .setInputPath(PATH_UPDATE_OBJECT_RECORDS_CSV)
                     .updateObjectRecords(OBJECT_NAME);
 
             assertNotNull(updateObjectRecordsResponse);

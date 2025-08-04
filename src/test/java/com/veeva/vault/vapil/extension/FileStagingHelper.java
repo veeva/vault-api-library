@@ -14,19 +14,12 @@ import java.nio.file.Files;
 public class FileStagingHelper {
 
     private static Logger log = LoggerFactory.getLogger(FileStagingHelper.class);
-    static final String FILE_STAGING_LOADER_FOLDER = "/loader";
-    static final String TEST_FILE_LOCAL_PATH = FileHelper.getPathTestFile();
-    static final String LOADER_FILE_LOCAL_PATH = FileHelper.getPathLoaderFile();
-    static final String TEST_FILE_FSS_PATH = "/vapil_test_document.docx";
-    static final String LOADER_FILE_FSS_PATH = "/loader_file.csv";
 
-    public static String getPathFileStagingTestFilePath() {
-        return TEST_FILE_FSS_PATH;
-    }
-    public static String getPathFileStagingLoaderFilePath() {
-        return LOADER_FILE_FSS_PATH;
-    }
-    public static String getPathFileStagingLoaderFolder() { return FILE_STAGING_LOADER_FOLDER; }
+    static final String PATH_LOCAL_TEST_FILE = FileHelper.PATH_LOCAL_TEST_FILE;
+    public static final String PATH_FILE_STAGING_LOADER_FOLDER = "/vault_loader";
+    public static final String NAME_FILE_STAGING_TEST_PDF = "vapil_test_document.pdf";
+    public static final String PATH_FILE_STAGING_TEST_PDF = String.format("/%s", NAME_FILE_STAGING_TEST_PDF);
+
     public static void createFileOnFileStaging(
             VaultClient vaultClient,
             File file,
@@ -37,7 +30,7 @@ public class FileStagingHelper {
         try {
             bytes = Files.readAllBytes(file.toPath());
         } catch (IOException e) {
-            log.error("Error reading file: " + TEST_FILE_LOCAL_PATH);
+            log.error("Error reading file: " + PATH_LOCAL_TEST_FILE);
             e.printStackTrace();
         }
 
@@ -50,36 +43,19 @@ public class FileStagingHelper {
     }
 
     public static void createTestFileOnFileStaging(VaultClient vaultClient) {
-        File testFile = new File(TEST_FILE_LOCAL_PATH);
+        File testFile = new File(PATH_LOCAL_TEST_FILE);
         byte[] bytes = new byte[0];
         try {
             bytes = Files.readAllBytes(testFile.toPath());
         } catch (IOException e) {
-            log.error("Error reading file: " + TEST_FILE_LOCAL_PATH);
+            log.error("Error reading file: " + PATH_LOCAL_TEST_FILE);
             e.printStackTrace();
         }
 
         FileStagingItemResponse fileStagingResponse = vaultClient.newRequest(FileStagingRequest.class)
                 .setOverwrite(true)
                 .setFile(testFile.getPath(), bytes)
-                .createFolderOrFile(FileStagingRequest.Kind.FILE, "vapil_test_document.docx");
-        Assertions.assertTrue(fileStagingResponse.isSuccessful());
-    }
-
-    public static void createLoaderFileOnFileStaging(VaultClient vaultClient) {
-        File testFile = new File(LOADER_FILE_LOCAL_PATH);
-        byte[] bytes = new byte[0];
-        try {
-            bytes = Files.readAllBytes(testFile.toPath());
-        } catch (IOException e) {
-            log.error("Error reading file: " + LOADER_FILE_LOCAL_PATH);
-            e.printStackTrace();
-        }
-
-        FileStagingItemResponse fileStagingResponse = vaultClient.newRequest(FileStagingRequest.class)
-                .setOverwrite(true)
-                .setFile(testFile.getPath(), bytes)
-                .createFolderOrFile(FileStagingRequest.Kind.FILE, "loader_file.csv");
+                .createFolderOrFile(FileStagingRequest.Kind.FILE, "vapil_test_document.pdf");
         Assertions.assertTrue(fileStagingResponse.isSuccessful());
     }
 }

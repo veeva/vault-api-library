@@ -455,4 +455,50 @@ public class UserRequestTest {
             }
         }
     }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully validate a session user")
+    class TestValidateSessionUser {
+        UserRetrieveResponse validateSessionUserResponse = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            validateSessionUserResponse = vaultClient.newRequest(UserRequest.class)
+                    .validateSessionUser();
+
+            assertNotNull(validateSessionUserResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(validateSessionUserResponse.isSuccessful());
+            assertNotNull(validateSessionUserResponse.getUsers());
+
+            for (UserRetrieveResponse.UserNode userNode : validateSessionUserResponse.getUsers()) {
+                assertNotNull(userNode.getUser().getId());
+                assertNotNull(userNode.getUser().getUserName());
+                assertNotNull(userNode.getUser().getUserFirstName());
+                assertNotNull(userNode.getUser().getUserLastName());
+                assertNotNull(userNode.getUser().getUserEmail());
+                assertNotNull(userNode.getUser().getUserTimezone());
+                assertNotNull(userNode.getUser().getUserLocale());
+                assertNotNull(userNode.getUser().getIsDomainAdmin());
+                assertNotNull(userNode.getUser().getActive());
+                assertNotNull(userNode.getUser().getSecurityPolicyId());
+                assertNotNull(userNode.getUser().getCreatedDate());
+                assertNotNull(userNode.getUser().getCreatedBy());
+                assertNotNull(userNode.getUser().getModifiedDate());
+                assertNotNull(userNode.getUser().getModifiedBy());
+                assertNotNull(userNode.getUser().getDomainId());
+                assertNotNull(userNode.getUser().getLastLogin());
+                assertNotNull(userNode.getUser().getUserLanguage());
+                assertNotNull(userNode.getUser().getLicenseType());
+                assertNotNull(userNode.getUser().getSecurityProfile());
+            }
+        }
+    }
 }

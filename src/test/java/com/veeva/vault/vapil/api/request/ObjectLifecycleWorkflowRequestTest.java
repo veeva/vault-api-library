@@ -176,7 +176,7 @@ class ObjectLifecycleWorkflowRequestTest {
 
         @BeforeAll
         public void setup() throws InterruptedException, IOException {
-            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createObjectRecords(vaultClient);
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
             assertTrue(createResponse.isSuccessful());
 
             for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {

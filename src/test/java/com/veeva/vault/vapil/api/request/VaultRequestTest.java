@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.VaultResponse;
 import com.veeva.vault.vapil.api.model.response.VaultResponse.*;
+import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import com.veeva.vault.vapil.extension.FileHelper;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 
@@ -14,18 +16,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("VaultRequestTest")
 @Tag("SmokeTest")
+@ExtendWith(VaultClientParameterResolver.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Vault Request Test should")
 public class VaultRequestTest {
 
-    private static final String BASIC_SETTINGS_FILE_NAME = "settings_vapil_basic.json";
-    private static JsonNode basicSettingsNode;
+    private static VaultClient vaultClient;
 
     @BeforeAll
-    static void setup() {
-        File settingsFile = FileHelper.getSettingsFile(BASIC_SETTINGS_FILE_NAME);
-        basicSettingsNode = FileHelper.readSettingsFile(settingsFile);
+    static void setup(VaultClient client) {
+        vaultClient = client;
+        Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
     }
 
     @Nested
@@ -38,14 +40,7 @@ public class VaultRequestTest {
         @Test
         @Order(1)
         void testRequest() {
-            VaultClient client = VaultClient.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-                    .withVaultDNS(basicSettingsNode.get("vaultDNS").asText())
-                    .withVaultClientId(basicSettingsNode.get("vaultClientId").asText())
-                    .withVaultUsername(basicSettingsNode.get("vaultUsername").asText())
-                    .withVaultPassword(basicSettingsNode.get("vaultPassword").asText())
-                    .build();
-
-            sendSuccessResponse = client.getAuthenticationResponse();
+            sendSuccessResponse = vaultClient.getAuthenticationResponse();
         }
 
         @Test
@@ -76,9 +71,9 @@ public class VaultRequestTest {
         @Order(1)
         void testRequest() {
             VaultClient client = VaultClient.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-                    .withVaultDNS(basicSettingsNode.get("vaultDNS").asText())
-                    .withVaultClientId(basicSettingsNode.get("vaultClientId").asText())
-                    .withVaultUsername(basicSettingsNode.get("vaultUsername").asText())
+                    .withVaultDNS(vaultClient.getVaultDNS())
+                    .withVaultClientId(vaultClient.getVaultClientId())
+                    .withVaultUsername("invalid_user")
                     .withVaultPassword("invalid")
                     .build();
 
@@ -116,16 +111,9 @@ public class VaultRequestTest {
         @Test
         @Order(1)
         void testRequest() {
-            VaultClient client = VaultClient.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-                    .withVaultDNS(basicSettingsNode.get("vaultDNS").asText())
-                    .withVaultClientId(basicSettingsNode.get("vaultClientId").asText())
-                    .withVaultUsername(basicSettingsNode.get("vaultUsername").asText())
-                    .withVaultPassword(basicSettingsNode.get("vaultPassword").asText())
-                    .build();
-
             String vql = "SELECT id FROM documents MAXROWS 1";
-            client.newRequest(QueryRequest.class).query(vql);
-            sendWarningResponse = client.newRequest(QueryRequest.class).query(vql);
+            vaultClient.newRequest(QueryRequest.class).query(vql);
+            sendWarningResponse = vaultClient.newRequest(QueryRequest.class).query(vql);
         }
 
         @Test
@@ -159,14 +147,7 @@ public class VaultRequestTest {
         @Test
         @Order(1)
         void testRequest() {
-            VaultClient client = VaultClient.newClientBuilder(VaultClient.AuthenticationType.BASIC)
-                    .withVaultDNS(basicSettingsNode.get("vaultDNS").asText())
-                    .withVaultClientId(basicSettingsNode.get("vaultClientId").asText())
-                    .withVaultUsername(basicSettingsNode.get("vaultUsername").asText())
-                    .withVaultPassword(basicSettingsNode.get("vaultPassword").asText())
-                    .build();
-
-            response = client.getAuthenticationResponse();
+            response = vaultClient.getAuthenticationResponse();
             assertNotNull(response);
         }
 

@@ -1,0 +1,36 @@
+-classpath
+'/home/admin/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.17.2/jackson-core-2.17.2.jar:/home/admin/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.17.2/jackson-databind-2.17.2.jar:/home/admin/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.17.2/jackson-annotations-2.17.2.jar:/home/admin/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-csv/2.17.2/jackson-dataformat-csv-2.17.2.jar:/home/admin/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar:/home/admin/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar:/home/admin/.m2/repository/com/squareup/okio/okio-jvm/3.6.0/okio-jvm-3.6.0.jar:/home/admin/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar:/home/admin/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.21/kotlin-stdlib-jdk8-1.8.21.jar:/home/admin/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.8.21/kotlin-stdlib-1.8.21.jar:/home/admin/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/home/admin/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.21/kotlin-stdlib-jdk7-1.8.21.jar:/home/admin/.m2/repository/org/slf4j/slf4j-api/2.0.13/slf4j-api-2.0.13.jar:/home/admin/.m2/repository/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar:/home/admin/.m2/repository/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1.jar:/home/admin/.m2/repository/org/apache/logging/log4j/log4j-slf4j2-impl/2.23.1/log4j-slf4j2-impl-2.23.1.jar'
+-encoding
+'UTF-8'
+-overview
+'/builds/veevavaultdevsupport/vault-api-library/src/main/resources/javadocoverview.html'
+-protected
+-source
+'17'
+-sourcepath
+'/builds/veevavaultdevsupport/vault-api-library/src/main/java:/builds/veevavaultdevsupport/vault-api-library/target/generated-sources/annotations:/builds/veevavaultdevsupport/vault-api-library/src/main/javadoc'
+-author
+-bottom
+'Copyright &#169; 2025. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/builds/veevavaultdevsupport/vault-api-library/docs/javadoc/25.1.1'
+-docencoding
+'UTF-8'
+-doctitle
+'Vault-API-Library 25.1.1 API'
+-tag
+"vapil.apicoverage:a:Vault API Coverage:"
+-tag
+"vapil.api:a:Vault API Endpoint:"
+-tag
+"vapil.vaultlink:a:Vault API Help Link:"
+-tag
+"vapil.request:a:Example Request:"
+-tag
+"vapil.response:a:Example Response:"
+-use
+-version
+-windowtitle
+'Vault-API-Library 25.1.1 API'

@@ -50,6 +50,23 @@ public class Job extends VaultModel {
 		this.set("links", links);
 	}
 
+	@JsonProperty("modified_by")
+	public Integer getModifiedBy() {
+		return getInteger("modified_by");
+	}
+
+	public void setModifiedBy(Integer modifiedBy) {
+		this.set("modified_by", modifiedBy);
+	}
+
+	@JsonProperty("modified_date")
+	public String getModifiedDate() {
+		return getString("modified_date");
+	}
+
+	public void setModifiedDate(String modifiedDate) {
+		this.set("modified_date", modifiedDate);
+	}
 
 	@JsonProperty("method")
 	public String getMethod() {

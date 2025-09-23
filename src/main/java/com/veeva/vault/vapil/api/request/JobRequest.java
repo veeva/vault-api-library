@@ -12,6 +12,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Job - Retrieve Job Status Requests
@@ -33,6 +34,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	private Integer offset;
 	private String status;
 	private ZonedDateTime startDate;
+	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 	private JobRequest() {
 	}
@@ -67,10 +69,6 @@ public class JobRequest extends VaultRequest<JobRequest> {
 		String url = vaultClient.getAPIEndpoint(URL_JOB_HISTORIES);
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		if (endDate != null) {
-			request.addQueryParam("end_date", endDate);
-		}
-
 		if (limit != null) {
 			request.addQueryParam("limit", limit);
 		}
@@ -80,7 +78,11 @@ public class JobRequest extends VaultRequest<JobRequest> {
 		}
 
 		if (startDate != null) {
-			request.addQueryParam("start_date", startDate);
+			request.addQueryParam("start_date", getFormattedDate(startDate, DATE_TIME_PATTERN));
+		}
+
+		if (endDate != null) {
+			request.addQueryParam("end_date", getFormattedDate(endDate, DATE_TIME_PATTERN));
 		}
 
 		if (status != null) {
@@ -132,10 +134,6 @@ public class JobRequest extends VaultRequest<JobRequest> {
 		String url = vaultClient.getAPIEndpoint(URL_JOB_MONITORS);
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
-		if (endDate != null) {
-			request.addQueryParam("end_date", endDate);
-		}
-
 		if (limit != null) {
 			request.addQueryParam("limit", limit);
 		}
@@ -145,7 +143,11 @@ public class JobRequest extends VaultRequest<JobRequest> {
 		}
 
 		if (startDate != null) {
-			request.addQueryParam("start_date", startDate);
+			request.addQueryParam("start_date", getFormattedDate(startDate, DATE_TIME_PATTERN));
+		}
+
+		if (endDate != null) {
+			request.addQueryParam("end_date", getFormattedDate(endDate, DATE_TIME_PATTERN));
 		}
 
 		if (status != null) {
@@ -399,5 +401,16 @@ public class JobRequest extends VaultRequest<JobRequest> {
 		return this;
 	}
 
+	/**
+	 * Converts the date to the proper string format expected by the API
+	 *
+	 * @param date        The date to convert
+	 * @param datePattern DateTimeFormatter pattern
+	 * @return Formatted date as string
+	 */
+	private String getFormattedDate(ZonedDateTime date, String datePattern) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
+		return date.format(formatter);
+	}
 
 }

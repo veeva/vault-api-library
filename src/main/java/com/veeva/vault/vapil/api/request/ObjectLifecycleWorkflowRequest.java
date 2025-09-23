@@ -52,6 +52,8 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 
 	// API Request Parameters
 	private Map<String, Object> bodyParams = null;
+	private String requestString; // For raw request
+	private String headerContentType;
 
 	private ObjectLifecycleWorkflowRequest() {
 	}
@@ -891,11 +893,25 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 		url = url.replace("{task_id}", String.valueOf(taskId));
 		url = url.replace("{task_action}", taskAction);
 		HttpRequestConnector request = new HttpRequestConnector(url);
+		String contentType = HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM;
+		if (headerContentType != null) {
+			contentType = headerContentType;
+		}
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, contentType);
 
 		if (bodyParams != null) {
 			request.setBodyParams(bodyParams);
+		}
+
+		if (requestString != null && !requestString.isEmpty()) {
+//			The media type is set to an invalid string due to the issue with okhttp below
+//			https://github.com/square/okhttp/issues/3081
+//			RequestBody.create() in HttpRequestConnector appends a charset to application/json content-type.
+//			This endpoint does not work with a charset appended to the content-type.
+//			Providing an invalid media type forces okhttp to not append a charset to the content-type
+//			and just use the application/json header as provided.
+			request.addRawString("intentionallyInvalidString", requestString);
 		}
 
 		return send(HttpMethod.POST, request, VaultResponse.class);
@@ -971,6 +987,27 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	public ObjectLifecycleWorkflowRequest setStatus(String status) {
 		this.status = status;
 		this.loc = false;
+		return this;
+	}
+
+	/**
+	 * Specify source data in an input string, such as a JSON request
+	 *
+	 * @param requestString The source request as a string
+	 * @return The Request
+	 */
+	public ObjectLifecycleWorkflowRequest setRequestString(String requestString) {
+		this.requestString = requestString;
+		return this;
+	}
+
+	/**
+	 * Set the Header Content Type to application/json
+	 *
+	 * @return The Request
+	 */
+	public ObjectLifecycleWorkflowRequest setContentTypeJson() {
+		this.headerContentType = HttpRequestConnector.HTTP_CONTENT_TYPE_JSON;
 		return this;
 	}
 }

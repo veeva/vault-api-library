@@ -22,6 +22,15 @@ public class LoaderTask extends VaultModel {
 		this.set("action", action);
 	}
 
+	@JsonProperty("changeobjecttype")
+	public Boolean getChangeObjectType() {
+		return getBoolean("changeobjecttype");
+	}
+
+	public void setChangeObjectType(Boolean changeobjecttype) {
+		this.set("changeobjecttype", changeobjecttype);
+	}
+
 	@JsonProperty("documentmigrationmode")
 	public Boolean getDocumentMigrationMode() {
 		return getBoolean("documentmigrationmode");
@@ -76,13 +85,13 @@ public class LoaderTask extends VaultModel {
 		this.set("object", object);
 	}
 
-	@JsonProperty("object_type")
-	public String getObjectType() {
-		return getString("object_type");
+	@JsonProperty("entity_type")
+	public String getEntityType() {
+		return getString("entity_type");
 	}
 
-	public void setObjectType(String objectType) {
-		this.set("object_type", objectType);
+	public void setEntityType(String objectType) {
+		this.set("entity_type", objectType);
 	}
 
 	@JsonProperty("order")

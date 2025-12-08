@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * The Audit APIs retrieve information about audits and audit types
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#logs">https://developer.veevavault.com/api/25.2/#logs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#logs">https://developer.veevavault.com/api/25.3/#logs</a>
  */
 public class LogRequest extends VaultRequest<LogRequest> {
 	// API Endpoints
@@ -118,7 +118,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return AuditTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-audit-types</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-audit-types' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-audit-types</a>
 	 * @vapil.request <pre>
 	 * AuditTypesResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditTypes();</pre>
@@ -144,7 +144,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return AuditMetadataResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-audit-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-audit-metadata' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-audit-metadata</a>
 	 * @vapil.request <pre>
 	 * AuditMetadataResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.retrieveAuditMetadata(LogRequest.AuditTrailType.DOCUMENT);</pre>
@@ -188,7 +188,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/audittrail/{audit_trail_type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-audit-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-audit-details' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-audit-details</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - DocumentAuditResponse</i>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
@@ -414,7 +414,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return DocumentAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-complete-audit-history-for-a-single-document</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-complete-audit-history-for-a-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-complete-audit-history-for-a-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 			.setLimit(4) // Just pull 4 records so the results can be viewed more easily
@@ -495,7 +495,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return ObjectAuditResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/audittrail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-complete-audit-history-for-a-single-object-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-complete-audit-history-for-a-single-object-record' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-complete-audit-history-for-a-single-object-record</a>
 	 * @vapil.request <pre>
 	 * ObjectAuditResponse resp = vaultClient.newRequest(LogRequest.class)
 	 * 				.setFormatResult(LogRequest.FormatResultType.JSON)
@@ -576,7 +576,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * JobCreateResponse when format result is CSV
 	 * @vapil.api <pre>
 	 * GET /api/{version}/notifications/histories</pre>
-	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/25.2/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-email-notification-histories</a>
+	 * @vapil.vaultlink <a href='https://https://developer.veevavault.com/api/25.3/#retrieve-email-notification-histories' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-email-notification-histories</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - EmailNotificationHistoryResponse</i>
 	 * EmailNotificationHistoryResponse response = vaultClient.newRequest(LogRequest.class)
@@ -691,7 +691,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/api_usage?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-daily-api-usage</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-daily-api-usage' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-daily-api-usage</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -751,7 +751,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse On SUCCESS, Vault retrieves the log from the specified date as a .ZIP file.
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/runtime?date=YYYY-MM-DD</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/25.2/#download-sdk-runtime-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-sdk-runtime-log' target='_blank'>https://developer.veevavault.com/api/25.3/#download-sdk-runtime-log</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - To file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -798,7 +798,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return SdkProfilingSessionBulkResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/code/profiler</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-profiling-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-profiling-session</a>
 	 * @vapil.request <pre>
 	 * SdkProfilingSessionBulkResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.retrieveAllProfilingSessions();
@@ -830,7 +830,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return SdkProfilingSessionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/code/profiler/{session_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-profiling-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-profiling-session</a>
 	 * @vapil.request <pre>
 	 * SdkProfilingSessionResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.retrieveProfilingSession(PROFILING_SESSION_NAME);
@@ -860,7 +860,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return SdkProfilingSessionCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/code/profiler</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#create-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.2/#create-profiling-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.3/#create-profiling-session</a>
 	 * @vapil.request <pre>
 	 * SdkProfilingSessionCreateResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.setUserId(USER_ID)
@@ -898,7 +898,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/code/profiler/{session_name}/actions/end</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#end-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.2/#end-profiling-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#end-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.3/#end-profiling-session</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.endProfilingSession(sessionName);
@@ -924,7 +924,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/code/profiler/{session_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-profiling-session</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-profiling-session' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-profiling-session</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.deleteProfilingSession(sessionName);
@@ -950,7 +950,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/code/profiler/{session_name}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-profiling-session-results' target='_blank'>https://developer.veevavault.com/api/25.2/#download-profiling-session-results</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-profiling-session-results' target='_blank'>https://developer.veevavault.com/api/25.3/#download-profiling-session-results</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Download to file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -988,7 +988,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return SdkDebugSessionBulkResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/debug</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-all-debug-logs' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-all-debug-logs</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-debug-logs' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-debug-logs</a>
 	 * @vapil.request <pre>
 	 * SdkDebugSessionBulkResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.setUserId(USER_ID)
@@ -1029,7 +1029,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return SdkDebugSessionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/debug/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-single-debug-log' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-single-debug-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-single-debug-log' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-single-debug-log</a>
 	 * @vapil.request <pre>
 	 * SdkDebugSessionResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.retrieveSingleDebugLog(debugLogId);
@@ -1059,7 +1059,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/logs/code/debug/{id}/files</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-debug-log-files' target='_blank'>https://developer.veevavault.com/api/25.2/#download-debug-log-files</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-debug-log-files' target='_blank'>https://developer.veevavault.com/api/25.3/#download-debug-log-files</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Download to file</i>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
@@ -1099,7 +1099,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return SdkDebugSessionCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/logs/code/debug</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#create-debug-log' target='_blank'>https://developer.veevavault.com/api/25.2/#create-debug-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-debug-log' target='_blank'>https://developer.veevavault.com/api/25.3/#create-debug-log</a>
 	 * @vapil.request <pre>
 	 * SdkDebugSessionCreateResponse createDebugLogResponse = vaultClient.newRequest(LogRequest.class)
 	 * 		.setLogLevel("info__sys")
@@ -1138,7 +1138,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/logs/code/debug/{id}/actions/reset</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#reset-debug-log' target='_blank'>https://developer.veevavault.com/api/25.2/#reset-debug-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#reset-debug-log' target='_blank'>https://developer.veevavault.com/api/25.3/#reset-debug-log</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.resetDebugLog(debugSessionId);
@@ -1164,7 +1164,7 @@ public class LogRequest extends VaultRequest<LogRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/logs/code/debug/{id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-debug-log' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-debug-log</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-debug-log' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-debug-log</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(LogRequest.class)
 	 * 		.deleteDebugLog(debugSessionId);

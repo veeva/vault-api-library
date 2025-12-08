@@ -25,10 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,6 +57,8 @@ public class DocumentRequestTest {
     private static final String PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV = DocumentRequestHelper.PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV;
     private static final String PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV;
     private static final String PATH_UNDO_COLLAB_CHECKOUT_CSV = DocumentRequestHelper.PATH_UNDO_COLLAB_CHECKOUT_CSV;
+    private static final String PATH_EXPORT_DOCUMENTS_JSON = DocumentRequestHelper.PATH_EXPORT_DOCUMENTS_JSON;
+    private static final String PATH_EXPORT_DOCUMENT_VERSIONS_JSON = DocumentRequestHelper.PATH_EXPORT_DOCUMENT_VERSIONS_JSON;
     private static VaultClient vaultClient;
 
     @BeforeAll
@@ -1752,6 +1751,80 @@ public class DocumentRequestTest {
                 assertNotNull(response.getResponseStatus());
                 assertNotNull(response.getResponseMessage());
             }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully export documents to file staging")
+    class TestExportDocuments {
+        JobCreateResponse response = null;
+        List<Integer> docIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
+            assertFalse(queryResponse.isFailure());
+            docIds.add(queryResponse.getData().get(0).getInteger("id"));
+
+            DocumentRequestHelper.writeToExportDocumentsFile(docIds);
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(PATH_EXPORT_DOCUMENTS_JSON)
+                    .exportDocuments(true, true, true, true);
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getUrl());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully export document versions to file staging")
+    class TestExportDocumentVersions {
+        JobCreateResponse response = null;
+        List<HashMap<String, Integer>> docVersions = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
+            assertFalse(queryResponse.isFailure());
+            HashMap<String, Integer> docVersion = new HashMap();
+            docVersion.put("id", queryResponse.getData().get(0).getInteger("id"));
+            docVersion.put("major_version_number__v", queryResponse.getData().get(0).getInteger("major_version_number__v"));
+            docVersion.put("minor_version_number__v", queryResponse.getData().get(0).getInteger("minor_version_number__v"));
+            docVersions.add(docVersion);
+
+            DocumentRequestHelper.writeToExportDocumentVersionsFile(docVersions);
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(PATH_EXPORT_DOCUMENT_VERSIONS_JSON)
+                    .exportDocumentVersions(true, true, true);
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getUrl());
         }
     }
 }

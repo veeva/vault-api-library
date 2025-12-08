@@ -22,6 +22,7 @@ public class LoaderRequestHelper {
     public static final String NAME_LOAD_DELETE_ATTACHMENTS_CSV = "load_data_delete_attachments.csv";
     public static final String NAME_LOAD_ASSIGN_ROLES_CSV = "load_data_assign_roles.csv";
     public static final String NAME_LOAD_REMOVE_ROLES_CSV = "load_data_remove_roles.csv";
+    public static final String NAME_LOAD_CHANGE_OBJECT_TYPE_CSV = "load_data_change_object_type.csv";
 
     public static final String PATH_RESOURCES_LOADER_FOLDER = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "vault_loader";
     public static final String PATH_LOAD_DOCUMENTS_CSV = PATH_RESOURCES_LOADER_FOLDER + File.separator + NAME_LOAD_DOCUMENTS_CSV;
@@ -30,6 +31,8 @@ public class LoaderRequestHelper {
     public static final String PATH_LOAD_DELETE_ATTACHMENTS_CSV = PATH_RESOURCES_LOADER_FOLDER + File.separator + NAME_LOAD_DELETE_ATTACHMENTS_CSV;
     public static final String PATH_LOAD_ASSIGN_ROLES_CSV = PATH_RESOURCES_LOADER_FOLDER + File.separator + NAME_LOAD_ASSIGN_ROLES_CSV;
     public static final String PATH_LOAD_REMOVE_ROLES_CSV = PATH_RESOURCES_LOADER_FOLDER + File.separator + NAME_LOAD_REMOVE_ROLES_CSV;
+    public static final String PATH_LOAD_CHANGE_OBJECT_TYPE_CSV = PATH_RESOURCES_LOADER_FOLDER + File.separator + NAME_LOAD_CHANGE_OBJECT_TYPE_CSV;
+    public static final String PATH_RETRIEVE_EXTRACT_TEXT_RESULTS_FILE = PATH_RESOURCES_LOADER_FOLDER + File.separator + "retrieve_extract_text_results.txt";
 
 
     public static QueryResponse queryForDocId(VaultClient vaultClient) {
@@ -97,5 +100,18 @@ public class LoaderRequestHelper {
         }
 
         FileHelper.writeCsvFile(PATH_LOAD_REMOVE_ROLES_CSV, updateData);
+    }
+
+    public static void writeToLoadChangeObjectTypeFile(List<String> recordIds, String objectTypeId) {
+        FileHelper.createFile(PATH_LOAD_CHANGE_OBJECT_TYPE_CSV);
+
+        List<String[]> updateData = new ArrayList<>();
+        updateData.add(new String[]{"id", "object_type__v"});
+
+        for (int i = 0; i < recordIds.size(); i++) {
+            updateData.add(new String[]{recordIds.get(i), objectTypeId});
+        }
+
+        FileHelper.writeCsvFile(PATH_LOAD_CHANGE_OBJECT_TYPE_CSV, updateData);
     }
 }

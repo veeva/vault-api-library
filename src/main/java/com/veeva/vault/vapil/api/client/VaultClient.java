@@ -47,7 +47,7 @@ public class VaultClient {
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v25.2";
+	public static final String VAULT_API_VERSION = "v25.3";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter
@@ -336,15 +336,12 @@ public class VaultClient {
 	 * 	<p>&nbsp;</p>
 	 * 	<p>OAUTH_ACCESS_TOKEN = OAuth OpenID Connect with IDP Access Token</p>
 	 * 	<p>&nbsp;</p>
-	 * 	<p>OAUTH_DISCOVERY = OAuth OpenID Connect with Vault Client Discovery</p>
-	 * 	<p>&nbsp;</p>
 	 * 	<p>SESSION_ID = Existing Vault session ID</p>
 	 *
 	 */
 	public enum AuthenticationType {
 		BASIC("BASIC"),
 		OAUTH_ACCESS_TOKEN("OAUTH_ACCESS_TOKEN"),
-		OAUTH_DISCOVERY("OAUTH_DISCOVERY"),
 		SESSION_ID("SESSION_ID"),
 		NO_AUTH("NO_AUTH");
 
@@ -599,25 +596,6 @@ public class VaultClient {
 					vaultClient.setAuthenticationResponse(authResponse);
 					break;
 
-				case OAUTH_DISCOVERY:
-					if (settings.getVaultUsername() == null || settings.getVaultUsername().isEmpty()) {
-						log.error("Vault user name is required");
-						throw new IllegalArgumentException("Vault user name is required");
-					}
-					if (settings.getIdpPassword() == null || settings.getIdpPassword().isEmpty()) {
-						log.error("IDP password is required");
-						throw new IllegalArgumentException("IDP password is required");
-					}
-					authRequest.setIdpOAuthScope(settings.getIdpOauthScope()); //always pass on oauth scope
-					if (settings.getIdpUsername() != null && !settings.getIdpPassword().isEmpty()) {
-						authRequest.setIdpUserName(settings.getIdpUsername());
-					}
-					if (settings.getVaultOauthClientId() != null && !settings.getVaultOauthClientId().isEmpty()) {
-						authRequest.setVaultOAuthClientId(settings.getVaultOauthClientId());
-					}
-					authResponse = authRequest.loginWithDiscovery(settings.getVaultUsername(), settings.getIdpPassword(), settings.getVaultDNS());
-					vaultClient.setAuthenticationResponse(authResponse);
-					break;
 				case SESSION_ID:
 					if (settings.getVaultSessionId() == null || settings.getVaultSessionId().isEmpty()) {
 						log.error("Vault session ID is required");
@@ -698,32 +676,6 @@ public class VaultClient {
 		 */
 		public Builder withIdpOauthScope(String idpOauthScope) {
 			this.settings.setIdpOauthScope(idpOauthScope);
-			return this;
-		}
-
-		/**
-		 * Initialize with a user's Idp Oauth Password.
-		 * <p>&nbsp;</p>
-		 * Required for OAuth with Discovery
-		 *
-		 * @param idpPassword Idp Oauth Password
-		 * @return {@link Builder}
-		 */
-		public Builder withIdpPassword(String idpPassword) {
-			this.settings.setIdpPassword(idpPassword);
-			return this;
-		}
-
-		/**
-		 * Initialize with a user's Idp Oauth user name.
-		 * <p>&nbsp;</p>
-		 * Required for OAuth with Discovery when Vault and Idp user name do not match
-		 *
-		 * @param idpUsername Idp Oauth user name
-		 * @return {@link Builder}
-		 */
-		public Builder withIdpUsername(String idpUsername) {
-			this.settings.setIdpUsername(idpUsername);
 			return this;
 		}
 

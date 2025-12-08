@@ -24,6 +24,7 @@ public class BulkTranslationRequestTest {
     private static VaultClient vaultClient;
     private static String BULK_IMPORT_TRANSLATION_FILE_NAME = "bulk_translation_test.csv";
     private static String BULK_IMPORT_TRANSLATION_FILE_CSV_PATH = FileHelper.PATH_RESOURCES_FOLDER + "bulk_translation" + File.separator + BULK_IMPORT_TRANSLATION_FILE_NAME;
+    private static String VAPIL_TEST_LABEL_SET_NAME = "vapil_test_label_set__c";
 
     @BeforeAll
     static void setup(VaultClient client) {
@@ -224,6 +225,33 @@ public class BulkTranslationRequestTest {
         public void testResponse() {
             assertTrue(response.isSuccessful());
             assertNotNull(response.getBinaryContent());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully export label set")
+    class TestExportLabelSet {
+
+        private BulkTranslationJobResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(BulkTranslationRequest.class)
+                    .exportLabelSet(VAPIL_TEST_LABEL_SET_NAME);
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getData());
+            assertNotNull(response.getData().getJobId());
+            assertNotNull(response.getData().getUrl());
         }
     }
 }

@@ -1,13 +1,11 @@
 package com.veeva.vault.vapil.api.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.veeva.vault.vapil.api.client.VaultClient;
-import com.veeva.vault.vapil.api.model.common.Job;
 import com.veeva.vault.vapil.api.model.common.LoaderTask;
 import com.veeva.vault.vapil.api.model.builder.LoaderTaskBuilder;
+import com.veeva.vault.vapil.api.model.builder.LoaderTaskBuilder.ExtractOption;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.extension.*;
 import org.junit.jupiter.api.*;
@@ -19,24 +17,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("LoaderRequestTest")
+@Tag("SmokeTest")
 @ExtendWith(VaultClientParameterResolver.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Loader Request should")
 public class LoaderRequestTest {
 
     private static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
+    private static final String VAPIL_OBJECT_TYPE_NAME = "vapil_test_type_1_object__c";
     private static final String PATH_LOAD_OBJECT_RECORDS_CSV = LoaderRequestHelper.PATH_LOAD_OBJECT_RECORDS_CSV;
     private static final String PATH_LOAD_CREATE_ATTACHMENTS_CSV = LoaderRequestHelper.PATH_LOAD_CREATE_ATTACHMENTS_CSV;
     private static final String PATH_LOAD_DELETE_ATTACHMENTS_CSV = LoaderRequestHelper.PATH_LOAD_DELETE_ATTACHMENTS_CSV;
     private static final String PATH_LOAD_ASSIGN_ROLES_CSV = LoaderRequestHelper.PATH_LOAD_ASSIGN_ROLES_CSV;
     private static final String PATH_LOAD_REMOVE_ROLES_CSV = LoaderRequestHelper.PATH_LOAD_REMOVE_ROLES_CSV;
+    private static final String PATH_LOAD_CHANGE_OBJECT_TYPE_CSV = LoaderRequestHelper.PATH_LOAD_CHANGE_OBJECT_TYPE_CSV;
+    private static final String PATH_RETRIEVE_EXTRACT_TEXT_RESULTS_FILE = LoaderRequestHelper.PATH_RETRIEVE_EXTRACT_TEXT_RESULTS_FILE;
 
     private static final String PATH_FILE_STAGING_LOADER_LOAD_OBJECT_RECORDS_CSV = String.format("%s/%s",
             FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_OBJECT_RECORDS_CSV);
@@ -48,6 +50,8 @@ public class LoaderRequestTest {
             FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_ASSIGN_ROLES_CSV);
     private static final String PATH_FILE_STAGING_LOADER_LOAD_REMOVE_ROLES_CSV = String.format("%s/%s",
             FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_REMOVE_ROLES_CSV);
+    private static final String PATH_FILE_STAGING_LOADER_LOAD_CHANGE_OBJECT_TYPE_CSV = String.format("%s/%s",
+            FileStagingHelper.PATH_FILE_STAGING_LOADER_FOLDER, LoaderRequestHelper.NAME_LOAD_CHANGE_OBJECT_TYPE_CSV);
 
     static LoaderTask loaderTask;
     static int loadJobId;
@@ -63,46 +67,11 @@ public class LoaderRequestTest {
         Assertions.assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
     }
 
-//    @AfterAll
-//    static void teardown() {
-//        DocumentBulkResponse response = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-//        Assertions.assertTrue(response.isSuccessful());
-//        for (DocumentResponse documentResponse : response.getData()) {
-//            Assertions.assertTrue(documentResponse.isSuccessful());
-//        }
-//    }
-
-    @Test
-    @Order(1)
-    @DisplayName("successfully create a loader job and load a set of data files")
-    public void testLoadDataObjects() throws InterruptedException {
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode jsonArray = mapper.createArrayNode();
-        jsonArray.addObject()
-                .put("object_type", "documents__v")
-                .put("action", "create")
-                .put("file", PATH_FILE_STAGING_LOADER_LOAD_OBJECT_RECORDS_CSV)
-                .put("order", 1);
-
-        LoaderResponse loadResponse = vaultClient.newRequest(LoaderRequest.class)
-                .setJson(jsonArray.toString())
-                .loadDataObjects();
-
-        Assertions.assertTrue(loadResponse.isSuccessful());
-        Assertions.assertNotNull(loadResponse.getJobId());
-        loadJobId = loadResponse.getJobId();
-        Assertions.assertNotNull(loadResponse.getUrl());
-        Assertions.assertNotNull(loadResponse.getTasks());
-        for (LoaderTask task : loadResponse.getTasks()) {
-            Assertions.assertNotNull(task.getTaskId());
-            loadTasks.add(task.getTaskId());
-        }
-        Thread.sleep(5000);
-    }
 
     @Test
     @Order(2)
     @DisplayName("successfully retrieve success logs of the loader results")
+    @Disabled
     public void testRetrieveLoadSuccessLogResults() {
         for (Integer taskId : loadTasks) {
             VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
@@ -120,11 +89,12 @@ public class LoaderRequestTest {
     @Test
     @Order(3)
     @DisplayName("successfully build a loader task")
+    @Disabled
     public void testBuild() {
         LoaderTaskBuilder taskBuilder = new LoaderTaskBuilder()
                 .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_RENDITIONS)
                 .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_SOURCE)
-                .setObjectType(LoaderTaskBuilder.ObjectType.DOCUMENTS)
+                .setEntityType(LoaderTaskBuilder.EntityType.DOCUMENTS)
                 .addField("id")
                 .addField("name__v")
                 .appendWhere("name__v != 'X'");
@@ -138,28 +108,9 @@ public class LoaderRequestTest {
     }
 
     @Test
-    @Order(4)
-    @DisplayName("successfully create and run a loader job to extract data")
-    public void testExtractDataFiles() throws Exception {
-        LoaderResponse extractResponse = vaultClient.newRequest(LoaderRequest.class)
-                .addLoaderTask(loaderTask)
-                .extractDataFiles();
-
-        Assertions.assertTrue(extractResponse.isSuccessful());
-        Assertions.assertNotNull(extractResponse.getJobId());
-        extractJobId = extractResponse.getJobId();
-        Assertions.assertNotNull(extractResponse.getUrl());
-        Assertions.assertNotNull(extractResponse.getTasks());
-        for (LoaderTask task : extractResponse.getTasks()) {
-            Assertions.assertNotNull(task.getTaskId());
-            extractTasks.add(task.getTaskId());
-        }
-        Thread.sleep(5000);
-    }
-
-    @Test
     @Order(5)
     @DisplayName("successfully retrieve results of a specified job task")
+    @Disabled
     public void testRetrieveLoaderExtractResults() {
         for (Integer taskId : extractTasks) {
             VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
@@ -172,145 +123,13 @@ public class LoaderRequestTest {
     @Test
     @Order(6)
     @DisplayName("successfully retrieve results of a specified job task that includes renditions requested with documents.")
+    @Disabled
     public void testRetrieveLoaderExtractRenditionsResults() {
         for (Integer taskId : extractTasks) {
             VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
                     .retrieveLoaderExtractRenditionsResults(extractJobId, taskId);
             Assertions.assertNotNull(resultResponse);
             Assertions.assertNotNull(resultResponse.getBinaryContent());
-        }
-    }
-
-    @Test
-    @Disabled("Needs Further setup/Eval")
-    public void testExtract() throws Exception {
-        //There are dependencies so an autonomous approach will require duplication.
-        Integer jobId = null;
-        List<Integer> taskIds = new ArrayList<>();
-
-        jobId = 46809;
-        taskIds.add(1);
-
-        LoaderTaskBuilder taskBuilder = new LoaderTaskBuilder()
-                .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_RENDITIONS)
-                .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_SOURCE)
-                .setObjectType(LoaderTaskBuilder.ObjectType.DOCUMENTS)
-                .addField("id")
-                .addField("name__v")
-                .appendWhere("name__v != 'X'");
-
-        System.out.println(taskBuilder.build().toMap());
-
-        LoaderResponse extractResponse = vaultClient.newRequest(LoaderRequest.class)
-                .addLoaderTask(taskBuilder.build())
-                .extractDataFiles();
-
-
-        System.out.println(extractResponse.getResponse());
-
-        if (extractResponse.isSuccessful()) {
-            jobId = extractResponse.getJobId();
-            if (extractResponse.getTasks() != null) {
-                for (LoaderTask tasks : extractResponse.getTasks()) {
-                    taskIds.add(tasks.getTaskId());
-                }
-            }
-        }
-
-        if (jobId != null) {
-            boolean retry = true;
-            while (retry) {
-
-
-                JobStatusResponse jobStatusResponse = vaultClient.newRequest(JobRequest.class).retrieveJobStatus(jobId);
-                if ((jobStatusResponse != null)
-                        && (!jobStatusResponse.hasErrors())
-                        && (jobStatusResponse.getData() != null)) {
-
-                    Job job = jobStatusResponse.getData();
-                    if (job.getRunEndDate() != null) {
-                        retry = false;
-
-                        for (Integer taskId : taskIds) {
-                            VaultResponse resultResponse = vaultClient.newRequest(LoaderRequest.class)
-                                    .retrieveLoaderExtractResults(jobId, taskId);
-                            System.out.println(new String(resultResponse.getBinaryContent()));
-
-                            VaultResponse renditionResponse = vaultClient.newRequest(LoaderRequest.class)
-                                    .retrieveLoaderExtractRenditionsResults(jobId, taskId);
-                            System.out.println(new String(renditionResponse.getBinaryContent()));
-                        }
-                    } else {
-                        //NOTE: MUST WAIT 30 SECONDS!
-                        //{"responseStatus":"FAILURE","errors":[{"type":"API_LIMIT_EXCEEDED","message":"Too many polling requests"}]}
-                        System.out.println("wait 30 seconds - job not complete");
-                        Thread.sleep(30000);
-                    }
-                }
-            }
-        }
-    }
-
-    @Test
-    @Disabled("Needs Further setup/Eval")
-    public void testLoad() throws Exception {
-        //There are dependencies so an autonomous approach will require duplication.
-        Integer jobId = null;
-        List<Integer> taskIds = new ArrayList<>();
-
-        //NOTE: be sure to put a csv file in the FTPS folder at /vapil/products.csv
-        //include all required fields
-        LoaderTaskBuilder taskBuilder = new LoaderTaskBuilder()
-                .setAction(LoaderTaskBuilder.Action.CREATE)
-                .setFile("/vapil/products.csv")
-                .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
-                .setObject("product__v");
-
-        LoaderResponse loadResponse = vaultClient.newRequest(LoaderRequest.class)
-                .addLoaderTask(taskBuilder.build())
-                .loadDataObjects();
-
-        System.out.println(loadResponse.getResponse());
-
-        if (loadResponse.isSuccessful()) {
-            jobId = loadResponse.getJobId();
-            if (loadResponse.getTasks() != null) {
-                for (LoaderTask tasks : loadResponse.getTasks()) {
-                    taskIds.add(tasks.getTaskId());
-                }
-            }
-        }
-
-        if (jobId != null) {
-            boolean retry = true;
-            while (retry) {
-                JobStatusResponse jobStatusResponse = vaultClient.newRequest(JobRequest.class).retrieveJobStatus(jobId);
-                if ((jobStatusResponse != null)
-                        && (!jobStatusResponse.hasErrors())
-                        && (jobStatusResponse.getData() != null)) {
-
-                    Job job = jobStatusResponse.getData();
-                    if (job.getRunEndDate() != null) {
-                        retry = false;
-
-                        for (Integer taskId : taskIds) {
-                            VaultResponse successLogResults = vaultClient.newRequest(LoaderRequest.class)
-                                    .retrieveLoadSuccessLogResults(jobId, taskId);
-                            System.out.println(new String(successLogResults.getBinaryContent()));
-
-                            VaultResponse failureLogResults = vaultClient.newRequest(LoaderRequest.class)
-                                    .retrieveLoadFailureLogResults(jobId, taskId);
-                            System.out.println(new String(failureLogResults.getBinaryContent()));
-                        }
-                    }
-                    else {
-                        //NOTE: MUST WAIT 30 SECONDS!
-                        //{"responseStatus":"FAILURE","errors":[{"type":"API_LIMIT_EXCEEDED","message":"Too many polling requests"}]}
-                        System.out.println("wait 30 seconds - job not complete");
-                        Thread.sleep(30000);
-                    }
-                }
-            }
         }
     }
 
@@ -372,7 +191,7 @@ public class LoaderRequestTest {
         public void testRequest() throws Exception {
             LoaderTask loaderTask = new LoaderTaskBuilder()
                     .setAction(LoaderTaskBuilder.Action.CREATE)
-                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setEntityType(LoaderTaskBuilder.EntityType.OBJECTS)
                     .setObject(OBJECT_NAME)
                     .setFile(PATH_FILE_STAGING_LOADER_LOAD_OBJECT_RECORDS_CSV)
                     .setRecordMigrationMode(true)
@@ -396,7 +215,7 @@ public class LoaderRequestTest {
             for (LoaderTask task : response.getTasks()) {
                 assertNotNull(task.getTaskId());
                 assertNotNull(task.getAction());
-                assertNotNull(task.getObjectType());
+                assertNotNull(task.getEntityType());
                 assertNotNull(task.getFile());
                 assertNotNull(task.getRecordMigrationMode());
                 assertNotNull(task.getNoTriggers());
@@ -453,7 +272,7 @@ public class LoaderRequestTest {
         public void testRequest() throws Exception {
             LoaderTask loaderTask = new LoaderTaskBuilder()
                     .setAction(LoaderTaskBuilder.Action.CREATE_ATTACHMENTS)
-                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setEntityType(LoaderTaskBuilder.EntityType.OBJECTS)
                     .setObject(OBJECT_NAME)
                     .setFile(PATH_FILE_STAGING_LOADER_LOAD_CREATE_ATTACHMENTS_CSV)
                     .build();
@@ -475,7 +294,7 @@ public class LoaderRequestTest {
             for (LoaderTask task : response.getTasks()) {
                 assertNotNull(task.getTaskId());
                 assertNotNull(task.getAction());
-                assertNotNull(task.getObjectType());
+                assertNotNull(task.getEntityType());
                 assertNotNull(task.getFile());
             }
 
@@ -538,7 +357,7 @@ public class LoaderRequestTest {
         public void testRequest() throws Exception {
             LoaderTask loaderTask = new LoaderTaskBuilder()
                     .setAction(LoaderTaskBuilder.Action.DELETE_ATTACHMENTS)
-                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setEntityType(LoaderTaskBuilder.EntityType.OBJECTS)
                     .setObject(OBJECT_NAME)
                     .setFile(PATH_FILE_STAGING_LOADER_LOAD_DELETE_ATTACHMENTS_CSV)
                     .build();
@@ -560,7 +379,7 @@ public class LoaderRequestTest {
             for (LoaderTask task : response.getTasks()) {
                 assertNotNull(task.getTaskId());
                 assertNotNull(task.getAction());
-                assertNotNull(task.getObjectType());
+                assertNotNull(task.getEntityType());
                 assertNotNull(task.getFile());
             }
 
@@ -615,7 +434,7 @@ public class LoaderRequestTest {
         public void testRequest() throws Exception {
             LoaderTask loaderTask = new LoaderTaskBuilder()
                     .setAction(LoaderTaskBuilder.Action.ASSIGN_ROLES)
-                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setEntityType(LoaderTaskBuilder.EntityType.OBJECTS)
                     .setObject(OBJECT_NAME)
                     .setFile(PATH_FILE_STAGING_LOADER_LOAD_ASSIGN_ROLES_CSV)
                     .build();
@@ -637,7 +456,7 @@ public class LoaderRequestTest {
             for (LoaderTask task : response.getTasks()) {
                 assertNotNull(task.getTaskId());
                 assertNotNull(task.getAction());
-                assertNotNull(task.getObjectType());
+                assertNotNull(task.getEntityType());
                 assertNotNull(task.getFile());
             }
 
@@ -705,7 +524,7 @@ public class LoaderRequestTest {
         public void testRequest() throws Exception {
             LoaderTask loaderTask = new LoaderTaskBuilder()
                     .setAction(LoaderTaskBuilder.Action.REMOVE_ROLES)
-                    .setObjectType(LoaderTaskBuilder.ObjectType.OBJECTS)
+                    .setEntityType(LoaderTaskBuilder.EntityType.OBJECTS)
                     .setObject(OBJECT_NAME)
                     .setFile(PATH_FILE_STAGING_LOADER_LOAD_REMOVE_ROLES_CSV)
                     .build();
@@ -727,11 +546,231 @@ public class LoaderRequestTest {
             for (LoaderTask task : response.getTasks()) {
                 assertNotNull(task.getTaskId());
                 assertNotNull(task.getAction());
-                assertNotNull(task.getObjectType());
+                assertNotNull(task.getEntityType());
                 assertNotNull(task.getFile());
             }
 
             jobId = response.getJobId();
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully change object type on object records")
+    class TestLoadDataChangeObjectType {
+        LoaderResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        int jobId;
+
+        @BeforeAll
+        public void setup() throws IOException {
+//            Create a record to attach the file to
+            ObjectRecordBulkResponse createRecordsResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
+            assertTrue(createRecordsResponse.isSuccessful());
+            assertTrue(createRecordsResponse.getData().get(0).isSuccessful());
+            recordIds.add(createRecordsResponse.getData().get(0).getData().getId());
+
+//            Query for object_type__v record
+            String objectTypeQuery = """
+                    SELECT id
+                    FROM object_type__v
+                    WHERE api_name__v = '%s'
+                    """.formatted(VAPIL_OBJECT_TYPE_NAME);
+
+            QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class)
+                    .query(objectTypeQuery);
+            assertFalse(queryResponse.isFailure());
+            String objectTypeId = queryResponse.getData().get(0).getString("id");
+
+//            Write to CSV File
+            LoaderRequestHelper.writeToLoadChangeObjectTypeFile(recordIds, objectTypeId);
+
+//            Upload the CSV file to File Staging
+            File file = new File(PATH_LOAD_CHANGE_OBJECT_TYPE_CSV);
+            FileStagingHelper.createFileOnFileStaging(vaultClient, file, PATH_FILE_STAGING_LOADER_LOAD_CHANGE_OBJECT_TYPE_CSV, true);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Wait for job completion
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+            VaultResponse loadResultsResponse = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoadSuccessLogResults(jobId, 1);
+            assertNotNull(loadResultsResponse);
+            assertTrue(loadResultsResponse.isSuccessful());
+
+//            Delete the records
+            ObjectRecordBulkResponse deleteRecordsResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteRecordsResponse.isSuccessful());
+            for (ObjectRecordResponse recordResponse : deleteRecordsResponse.getData()) {
+                assertTrue(recordResponse.isSuccessful());
+            }
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setAction(LoaderTaskBuilder.Action.UPDATE)
+                    .setEntityType(LoaderTaskBuilder.EntityType.OBJECTS)
+                    .setObject(OBJECT_NAME)
+                    .setChangeObjectType(true)
+                    .setFile(PATH_FILE_STAGING_LOADER_LOAD_CHANGE_OBJECT_TYPE_CSV)
+                    .build();
+
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTask(loaderTask)
+                    .loadDataObjects();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getUrl());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getTasks());
+            for (LoaderTask task : response.getTasks()) {
+                assertNotNull(task.getTaskId());
+                assertNotNull(task.getAction());
+                assertNotNull(task.getEntityType());
+                assertNotNull(task.getFile());
+                assertNotNull(task.getChangeObjectType());
+            }
+
+            jobId = response.getJobId();
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully extract data files (documents) with include text option")
+    class TestExtractDataFilesIncludeText {
+        LoaderResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            List<LoaderTask> loaderTasks = new ArrayList<>();
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setEntityType(LoaderTaskBuilder.EntityType.DOCUMENTS)
+                    .setFields(List.of("id", "name__v"))
+                    .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_TEXT)
+                    .build();
+            loaderTasks.add(loaderTask);
+
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTasks(loaderTasks)
+                    .extractDataFiles();
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getUrl());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getTasks());
+            for (LoaderTask task : response.getTasks()) {
+                assertNotNull(task.getTaskId());
+                assertNotNull(task.getExtractOptions());
+                assertNotNull(task.getEntityType());
+                assertNotNull(task.getFields());
+            }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve text extract results from a loader job as binary")
+    class TestRetrieveLoaderExtractTextResultsBinary {
+        VaultResponse response = null;
+        int jobId;
+
+        @BeforeAll
+        public void setup() throws Exception {
+            List<LoaderTask> loaderTasks = new ArrayList<>();
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setEntityType(LoaderTaskBuilder.EntityType.DOCUMENTS)
+                    .setFields(List.of("id", "name__v"))
+                    .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_TEXT)
+                    .build();
+            loaderTasks.add(loaderTask);
+
+            LoaderResponse response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTasks(loaderTasks)
+                    .extractDataFiles();
+            assertTrue(response.isSuccessful());
+            jobId = response.getJobId();
+
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .retrieveLoaderExtractTextResults(jobId, 1);
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getBinaryContent());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve text extract results from a loader job as file")
+    class TestRetrieveLoaderExtractTextResultsFile {
+        VaultResponse response = null;
+        int jobId;
+
+        @BeforeAll
+        public void setup() throws Exception {
+            List<LoaderTask> loaderTasks = new ArrayList<>();
+            LoaderTask loaderTask = new LoaderTaskBuilder()
+                    .setEntityType(LoaderTaskBuilder.EntityType.DOCUMENTS)
+                    .setFields(List.of("id", "name__v"))
+                    .addExtractOption(LoaderTaskBuilder.ExtractOption.INCLUDE_TEXT)
+                    .build();
+            loaderTasks.add(loaderTask);
+
+            LoaderResponse response = vaultClient.newRequest(LoaderRequest.class)
+                    .addLoaderTasks(loaderTasks)
+                    .extractDataFiles();
+            assertTrue(response.isSuccessful());
+            jobId = response.getJobId();
+
+            JobStatusHelper.checkJobCompletion(vaultClient, jobId);
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() throws Exception {
+            response = vaultClient.newRequest(LoaderRequest.class)
+                    .setOutputPath(PATH_RETRIEVE_EXTRACT_TEXT_RESULTS_FILE)
+                    .retrieveLoaderExtractTextResults(jobId, 1);
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
         }
     }
 

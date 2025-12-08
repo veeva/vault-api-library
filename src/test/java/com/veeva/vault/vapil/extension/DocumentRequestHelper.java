@@ -1,5 +1,8 @@
 package com.veeva.vault.vapil.extension;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.DocumentBulkResponse;
 import com.veeva.vault.vapil.api.model.response.QueryResponse;
@@ -7,8 +10,10 @@ import com.veeva.vault.vapil.api.request.DocumentRequest;
 import com.veeva.vault.vapil.api.request.QueryRequest;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,6 +43,8 @@ public class DocumentRequestHelper {
     public static final String PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "create_multiple_document_versions.csv";
     public static final String PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "reclassify_multiple_documents.csv";
     public static final String PATH_UNDO_COLLAB_CHECKOUT_CSV = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "undo_collab_checkout.csv";
+    public static final String PATH_EXPORT_DOCUMENTS_JSON = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "export_documents.json";
+    public static final String PATH_EXPORT_DOCUMENT_VERSIONS_JSON = PATH_RESOURCES_DOCUMENTS_FOLDER + File.separator + "export_document_versions.json";
 
 
     public static QueryResponse queryForDocId(VaultClient vaultClient) {
@@ -125,6 +132,42 @@ public class DocumentRequestHelper {
         }
 
         FileHelper.writeCsvFile(PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV, data);
+    }
+
+    public static void writeToExportDocumentsFile(List<Integer> docIds) throws IOException {
+        FileHelper.createFile(PATH_EXPORT_DOCUMENTS_JSON);
+        File exportDocumentsFile = new File(PATH_EXPORT_DOCUMENTS_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode rootNode = mapper.createArrayNode();
+        int size = docIds.size();
+
+        for (int i = 0; i < size; i++) {
+            ObjectNode docNode = mapper.createObjectNode();
+            docNode.put("id", docIds.get(i));
+            rootNode.add(docNode);
+        }
+
+        mapper.writerWithDefaultPrettyPrinter().writeValue(exportDocumentsFile, rootNode);
+    }
+
+    public static void writeToExportDocumentVersionsFile(List<HashMap<String, Integer>> docVersions) throws IOException {
+        FileHelper.createFile(PATH_EXPORT_DOCUMENT_VERSIONS_JSON);
+        File exportDocumentsFile = new File(PATH_EXPORT_DOCUMENT_VERSIONS_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode rootNode = mapper.createArrayNode();
+        int size = docVersions.size();
+
+        for (int i = 0; i < size; i++) {
+            ObjectNode docNode = mapper.createObjectNode();
+            docNode.put("id", docVersions.get(0).get("id"));
+            docNode.put("major_version_number__v", docVersions.get(0).get("major_version_number__v"));
+            docNode.put("minor_version_number__v", docVersions.get(0).get("minor_version_number__v"));
+            rootNode.add(docNode);
+        }
+
+        mapper.writerWithDefaultPrettyPrinter().writeValue(exportDocumentsFile, rootNode);
     }
 
     public static DocumentBulkResponse createMultipleDocuments(VaultClient vaultClient, int numOfDocuments) {

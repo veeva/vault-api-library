@@ -16,7 +16,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Document Lifecycle requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#document-lifecycle">https://developer.veevavault.com/api/25.2/#document-lifecycle</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#document-lifecycle">https://developer.veevavault.com/api/25.3/#document-lifecycle</a>
  */
 public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequest> {
 
@@ -72,7 +72,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentActionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-document-user-actions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-document-user-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-user-actions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-user-actions</a>
 	 * @vapil.request <pre>
 	 * DocumentActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.retrieveDocumentUserActions(docId, majorVersion, minorVersion);
@@ -117,7 +117,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentActionResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-user-actions-on-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-user-actions-on-multiple-documents</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-user-actions-on-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-user-actions-on-multiple-documents</a>
 	 * @vapil.request <pre>
 	 * DocumentActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.retrieveUserActionsOnMultipleDocuments(docIds);
@@ -163,7 +163,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentActionEntryCriteriaResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-document-entry-criteria' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-document-entry-criteria</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-entry-criteria' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-entry-criteria</a>
 	 * @vapil.request <pre>
 	 * DocumentActionEntryCriteriaResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.retrieveDocumentEntryCriteria(docId, majorVersion, minorVersion, userActionName);
@@ -203,7 +203,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentActionInitiateResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-document-user-action' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-document-user-action</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-document-user-action' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-document-user-action</a>
 	 * @vapil.request <pre>
 	 * DocumentActionInitiateResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.initiateDocumentUserAction(docId, majorVersion, minorVersion, userActionName);
@@ -246,7 +246,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/lifecycle_actions/{user_action_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-bulk-document-user-actions' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-bulk-document-user-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-bulk-document-user-actions' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-bulk-document-user-actions</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.initiateBulkDocumentUserActions(userActionName, docIds, lifecycle, state);
@@ -280,7 +280,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return BinderActionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{id}/versions/{major_version}/{minor_version}/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-binder-user-actions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-binder-user-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-binder-user-actions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-binder-user-actions</a>
 	 * @vapil.request <pre>
 	 * BinderActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.retrieveBinderUserActions(binderId, majorVersion, minorVersion);
@@ -325,7 +325,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return BinderActionResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders/lifecycle_actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-user-actions-on-multiple-binders' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-user-actions-on-multiple-binders</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-user-actions-on-multiple-binders' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-user-actions-on-multiple-binders</a>
 	 * @vapil.request <pre>
 	 * BinderActionResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.retrieveUserActionsOnMultipleBinders(binderIds);
@@ -371,7 +371,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return BinderActionEntryCriteriaResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}/entry_requirements</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-binder-entry-criteria' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-binder-entry-criteria</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-binder-entry-criteria' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-binder-entry-criteria</a>
 	 * @vapil.request <pre>
 	 * BinderActionEntryCriteriaResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.retrieveBinderEntryCriteria(binderId, majorVersion, minorVersion, userActionName);
@@ -411,7 +411,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return BinderActionInitiateResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/binders/{id}/versions/{major_version}/{minor_version}/lifecycle_actions/{name__v}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-binder-user-action' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-binder-user-action</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-binder-user-action' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-binder-user-action</a>
 	 * @vapil.request <pre>
 	 * BinderActionInitiateResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.initiateBinderUserAction(binderId, majorVersion, minorVersion, userActionName);
@@ -450,7 +450,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/binders/lifecycle_actions/{user_action_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-bulk-binder-user-actions' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-bulk-binder-user-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-bulk-binder-user-actions' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-bulk-binder-user-actions</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 		.initiateBulkBinderUserActions(userActionName, binderIds, lifecycle, state);
@@ -488,7 +488,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/actions/{lifecycle.state.action}/{job_id}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-controlled-copy-job-results' target='_blank'>https://developer.veevavault.com/api/25.2/#download-controlled-copy-job-results</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-controlled-copy-job-results' target='_blank'>https://developer.veevavault.com/api/25.3/#download-controlled-copy-job-results</a>
 	 */
 	public VaultResponse downloadControlledCopyJobResult(String lifecycleStateAction, int jobId) {
 
@@ -508,7 +508,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentLifecycleRoleAssignmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-lifecycle-role-assignment-rules-default-amp-override' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-lifecycle-role-assignment-rules-default-amp-override</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-lifecycle-role-assignment-rules-default-amp-override' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-lifecycle-role-assignment-rules-default-amp-override</a>
 	 * @vapil.request <pre>
 	 * DocumentLifecycleRoleAssignmentResponse resp = vaultClient.newRequest(DocumentLifecycleRequest.class)
 	 * 				.setLifecycleName("general_lifecycle1__c").setRoleName("all_users__v")
@@ -587,7 +587,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return LifecycleRoleAssignmentRulesResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#create-override-rules' target='_blank'>https://developer.veevavault.com/api/25.2/#create-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-override-rules' target='_blank'>https://developer.veevavault.com/api/25.3/#create-override-rules</a>
 	 * @vapil.request <pre>
 	 * .newRequest(DocumentLifecycleRequest.class).setInputPath(csvFilePath).createOverrideRules();</pre>
 	 * @vapil.response <pre>System.out.println(bulkPathResponse.getResponse());
@@ -639,7 +639,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return LifecycleRoleAssignmentRulesResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/25.2/#update-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/25.3/#update-override-rules</a>
 	 * @vapil.request <pre>
 	 * .newRequest(DocumentLifecycleRequest.class).setInputPath(csvFilePath).updateOverrideRules();</pre>
 	 * @vapil.response <pre>System.out.println(updateOverrideRulesResponse.getResponse());
@@ -686,7 +686,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentLifecycleDeleteOverrideRulesResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/25.2/#update-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-override-rules' target='_blank'>https://developer.veevavault.com/api/25.3/#update-override-rules</a>
 	 * @vapil.request <pre>
 	 * .newRequest(DocumentLifecycleRequest.class)
 	 * 					.deleteOverrideRules(lifecycle, role);</pre>
@@ -740,7 +740,7 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 	 * @return DocumentLifecycleDeleteOverrideRulesResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/configuration/role_assignment_rule</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#delete-override-rules' target='_blank'>https://developer.veevavault.com/api/25.2/#delete-override-rules</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-override-rules' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-override-rules</a>
 	 */
 	public DocumentLifecycleDeleteOverrideRulesResponse deleteOverrideRules() {
 		String url = vaultClient.getAPIEndpoint(URL_DELETE_OVERRIDE_RULES);

@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Job - Retrieve Job Status Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#jobs">https://developer.veevavault.com/api/25.2/#jobs</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#jobs">https://developer.veevavault.com/api/25.3/#jobs</a>
  */
 public class JobRequest extends VaultRequest<JobRequest> {
 
@@ -27,6 +27,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	private static final String URL_JOB_MONITORS = "/services/jobs/monitors";
 	private static final String URL_JOB_TASKS = "/services/jobs/{job_id}/tasks";
 	private static final String URL_JOB_START_NOW = "/services/jobs/start_now/{job_id}";
+	private static final String URL_JOB_CANCEL = "/services/jobs/actions/cancel";
 
 	// API Request Parameters
 	private ZonedDateTime endDate;
@@ -34,7 +35,12 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	private Integer offset;
 	private String status;
 	private ZonedDateTime startDate;
+	private HttpRequestConnector.BinaryFile binaryFile;
+	private String inputPath;
+	private String requestString;
+	private String headerContentType;
 	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
 
 	private JobRequest() {
 	}
@@ -56,7 +62,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobHistoryResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-job-histories</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-job-histories</a>
 	 * @vapil.request <pre>
 	 * JobHistoryResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobHistories();</pre>
 	 * @vapil.response <pre>
@@ -101,7 +107,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobHistoryResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-job-histories</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-job-histories' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-job-histories</a>
 	 * @vapil.request <pre>
 	 * JobHistoryResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
 	 * 		.retrieveJobHistoriesByPage(response.getResponseDetails().getNextPage());</pre>
@@ -123,7 +129,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobMonitorResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/monitors</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-job-monitors</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-job-monitors</a>
 	 * @vapil.request <pre>
 	 * JobMonitorResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobMonitors();</pre>
 	 * @vapil.response <pre>
@@ -166,7 +172,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobMonitorResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/monitors</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-job-monitors</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-job-monitors' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-job-monitors</a>
 	 * @vapil.request <pre>
 	 * JobMonitorResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
 	 * 		.retrieveJobMonitorsByPage(response.getResponseDetails().getNextPage());</pre>
@@ -193,7 +199,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobStatusResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-job-status' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-job-status</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-job-status' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-job-status</a>
 	 * @vapil.request <pre>
 	 * JobStatusResponse response = vaultClient.newRequest(JobRequest.class).retrieveJobStatus(jobId);</pre>
 	 * @vapil.response <pre>
@@ -225,7 +231,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobTaskResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-sdk-job-tasks' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-job-tasks</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-sdk-job-tasks' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-job-tasks</a>
 	 * @vapil.request <pre>
 	 * JobTaskResponse response = vaultClient.newRequest(JobRequest.class)
 	 * 		.retrieveSdkJobTasks(jobId);
@@ -266,7 +272,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobTaskResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/jobs/{job_id}/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-job-tasks' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-job-tasks</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-job-tasks' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-job-tasks</a>
 	 * @vapil.request <pre>
 	 * JobTaskResponse paginatedResponse = vaultClient.newRequest(JobRequest.class)
 	 * 		.retrieveJobTasksByPage(response.getResponseDetails().getNextPage());</pre>
@@ -311,7 +317,7 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/jobs/start_now/{job_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#start-job' target='_blank'>https://developer.veevavault.com/api/25.2/#start-job</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#start-job' target='_blank'>https://developer.veevavault.com/api/25.3/#start-job</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse response = vaultClient.newRequest(JobRequest.class).startJob(jobId);</pre>
 	 * @vapil.response <pre>
@@ -328,6 +334,50 @@ public class JobRequest extends VaultRequest<JobRequest> {
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
 		return send(HttpMethod.POST, request, JobCreateResponse.class);
+	}
+
+	/**
+	 * Cancel Job
+	 * <p>
+	 * Request to cancel up to 500 job instances. Once cancelled, the job moves to the CANCELLED state.
+	 *
+	 * This is analogous to the Start Now option in the Vault UI.
+	 *
+	 * @return JobCancelBulkResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/services/jobs/actions/cancel</pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#cancel-job' target='_blank'>https://developer.veevavault.com/api/25.3/#cancel-job</a>
+	 * @vapil.request <pre>
+	 * JobCancelBulkResponse response = vaultClient.newRequest(JobRequest.class)
+	 * 		.setInputPath(inputPath)
+	 * 		.cancelJob();
+	 * </pre>
+	 * @vapil.response <pre>
+	 * for (JobCancelBulkResponse.JobCancelResponse cancelResponse : response.getData()) {
+	 * 		System.out.println("Response Status: " + cancelResponse.getResponseStatus());
+	 * 		System.out.println("Job ID: " + cancelResponse.getData().getId());
+	 * }
+	 * </pre>
+	 */
+	public JobCancelBulkResponse cancelJob() {
+		String url = vaultClient.getAPIEndpoint(URL_JOB_CANCEL);
+		HttpRequestConnector request = new HttpRequestConnector(url);
+
+		String contentType = HttpRequestConnector.HTTP_CONTENT_TYPE_JSON;
+		if (headerContentType != null)
+			contentType = headerContentType;
+
+		if (inputPath != null) {
+			request.addFile(contentType, inputPath);
+		}
+
+		if (binaryFile != null)
+			request.addBinary(contentType, binaryFile.getBinaryContent());
+
+		if (requestString != null && !requestString.isEmpty())
+			request.addRawString(contentType, requestString);
+
+		return send(HttpMethod.POST, request, JobCancelBulkResponse.class);
 	}
 
 	/*
@@ -402,6 +452,62 @@ public class JobRequest extends VaultRequest<JobRequest> {
 	}
 
 	/**
+	 * Set the Header Content Type to CSV
+	 *
+	 * @return JobRequest
+	 */
+	public JobRequest setContentTypeCsv() {
+		this.headerContentType = HttpRequestConnector.HTTP_CONTENT_TYPE_CSV;
+		return this;
+	}
+
+	/**
+	 * Set the Header Content Type to JSON
+	 *
+	 * @return JobRequest
+	 */
+	public JobRequest setContentTypeJson() {
+		this.headerContentType = HttpRequestConnector.HTTP_CONTENT_TYPE_JSON;
+		return this;
+	}
+
+	/**
+	 * Specify source data in an input string, such as a JSON request
+	 *
+	 * @param requestString The source request as a string
+	 * @return JobRequest
+	 */
+	public JobRequest setRequestString(String requestString) {
+		this.requestString = requestString;
+		return this;
+	}
+
+	/**
+	 * Specify source data in an input file
+	 *
+	 * @param filename      file name (no path)
+	 * @param binaryContent byte array of the file content
+	 *
+	 * @return JobRequest
+	 */
+	public JobRequest setBinaryFile(String filename, byte[] binaryContent) {
+		this.binaryFile = new HttpRequestConnector.BinaryFile(filename, binaryContent);
+		return this;
+	}
+
+	/**
+	 * Specify source data in an input file
+	 *
+	 * @param inputPath Absolute path to the file for the request
+	 *
+	 * @return JobRequest
+	 */
+	public JobRequest setInputPath(String inputPath) {
+		this.inputPath = inputPath;
+		return this;
+	}
+
+	/**
 	 * Converts the date to the proper string format expected by the API
 	 *
 	 * @param date        The date to convert
@@ -412,5 +518,4 @@ public class JobRequest extends VaultRequest<JobRequest> {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
 		return date.format(formatter);
 	}
-
 }

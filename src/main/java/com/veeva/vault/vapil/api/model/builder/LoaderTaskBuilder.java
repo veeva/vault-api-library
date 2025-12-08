@@ -104,7 +104,8 @@ public class LoaderTaskBuilder {
 
 	public enum ExtractOption {
 		INCLUDE_SOURCE("include_source__v"),
-		INCLUDE_RENDITIONS("include_renditions__v");
+		INCLUDE_RENDITIONS("include_renditions__v"),
+		INCLUDE_TEXT("include_text__v");
 
 		String apiName;
 
@@ -147,12 +148,17 @@ public class LoaderTaskBuilder {
 		return this;
 	}
 
+	public LoaderTaskBuilder setChangeObjectType(Boolean changeObjectType) {
+		loaderTask.setChangeObjectType(changeObjectType);
+		return this;
+	}
+
 	public LoaderTaskBuilder setNoTriggers(Boolean noTriggers) {
 		loaderTask.setNoTriggers(noTriggers);
 		return this;
 	}
 
-	public enum ObjectType {
+	public enum EntityType {
 		DOCUMENTS("documents__v"),
 		DOCUMENT_ATTACHMENTS("document_attachments__v"),
 		DOCUMENT_RELATIONSHIPS("document_relationships__v"),
@@ -165,7 +171,7 @@ public class LoaderTaskBuilder {
 
 		String apiName;
 
-		ObjectType(String apiName) {
+		EntityType(String apiName) {
 			this.apiName = apiName;
 		}
 
@@ -174,11 +180,11 @@ public class LoaderTaskBuilder {
 		}
 	}
 
-	public LoaderTaskBuilder setObjectType(ObjectType objectType) {
-		if (objectType != null) {
-			loaderTask.setObjectType(objectType.getApiName());
+	public LoaderTaskBuilder setEntityType(EntityType entityType) {
+		if (entityType != null) {
+			loaderTask.setEntityType(entityType.getApiName());
 		} else {
-			loaderTask.setObjectType(null);
+			loaderTask.setEntityType(null);
 		}
 
 		return this;

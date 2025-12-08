@@ -7,7 +7,6 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.extension.ObjectRecordRequestHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
-import okhttp3.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -249,10 +248,22 @@ class ObjectLifecycleWorkflowRequestTest {
             ObjectMultiRecordWorkflowInitiateResponse workflowResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
                     .setBodyParams(bodyParams)
                     .initiateMultiRecordWorkflow(MULTI_RECORD_WORKFLOW_NAME);
-
             assertTrue(workflowResponse.isSuccessful());
             workflowIds.add(Integer.parseInt(workflowResponse.getData().getWorkflowId()));
             envelopeId = workflowResponse.getData().getRecordId();
+            Thread.sleep(2000);
+
+//            Query for Job Step ID
+            String query = String.format("SELECT id FROM active_workflow_job__sys WHERE workflow__sys = %s", workflowIds.get(0));
+            QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class)
+                    .query(query);
+            assertTrue(queryResponse.isSuccessful());
+            String jobStepId = queryResponse.getData().get(0).getString("id");
+
+//            Complete Job Step
+            VaultResponse completeJobStepResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+                    .completeJobStep(jobStepId, ObjectLifecycleWorkflowRequest.CompletionStatus.SUCCESS);
+            assertTrue(completeJobStepResponse.isSuccessful());
             Thread.sleep(2000);
 
 //            Get a Task ID
@@ -293,6 +304,78 @@ class ObjectLifecycleWorkflowRequestTest {
 
             Assertions.assertNotNull(response);
 
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @Tag("SmokeTest")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully complete a workflow job step")
+    class TestCompleteJobStep {
+
+        VaultResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        String workflowId = null;
+        String jobStepId = null;
+
+        @BeforeAll
+        public void setup() throws InterruptedException, IOException {
+//            Create Object record
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
+            assertTrue(createResponse.isSuccessful());
+
+            for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
+                assertTrue(objectRecordResponse.isSuccessful());
+                recordIds.add(objectRecordResponse.getData().getId());
+            }
+            Thread.sleep(3000);
+
+//            Initiate Workflow on Object record
+            Map<String, Object> bodyParams = new HashMap<>();
+            bodyParams.put("contents__sys", String.format("Object:%s.%s", OBJECT_NAME, recordIds.get(0)));
+            bodyParams.put("description__sys", "Description for Test Workflow");
+
+            ObjectMultiRecordWorkflowInitiateResponse initiateWorkflowResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+                    .setBodyParams(bodyParams)
+                    .initiateMultiRecordWorkflow(MULTI_RECORD_WORKFLOW_NAME);
+            assertTrue(initiateWorkflowResponse.isSuccessful());
+            workflowId = initiateWorkflowResponse.getData().getWorkflowId();
+            Thread.sleep(3000);
+
+//            Query for Job Step ID
+            String query = String.format("SELECT id FROM active_workflow_job__sys WHERE workflow__sys = %s", workflowId);
+            QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class)
+                    .query(query);
+            assertTrue(queryResponse.isSuccessful());
+            jobStepId = queryResponse.getData().get(0).getString("id");
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Cancel Workflow
+            VaultResponse actionResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+                    .initiateWorkflowAction(Integer.parseInt(workflowId), "cancel");
+            assertTrue(actionResponse.isSuccessful());
+
+//            Delete Object record
+            ObjectRecordBulkResponse deleteResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        void testRequest() {
+            response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+                    .completeJobStep(jobStepId, ObjectLifecycleWorkflowRequest.CompletionStatus.SUCCESS);
+
+            Assertions.assertNotNull(response);
         }
 
         @Test

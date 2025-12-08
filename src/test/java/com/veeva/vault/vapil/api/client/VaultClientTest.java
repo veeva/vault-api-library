@@ -49,10 +49,9 @@ public class VaultClientTest {
             HttpRequestConnector request = new HttpRequestConnector(oauthTokenSettingsNode.get("idpAccessTokenUrl").asText());
             request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
             request.addBodyParam("grant_type", oauthTokenSettingsNode.get("idpGrantType").asText());
-            request.addBodyParam("username", oauthTokenSettingsNode.get("idpUsername").asText());
-            request.addBodyParam("password", oauthTokenSettingsNode.get("idpPassword").asText());
             request.addBodyParam("scope", oauthTokenSettingsNode.get("idpOauthScope").asText());
             request.addBodyParam("client_id", oauthTokenSettingsNode.get("idpClientId").asText());
+            request.addBodyParam("client_secret", oauthTokenSettingsNode.get("idpClientSecret").asText());
 
             HttpResponseConnector response = request.sendPost();
             OauthTokenResponse tokenResponse = getBaseObjectMapper().readValue(response.getResponse(), OauthTokenResponse.class);
@@ -430,103 +429,6 @@ public class VaultClientTest {
         public void testRequest() {
             VaultClient testClient = VaultClient
                     .newClientBuilderFromSettings(oauthTokenSettingsFile)
-                    .build();
-
-            assertNotNull(testClient.getAuthenticationResponse());
-            authResponse = testClient.getAuthenticationResponse();
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertEquals("SUCCESS", authResponse.getResponseStatus());
-            assertNotNull(authResponse.getSessionId());
-            assertNotNull(authResponse.getVaultId());
-            assertNotNull(authResponse.getResponse());
-            assertNotNull(authResponse.getUserId());
-            assertNotNull(authResponse.getVaultIds());
-            for (AuthenticationResponse.Vault vault : authResponse.getVaultIds()) {
-                assertNotNull(vault.getId());
-                assertNotNull(vault.getName());
-                assertNotNull(vault.getUrl());
-            }
-        }
-    }
-
-    @Disabled
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully build a client with Oauth Discovery credentials")
-    class TestAuthenticationTypeOAuthDiscovery {
-        private JsonNode oauthDiscoverySettingsNode;
-        private AuthenticationResponse authResponse = null;
-
-        @BeforeAll
-        public void setup() {
-            String oauthTokenSettings = "settings_vapil_oauth_discovery.json";
-            File oauthTokenSettingsFile = FileHelper.getSettingsFile(oauthTokenSettings);
-            oauthDiscoverySettingsNode = FileHelper.readSettingsFile(oauthTokenSettingsFile);
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            String oauthToken = getOauthToken(oauthDiscoverySettingsNode);
-            VaultClient testClient = VaultClient
-                    .newClientBuilder(VaultClient.AuthenticationType.OAUTH_DISCOVERY)
-                    .withVaultClientId(oauthDiscoverySettingsNode.get("vaultClientId").asText())
-                    .withVaultDNS(oauthDiscoverySettingsNode.get("vaultDNS").asText())
-                    .withVaultOauthProfileId(oauthDiscoverySettingsNode.get("vaultOauthProfileId").asText())
-                    .withVaultUsername(oauthDiscoverySettingsNode.get("vaultUsername").asText())
-                    .withIdpUsername(oauthDiscoverySettingsNode.get("idpUsername").asText())
-                    .withIdpPassword(oauthDiscoverySettingsNode.get("idpPassword").asText())
-                    .withVaultOauthClientId(oauthDiscoverySettingsNode.get("vaultOauthClientId").asText())
-                    .withIdpOauthAccessToken(oauthToken)
-                    .build();
-
-            assertNotNull(testClient.getAuthenticationResponse());
-            authResponse = testClient.getAuthenticationResponse();
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertEquals("SUCCESS", authResponse.getResponseStatus());
-            assertNotNull(authResponse.getSessionId());
-            assertNotNull(authResponse.getVaultId());
-            assertNotNull(authResponse.getResponse());
-            assertNotNull(authResponse.getUserId());
-            assertNotNull(authResponse.getVaultIds());
-            for (AuthenticationResponse.Vault vault : authResponse.getVaultIds()) {
-                assertNotNull(vault.getId());
-                assertNotNull(vault.getName());
-                assertNotNull(vault.getUrl());
-            }
-        }
-    }
-
-    @Disabled
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully build a client from a settings file")
-    class TestAuthenticationTypeOauthDiscoverySettings {
-
-        private File oauthDiscoverySettingsFile = null;
-        private AuthenticationResponse authResponse = null;
-
-        @BeforeAll
-        public void setup() {
-            String oauthDiscoverySettingsFileName = "settings_vapil_oauth_discovery.json";
-            oauthDiscoverySettingsFile = FileHelper.getSettingsFile(oauthDiscoverySettingsFileName);
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            VaultClient testClient = VaultClient
-                    .newClientBuilderFromSettings(oauthDiscoverySettingsFile)
                     .build();
 
             assertNotNull(testClient.getAuthenticationResponse());

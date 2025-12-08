@@ -495,7 +495,7 @@ public class DocumentAnnotationRequestTest {
                 annotationIds.add(annotation.getId());
             }
 
-            DocumentAnnotationRequestHelper.writeAddRepliesFile(vaultClient, docIds, annotationIds);
+            DocumentAnnotationRequestHelper.writeAddRepliesFile(docIds, annotationIds);
             File jsonFile = new File(PATH_ADD_REPLIES_JSON);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(jsonFile);
@@ -554,7 +554,7 @@ public class DocumentAnnotationRequestTest {
                 annotationIds.add(annotation.getId());
             }
 
-            DocumentAnnotationRequestHelper.writeAddRepliesFile(vaultClient, docIds, annotationIds);
+            DocumentAnnotationRequestHelper.writeAddRepliesFile(docIds, annotationIds);
         }
 
         @AfterAll
@@ -610,7 +610,7 @@ public class DocumentAnnotationRequestTest {
                 annotationIds.add(annotation.getId());
             }
 
-            DocumentAnnotationRequestHelper.writeUpdateAnnotationsFile(vaultClient, docIds, annotationIds);
+            DocumentAnnotationRequestHelper.writeUpdateAnnotationsFile(docIds, annotationIds);
             File jsonFile = new File(PATH_UPDATE_ANNOTATIONS_JSON);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(jsonFile);
@@ -669,7 +669,7 @@ public class DocumentAnnotationRequestTest {
                 annotationIds.add(annotation.getId());
             }
 
-            DocumentAnnotationRequestHelper.writeUpdateAnnotationsFile(vaultClient, docIds, annotationIds);
+            DocumentAnnotationRequestHelper.writeUpdateAnnotationsFile(docIds, annotationIds);
         }
 
         @AfterAll

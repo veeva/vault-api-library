@@ -23,7 +23,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Object Lifecycle and Workflow requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#object-lifecycle-amp-workflows">https://developer.veevavault.com/api/25.2/#object-lifecycle-amp-workflows</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#object-lifecycle-amp-workflows">https://developer.veevavault.com/api/25.3/#object-lifecycle-amp-workflows</a>
  */
 public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycleWorkflowRequest> {
 	// API Endpoints
@@ -40,6 +40,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	private static final String URL_OBJ_ACTIONS_WORKFLOW_TASK_ACTION = "/objects/objectworkflows/tasks/{task_id}/actions/{task_action}";
 	private static final String URL_OBJ_ACTIONS_MULTI_RECORD_WORKFLOWS = "/objects/objectworkflows/actions";
 	private static final String URL_OBJ_ACTIONS_MULTI_RECORD_WORKFLOW = "/objects/objectworkflows/actions/{workflow_name}";
+	private static final String URL_COMPLETE_JOB_STEP = "/workflow/job_step/{job_step_id}/actions/complete";
 	private static final String PARAM_OBJECT__V = "object__v";
 	private static final String PARAM_RECORD_ID__V = "record_id__v";
 	private static final String PARAM_PARTICIPANT = "participant";
@@ -76,7 +77,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectRecordActionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-object-record-user-actions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-object-record-user-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-object-record-user-actions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-object-record-user-actions</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordActionResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 				.retrieveObjectRecordUserActions("tt_claim__c", "OOW000000000501");</pre>
@@ -129,7 +130,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectRecordActionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/vobjects/{object_name}/{object_record_id}/actions/{action_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-object-user-action-details' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-object-user-action-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-object-user-action-details' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-object-user-action-details</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordActionResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 				.retrieveObjectRecordUserActionDetails(objectName, recordId, actionName);</pre>
@@ -179,7 +180,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectRecordActionResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/{object_record_id}/actions/{action_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-object-action-on-a-single-record' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-object-action-on-a-single-record</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-object-action-on-a-single-record' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-object-action-on-a-single-record</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordActionResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 				.initiateObjectActionOnASingleRecord(objectName, recordId, actionName);</pre>
@@ -218,7 +219,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectRecordActionBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/vobjects/{object_name}/actions/{action_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-object-action-on-multiple-records' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-object-action-on-multiple-records</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-object-action-on-multiple-records' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-object-action-on-multiple-records</a>
 	 * @vapil.request <pre>
 	 * ObjectRecordActionResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 				.initiateObjectActionOnMultipleRecords(objectName, ids, actionName);</pre>
@@ -271,7 +272,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflows' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflows' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflows</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class).setPageSize(0).setOffset(0)
 	 * 				.retrieveWorkflows(object, recordId, participant);</pre>
@@ -340,7 +341,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflows' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflows' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflows</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowResponse paginatedResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 		.retrieveWorkflowsByPage(response.getResponseDetails().getNextPage());</pre>
@@ -360,7 +361,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/{workflow_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflow-details' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflow-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflow-details' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflow-details</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class).setLoc(true)
 	 * 				.retrieveWorkflowDetails(workflowId);</pre>
@@ -411,7 +412,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowActionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/{workflow_id}/actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflow-actions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflow-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflow-actions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflow-actions</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowActionResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class).setLoc(false)
 	 * 				.retrieveWorkflowActions(workflowId);</pre>
@@ -449,7 +450,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowActionDetailsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/{workflow_id}/actions/{workflow_action}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflow-action-details' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflow-action-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflow-action-details' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflow-action-details</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowActionDetailsResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class).setLoc(false)
 	 * 				.retrieveWorkflowActionDetails(workflowId, workflowName);</pre>
@@ -488,7 +489,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/objectworkflows/{workflow_id}/actions/{workflow_action}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-workflow-action' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-workflow-action</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-workflow-action' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-workflow-action</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 				.setBodyParams(bodyParams)
@@ -529,7 +530,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectMultiRecordWorkflowsResponse
 	 * @vapil.api <pre>
 	 * GET /objects/objectworkflows/actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#multi-record-workflows' target='_blank'>https://developer.veevavault.com/api/25.2/#multi-record-workflows</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#multi-record-workflows' target='_blank'>https://developer.veevavault.com/api/25.3/#multi-record-workflows</a>
 	 * @vapil.request <pre>
 	 * ObjectMultiRecordWorkflowsResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 *                 .retrieveMultiRecordWorkflows();</pre>
@@ -559,7 +560,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectMultiRecordWorkflowDetailsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/actions/{workflow_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-multi-record-workflow-details' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-multi-record-workflow-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-multi-record-workflow-details' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-multi-record-workflow-details</a>
 	 * @vapil.request <pre>
 	 * ObjectMultiRecordWorkflowDetailsResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 *                 .retrieveMultiRecordWorkflowDetails(workflowName);</pre>
@@ -601,7 +602,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return InitiateMultiRecordWorkflowResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/objectworkflows/actions/{workflow_name}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-multi-record-workflow' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-multi-record-workflow</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-multi-record-workflow' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-multi-record-workflow</a>
 	 * @vapil.request <pre>
 	 * InitiateMultiRecordWorkflowResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 *                 .setBodyParams(bodyParams)
@@ -651,7 +652,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowTaskResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/tasks</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-object-workflow-tasks' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-object-workflow-tasks</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-object-workflow-tasks' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-object-workflow-tasks</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowTaskResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class).setPageSize(0)
 	 * 				.setOffset(0).retrieveObjectWorkflowTasks(object, recordId, assignee);</pre>
@@ -719,7 +720,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowTaskResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/tasks/{task_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflow-task-details' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflow-task-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflow-task-details' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflow-task-details</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowTaskResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 				.retrieveObjectWorkflowTaskDetails(taskId);</pre>
@@ -767,7 +768,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowActionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/tasks/{task_id}/actions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflow-task-actions' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflow-task-actions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflow-task-actions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflow-task-actions</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowActionResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class).setLoc(false)
 	 * 				.retrieveObjectWorkflowTaskActions(taskId);</pre>
@@ -800,7 +801,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return ObjectWorkflowTaskActionDetailsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/objectworkflows/tasks/{task_id}/actions/{task_action}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-workflow-task-action-details' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-workflow-task-action-details</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-workflow-task-action-details' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-workflow-task-action-details</a>
 	 * @vapil.request <pre>
 	 * ObjectWorkflowTaskActionDetailsResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class).setLoc(false)
 	 * 				.retrieveObjectWorkflowTaskActionDetails(taskId, taskAction);</pre>
@@ -879,7 +880,7 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/objectworkflows/tasks/{task_id}/actions/{task_action}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#initiate-workflow-task-action' target='_blank'>https://developer.veevavault.com/api/25.2/#initiate-workflow-task-action</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#initiate-workflow-task-action' target='_blank'>https://developer.veevavault.com/api/25.3/#initiate-workflow-task-action</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
 	 * 				.setBodyParams(bodyParams)
@@ -915,6 +916,64 @@ public class ObjectLifecycleWorkflowRequest extends VaultRequest<ObjectLifecycle
 		}
 
 		return send(HttpMethod.POST, request, VaultResponse.class);
+	}
+
+	/**
+	 * <b>Complete Job Step</b>
+	 * <p>
+	 * Accepts a request to complete a Job step.
+	 *
+	 * @param jobStepId  The Job Step id field value.
+	 * @param completionStatus The completion status verdict required to complete the Job step.
+	 * @return VaultResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/workflow/job_step/{job_step_id}/actions/complete
+	 * </pre>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#complete-job-step' target='_blank'>https://developer.veevavault.com/api/25.3/#complete-job-step</a>
+	 * @vapil.request <pre>
+	 * VaultResponse response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+	 * 		.completeJobStep(jobStepId, CompletionStatus.SUCCESS);
+	 * </pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Response Status: " + response.getResponseStatus());
+	 * </pre>
+	 */
+	public VaultResponse completeJobStep(String jobStepId, CompletionStatus completionStatus) {
+		String url = vaultClient.getAPIEndpoint(URL_COMPLETE_JOB_STEP);
+		url = url.replace("{job_step_id}", String.valueOf(jobStepId));
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+
+		request.addBodyParam("completion_status__sys", completionStatus.getValue());
+
+		return send(HttpMethod.POST, request, VaultResponse.class);
+	}
+
+	/*
+	 *
+	 * Enums
+	 *
+	 */
+
+	/**
+	 * Enum CompletionStatus represents the completion status verdict required to complete the Job step.
+	 * Option(s): success, errors encountered, failed
+	 */
+	public enum CompletionStatus {
+		SUCCESS("success__sys"),
+		ERRORS_ENCOUNTERED("errors_encountered__sys"),
+		FAILED("failed__sys");
+
+		private final String completionStatus;
+
+		CompletionStatus(String completionStatus) {
+			this.completionStatus = completionStatus;
+		}
+
+		public String getValue() {
+			return completionStatus;
+		}
 	}
 
 	/*

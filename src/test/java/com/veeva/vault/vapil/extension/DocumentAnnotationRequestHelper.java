@@ -67,7 +67,7 @@ public class DocumentAnnotationRequestHelper {
         mapper.writerWithDefaultPrettyPrinter().writeValue(createAnnotationsFile, rootNode);
     }
 
-    public static void writeAddRepliesFile(VaultClient vaultClient, List<String> docIds, List<String> annotationIds) throws IOException {
+    public static void writeAddRepliesFile(List<String> docIds, List<String> annotationIds) throws IOException {
         FileHelper.createFile(PATH_ADD_REPLIES_JSON);
         File addRepliesFile = new File(PATH_ADD_REPLIES_JSON);
 
@@ -91,7 +91,7 @@ public class DocumentAnnotationRequestHelper {
         mapper.writerWithDefaultPrettyPrinter().writeValue(addRepliesFile, rootNode);
     }
 
-    public static void writeUpdateAnnotationsFile(VaultClient vaultClient, List<String> docIds, List<String> annotationIds) throws IOException {
+    public static void writeUpdateAnnotationsFile(List<String> docIds, List<String> annotationIds) throws IOException {
         FileHelper.createFile(PATH_UPDATE_ANNOTATIONS_JSON);
         File updateAnnotationsFile = new File(PATH_UPDATE_ANNOTATIONS_JSON);
 

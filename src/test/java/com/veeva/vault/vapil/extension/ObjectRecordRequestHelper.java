@@ -18,12 +18,14 @@ public class ObjectRecordRequestHelper {
 
     public static final String OBJECT_NAME = "vapil_test_object__c";
     public static final String OBJECT_NAME_PARENT = "vapil_test_parent_object__c";
+    public static final String VAPIL_OBJECT_TYPE_NAME = "vapil_test_type_1_object__c";
 
-    public static final String PATH_CREATE_OBJECT_RECORDS_CSV = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "create_object_records.csv";
-    public static final String PATH_CREATE_SINGLE_OBJECT_RECORD_CSV = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "create_single_object_record.csv";
-    public static final String PATH_UPDATE_OBJECT_RECORDS_CSV = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "update_object_records.csv";
-    public static final String PATH_DELETE_OBJECT_RECORDS_CSV = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "delete_object_records.csv";
-    public static final String PATH_MERGE_OBJECT_RECORDS_CSV = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "object_records" + File.separator + "merge_object_records.csv";
+    public static final String PATH_RESOURCES_VAULT_OBJECTS_FOLDER = FileHelper.PATH_RESOURCES_FOLDER + File.separator + "vault_objects";
+    public static final String PATH_CREATE_OBJECT_RECORDS_CSV = PATH_RESOURCES_VAULT_OBJECTS_FOLDER + File.separator + "create_object_records.csv";
+    public static final String PATH_CREATE_SINGLE_OBJECT_RECORD_CSV = PATH_RESOURCES_VAULT_OBJECTS_FOLDER + File.separator + "create_single_object_record.csv";
+    public static final String PATH_UPDATE_OBJECT_RECORDS_CSV = PATH_RESOURCES_VAULT_OBJECTS_FOLDER + File.separator + "update_object_records.csv";
+    public static final String PATH_DELETE_OBJECT_RECORDS_CSV = PATH_RESOURCES_VAULT_OBJECTS_FOLDER + File.separator + "delete_object_records.csv";
+    public static final String PATH_MERGE_OBJECT_RECORDS_CSV = PATH_RESOURCES_VAULT_OBJECTS_FOLDER + File.separator + "merge_object_records.csv";
 
     public static QueryResponse queryForRecordId(VaultClient vaultClient) {
         StringBuilder query = new StringBuilder();
@@ -58,6 +60,7 @@ public class ObjectRecordRequestHelper {
                 .setContentTypeCsv()
                 .setInputPath(PATH_CREATE_OBJECT_RECORDS_CSV)
                 .createAndUpsertObjectRecords(OBJECT_NAME);
+
 
         return response;
     }

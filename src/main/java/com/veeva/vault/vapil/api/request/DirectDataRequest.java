@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  * <li>Download Direct Data File</li>
  * </ul>
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.2/#direct-data">https://developer.veevavault.com/api/25.2/#direct-data</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#direct-data">https://developer.veevavault.com/api/25.3/#direct-data</a>
  */
 
 public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
@@ -26,7 +26,6 @@ public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
     private ExtractType extractType;
     private ZonedDateTime startTime;
     private ZonedDateTime stopTime;
-    private Integer filepart;
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm'Z'";
 
     // API Request Parameter Constants
@@ -44,7 +43,7 @@ public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
      *
      * @return DirectDataResponse
      * @vapil.api <pre> GET /api/{version}/services/directdata/files </pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#retrieve-available-direct-data-files' target='_blank'>https://developer.veevavault.com/api/25.2/#retrieve-available-direct-data-files</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-available-direct-data-files' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-available-direct-data-files</a>
      * @vapil.request <pre>
      * ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneId.of("UTC"));
      * ZonedDateTime stopTime = currentDateTime.toLocalDate().atStartOfDay(ZoneId.of("UTC"));
@@ -98,7 +97,7 @@ public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
      * @param name The name of the Direct Data file to download.
      * @return VaultResponse
      * @vapil.api <pre> GET /api/{version}/services/directdata/files/{name} </pre>
-     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.2/#download-direct-data-file' target='_blank'>https://developer.veevavault.com/api/25.2/#download-direct-data-file</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-direct-data-file' target='_blank'>https://developer.veevavault.com/api/25.3/#download-direct-data-file</a>
      * @vapil.request <pre>
      * VaultResponse response = vaultClient.newRequest(DirectDataRequest.class)
      *      .downloadDirectDataFile(fileName);
@@ -112,10 +111,6 @@ public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
         String url = vaultClient.getAPIEndpoint(URL_DOWNLOAD_ITEM)
                 .replace("{name}", name);
         HttpRequestConnector request = new HttpRequestConnector(url);
-
-        if (this.filepart != null) {
-            request.addQueryParam("filepart", filepart);
-        }
 
         return sendReturnBinary(HttpRequestConnector.HttpMethod.GET, request, VaultResponse.class);
     }
@@ -150,17 +145,6 @@ public class DirectDataRequest extends VaultRequest<DirectDataRequest> {
      */
     public DirectDataRequest setStopTime(ZonedDateTime stopTime) {
         this.stopTime = stopTime;
-        return this;
-    }
-
-    /**
-     * Set the number for the file part.
-     *
-     * @param filepart This value is required if the file to download has more than one part.
-     * @return DirectDataRequest
-     */
-    public DirectDataRequest setFilepart(Integer filepart) {
-        this.filepart = filepart;
         return this;
     }
 

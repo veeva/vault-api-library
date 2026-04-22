@@ -708,7 +708,7 @@ public class DocumentAnnotationRequestTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully read annotations from a document by ID")
-    class TestReadAnnotationsByDocumentVersionAndType {
+    class TestReadAnnotationsByDocumentVersionAndTypePdf {
 
         DocumentAnnotationReadResponse readAnnotationsByDocumentVersionAndTypeResponse;
         Integer docId;
@@ -772,6 +772,67 @@ public class DocumentAnnotationRequestTest {
                 assertNotNull(placemark.getPageNumber());
                 assertNotNull(placemark.getStyle());
                 assertNotNull(placemark.getCoordinates());
+            }
+        }
+    }
+
+    @Nested
+    @Tag("SmokeTest")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully read annotations from a video document by ID")
+    class TestReadAnnotationsByDocumentVersionAndTypeVideo {
+
+        DocumentAnnotationReadResponse readAnnotationsByDocumentVersionAndTypeResponse;
+        Integer docId;
+        Integer majorVersionNumber;
+        Integer minorVersionNumber;
+
+        @BeforeAll
+        public void setup() {
+            QueryResponse.QueryResult queryResult = DocumentAnnotationRequestHelper.getVideoAnnotationsDoc(vaultClient);
+
+            docId = queryResult.getInteger("id");
+            majorVersionNumber = queryResult.getInteger("major_version_number__v");
+            minorVersionNumber = queryResult.getInteger("minor_version_number__v");
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            readAnnotationsByDocumentVersionAndTypeResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+                    .readAnnotationsByDocumentVersionAndType(docId, majorVersionNumber, minorVersionNumber);
+
+            assertNotNull(readAnnotationsByDocumentVersionAndTypeResponse);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(readAnnotationsByDocumentVersionAndTypeResponse.isSuccessful());
+            DocumentAnnotation.ResponseDetails responseDetails = readAnnotationsByDocumentVersionAndTypeResponse.getResponseDetails();
+            assertNotNull(responseDetails);
+            assertNotNull(responseDetails.getLimit());
+            assertNotNull(responseDetails.getOffset());
+            assertNotNull(responseDetails.getSize());
+            assertNotNull(responseDetails.getTotal());
+
+            List<DocumentAnnotation> data = readAnnotationsByDocumentVersionAndTypeResponse.getData();
+            assertNotNull(data);
+            for (DocumentAnnotation annotation : data) {
+                assertNotNull(annotation.getDocumentVersionId());
+                assertNotNull(annotation.getModifiedByUser());
+                assertNotNull(annotation.getId());
+                assertNotNull(annotation.getCreatedByUser());
+
+                DocumentAnnotation.Placemark placemark = annotation.getPlacemark();
+                assertNotNull(placemark);
+                assertNotNull(placemark.getVideoTimeSignature());
+                assertNotNull(placemark.getVideoWidth());
+                assertNotNull(placemark.getVideoHeight());
+                assertNotNull(placemark.getVideoXCoordinate());
+                assertNotNull(placemark.getVideoYCoordinate());
+                assertNotNull(placemark.getType());
             }
         }
     }

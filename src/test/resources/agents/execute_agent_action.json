@@ -1,0 +1,6 @@
+{
+  "agent_name" : "base_object_chat_agent__sys",
+  "action_name" : "summarize_record__sys",
+  "object" : "vapil_test_object__c",
+  "record_id" : "V4U000000018001"
+}

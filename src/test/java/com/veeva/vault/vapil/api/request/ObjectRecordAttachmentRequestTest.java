@@ -26,8 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(VaultClientParameterResolver.class)
 public class ObjectRecordAttachmentRequestTest {
     private static VaultClient vaultClient;
-    static final String OBJECT_NAME = "vapil_test_object__c";
-//    static final String OBJECT_NAME = "";
+    static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
     static final String RECORD_ID = "";
     static final int ATTACHMENT_ID = 0;
     static final int VERSION_ID = 1;

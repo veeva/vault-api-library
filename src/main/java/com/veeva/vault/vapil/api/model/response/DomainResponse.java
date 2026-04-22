@@ -132,22 +132,22 @@ public class DomainResponse extends VaultResponse {
 
 			public static class VaultApplication extends VaultModel {
 
-				@JsonProperty("name__v")
+				@JsonProperty("name")
 				public String getName() {
-					return this.getString("name__v");
+					return this.getString("name");
 				}
 
 				public void setName(String name) {
-					this.set("name__v", name);
+					this.set("name", name);
 				}
 
-				@JsonProperty("label__v")
+				@JsonProperty("label")
 				public String getLabel() {
-					return this.getString("label__v");
+					return this.getString("label");
 				}
 
 				public void setLabel(String label) {
-					this.set("label__v", label);
+					this.set("label", label);
 				}
 			}
 		}

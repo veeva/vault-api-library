@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * 					.setInputPath(csvFilePath)
  * 					.createMultipleDocuments();</pre>
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#documents">https://developer.veevavault.com/api/25.3/#documents</a>
+ * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/documents">https://general.veevavault.dev/vault-api/api-reference/26.1/documents</a>
  * <p>
  * <i>The following endpoints are covered in other classes for ease of use</i>
  * <ul>
@@ -76,6 +76,12 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * <b>X-VaultAPI-MigrationMode</b> When set to true, Vault applies Document Migration Mode limitations only to documents created with the request.
 	 */
 	public static final String HTTP_HEADER_VAULT_MIGRATION_MODE = "X-VaultAPI-MigrationMode";
+
+	/**
+	 * <b>X-VaultAPI-NoTriggers</b> When set to true, it bypasses all system, standard, and custom triggers when using Record Migration Mode.
+	 */
+	public static final String HTTP_HEADER_VAULT_NO_TRIGGERS = "X-VaultAPI-NoTriggers";
+
 	public static final String HTTP_HEADER_INCLUDE_TEXT_STRUCTURE = "X-VaultAPI-IncludeTextStructure";
 
 	/**
@@ -123,19 +129,14 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	private Integer limit;
 	private String inputPath;
 	private Boolean lockDocument;
-	private NamedFilter namedFilter;
 	private String outputPath;
 	private String requestString; // For raw request
-	private Scope scope;
-	private String searchKeyword;
-	private String sort;
-	private Integer start;
 	private Boolean steadyState;
 	private Boolean suppressRendition;
 	private CrosslinkBinding sourceBindingRule;
 	private String tokenGroup;
-	private VersionsScope versionsScope;
 	private Boolean migrationMode;
+	private Boolean noTriggers;
 	private Integer offset;
 	private String startDate;
 	private String endDate;
@@ -160,7 +161,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentFieldResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/properties</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-document-fields' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-document-fields</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-fields/retrieve-all-document-fields' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-fields/retrieve-all-document-fields</a>
 	 * @vapil.request <pre>
 	 * DocumentFieldResponse resp  = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveAllDocumentFields();</pre>
@@ -185,7 +186,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentFieldResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/metadata/objects/documents/properties/find_common</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-common-document-fields' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-common-document-fields</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-fields/retrieve-common-document-fields' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-fields/retrieve-common-document-fields</a>
 	 * @vapil.request <pre>
 	 * DocumentFieldResponse resp  = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveCommonDocumentFields();</pre>
@@ -218,7 +219,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentTypesResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/types</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-document-types' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-document-types</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-all-document-types' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-all-document-types</a>
 	 * @vapil.request <pre>
 	 * DocumentTypesResponse allTypesResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.retrieveAllDocumentTypes();</pre>
@@ -265,7 +266,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentTypeResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/types/{type}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-type' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-type</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-document-type' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-document-type</a>
 	 * @vapil.request <pre>
 	 * DocumentTypeResponse typeResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveDocumentType(documentType.getName());
@@ -291,7 +292,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentSubtypeResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/types/{type}/subtypes/{subtype}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-subtype' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-subtype</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-document-subtype' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-document-subtype</a>
 	 * @vapil.request <pre>
 	 * DocumentSubtypeResponse subtypeResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveDocumentSubtype(documentType.getName(), documentSubtype.getName());
@@ -318,7 +319,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentClassificationResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/types/{type}/subtypes/{subtype}/classifications/{classification}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-classification' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-classification</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-document-classification' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-document-types/retrieve-document-classification</a>
 	 * @vapil.request <pre>
 	 * DocumentClassificationResponse classificationResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveDocumentClassification(
@@ -341,88 +342,6 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 		return send(HttpMethod.GET, request, DocumentClassificationResponse.class);
 	}
 
-	/*
-	 *
-	 * Retrieve Document
-	 *
-	 */
-
-	/**
-	 * <b>Retrieve All Documents</b>
-	 * <p>
-	 * Retrieve the latest version of all documents and binders
-	 * <p>
-	 * Various properties can filter the list of returned documents
-	 * <ul>
-	 * <li>namedFilter=My Documents	Retrieves only documents which you have created.</li>
-	 * <li>namedFilter=Favorites	Retrieves only documents which you have marked as favorites in the library.</li>
-	 * <li>namedFilter=Recent Documents	Retrieves only documents which you have recently accessed.</li>
-	 * <li>namedFilter=Cart	Retrieves only documents in your cart.</li>
-	 * <li>versionsScope=contents	Searches only within the document content.</li>
-	 * <li>versionsScope=all	Searches both within the document content and searchable document fields.</li>
-	 * <li>versionsScope=all	Retrieves all document versions, rather than only the latest version.</li>
-	 * <li>searchKeyword={keyword}	Search for documents based on a {keyword} in searchable document fields.</li>
-	 * <li>limit</li>
-	 * <li>sort</li>
-	 * <li>start</li>
-	 * </ul>
-	 *
-	 * @return DocumentsResponse
-	 * @vapil.api <pre>
-	 * GET /api/{version}/objects/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-documents</a>
-	 * @vapil.request <pre>
-	 * DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
-	 * 		.retrieveAllDocuments();
-	 * </pre>
-	 * @vapil.response <pre>
-	 * System.out.println("Number of Documents: " + response.getSize());
-	 * List&lt;DocumentsResponse.DocumentNode&gt; documents = response.getDocuments();
-	 * for (DocumentsResponse.DocumentNode documentNode : documents) {
-	 * 		Document document = documentNode.getDocument();
-	 * 		System.out.println("Document Name: " + document.getName());
-	 * 		System.out.println("Document ID: " + document.getId());
-	 * 		System.out.println(("Major Version: " + document.getMajorVersionNumber()));
-	 * 		System.out.println("Minor Version: " + document.getMinorVersionNumber());
-	 * }
-	 * </pre>
-	 */
-	public DocumentsResponse retrieveAllDocuments() {
-		String url = vaultClient.getAPIEndpoint(URL_DOCS);
-		HttpRequestConnector request = new HttpRequestConnector(url);
-
-		if (namedFilter != null) {
-			request.addQueryParam("named_filter", namedFilter.toString());
-		}
-
-		if (scope != null) {
-			request.addQueryParam("scope", scope.toString());
-		}
-
-		if (versionsScope != null && versionsScope.getValue().equals(VersionsScope.ALL)) {
-			request.addQueryParam("versionscope", versionsScope.toString());
-		}
-
-		if (searchKeyword != null) {
-			request.addQueryParam("search", searchKeyword);
-		}
-
-		if (limit != null) {
-			request.addQueryParam("limit", limit);
-		}
-
-		if (sort != null) {
-			request.addQueryParam("sort", sort);
-		}
-
-		if (start != null) {
-			request.addQueryParam("start", start);
-		}
-
-
-		return send(HttpMethod.GET, request, DocumentsResponse.class);
-	}
-
 	/**
 	 * <b>Retrieve Document</b>
 	 * <p>
@@ -432,7 +351,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document</a>
 	 * @vapil.request <pre>
 	 * DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveDocument(docId);
@@ -469,7 +388,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentVersionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-versions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-versions</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document-versions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document-versions</a>
 	 * @vapil.request <pre>
 	 * DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveDocumentVersion(docId, 0, 1);
@@ -497,7 +416,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-version' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-version</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document-version</a>
 	 * @vapil.request <pre>
 	 * DocumentResponse response  = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.retrieveDocumentVersion(docId, 0, 1);
@@ -523,7 +442,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/file</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-document-file' target='_blank'>https://developer.veevavault.com/api/25.3/#download-document-file</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/download-document-file' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/download-document-file</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentRequest.class).downloadDocumentFile(docId);</pre>
 	 * @vapil.response <pre>if (response != null &amp;&amp; response.isSuccessful()) {
@@ -556,7 +475,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/file</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-document-version-file' target='_blank'>https://developer.veevavault.com/api/25.3/#download-document-version-file</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/download-document-version-file' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/download-document-version-file</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.downloadDocumentVersionFile(docId, majorVersion, minorVersion);</pre>
@@ -589,7 +508,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/thumbnail</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-document-version-thumbnail-file' target='_blank'>https://developer.veevavault.com/api/25.3/#download-document-version-thumbnail-file</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/download-document-version-thumbnail-file' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/download-document-version-thumbnail-file</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.downloadDocumentVersionThumbnailFile(docId, majorVersion, minorVersion);</pre>
@@ -622,7 +541,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/text</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-document-text' target='_blank'>https://developer.veevavault.com/api/25.3/#download-document-text</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document-version-text' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/retrieve-documents/retrieve-document-version-text</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.setIncludeTextStructure(true)
@@ -663,7 +582,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#create-single-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document</a>
 	 * @vapil.request <pre>
 	 * Document doc = new Document();
 	 *
@@ -692,6 +611,12 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 			request.addFileBinary("file", binaryFile.getBinaryContent(), binaryFile.getFileName());
 		}
 
+		if (migrationMode != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_MIGRATION_MODE, migrationMode);
+
+		if (noTriggers != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_NO_TRIGGERS, noTriggers);
+
 		return send(HttpMethod.POST, request, DocumentResponse.class);
 	}
 
@@ -703,7 +628,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#create-single-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentResponse response = vaultClient.newRequest(DocumentRequest.class).createDocumentFromTemplate(doc, "template_name__c");</pre>
 	 * @vapil.response <pre>System.out.println("Created doc id: " + response);</pre>
@@ -725,7 +650,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#create-single-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentResponse response = vaultClient.newRequest(DocumentRequest.class).createContentPlaceholderDocument(doc);</pre>
 	 * @vapil.response <pre>System.out.println("Created doc id: " + response.getDocument().getId());</pre>
@@ -745,7 +670,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#create-single-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document</a>
 	 * @vapil.request <pre>
 	 * DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 					.setInputPath(filePath)
@@ -791,7 +716,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#create-single-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-single-document</a>
 	 * @vapil.request <pre>
 	 * Document doc = new Document();
 	 * doc.setName("VAPIL CrossLink");
@@ -863,7 +788,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#create-multiple-documents</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-multiple-documents' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/create-documents/create-multiple-documents</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - CSV input</i>
 	 * DocumentBulkResponse response = vaultClient.newRequest(DocumentRequest.class)
@@ -901,7 +826,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/{doc_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#update-single-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/update-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/update-single-document</a>
 	 */
 	public DocumentResponse updateSingleDocument(Document doc) {
 		String url = vaultClient.getAPIEndpoint(URL_DOC)
@@ -914,9 +839,11 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 		if (bodyParams.containsKey("id")) bodyParams.remove("id");
 		request.setBodyParams(bodyParams);
 
-		if (migrationMode != null) {
+		if (migrationMode != null)
 			request.addHeaderParam(HTTP_HEADER_VAULT_MIGRATION_MODE, migrationMode);
-		}
+
+		if (noTriggers != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_NO_TRIGGERS, noTriggers);
 
 		return send(HttpMethod.PUT, request, DocumentResponse.class);
 	}
@@ -930,7 +857,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#update-multiple-documents</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/update-multiple-documents' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/update-multiple-documents</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - CSV input</i>
 	 * DocumentBulkResponse response = vaultClient.newRequest(DocumentRequest.class)
@@ -962,7 +889,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/{doc_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#reclassify-document' target='_blank'>https://developer.veevavault.com/api/25.3/#reclassify-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/reclassify-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/reclassify-single-document</a>
 	 */
 	public DocumentResponse reclassifySingleDocument(Document doc) {
 		doc.set("reclassify", "true");
@@ -982,7 +909,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/batch/actions/reclassify</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#reclassify-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#reclassify-multiple-documents</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/reclassify-multiple-documents' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/reclassify-multiple-documents</a>
 	 */
 	public DocumentBulkResponse reclassifyMultipleDocuments() {
 
@@ -1000,7 +927,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-document-version' target='_blank'>https://developer.veevavault.com/api/25.3/#update-document-version</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/update-document-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/update-document-version</a>
 	 */
 	public DocumentResponse updateDocumentVersion(Document doc, int majorVersion, int minorVersion) {
 		String url = vaultClient.getAPIEndpoint(URL_DOC_VERSION)
@@ -1010,6 +937,12 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 		HttpRequestConnector request = new HttpRequestConnector(url);
 
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+
+		if (migrationMode != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_MIGRATION_MODE, migrationMode);
+
+		if (noTriggers != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_NO_TRIGGERS, noTriggers);
 
 		Map<String, Object> bodyParams = doc.toMap();
 		if (bodyParams.containsKey("id")) bodyParams.remove("id");
@@ -1030,7 +963,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/versions/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#create-multiple-documents</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/create-multiple-document-versions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/create-multiple-document-versions</a>
 	 */
 	public DocumentBulkResponse createMultipleDocumentVersions() {
 		return bulkDocument(HttpMethod.POST, URL_DOCS_BATCH_VERSIONS);
@@ -1050,7 +983,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-single-document-version' target='_blank'>https://developer.veevavault.com/api/25.3/#create-single-document-version</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/create-single-document-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/update-documents/create-single-document-version</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Create Single Document Version From Uploaded Content</i>
 	 * DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
@@ -1118,7 +1051,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{document_id}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-single-document' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-single-document</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-single-document' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-single-document</a>
 	 */
 	public DocumentResponse deleteSingleDocument(int docid) {
 		String url = vaultClient.getAPIEndpoint(URL_DOC)
@@ -1141,7 +1074,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentBulkResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-multiple-documents</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-multiple-documents' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-multiple-documents</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - CSV input</i>
 	 * DocumentBulkResponse response = vaultClient.newRequest(DocumentRequest.class)
@@ -1171,7 +1104,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-single-document-version' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-single-document-version</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-single-document-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-single-document-version</a>
 	 * @vapil.request <pre>
 	 * DocumentResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.deleteSingleDocumentVersion(docId, 0, 1);
@@ -1205,7 +1138,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentBulkResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/versions/batch</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-multiple-documents' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-multiple-documents</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-multiple-document-versions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/delete-multiple-document-versions</a>
 	 */
 	public DocumentBulkResponse deleteMultipleDocumentVersions() {
 		return bulkDocument(HttpMethod.DELETE, URL_DOCS_BATCH_VERSIONS);
@@ -1225,7 +1158,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentDeletionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/deletions/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-deleted-document-ids' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-deleted-document-ids</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/retrieve-deleted-document-ids' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/retrieve-deleted-document-ids</a>
 	 * @vapil.request <pre>
 	 * DocumentDeletionResponse response = vaultClient.newRequest(DocumentRequest.class).retrieveDeletedDocumentIds();</pre>
 	 * @vapil.response <pre>if (response != null &amp;&amp; response.isSuccessful()) {
@@ -1261,7 +1194,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentDeletionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/deletions/documents</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-deleted-document-ids' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-deleted-document-ids</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/retrieve-deleted-document-ids' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/delete-documents/retrieve-deleted-document-ids</a>
 	 * @vapil.request <pre>
 	 * DocumentDeletionResponse paginatedResponse = paginatedResponse = vaultClient.newRequest(JobRequest.class)
 	 * 		.retrieveDeletedDocumentIdsByPage(response.getResponseDetails().getNextPage());</pre>
@@ -1285,7 +1218,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return MetaDataDocumentLockResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/documents/lock</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-lock-metadata' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-lock-metadata</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/retrieve-document-lock-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/retrieve-document-lock-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataDocumentLockResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.retrieveDocumentLockMetadata();</pre>
@@ -1315,7 +1248,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}/lock</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-document-lock' target='_blank'>https://developer.veevavault.com/api/25.3/#create-document-lock</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/create-document-lock' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/create-document-lock</a>
 	 * @vapil.request <pre>
 	 * VaultResponse lockCreateResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.createDocumentLock(docId);</pre>
@@ -1339,7 +1272,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/lock</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-lock' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-lock</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/retrieve-document-lock' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/retrieve-document-lock</a>
 	 * @vapil.request <pre>
 	 * DocumentLockResponse lockResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.retrieveDocumentLock(docId);</pre>
@@ -1366,7 +1299,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{doc_id}/lock</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-document-lock' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-document-lock</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/delete-document-lock' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/delete-document-lock</a>
 	 * @vapil.request <pre>
 	 * VaultResponse lockDeleteResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.deleteDocumentLock(docId);</pre>
@@ -1391,7 +1324,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentCollaborativeCheckoutResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/batch/lock</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#undo-collaborative-authoring-checkout' target='_blank'>https://developer.veevavault.com/api/25.3/#undo-collaborative-authoring-checkout</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/undo-collaborative-authoring-checkout' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-locks/undo-collaborative-authoring-checkout</a>
 	 * @vapil.request <pre>
 	 * DocumentCollaborativeCheckoutResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 		.setInputPath(csv_path)
@@ -1444,7 +1377,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/batch/actions/fileextract</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#export-documents-1' target='_blank'>https://developer.veevavault.com/api/25.3/#export-documents-1</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/export-documents/export-documents' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/export-documents/export-documents</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.setInputPath(filePath)
@@ -1489,7 +1422,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return JobCreateResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/versions/batch/actions/fileextract</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#export-document-versions' target='_blank'>https://developer.veevavault.com/api/25.3/#export-document-versions</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/export-documents/export-document-versions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/export-documents/export-document-versions</a>
 	 * @vapil.request <pre>
 	 * JobCreateResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.setInputPath(filePath)
@@ -1537,7 +1470,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentExportResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/batch/actions/fileextract/{jobid}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-export-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-export-results</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/export-documents/retrieve-document-export-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/export-documents/retrieve-document-export-results</a>
 	 * @vapil.request <pre>
 	 * DocumentExportResponse exportResponse = vaultClient.newRequest(DocumentRequest.class)
 	 * 				.retrieveDocumentExportResults(jobId);</pre>
@@ -1574,7 +1507,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 * @return DocumentTokenResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/tokens</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#document-tokens' target='_blank'>https://developer.veevavault.com/api/25.3/#document-tokens</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-tokens' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/documents/document-tokens</a>
 	 * @vapil.request <pre>
 	 * DocumentTokenResponse response = vaultClient.newRequest(DocumentRequest.class)
 	 * 					.setExpiryDateOffset(10)
@@ -1651,8 +1584,11 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 		if (binaryFile != null)
 			request.addBinary(contentType, binaryFile.getBinaryContent());
 
-		if (migrationMode)
-			request.addHeaderParam(HTTP_HEADER_VAULT_MIGRATION_MODE, "true");
+		if (migrationMode != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_MIGRATION_MODE, migrationMode);
+
+		if (noTriggers != null)
+			request.addHeaderParam(HTTP_HEADER_VAULT_NO_TRIGGERS, noTriggers);
 
 		return send(httpMethod, request, DocumentBulkResponse.class);
 	}
@@ -1713,64 +1649,6 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 		private String value;
 
 		DownloadOption(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-
-	/**
-	 * Retrieve all document named filter
-	 */
-	public enum NamedFilter {
-		CART("Cart"),
-		FAVORITES("Favorites"),
-		MYDOCUMENTS("My Documents"),
-		RECENTDOCUMENTS("Recent Documents");
-
-		private String value;
-
-		NamedFilter(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-
-	/**
-	 * Retrieve all document scope
-	 */
-	public enum Scope {
-		ALL("all"),
-		CONTENTS("contents"),
-		MYDOCUMENTS("My Documents"),
-		RECENTDOCUMENTS("Recent Documents");
-
-		private String value;
-
-		Scope(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-
-	/**
-	 * Retrieve all document versions scope
-	 */
-	public enum VersionsScope {
-		ALL("all"),
-		LATESTVERSION("latestversion");
-
-		private String value;
-
-		VersionsScope(String value) {
 			this.value = value;
 		}
 
@@ -1902,7 +1780,7 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	}
 
 	/**
-	 * Set the limit of documents returned by retrieve all documents
+	 * Set the limit of documents returned by retrieve delete document ids
 	 *
 	 * @param limit max number of documents returned
 	 * @return The Request
@@ -1946,17 +1824,6 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	}
 
 	/**
-	 * Set named filter of documents returned by retrieve all documents
-	 *
-	 * @param namedFilter named filter for documents
-	 * @return The Request
-	 */
-	public DocumentRequest setScopeFilter(NamedFilter namedFilter) {
-		this.namedFilter = namedFilter;
-		return this;
-	}
-
-	/**
 	 * Specify source data in an input string, such as a JSON request
 	 *
 	 * @param requestString The source request as a string
@@ -1968,39 +1835,6 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	}
 
 	/**
-	 * Set scope of documents returned by retrieve all documents
-	 *
-	 * @param scope scope of documents
-	 * @return The Request
-	 */
-	public DocumentRequest setScopeFilter(Scope scope) {
-		this.scope = scope;
-		return this;
-	}
-
-	/**
-	 * Search keyword for documents returned by retrieve all documents
-	 *
-	 * @param keyword keyword to search for
-	 * @return The Request
-	 */
-	public DocumentRequest setSearchKeyword(String keyword) {
-		this.searchKeyword = keyword;
-		return this;
-	}
-
-	/**
-	 * Sort for documents returned by retrieve all documents
-	 *
-	 * @param sort order by value
-	 * @return The Request
-	 */
-	public DocumentRequest setSort(String sort) {
-		this.sort = sort;
-		return this;
-	}
-
-	/**
 	 * Specify the Cross-Link Source Binding Rule
 	 *
 	 * @param sourceBindingRule Possible values are Latest version, Latest Steady State version, or Specific Document version
@@ -2008,17 +1842,6 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 */
 	public DocumentRequest setSourceBindingRule(CrosslinkBinding sourceBindingRule) {
 		this.sourceBindingRule = sourceBindingRule;
-		return this;
-	}
-
-	/**
-	 * Set the starting position of documents returned by retrieve all documents
-	 *
-	 * @param start starting position
-	 * @return The Request
-	 */
-	public DocumentRequest setStart(Integer start) {
-		this.start = start;
 		return this;
 	}
 
@@ -2064,17 +1887,6 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	}
 
 	/**
-	 * Set all versions or latest version of documents returned by retrieve all documents
-	 *
-	 * @param versionsScope scope for versions
-	 * @return The Request
-	 */
-	public DocumentRequest setVersionScope(VersionsScope versionsScope) {
-		this.versionsScope = versionsScope;
-		return this;
-	}
-
-	/**
 	 * Enable migration mode to create multiple document versions in bulk
 	 * and perform manual assignment of documents numbers.
 	 * If not specified, the create multiple document versions endpoint will fail.
@@ -2085,6 +1897,19 @@ public class DocumentRequest extends VaultRequest<DocumentRequest> {
 	 */
 	public DocumentRequest setMigrationMode(boolean migrationMode) {
 		this.migrationMode = migrationMode;
+		return this;
+	}
+
+	/**
+	 * When set to true, it bypasses all system, standard,
+	 * and custom triggers when using Document Migration Mode.
+	 * API user must have the Document Migration permission to use this header.
+	 *
+	 * @param noTriggers Boolean value to bypass triggers
+	 * @return The Request
+	 */
+	public DocumentRequest setNoTriggers(boolean noTriggers) {
+		this.noTriggers = noTriggers;
 		return this;
 	}
 

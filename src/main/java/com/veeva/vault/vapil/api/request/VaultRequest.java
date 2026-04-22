@@ -354,7 +354,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * This method is implemented for all Request classes. When set in the request, the
 	 * Reference ID is returned in the response headers of the returned Response class.
 	 *
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/docs/#reference-id' target='_blank'>https://developer.veevavault.com/docs/#reference-id</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/references/response-headers' target='_blank'>https://general.veevavault.dev/vault-api/references/response-headers</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DomainRequest.class)
 	 * 		.setHeaderReferenceId("test-reference-id")
@@ -377,7 +377,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * This method is implemented for all Request classes. When set on a request, it overrides
 	 * the client ID set on the Vault Client.
 	 *
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/docs/#client-id' target='_blank'>https://developer.veevavault.com/docs/#client-id</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/references/client-id' target='_blank'>https://general.veevavault.dev/vault-api/references/client-id</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DomainRequest.class)
 	 * 		.setHeaderClientId("test-request-client-id")

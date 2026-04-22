@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Vault Loader Requests
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#vault-loader">https://developer.veevavault.com/api/25.3/#vault-loader</a>
+ * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader">https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader</a>
  */
 public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	// API Endpoints
@@ -47,7 +47,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @return LoaderResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/loader/extract</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#extract-data-files' target='_blank'>https://developer.veevavault.com/api/25.3/#extract-data-files</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/extract-data-files' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/extract-data-files</a>
 	 * @vapil.request <pre>
 	 * List&lt;LoaderTask&gt; loaderTasks = new ArrayList&lt;&gt;();
 	 * 		.setEntityType(LoaderTaskBuilder.EntityType.DOCUMENTS)
@@ -99,7 +99,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @vapil.api <pre>
 	 * POST /api/{version}/services/loader/load
 	 * </pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#load-data-objects' target='_blank'>https://developer.veevavault.com/api/25.3/#load-data-objects</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-load/load-data-objects' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-load/load-data-objects</a>
 	 * @vapil.request <pre>
 	 * List&lt;LoaderTask&gt; loaderTasks = new ArrayList&lt;&gt;();
 	 * LoaderTask loaderTask = new LoaderTaskBuilder()
@@ -155,7 +155,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-loader-extract-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-extract-results</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-results</a>
 	 */
 	public VaultResponse retrieveLoaderExtractResults(int jobId, int taskId) {
 		return retrieveResults(URL_LOADER_TASK_RESULTS, jobId, taskId);
@@ -169,7 +169,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/results/renditions</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-loader-extract-renditions-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-loader-extract-renditions-results</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-renditions-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-renditions-results</a>
 	 */
 	public VaultResponse retrieveLoaderExtractRenditionsResults(int jobId, int taskId) {
 		return retrieveResults(URL_LOADER_TASK_RENDITION_RESULTS, jobId, taskId);
@@ -183,7 +183,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/results/text</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-loader-extract-text-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-loader-extract-text-results</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-text-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-text-results</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Download to file</i>
 	 * VaultResponse response = vaultClient.newRequest(LoaderRequest.class)
@@ -211,7 +211,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/successlog</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-load-success-log-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-load-success-log-results</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-load/retrieve-load-success-log-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-load/retrieve-load-success-log-results</a>
 	 */
 	public VaultResponse retrieveLoadSuccessLogResults(int jobId, int taskId) {
 		return retrieveResults(URL_LOADER_TASK_SUCCESS_LOG, jobId, taskId);
@@ -225,7 +225,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/failurelog</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-load-failure-log-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-load-failure-log-results</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-load/retrieve-load-failure-log-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-load/retrieve-load-failure-log-results</a>
 	 */
 	public VaultResponse retrieveLoadFailureLogResults(int jobId, int taskId) {
 		return retrieveResults(URL_LOADER_TASK_FAILURE_LOG, jobId, taskId);
@@ -240,7 +240,7 @@ public class LoaderRequest extends VaultRequest<LoaderRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/services/loader/{job_id}/tasks/{task_id}/results</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-extract-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-extract-results</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/vault-loader/multi-file-extract/retrieve-loader-extract-results</a>
 	 */
 	private VaultResponse retrieveResults(String endpoint, int jobId, int taskId) {
 		String url = vaultClient.getAPIEndpoint(endpoint);

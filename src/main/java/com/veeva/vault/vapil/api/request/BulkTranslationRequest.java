@@ -21,7 +21,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * <li>Retrieve Import Bulk Translation File Job Errors</li>
  * </ul>
  *
- * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#bulk-translation">https://developer.veevavault.com/api/25.3/#bulk-translation</a>
+ * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation">https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation</a>
  */
 public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest> {
 
@@ -36,7 +36,7 @@ public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest>
 
 
 	// API Request Parameter Constants
-	public static final String FILE_PATH = "file_path";
+	public static final String FILE_PATHS = "file_paths";
 
 
 	/**
@@ -50,7 +50,7 @@ public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest>
 	 * @param lang        The language to export.
 	 * @return BulkTranslationJobResponse
 	 * @vapil.api <pre> POST /api/{version}/messages/{message_type}/language/{lang}/actions/export</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#export-bulk-translation-file' target='_blank'>https://developer.veevavault.com/api/25.3/#export-bulk-translation-file</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/export-bulk-translation-file' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/export-bulk-translation-file</a>
 	 * @vapil.request <pre>
 	 * BulkTranslationJobResponse response = vaultClient.newRequest(BulkTranslationRequest.class)
 	 * 		.exportBulkTranslationFile(MESSAGE_TYPE.SYSTEM_MESSAGES, "ja");
@@ -75,24 +75,24 @@ public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest>
 	/**
 	 * <b>Import Bulk Translation File</b>
 	 * <p>
-	 * Import a bulk translation file into Vault. While an exported bulk translation file can contain only one (1) language,
+	 * Import bulk translation files into Vault. While an exported bulk translation file can contain only one (1) language,
 	 * your import file may include multiple languages.
 	 *
 	 * @param messageType The message type to export.
-	 * @param filePath   The file path of the CSV file on the file staging server.
+	 * @param filePaths   A comma-separated list of the file paths of the CSV files on file staging
 	 * @return BulkTranslationJobResponse
 	 * @vapil.api <pre> POST /api/{version}/messages/{message_type}/actions/import</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#import-bulk-translation-file' target='_blank'>https://developer.veevavault.com/api/25.3/#import-bulk-translation-file</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/import-bulk-translation-file' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/import-bulk-translation-file</a>
 	 * @vapil.request <pre>
 	 * BulkTranslationJobResponse response = vaultClient.newRequest(BulkTranslationRequest.class)
-	 * 		.importBulkTranslationFile(MESSAGE_TYPE.SYSTEM_MESSAGES, "/bulk_translation_test.csv");
+	 * 		.importBulkTranslationFiles(MESSAGE_TYPE.SYSTEM_MESSAGES, "/PromoMats_French_Field-Labels.csv,/PromoMats_English_Field-Labels.csv");
 	 * </pre>
 	 * @vapil.response <pre>
 	 * System.out.println("Job ID = " + response.getData().getJobId());
 	 * System.out.println("Job URL = " + response.getData().getUrl());
 	 * </pre>
 	 */
-	public BulkTranslationJobResponse importBulkTranslationFile(MESSAGE_TYPE messageType, String filePath) {
+	public BulkTranslationJobResponse importBulkTranslationFiles(MESSAGE_TYPE messageType, String filePaths) {
 		String url = vaultClient.getAPIEndpoint(URL_IMPORT_BULK_TRANSLATION_FILE)
 				.replace("{message_type}", messageType.getValue());
 
@@ -100,7 +100,7 @@ public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest>
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
 
-		request.addBodyParam(FILE_PATH, filePath);
+		request.addBodyParam(FILE_PATHS, filePaths);
 
 		return send(HttpMethod.POST, request, BulkTranslationJobResponse.class);
 	}
@@ -113,7 +113,7 @@ public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest>
 	 * @param jobId The job ID of the import bulk translation file job.
 	 * @return BulkTranslationImportSummaryResponse
 	 * @vapil.api <pre> GET /api/{version}/services/jobs/{job_id}/summary</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-import-bulk-translation-file-job-summary' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-import-bulk-translation-file-job-summary</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/retrieve-import-bulk-translation-file-job-summary' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/retrieve-import-bulk-translation-file-job-summary</a>
 	 * @vapil.request <pre>
 	 * BulkTranslationImportSummaryResponse response = vaultClient.newRequest(BulkTranslationRequest.class)
 	 * 		.retrieveImportBulkTranslationFileJobSummary(jobId);
@@ -142,7 +142,7 @@ public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest>
 	 * @param jobId The job ID of the import bulk translation file job.
 	 * @return VaultResponse
 	 * @vapil.api <pre>GET /api/{version}/services/jobs/{job_id}/errors</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-import-bulk-translation-file-job-errors' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-import-bulk-translation-file-job-errors</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/retrieve-import-bulk-translation-file-job-errors' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/retrieve-import-bulk-translation-file-job-errors</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(BulkTranslationRequest.class)
 	 * 		.retrieveImportBulkTranslationFileJobErrors(jobId);
@@ -191,7 +191,7 @@ public class BulkTranslationRequest extends VaultRequest<BulkTranslationRequest>
 	 * @param name        The name of the label set.
 	 * @return BulkTranslationJobResponse
 	 * @vapil.api <pre> POST /api/{version}/messages/{message_type}/label_set/{name}/actions/export</pre>
-	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#export-label-set' target='_blank'>https://developer.veevavault.com/api/25.3/#export-label-set</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/export-label-set' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/bulk-translation/export-label-set</a>
 	 * @vapil.request <pre>
 	 * BulkTranslationJobResponse response = vaultClient.newRequest(BulkTranslationRequest.class)
 	 * 		.exportLabelSet(name);

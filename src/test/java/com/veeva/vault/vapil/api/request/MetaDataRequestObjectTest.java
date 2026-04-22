@@ -15,6 +15,7 @@ import com.veeva.vault.vapil.api.model.response.MetaDataObjectBulkResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectFieldResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectPageLayoutResponse;
 import com.veeva.vault.vapil.api.model.response.MetaDataObjectResponse;
+import com.veeva.vault.vapil.extension.ObjectRecordRequestHelper;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Metadata object request should")
 public class MetaDataRequestObjectTest {
 
-    static final String OBJECT_NAME = "vapil_test_object__c";
+    static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
     static final String FIELD_NAME = "test_subtype_field__c";
     static final String OBJECT_PAGE_LAYOUT_NAME = "vapil_test_action_layout__c";
     private static VaultClient vaultClient;

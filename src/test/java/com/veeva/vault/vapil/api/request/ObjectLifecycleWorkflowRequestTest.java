@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Object Lifecycle Workflow Request should")
 class ObjectLifecycleWorkflowRequestTest {
 
-    static final String OBJECT_NAME = "vapil_test_object__c";
+    static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
     static final String ENVELOPE__SYS = "envelope__sys";
     static final String MULTI_RECORD_WORKFLOW_NAME = "Objectworkflow.vapil_test_object_workflow__c";
     static final String WORKFLOW_ACTION_NAME = "Objectlifecyclestateuseraction.vapil_test_object__c.active_state__c.start_vapil_test_object_workflow_useract__c";

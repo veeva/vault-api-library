@@ -16,9 +16,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -454,6 +452,56 @@ public class DocumentLifecycleRequestTest {
 		@Order(1)
 		public void testRequest() {
 			response = vaultClient.newRequest(DocumentLifecycleRequest.class)
+					.initiateBinderUserAction(binderId, majorVersion, minorVersion, userActionName);
+
+			assertNotNull(response);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(response.isSuccessful());
+			assertNotNull(response.getId());
+		}
+	}
+
+	@Nested
+	@Disabled
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully initiate a user action on a binder that starts a legacy workflow.")
+	class TestInitiateBinderUserActionStartLegacyWorkflow {
+		BinderActionInitiateResponse response = null;
+		int binderId;
+		int majorVersion = 0;
+		int minorVersion = 1;
+		String userActionName;
+		Map<String, Object> bodyParams = new HashMap<String, Object>() {{
+			put("user_control_single__c", "user:13857979");
+		}};
+
+		@BeforeAll
+		public void setup() {
+			BinderResponse createResponse = BinderRequestHelper.createBinder(vaultClient);
+			binderId = createResponse.getDocument().getId();
+
+			BinderActionResponse retrieveActionResponse = vaultClient.newRequest(DocumentLifecycleRequest.class)
+					.retrieveBinderUserActions(binderId, majorVersion, minorVersion);
+			assertTrue(retrieveActionResponse.isSuccessful());
+
+			for (DocumentActionResponse.LifecycleAction action : retrieveActionResponse.getLifecycleActions()) {
+				if ("workflow".equals(action.getLifecycleActionType())) {
+					userActionName = action.getName();
+					break;
+				}
+			}
+		}
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			response = vaultClient.newRequest(DocumentLifecycleRequest.class)
+					.setBodyParams(bodyParams)
 					.initiateBinderUserAction(binderId, majorVersion, minorVersion, userActionName);
 
 			assertNotNull(response);

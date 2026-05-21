@@ -431,6 +431,10 @@ public class DocumentLifecycleRequest extends VaultRequest<DocumentLifecycleRequ
 		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE,
 				HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
 
+		if (bodyParams != null && !bodyParams.isEmpty()) {
+			request.setBodyParams(bodyParams);
+		}
+
 		return send(HttpMethod.PUT, request, BinderActionInitiateResponse.class);
 	}
 

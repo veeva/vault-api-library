@@ -27,21 +27,13 @@ public class DocumentAnnotationRequestHelper {
 
     public static QueryResponse.QueryResult getAnnotationsDoc(VaultClient vaultClient) {
 //        Get VAPIL Annotations Doc
-        String query = "SELECT id, name__v, major_version_number__v, minor_version_number__v " +
-                "FROM documents " +
-                "WHERE name__v = 'VAPIL Annotations Doc (Do Not Delete)'";
-
-        QueryResponse response = vaultClient.newRequest(QueryRequest.class)
-                .query(query);
-
-        return response.getData().get(0);
-    }
-
-    public static QueryResponse.QueryResult getVideoAnnotationsDoc(VaultClient vaultClient) {
-//        Get VAPIL Video Annotations Doc
-        String query = "SELECT id, name__v, major_version_number__v, minor_version_number__v " +
-                "FROM documents " +
-                "WHERE name__v = 'VAPIL Video Annotations Doc (Do Not Delete)'";
+        String query = "SELECT id,\n" +
+                "name__v,\n" +
+                "major_version_number__v,\n" +
+                "minor_version_number__v\n" +
+                "FROM documents\n" +
+                "WHERE name__v LIKE '\n" +
+                "VAPIL Annotations Doc%'";
 
         QueryResponse response = vaultClient.newRequest(QueryRequest.class)
                 .query(query);
@@ -51,9 +43,9 @@ public class DocumentAnnotationRequestHelper {
 
     public static void writeCreateAnnotationsFile(VaultClient vaultClient) throws IOException {
         QueryResponse.QueryResult annotationsDoc = getAnnotationsDoc(vaultClient);
-        Integer docId = annotationsDoc.getInteger("id");
-        Integer majorVersionNumber = annotationsDoc.getInteger("major_version_number__v");
-        Integer minorVersionNumber = annotationsDoc.getInteger("minor_version_number__v");
+        int docId = annotationsDoc.getInteger("id");
+        int majorVersionNumber = annotationsDoc.getInteger("major_version_number__v");
+        int minorVersionNumber = annotationsDoc.getInteger("minor_version_number__v");
         String docVersionId = docId + "_" + majorVersionNumber + "_" + minorVersionNumber;
 
         FileHelper.createFile(PATH_CREATE_ANNOTATIONS_JSON);
@@ -65,16 +57,13 @@ public class DocumentAnnotationRequestHelper {
         annotationNode.put("document_version_id__sys", docVersionId);
         annotationNode.put("color__sys", "orange_dark__sys");
         annotationNode.put("comment__sys", "VAPIL Test");
-        
         ObjectNode placemarkNode = mapper.createObjectNode();
         placemarkNode.put("type__sys", "sticky__sys");
         placemarkNode.put("page_number__sys", 1);
         placemarkNode.put("x_coordinate__sys", 100);
         placemarkNode.put("y_coordinate__sys", 100);
-        
         annotationNode.set("placemark", placemarkNode);
         rootNode.add(annotationNode);
-        
         mapper.writerWithDefaultPrettyPrinter().writeValue(createAnnotationsFile, rootNode);
     }
 
@@ -88,15 +77,13 @@ public class DocumentAnnotationRequestHelper {
 
         for (int i = 0; i < size; i++) {
             ObjectNode annotationNode = mapper.createObjectNode();
-            ObjectNode placemarkNode = mapper.createObjectNode();
-            
             annotationNode.put("type__sys", "reply__sys");
             annotationNode.put("document_version_id__sys", docIds.get(i));
             annotationNode.put("comment__sys", "VAPIL test annotation reply");
 
+            ObjectNode placemarkNode = mapper.createObjectNode();
             placemarkNode.put("type__sys", "reply__sys");
             placemarkNode.put("reply_parent__sys", annotationIds.get(i));
-
             annotationNode.set("placemark", placemarkNode);
             rootNode.add(annotationNode);
         }

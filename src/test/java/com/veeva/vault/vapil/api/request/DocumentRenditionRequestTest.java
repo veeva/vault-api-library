@@ -334,20 +334,24 @@ public class DocumentRenditionRequestTest {
     class TestUpdateMultipleDocumentRenditionsCsv {
 
         private DocumentRenditionBulkResponse updateMultipleDocumentRenditionsResponse = null;
+        private int docId = 0;
+        private int majorVersion = 0;
+        private int minorVersion = 1;
 
         @BeforeAll
         public void setup() throws IOException {
-            String vql = """
-                SELECT id, major_version_number__v, minor_version_number__v
-                FROM documents
-                WHERE name__v = 'VAPIL Test Re-render (Do Not Delete)'
-                """;
-            QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class)
-                .query(vql);
+            DocumentsResponse retrieveResponse = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
 
-            int docId = queryResponse.getData().get(0).getInteger("id");
-            int majorVersion = queryResponse.getData().get(0).getInteger("major_version_number__v");
-            int minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
+            assertTrue(retrieveResponse.isSuccessful());
+            for (DocumentsResponse.DocumentNode documentNode : retrieveResponse.getDocuments()) {
+                if (documentNode.getDocument().getName().contains("VAPIL Test Re-render (Do Not Delete)")) {
+                    docId = documentNode.getDocument().getId();
+                    majorVersion = documentNode.getDocument().getMajorVersionNumber();
+                    minorVersion = documentNode.getDocument().getMinorVersionNumber();
+                    break;
+                }
+            }
 
             VaultResponse deleteResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
                     .deleteSingleDocumentRendition(docId, "viewable_rendition__v");
@@ -391,21 +395,24 @@ public class DocumentRenditionRequestTest {
     class TestUpdateMultipleDocumentRenditionsBytes {
 
         private DocumentRenditionBulkResponse updateMultipleDocumentRenditionsResponse = null;
+        private int docId = 0;
+        private int majorVersion = 0;
+        private int minorVersion = 1;
 
         @BeforeAll
         public void setup() throws IOException {
+            DocumentsResponse retrieveResponse = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
 
-            String vql = """
-                SELECT id, major_version_number__v, minor_version_number__v
-                FROM documents
-                WHERE name__v = 'VAPIL Test Re-render (Do Not Delete)'
-                """;
-            QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class)
-                .query(vql);
-
-            int docId = queryResponse.getData().get(0).getInteger("id");
-            int majorVersion = queryResponse.getData().get(0).getInteger("major_version_number__v");
-            int minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
+            assertTrue(retrieveResponse.isSuccessful());
+            for (DocumentsResponse.DocumentNode documentNode : retrieveResponse.getDocuments()) {
+                if (documentNode.getDocument().getName().contains("VAPIL Test Re-render (Do Not Delete)")) {
+                    docId = documentNode.getDocument().getId();
+                    majorVersion = documentNode.getDocument().getMajorVersionNumber();
+                    minorVersion = documentNode.getDocument().getMinorVersionNumber();
+                    break;
+                }
+            }
 
             VaultResponse deleteResponse = vaultClient.newRequest(DocumentRenditionRequest.class)
                     .deleteSingleDocumentRendition(docId, "viewable_rendition__v");

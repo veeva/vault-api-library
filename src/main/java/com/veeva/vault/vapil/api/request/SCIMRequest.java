@@ -11,7 +11,7 @@ package com.veeva.vault.vapil.api.request;
 /**
  * SCIM Requests
  *
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/scim">https://general.veevavault.dev/vault-api/api-reference/26.1/scim</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#scim">https://developer.veevavault.com/api/25.3/#scim</a>
  */
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -73,7 +73,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/ServiceProviderConfig</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-scim-provider' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-scim-provider</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -149,7 +149,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/Schemas</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-scim-schema-information' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-scim-schema-information</a>
 	 *
 	 * @return SCIMResponse
 	 */
@@ -169,7 +169,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/Schemas/{id}</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-single-scim-resource' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-single-scim-resource</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -213,7 +213,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/ResourceTypes</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-scim-resource-types' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-scim-resource-types</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -251,7 +251,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/ResourceTypes/{type}</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-scim-resource-types' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-scim-resource-types</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -284,7 +284,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * POST /api/{version}/scim/v2/Users</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/create-user-with-scim' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/create-user-with-scim</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#create-user-with-scim' target='_blank'>https://developer.veevavault.com/api/25.3/#create-user-with-scim</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -345,7 +345,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/Users</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-all-users-with-scim' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-all-users-with-scim</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-users-with-scim' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-users-with-scim</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -408,7 +408,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/Users/{id}</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-single-user-with-scim' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-single-user-with-scim</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-single-user-with-scim' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-single-user-with-scim</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -459,7 +459,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/Me</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-current-user-with-scim' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-current-user-with-scim</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-current-user-with-scim' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-current-user-with-scim</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -504,7 +504,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * PUT /api/{version}/scim/v2/Me</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/update-current-user-with-scim' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/update-current-user-with-scim</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#update-current-user-with-scim' target='_blank'>https://developer.veevavault.com/api/25.3/#update-current-user-with-scim</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -563,7 +563,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/{type}/{id}</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/discovery-endpoints</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-single-scim-resource' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-single-scim-resource</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -599,7 +599,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * GET /api/{version}/scim/v2/{type}</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-scim-resources' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/retrieve-scim-resources</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#retrieve-scim-resources' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-scim-resources</a>
 	 *
 	 * @vapil.request
 	 * <pre>
@@ -657,7 +657,7 @@ public class SCIMRequest extends VaultRequest<SCIMRequest> {
 	 * PUT /api/{version}/scim/v2/Users/{id}</pre>
 	 *
 	 * @vapil.vaultlink
-	 * <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/update-user-with-scim' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/scim/users/update-user-with-scim</a>
+	 * <a href='https://developer.veevavault.com/api/25.3/#update-current-user-with-scim' target='_blank'>https://developer.veevavault.com/api/25.3/#update-current-user-with-scim</a>
 	 *
 	 * @vapil.request
 	 * <pre>

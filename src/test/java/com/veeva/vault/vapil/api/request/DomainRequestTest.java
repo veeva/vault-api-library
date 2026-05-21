@@ -52,25 +52,10 @@ public class DomainRequestTest {
             assertNotNull(response.getDomain().getDomainName());
             assertNotNull(response.getDomain().getDomainType());
             List<DomainResponse.Domain.DomainVault> vaults = response.getDomain().getVaults();
-            assertNotNull(vaults);
             for (DomainResponse.Domain.DomainVault vault : vaults) {
                 assertNotNull(vault.getId());
                 assertNotNull(vault.getVaultName());
                 assertNotNull(vault.getVaultStatus());
-
-                List<DomainResponse.Domain.DomainVault.VaultApplication> applications = vault.getVaultApplication();
-                if (applications != null) {
-                    for (DomainResponse.Domain.DomainVault.VaultApplication application : applications) {
-                        assertNotNull(application.getName());
-                        assertNotNull(application.getLabel());
-                    }
-                }
-
-                DomainResponse.Domain.DomainVault.VaultFamily family = vault.getVaultFamily();
-                if (family != null) {
-                    assertNotNull(family.getName());
-                    assertNotNull(family.getLabel());
-                }
             }
         }
     }

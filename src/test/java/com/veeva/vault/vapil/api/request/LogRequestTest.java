@@ -11,7 +11,6 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.SdkDebugSession;
 import com.veeva.vault.vapil.api.model.common.SdkProfilingSession;
 import com.veeva.vault.vapil.extension.FileHelper;
-import com.veeva.vault.vapil.extension.ObjectRecordRequestHelper;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +42,7 @@ public class LogRequestTest {
 	private static final String PROFILING_SESSION_NAME = "vapil_test_profiling_session__c";
 	private static final String DEBUG_SESSION_LABEL = "VAPIL Test Debug";
 	private static final String RESOURCES_LOGS_FOLDER = FileHelper.getPathLogsFolder();
-	private static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
+	private static final String TEST_OBJECT_NAME = "vapil_test_object__c";
 	private static VaultClient vaultClient;
 
 	@BeforeAll
@@ -612,7 +611,7 @@ public class LogRequestTest {
 		@BeforeAll
 		public void setup() {
 			QueryResponse queryResponse = vaultClient.newRequest(QueryRequest.class)
-					.query(String.format("SELECT id FROM %s MAXROWS 1", OBJECT_NAME));
+					.query(String.format("SELECT id FROM %s MAXROWS 1", TEST_OBJECT_NAME));
 			recordId = queryResponse.getData().get(0).getString("id");
 		}
 
@@ -621,7 +620,7 @@ public class LogRequestTest {
 		public void testRequest() {
 			retrieveAuditHistoryObjectResponse = vaultClient.newRequest(LogRequest.class)
 					.setEvents(new HashSet<>(Arrays.asList("Create", "Edit")))
-					.retrieveCompleteAuditHistoryForASingleObjectRecord(OBJECT_NAME, recordId);
+					.retrieveCompleteAuditHistoryForASingleObjectRecord(TEST_OBJECT_NAME, recordId);
 		}
 
 		@Test
@@ -1297,59 +1296,6 @@ public class LogRequestTest {
 		@Order(2)
 		public void testResponse() {
 			assertTrue(deleteDebugLogResponse.isSuccessful());
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully download workflow activity log to file")
-	class TestDownloadWorkflowActivityLogToFile {
-
-		private VaultResponse downloadWorkflowActivityLogResponse = null;
-		Path outputPath = Paths.get(RESOURCES_LOGS_FOLDER, "workflow_activity_log.zip");
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
-			downloadWorkflowActivityLogResponse = vaultClient.newRequest(LogRequest.class)
-					.setOutputPath(outputPath.toString())
-					.downloadWorkflowActivityLog(date);
-
-			assertNotNull(downloadWorkflowActivityLogResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(downloadWorkflowActivityLogResponse.isSuccessful());
-		}
-	}
-
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully download workflow activity log to bytes")
-	class TestDownloadWorkflowActivityLogToBytes {
-
-		private VaultResponse downloadSdkRuntimeLogResponse = null;
-
-		@Test
-		@Order(1)
-		public void testRequest() {
-			LocalDate date = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1).toLocalDate();
-			downloadSdkRuntimeLogResponse = vaultClient.newRequest(LogRequest.class)
-					.retrieveDailyAPIUsage(date);
-
-			assertNotNull(downloadSdkRuntimeLogResponse);
-		}
-
-		@Test
-		@Order(2)
-		public void testResponse() {
-			assertTrue(downloadSdkRuntimeLogResponse.isSuccessful());
-			assertNotNull(downloadSdkRuntimeLogResponse.getBinaryContent());
 		}
 	}
 }

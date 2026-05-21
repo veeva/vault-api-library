@@ -11,7 +11,8 @@ src/test/resources/test.properties
 .DS_Store
 
 #IntelliJ
-.idea/
+.idea/*
+!.idea/runConfigurations/
 
 #Eclipse
 .eclipse
@@ -22,14 +23,11 @@ src/test/resources/test.properties
 
 # Log file
 *.log
-/src/test/resources/settings_files/settings_vapil_basic.json
-/src/test/resources/settings_files/settings_vapil_oauth_discovery.json
-/src/test/resources/settings_files/settings_vapil_oauth_token.json
-/src/test/resources/settings_files/settings_vapil_sandbox.json
-/src/test/resources/settings_files/settings_vapil_session_id.json
-src/test/resources/settings_files/settings_vapil_basic_eric.json
-src/test/resources/settings_files/settings_vapil_basic_lr.json
-src/test/resources/settings_files/settings_vapil_dev.json
-src/test/resources/settings_files/settings_vapil_session_id_lr.json
-src/test/resources/settings_files/settings_vapil_basic_lr - Copy.json
-.gemini/settings.json
+
+# Settings files
+/src/test/resources/settings_files/settings_*
+
+# LLM settings
+.gemini/*
+!.gemini/settings.json
+!mcp.json

@@ -16,7 +16,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 /**
  * Retrieve Domain specific information
  *
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/domain-information">https://general.veevavault.dev/vault-api/api-reference/26.1/domain-information</a>
+ * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.2/domain-information">https://general.veevavault.dev/vault-api/api-reference/26.2/domain-information</a>
  */
 public class DomainRequest extends VaultRequest<DomainRequest> {
 
@@ -39,7 +39,7 @@ public class DomainRequest extends VaultRequest<DomainRequest> {
 	 * @return DomainResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/domain</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/domain-information/retrieve-domain-information' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/domain-information/retrieve-domain-information</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/domain-information/retrieve-domain-information' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/domain-information/retrieve-domain-information</a>
 	 * @vapil.request <pre>
 	 * DomainResponse resp = vaultClient.newRequest(DomainRequest.class)
 	 * 		.setIncludeApplications(includeApplication)
@@ -74,7 +74,7 @@ public class DomainRequest extends VaultRequest<DomainRequest> {
 	 * @return DomainsResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/domains</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/domain-information/retrieve-domains' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/domain-information/retrieve-domains</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/domain-information/retrieve-domains' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/domain-information/retrieve-domains</a>
 	 * @vapil.request <pre>
 	 * DomainsResponse response = vaultClient.newRequest(DomainRequest.class)
 	 * 		.retrieveDomains();

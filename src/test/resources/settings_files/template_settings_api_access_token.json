@@ -1,0 +1,19 @@
+{
+    "authenticationType": "API_ACCESS_TOKEN",
+    "vaultUsername": "user@cholecap.com",
+    "vaultPassword": "",
+    "vaultApiAccessToken": "veeva-vault-123456-789abc-defghijklm",
+    "vaultDNS": "dns.veevavault.com",
+    "vaultSessionId": "",
+    "vaultClientId": "veeva-vault-devsupport-client-vapil",
+    "vaultOauthClientId": "",
+    "vaultOauthProfileId": "",
+    "idpOauthAccessToken": "",
+    "idpOauthScope": "openid",
+    "idpUsername": "",
+    "idpPassword": "",
+    "logApiErrors": true,
+    "httpTimeout": 60,
+    "validateSession": true,
+    "allowAllCertificates": false
+}

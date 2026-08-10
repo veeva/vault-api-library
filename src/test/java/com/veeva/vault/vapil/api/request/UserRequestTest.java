@@ -22,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +61,7 @@ public class UserRequestTest {
     static void setup(VaultClient client) {
         vaultClient = client;
         assertTrue(vaultClient.getAuthenticationResponse().isSuccessful());
-        vaultId = vaultClient.getAuthenticationResponse().getHeaderVaultId();
+//        vaultId = vaultClient.getAuthenticationResponse().getHeaderVaultId();
     }
 
     @Test
@@ -453,6 +455,63 @@ public class UserRequestTest {
                 assertNotNull(externalLicense.getUsed());
                 assertNotNull(externalLicense.getShared());
             }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully generate an API access token")
+    class TestGenerateApiAccessToken {
+
+        private ApiAccessTokenResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            int userId = Integer.parseInt(vaultClient.getAuthenticationResponse().getUserId());
+            response = vaultClient.newRequest(UserRequest.class)
+                    .setExpiryDate(ZonedDateTime.now(ZoneId.of("UTC")).plusDays(7))
+                    .generateApiAccessToken(userId, "VapilTest");
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getData());
+            assertNotNull(response.getData().getId());
+            assertNotNull(response.getData().getToken());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully generate my API access token")
+    class TestGenerateMyApiAccessToken {
+
+        private ApiAccessTokenResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(UserRequest.class)
+                    .setExpiryDate(ZonedDateTime.now(ZoneId.of("UTC")).plusDays(7))
+                    .generateMyApiAccessToken("VapilTest");
+
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getData());
+            assertNotNull(response.getData().getId());
+            assertNotNull(response.getData().getToken());
         }
     }
 

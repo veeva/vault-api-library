@@ -11,6 +11,7 @@ import com.veeva.vault.vapil.api.client.VaultClient;
 import com.veeva.vault.vapil.api.model.common.ComponentRecord;
 import com.veeva.vault.vapil.api.model.common.ComponentType;
 import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.model.response.ComponentContentResponse.ComponentContent;
 import com.veeva.vault.vapil.extension.FileHelper;
 import com.veeva.vault.vapil.extension.JobStatusHelper;
 import com.veeva.vault.vapil.extension.MetadataRequestHelper;
@@ -428,6 +429,53 @@ public class MetaDataRequestComponentTest {
 			assertNotNull(response.getComponentType());
 			assertNotNull(response.getCommandType());
 			assertNotNull(response.getRecordName());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully retrieve the content file for a Reportexceltemplate component record")
+	class TestRetrieveContentFile {
+		ComponentContentResponse response = null;
+		String recordName;
+
+		@BeforeAll
+		public void setup() {
+			MetaDataComponentTypeBulkResponse recordsResponse = vaultClient.newRequest(MetaDataRequest.class)
+					.retrieveComponentRecords("Reportexceltemplate");
+
+			assertNotNull(recordsResponse);
+			assertTrue(recordsResponse.isSuccessful());
+			List<ComponentType> data = recordsResponse.getData();
+			assertNotNull(data);
+			assertFalse(data.isEmpty());
+			recordName = data.get(0).getName();
+			assertNotNull(recordName);
+		}
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			response = vaultClient.newRequest(MetaDataRequest.class)
+					.retrieveContentFile("Reportexceltemplate", recordName);
+
+			assertNotNull(response);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(response.isSuccessful());
+			List<ComponentContent> data = response.getData();
+			assertNotNull(data);
+			for (ComponentContent content : data) {
+				assertNotNull(content.getFormat());
+				assertNotNull(content.getName());
+				assertNotNull(content.getOriginalName());
+				assertNotNull(content.getSha1Checksum());
+				assertNotNull(content.getSize());
+			}
 		}
 	}
 }

@@ -22,12 +22,14 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
  * Users
  *
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/users">https://general.veevavault.dev/vault-api/api-reference/26.1/users</a>
+ * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.2/users">https://general.veevavault.dev/vault-api/api-reference/26.2/users</a>
  */
 public class UserRequest extends VaultRequest<UserRequest> {
 	private static Logger log = LoggerFactory.getLogger(UserRequest.class);
@@ -41,6 +43,8 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	private static final String URL_USER_PERMISSIONS = "/objects/users/{user_id}/permissions";
 	private static final String URL_LICENSE_USAGE = "/objects/licenses";
 	private static final String URL_VALIDATE_SESSION_USER = "/objects/users/me";
+	private static final String URL_API_ACCESS_TOKEN = "/objects/users/{user_id}/api_access_token__sys";
+	private static final String URL_MY_API_ACCESS_TOKEN = "/objects/users/me/api_access_token__sys";
 
 	// query string parameters for user retrieval
 	private static final String HTTP_QUERYSTRING_VAULTS = "vaults";
@@ -56,6 +60,11 @@ public class UserRequest extends VaultRequest<UserRequest> {
 
 	// parameter for user permissions filter
 	private static final String PERMISSIONS_FILTER = "filter";
+
+	// parameters for generating API access token
+	private static final String PARAM_NAME = "name__v";
+	private static final String PARAM_EXPIRY_DATE = "expiry_date__v";
+	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 	// API Request Parameters
 	private HttpRequestConnector.BinaryFile binaryFile;
@@ -74,6 +83,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	private Boolean excludeVaultMembership;
 	private Boolean excludeAppLicensing;
 	private String filter;
+	private ZonedDateTime expiryDate;
 
 	private UserRequest() {
 		this.headerAccept = HttpRequestConnector.HTTP_CONTENT_TYPE_JSON;
@@ -87,7 +97,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return MetaDataUserResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/metadata/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-user-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-user-metadata</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-user-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-user-metadata</a>
 	 * @vapil.request <pre>
 	 * MetaDataUserResponse resp = vaultClient.newRequest(UserRequest.class).retrieveUserMetadata();</pre>
 	 * @vapil.response <pre>
@@ -126,7 +136,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-all-users' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-all-users</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-all-users' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-all-users</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .retrieveAllUsers();</pre>
@@ -192,7 +202,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/{id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-user</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-user</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(UserRequest.class).retrieveUser(userId);</pre>
 	 * @vapil.response <pre>
@@ -219,7 +229,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/create-users/create-single-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/create-users/create-single-user</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/create-users/create-single-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/create-users/create-single-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeForm()
@@ -242,7 +252,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users/{id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/update-users/update-single-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/update-users/update-single-user</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/update-users/update-single-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/update-users/update-single-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeXForm()
@@ -268,7 +278,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users/{user_id}/password</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/change-my-password' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/change-my-password</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/change-my-password' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/change-my-password</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(UserRequest.class).changePassword(userId, oldPass, newPass);</pre>
 	 * @vapil.response <pre>System.out.println(resp.getResponseStatus());
@@ -297,7 +307,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/{id}/permissions</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-user-permissions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-user-permissions</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-user-permissions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-user-permissions</a>
 	 * @vapil.request <pre>
 	 * UserPermissionResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .retrieveUserPermissions(userId);</pre>
@@ -331,7 +341,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/users/{user_id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/disable-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/disable-user</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/disable-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/disable-user</a>
 	 * @vapil.request <pre>
 	 * UserResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setDomainAsTrue()
@@ -359,7 +369,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/create-users/create-multiple-users' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/create-users/create-multiple-users</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/create-users/create-multiple-users' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/create-users/create-multiple-users</a>
 	 * @vapil.request <pre>
 	 * UserBulkResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeCsv()
@@ -397,7 +407,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/update-users/update-multiple-users' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/update-users/update-multiple-users</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/update-users/update-multiple-users' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/update-users/update-multiple-users</a>
 	 * @vapil.request <pre>
 	 * UserBulkResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeCsv()
@@ -436,7 +446,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/users/{user_id}/vault_membership/{vault_id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/update-vault-membership' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/update-vault-membership</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/update-vault-membership' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/update-vault-membership</a>
 	 * @vapil.request <pre>
 	 * VaultResponse resp = vaultClient.newRequest(UserRequest.class)
 	 *                 .setContentTypeXForm()
@@ -463,7 +473,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserLicenseUsageResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/licenses</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-application-license-usage' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/retrieve-application-license-usage</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-application-license-usage' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/retrieve-application-license-usage</a>
 	 * @vapil.request <pre>
 	 * UserLicenseUsageResponse response = vaultClient.newRequest(UserRequest.class)
 	 * 		.retrieveApplicationLicenseUsage();
@@ -503,7 +513,7 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	 * @return UserRetrieveResponse Vault returns an array of size 1
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/users/me</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/users/validate-session-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/users/validate-session-user</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/validate-session-user' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/validate-session-user</a>
 	 * @vapil.request <pre>
 	 * UserRetrieveResponse resp = vaultClient.newRequest(UserRequest.class).validateSessionUser();</pre>
 	 * @vapil.response <pre>
@@ -519,6 +529,73 @@ public class UserRequest extends VaultRequest<UserRequest> {
 		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_VALIDATE_SESSION_USER));
 
 		return send(HttpMethod.GET, request, UserRetrieveResponse.class);
+	}
+
+	/**
+	 * <b>Generate API Access Token</b>
+	 * <p>
+	 * Generate an API access token for a specified Vault user.
+	 * Each user can be granted up to 25 active access tokens.
+	 * You cannot generate access tokens for VeevaID users.
+	 *
+	 * @param userId The ID of the Vault user for which to generate an access token
+	 * @param name   The name or description of the access token
+	 * @return ApiAccessTokenResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/objects/users/{user_id}/api_access_token__sys</pre>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/api-access-tokens/generate-api-access-token' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/api-access-tokens/generate-api-access-token</a>
+	 * @vapil.request <pre>
+	 * ApiAccessTokenResponse response = vaultClient.newRequest(UserRequest.class)
+	 * 		.setExpiryDate(ZonedDateTime.now(ZoneId.of("UTC")).plusDays(7))
+	 * 		.generateApiAccessToken(userId, "VapilTest");</pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Id: " + response.getData().getId());
+	 * System.out.println("Token: " + response.getData().getToken());
+	 * </pre>
+	 */
+	public ApiAccessTokenResponse generateApiAccessToken(int userId, String name) {
+		String url = vaultClient.getAPIEndpoint(URL_API_ACCESS_TOKEN)
+				.replace("{user_id}", String.valueOf(userId));
+
+		HttpRequestConnector request = new HttpRequestConnector(url);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+
+		request.addBodyParam(PARAM_NAME, name);
+		if (expiryDate != null)
+			request.addBodyParam(PARAM_EXPIRY_DATE, getFormattedDate(expiryDate));
+
+		return send(HttpMethod.POST, request, ApiAccessTokenResponse.class);
+	}
+
+	/**
+	 * <b>Generate My API Access Token</b>
+	 * <p>
+	 * Generate an API access token for the currently authenticated user.
+	 * Each user can be granted up to 25 active access tokens.
+	 *
+	 * @param name The name or description of the access token
+	 * @return ApiAccessTokenResponse
+	 * @vapil.api <pre>
+	 * POST /api/{version}/objects/users/me/api_access_token__sys</pre>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/users/api-access-tokens/generate-my-api-access-token' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/users/api-access-tokens/generate-my-api-access-token</a>
+	 * @vapil.request <pre>
+	 * ApiAccessTokenResponse response = vaultClient.newRequest(UserRequest.class)
+	 * 		.setExpiryDate(ZonedDateTime.now(ZoneId.of("UTC")).plusDays(7))
+	 * 		.generateMyApiAccessToken("VapilTest");</pre>
+	 * @vapil.response <pre>
+	 * System.out.println("Id: " + response.getData().getId());
+	 * System.out.println("Token: " + response.getData().getToken());
+	 * </pre>
+	 */
+	public ApiAccessTokenResponse generateMyApiAccessToken(String name) {
+		HttpRequestConnector request = new HttpRequestConnector(vaultClient.getAPIEndpoint(URL_MY_API_ACCESS_TOKEN));
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_XFORM);
+
+		request.addBodyParam(PARAM_NAME, name);
+		if (expiryDate != null)
+			request.addBodyParam(PARAM_EXPIRY_DATE, getFormattedDate(expiryDate));
+
+		return send(HttpMethod.POST, request, ApiAccessTokenResponse.class);
 	}
 
 	/**
@@ -856,6 +933,23 @@ public class UserRequest extends VaultRequest<UserRequest> {
 	public UserRequest setDomainAsTrue() {
 		this.domain = true;
 		return this;
+	}
+
+	/**
+	 * Set the expiration date of the access token.
+	 * If omitted, the token never expires (subject to the user's security profile settings).
+	 *
+	 * @param expiryDate Expiration date and time in UTC
+	 * @return The Request
+	 */
+	public UserRequest setExpiryDate(ZonedDateTime expiryDate) {
+		this.expiryDate = expiryDate;
+		return this;
+	}
+
+	private String getFormattedDate(ZonedDateTime date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+		return date.format(formatter);
 	}
 
 }

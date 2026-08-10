@@ -8,6 +8,7 @@
 package com.veeva.vault.vapil.api.request;
 
 import com.veeva.vault.vapil.api.client.VaultClient;
+import com.veeva.vault.vapil.api.model.common.QueryProfilerSession;
 import com.veeva.vault.vapil.api.model.common.SdkDebugSession;
 import com.veeva.vault.vapil.api.model.common.SdkProfilingSession;
 import com.veeva.vault.vapil.extension.FileHelper;
@@ -17,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.veeva.vault.vapil.extension.VaultClientParameterResolver;
 import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.model.response.QueryProfilerSessionBulkResponse;
+import com.veeva.vault.vapil.api.model.response.QueryProfilerSessionCreateResponse;
+import com.veeva.vault.vapil.api.model.response.QueryProfilerSessionResponse;
 import com.veeva.vault.vapil.api.model.response.AuditMetadataResponse.AuditMetadata;
 import com.veeva.vault.vapil.api.model.response.AuditTypesResponse.AuditTrail;
 import com.veeva.vault.vapil.api.model.response.DocumentAuditResponse.DocumentAudit;
@@ -785,6 +789,228 @@ public class LogRequestTest {
 	@Nested
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully list all VQL Query Profiler sessions in the Vault")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestListAllSessions {
+
+		private QueryProfilerSessionBulkResponse listAllSessionsResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			listAllSessionsResponse = vaultClient.newRequest(LogRequest.class)
+					.listAllSessions();
+
+			assertNotNull(listAllSessionsResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(listAllSessionsResponse.isSuccessful());
+
+			assertNotNull(listAllSessionsResponse.getData());
+			List<QueryProfilerSession> sessions = listAllSessionsResponse.getData();
+			for (QueryProfilerSession session : sessions) {
+				assertNotNull(session.getId());
+				assertNotNull(session.getLabel());
+				assertNotNull(session.getName());
+//				assertNotNull(session.getDescription());
+				assertNotNull(session.getStatus());
+//				assertNotNull(session.getUserId());
+//				assertNotNull(session.getQueryTargets());
+//				assertNotNull(session.getQueryOrigin());
+//				assertNotNull(session.getResponseStatus());
+				assertNotNull(session.getCreatedDate());
+				assertNotNull(session.getExpirationDate());
+			}
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully list single VQL Query Profiler session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestListSingleSession {
+
+		private QueryProfilerSessionResponse listSingleSessionResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			listSingleSessionResponse = vaultClient.newRequest(LogRequest.class)
+					.listSingleSession("test_profiler_log__c");
+
+			assertNotNull(listSingleSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(listSingleSessionResponse.isSuccessful());
+			assertNotNull(listSingleSessionResponse.getData());
+			assertNotNull(listSingleSessionResponse.getData().getId());
+			assertNotNull(listSingleSessionResponse.getData().getLabel());
+			assertNotNull(listSingleSessionResponse.getData().getName());
+			assertNotNull(listSingleSessionResponse.getData().getStatus());
+			assertNotNull(listSingleSessionResponse.getData().getCreatedDate());
+			assertNotNull(listSingleSessionResponse.getData().getExpirationDate());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully create new VQL Query Profiler session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestCreateNewSession {
+
+		private QueryProfilerSessionCreateResponse createNewSessionResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			long currentEpochTime = Instant.now().getEpochSecond();
+
+			createNewSessionResponse = vaultClient.newRequest(LogRequest.class)
+					.setUserId(vaultClient.getUserId())
+					.setDescription("Vapil Test Description")
+					.setQueryOrigin(LogRequest.QueryOriginType.ALL)
+					.setQueryTargets(new HashSet<>(Arrays.asList("user__sys")))
+					.setResultCountMin(0)
+					.setResultCountMax(1000)
+					.setQueryTimeMin(0)
+					.setQueryTimeMax(1200)
+					.setQueryResponseStatus(LogRequest.QueryResponseStatusType.ALL)
+					.createNewSession(String.format("VAPIL Test %d", currentEpochTime));
+
+			assertNotNull(createNewSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(createNewSessionResponse.isSuccessful());
+			assertNotNull(createNewSessionResponse.getData());
+			assertNotNull(createNewSessionResponse.getData().getId());
+			assertNotNull(createNewSessionResponse.getData().getName());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully end an active VQL Query Profiler session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestEndActiveSession {
+
+		private VaultResponse endActiveSessionResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			endActiveSessionResponse = vaultClient.newRequest(LogRequest.class)
+					.endActiveSession("test_profiler_log_2__c");
+
+			assertNotNull(endActiveSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(endActiveSessionResponse.isSuccessful());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully delete a VQL Query Profiler session")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestDeleteSession {
+
+		private VaultResponse deleteSessionResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			deleteSessionResponse = vaultClient.newRequest(LogRequest.class)
+					.deleteSession("test_profiler_log__c");
+
+			assertNotNull(deleteSessionResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(deleteSessionResponse.isSuccessful());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully download VQL Query Profiler session results to a file")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestDownloadSessionResultsFile {
+
+		private VaultResponse downloadSessionResultsResponse = null;
+		Path outputPath = Paths.get(RESOURCES_LOGS_FOLDER, "query_profiler_results.zip");
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			downloadSessionResultsResponse = vaultClient.newRequest(LogRequest.class)
+					.setOutputPath(outputPath.toString())
+					.downloadSessionResults("test_profiler_log__c");
+
+			assertNotNull(downloadSessionResultsResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(downloadSessionResultsResponse.isSuccessful());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully download VQL Query Profiler session results to bytes")
+	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
+			"which takes a considerable amount of time, and is not conducive to automated testing")
+	class TestDownloadSessionResultsBytes {
+
+		private VaultResponse downloadSessionResultsResponse = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			downloadSessionResultsResponse = vaultClient.newRequest(LogRequest.class)
+					.downloadSessionResults("test_profiler_log__c");
+
+			assertNotNull(downloadSessionResultsResponse);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(downloadSessionResultsResponse.isSuccessful());
+			assertNotNull(downloadSessionResultsResponse.getBinaryContent());
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 	@DisplayName("successfully retrieve all sdk profiling sessions in the Vault")
 	@Disabled("Profiling sessions need to complete processing before they can be read/downloaded/deleted/etc, " +
 			"which takes a considerable amount of time, and is not conducive to automated testing")
@@ -950,7 +1176,7 @@ public class LogRequestTest {
 	class TestDownloadSdkProfilingSessionResultsFile {
 
 		private VaultResponse downloadProfilingSessionResults = null;
-		Path outputPath = Paths.get(System.getProperty("user.home"), "Downloads", "profiler_results.zip");
+		Path outputPath = Paths.get(RESOURCES_LOGS_FOLDER, "profiler_results.zip");
 
 		@Test
 		@Order(1)

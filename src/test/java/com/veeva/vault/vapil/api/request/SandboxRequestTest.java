@@ -15,6 +15,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Tag("SandboxRequest")
 @ExtendWith(VaultClientParameterResolver.class)
@@ -22,6 +24,7 @@ import java.io.File;
 public class SandboxRequestTest {
 
 	static final String SANDBOX_NAME = "VAPIL Test Sandbox";
+	static final String SANDBOX_LR_NAME = "VAPIL LR";
 	static final String SNAPSHOT_NAME = "VAPIL Test Snapshot";
 	static final String SNAPSHOT_API_NAME = "vapil_test_snapshot__c";
 	static final String DOMAIN = "sb-developersupport.com";
@@ -223,5 +226,33 @@ public class SandboxRequestTest {
 				.deleteSandbox(SANDBOX_NAME);
 
 		Assertions.assertTrue(response.isSuccessful());
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully generate an API access token for a sandbox")
+	class TestGenerateApiAccessTokenForSandbox {
+
+		private ApiAccessTokenResponse response = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			response = vaultClient.newRequest(SandboxRequest.class)
+					.setExpiryDate(ZonedDateTime.now(ZoneId.of("UTC")).plusDays(7))
+					.generateApiAccessTokenForSandbox(SANDBOX_LR_NAME, "VapilTest");
+
+			Assertions.assertNotNull(response);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			Assertions.assertTrue(response.isSuccessful());
+			Assertions.assertNotNull(response.getData());
+			Assertions.assertNotNull(response.getData().getId());
+			Assertions.assertNotNull(response.getData().getToken());
+		}
 	}
 }

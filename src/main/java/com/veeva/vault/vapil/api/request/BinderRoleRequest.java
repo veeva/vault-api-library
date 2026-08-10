@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * Binder Role Requests
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles">https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles</a>
+ * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles">https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles</a>
  */
 public class BinderRoleRequest extends VaultRequest<BinderRoleRequest> {
 	private static Logger log = LoggerFactory.getLogger(BinderRoleRequest.class);
@@ -42,7 +42,7 @@ public class BinderRoleRequest extends VaultRequest<BinderRoleRequest> {
 	 * @return BinderRoleRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/{binder_id}/roles</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/retrieve-all-binder-roles' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/retrieve-all-binder-roles</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/retrieve-all-binder-roles' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/retrieve-all-binder-roles</a>
 	 * @vapil.request <pre>
 	 * BinderRoleRetrieveResponse response = vaultClient.newRequest(BinderRoleRequest.class)
 	 * 		.retrieveAllBinderRoles(binderId);
@@ -75,7 +75,7 @@ public class BinderRoleRequest extends VaultRequest<BinderRoleRequest> {
 	 * @return BinderRoleRetrieveResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/binders/{binder_id}/roles/{role_name}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/retrieve-binder-role' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/retrieve-binder-role</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/retrieve-binder-role' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/retrieve-binder-role</a>
 	 * @vapil.request <pre>
 	 * BinderRoleRetrieveResponse response = vaultClient.newRequest(BinderRoleRequest.class)
 	 * 		.retrieveBinderRole(binderId, "owner__v");
@@ -103,7 +103,7 @@ public class BinderRoleRequest extends VaultRequest<BinderRoleRequest> {
 	 * @return BinderRoleChangeResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/binders/{binder_id}/roles</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/assign-users-groups-to-roles-on-a-single-binder' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/assign-users-groups-to-roles-on-a-single-binder</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/assign-users-groups-to-roles-on-a-single-binder' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/assign-users-groups-to-roles-on-a-single-binder</a>
 	 * @vapil.request <pre>
 	 * BinderRoleChangeResponse response = vaultClient.newRequest(BinderRoleRequest.class)
 	 * 		.setBodyParams(Collections.singletonMap("editor__v.users", userId))
@@ -136,7 +136,7 @@ public class BinderRoleRequest extends VaultRequest<BinderRoleRequest> {
 	 * @return BinderRoleChangeBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/roles/batch</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/document-roles/assign-users-groups-to-roles-on-multiple-documents-binders' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/document-roles/assign-users-groups-to-roles-on-multiple-documents-binders</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/document-roles/assign-users-groups-to-roles-on-multiple-documents-binders' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/document-roles/assign-users-groups-to-roles-on-multiple-documents-binders</a>
 	 * @vapil.request <pre>
 	 * BinderRoleChangeBulkResponse response = vaultClient.newRequest(BinderRoleRequest.class)
 	 * 		.setContentTypeCsv()
@@ -171,7 +171,7 @@ public class BinderRoleRequest extends VaultRequest<BinderRoleRequest> {
 	 * @return BinderRoleChangeBulkResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/roles/batch</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/document-roles/remove-users-groups-from-roles-on-multiple-documents-binders' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/document-roles/remove-users-groups-from-roles-on-multiple-documents-binders</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/document-roles/remove-users-groups-from-roles-on-multiple-documents-binders' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/document-roles/remove-users-groups-from-roles-on-multiple-documents-binders</a>
 	 * @vapil.request <pre>
 	 * BinderRoleChangeBulkResponse response = vaultClient.newRequest(BinderRoleRequest.class)
 	 * 		.setContentTypeCsv()
@@ -207,7 +207,7 @@ public class BinderRoleRequest extends VaultRequest<BinderRoleRequest> {
 	 * @return BinderRoleChangeResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/binders/{binder_id}/roles/{role_name_and_user_or_group}/{id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/remove-users-groups-from-roles-on-a-single-binder' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.1/document-binder-roles/binder-roles/remove-users-groups-from-roles-on-a-single-binder</a>
+	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/remove-users-groups-from-roles-on-a-single-binder' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/document-binder-roles/binder-roles/remove-users-groups-from-roles-on-a-single-binder</a>
 	 * @vapil.request <pre>
 	 * BinderRoleChangeResponse response = vaultClient.newRequest(BinderRoleRequest.class)
 	 * 		.removeUsersAndGroupsFromRolesOnASingleBinder(binderId,

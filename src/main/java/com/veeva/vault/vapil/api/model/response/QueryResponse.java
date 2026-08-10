@@ -54,6 +54,15 @@ public class QueryResponse extends VaultResponse {
 		this.set("queryDescribe", queryDescribe);
 	}
 
+	@JsonProperty("document_properties")
+	public List<DocumentProperty> getDocumentProperties() {
+		return (List<DocumentProperty>) this.get("document_properties");
+	}
+
+	public void setDocumentProperties(List<DocumentProperty> documentProperties) {
+		this.set("document_properties", documentProperties);
+	}
+
 	@JsonProperty("record_properties")
 	public List<RecordProperty> getRecordProperties() {
 		return (List<RecordProperty>) this.get("record_properties");
@@ -138,6 +147,213 @@ public class QueryResponse extends VaultResponse {
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
+			}
+		}
+	}
+
+	public static class DocumentProperty extends VaultModel {
+
+		@JsonProperty("id")
+		public Integer getId() {
+			return this.getInteger("id");
+		}
+
+		public void setId(Integer id) {
+			this.set("id", id);
+		}
+
+		@JsonProperty("version_id")
+		public String getVersionId() {
+			return this.getString("version_id");
+		}
+
+		public void setVersionId(String versionId) {
+			this.set("version_id", versionId);
+		}
+
+		@JsonProperty("field_properties")
+		public FieldProperties getFieldProperties() {
+			return (FieldProperties) this.get("field_properties");
+		}
+
+		public void setFieldProperties(FieldProperties fieldProperties) {
+			this.set("field_properties", fieldProperties);
+		}
+
+		@JsonProperty("permissions")
+		public DocumentPermissions getPermissions() {
+			return (DocumentPermissions) this.get("permissions");
+		}
+
+		public void setPermissions(DocumentPermissions permissions) {
+			this.set("permissions", permissions);
+		}
+
+		public static class FieldProperties extends VaultModel {
+
+			@JsonProperty("edit")
+			public List<String> getEdit() {
+				return (List<String>) this.get("edit");
+			}
+
+			public void setEdit(List<String> edit) {
+				this.set("edit", edit);
+			}
+
+			@JsonProperty("read-only")
+			public List<String> getReadOnly() {
+				return (List<String>) this.get("read-only");
+			}
+
+			public void setReadOnly(List<String> readOnly) {
+				this.set("read-only", readOnly);
+			}
+		}
+
+		public static class DocumentPermissions extends VaultModel {
+
+			@JsonProperty("annotate")
+			public Boolean getAnnotate() {
+				return this.getBoolean("annotate");
+			}
+
+			public void setAnnotate(Boolean annotate) {
+				this.set("annotate", annotate);
+			}
+
+			@JsonProperty("change_coordinator")
+			public Boolean getChangeCoordinator() {
+				return this.getBoolean("change_coordinator");
+			}
+
+			public void setChangeCoordinator(Boolean changeCoordinator) {
+				this.set("change_coordinator", changeCoordinator);
+			}
+
+			@JsonProperty("change_owner")
+			public Boolean getChangeOwner() {
+				return this.getBoolean("change_owner");
+			}
+
+			public void setChangeOwner(Boolean changeOwner) {
+				this.set("change_owner", changeOwner);
+			}
+
+			@JsonProperty("create_anchors")
+			public Boolean getCreateAnchors() {
+				return this.getBoolean("create_anchors");
+			}
+
+			public void setCreateAnchors(Boolean createAnchors) {
+				this.set("create_anchors", createAnchors);
+			}
+
+			@JsonProperty("delete")
+			public Boolean getDelete() {
+				return this.getBoolean("delete");
+			}
+
+			public void setDelete(Boolean delete) {
+				this.set("delete", delete);
+			}
+
+			@JsonProperty("download_source")
+			public Boolean getDownloadSource() {
+				return this.getBoolean("download_source");
+			}
+
+			public void setDownloadSource(Boolean downloadSource) {
+				this.set("download_source", downloadSource);
+			}
+
+			@JsonProperty("edit_document")
+			public Boolean getEditDocument() {
+				return this.getBoolean("edit_document");
+			}
+
+			public void setEditDocument(Boolean editDocument) {
+				this.set("edit_document", editDocument);
+			}
+
+			@JsonProperty("edit_fields")
+			public Boolean getEditFields() {
+				return this.getBoolean("edit_fields");
+			}
+
+			public void setEditFields(Boolean editFields) {
+				this.set("edit_fields", editFields);
+			}
+
+			@JsonProperty("edit_relationships")
+			public Boolean getEditRelationships() {
+				return this.getBoolean("edit_relationships");
+			}
+
+			public void setEditRelationships(Boolean editRelationships) {
+				this.set("edit_relationships", editRelationships);
+			}
+
+			@JsonProperty("edit_sharing_settings")
+			public Boolean getEditSharingSettings() {
+				return this.getBoolean("edit_sharing_settings");
+			}
+
+			public void setEditSharingSettings(Boolean editSharingSettings) {
+				this.set("edit_sharing_settings", editSharingSettings);
+			}
+
+			@JsonProperty("manage_viewable_rendition")
+			public Boolean getManageViewableRendition() {
+				return this.getBoolean("manage_viewable_rendition");
+			}
+
+			public void setManageViewableRendition(Boolean manageViewableRendition) {
+				this.set("manage_viewable_rendition", manageViewableRendition);
+			}
+
+			@JsonProperty("multi_channel_actions")
+			public Boolean getMultiChannelActions() {
+				return this.getBoolean("multi_channel_actions");
+			}
+
+			public void setMultiChannelActions(Boolean multiChannelActions) {
+				this.set("multi_channel_actions", multiChannelActions);
+			}
+
+			@JsonProperty("reclassify")
+			public Boolean getReclassify() {
+				return this.getBoolean("reclassify");
+			}
+
+			public void setReclassify(Boolean reclassify) {
+				this.set("reclassify", reclassify);
+			}
+
+			@JsonProperty("version")
+			public Boolean getVersion() {
+				return this.getBoolean("version");
+			}
+
+			public void setVersion(Boolean version) {
+				this.set("version", version);
+			}
+
+			@JsonProperty("view_content")
+			public Boolean getViewContent() {
+				return this.getBoolean("view_content");
+			}
+
+			public void setViewContent(Boolean viewContent) {
+				this.set("view_content", viewContent);
+			}
+
+			@JsonProperty("view_document")
+			public Boolean getViewDocument() {
+				return this.getBoolean("view_document");
+			}
+
+			public void setViewDocument(Boolean viewDocument) {
+				this.set("view_document", viewDocument);
 			}
 		}
 	}

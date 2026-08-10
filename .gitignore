@@ -27,7 +27,16 @@ src/test/resources/test.properties
 # Settings files
 /src/test/resources/settings_files/settings_*
 
+# AWS SAM build output
+.aws-sam/
+
 # LLM settings
+GEMINI.md
 .gemini/*
-!.gemini/settings.json
 !mcp.json
+.claude/*
+!.claude/skills/
+
+# Release draft files
+veeva_connect_post.md
+orgwiki_post.md

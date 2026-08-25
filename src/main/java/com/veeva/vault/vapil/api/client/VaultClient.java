@@ -47,7 +47,7 @@ public class VaultClient {
 	 * The current Vault API Version {@value #VAULT_API_VERSION}. This variable drives the version
 	 * used in all API calls.
 	 */
-	public static final String VAULT_API_VERSION = "v26.2";
+	public static final String VAULT_API_VERSION = "v25.3";
 
 	private static final String VAULT_CLIENT_SETTER = "setVaultClient"; // The VaultRequest VaultClient setter
 	private static final String URL_LOGIN = "login.veevavault.com"; // The VaultRequest VaultClient setter
@@ -63,7 +63,6 @@ public class VaultClient {
 	private boolean logApiErrors = true;
 
 	private AuthenticationResponse authenticationResponse = null;
-	private String vaultApiAccessToken;
 
 	protected VaultClient() {
 	}
@@ -298,24 +297,6 @@ public class VaultClient {
 	}
 
 	/**
-	 * @return The API access token value
-	 */
-	public String getVaultApiAccessToken() {
-		return vaultApiAccessToken;
-	}
-
-	protected void setVaultApiAccessToken(String vaultApiAccessToken) {
-		this.vaultApiAccessToken = vaultApiAccessToken;
-	}
-
-	/**
-	 * @return true if the Vault Client has an API access token set.
-	 */
-	public boolean hasApiAccessToken() {
-		return vaultApiAccessToken != null && !vaultApiAccessToken.isEmpty();
-	}
-
-	/**
 	 * Returns the user ID from the Vault client's auth response.
 	 *
 	 * Note that this will return null if VaultConnection was instantiated with an existing
@@ -356,15 +337,12 @@ public class VaultClient {
 	 * 	<p>OAUTH_ACCESS_TOKEN = OAuth OpenID Connect with IDP Access Token</p>
 	 * 	<p>&nbsp;</p>
 	 * 	<p>SESSION_ID = Existing Vault session ID</p>
-	 * 	<p>&nbsp;</p>
-	 * 	<p>API_ACCESS_TOKEN = Vault API Access Token</p>
 	 *
 	 */
 	public enum AuthenticationType {
 		BASIC("BASIC"),
 		OAUTH_ACCESS_TOKEN("OAUTH_ACCESS_TOKEN"),
 		SESSION_ID("SESSION_ID"),
-		API_ACCESS_TOKEN("API_ACCESS_TOKEN"),
 		NO_AUTH("NO_AUTH");
 
 
@@ -631,16 +609,6 @@ public class VaultClient {
 						vaultClient.validateSession();
 					}
 					break;
-				case API_ACCESS_TOKEN:
-					if (settings.getVaultApiAccessToken() == null || settings.getVaultApiAccessToken().isEmpty()) {
-						log.error("Vault API Access Token is required");
-						throw new IllegalArgumentException("Vault API Access Token is required");
-					}
-					vaultClient.setVaultApiAccessToken(settings.getVaultApiAccessToken());
-					authResponse = new AuthenticationResponse();
-					vaultClient.setAuthenticationResponse(authResponse);
-					break;
-
 				case NO_AUTH:
 					if (settings.getVaultUsername() != null && !settings.getVaultUsername().isEmpty()) {
 						vaultClient.setUsername(settings.getVaultUsername());
@@ -799,19 +767,6 @@ public class VaultClient {
 		}
 
 		/**
-		 * Initialize with a Vault API Access Token.
-		 * <p>&nbsp;</p>
-		 * Required for API Access Token auth
-		 *
-		 * @param vaultApiAccessToken Vault API Access Token (begins with "veeva-vault-")
-		 * @return {@link Builder}
-		 */
-		public Builder withVaultApiAccessToken(String vaultApiAccessToken) {
-			this.settings.setVaultApiAccessToken(vaultApiAccessToken);
-			return this;
-		}
-
-		/**
 		 * Initialize with a user's Vault user name.
 		 * <p>&nbsp;</p>
 		 * Required for Basic Auth
@@ -934,13 +889,6 @@ public class VaultClient {
 			this.set("vaultSessionId", vaultSessionId);
 		}
 
-		@JsonProperty("vaultApiAccessToken")
-		public String getVaultApiAccessToken() {
-			return this.getString("vaultApiAccessToken");
-		}
-		public void setVaultApiAccessToken(String vaultApiAccessToken) {
-			this.set("vaultApiAccessToken", vaultApiAccessToken);
-		}
 
 		@JsonProperty("vaultOauthClientId")
 		public String getVaultOauthClientId() {

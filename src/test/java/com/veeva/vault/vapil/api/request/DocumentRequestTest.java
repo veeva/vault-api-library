@@ -45,7 +45,6 @@ public class DocumentRequestTest {
     private static final String DOC_CLASSIFICATION_NAME = DocumentRequestHelper.VAPIL_TEST_DOC_CLASSIFICATION_NAME;
     private static final String DOC_CLASSIFICATION_LABEL = DocumentRequestHelper.VAPIL_TEST_DOC_CLASSIFICATION_LABEL;
     private static final String DOC_RECLASSIFY_TYPE_NAME = DocumentRequestHelper.VAPIL_TEST_RECLASSIFY_TYPE_NAME;
-    private static final String DOC_RECLASSIFY_TYPE_LABEL = DocumentRequestHelper.VAPIL_TEST_RECLASSIFY_TYPE_LABEL;
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 1;
@@ -58,6 +57,8 @@ public class DocumentRequestTest {
     private static final String PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV = DocumentRequestHelper.PATH_CREATE_MULTIPLE_DOCUMENT_VERSIONS_CSV;
     private static final String PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV = DocumentRequestHelper.PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV;
     private static final String PATH_UNDO_COLLAB_CHECKOUT_CSV = DocumentRequestHelper.PATH_UNDO_COLLAB_CHECKOUT_CSV;
+    private static final String PATH_EXPORT_DOCUMENTS_JSON = DocumentRequestHelper.PATH_EXPORT_DOCUMENTS_JSON;
+    private static final String PATH_EXPORT_DOCUMENT_VERSIONS_JSON = DocumentRequestHelper.PATH_EXPORT_DOCUMENT_VERSIONS_JSON;
     private static VaultClient vaultClient;
 
     @BeforeAll
@@ -361,6 +362,50 @@ public class DocumentRequestTest {
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully retrieve all documents")
+    class TestRetrieveAllDocuments {
+        DocumentsResponse response = null;
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DocumentRequest.class).retrieveAllDocuments();
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getSize());
+            assertNotNull(response.getLimit());
+            assertNotNull(response.getStart());
+            assertNotNull(response.getDocuments());
+            for (DocumentsResponse.DocumentNode documentNode : response.getDocuments()) {
+                Document document = documentNode.getDocument();
+                assertNotNull(document);
+                assertNotNull(document.getId());
+                assertNotNull(document.getDocumentNumber());
+                assertNotNull(document.getName());
+                assertNotNull(document.getLifecycle());
+                assertNotNull(document.getStatus());
+                assertNotNull(document.getType());
+                assertNotNull(document.getCreatedBy());
+                assertNotNull(document.getDocumentCreationDate());
+                assertNotNull(document.getVersionCreatedBy());
+                assertNotNull(document.getVersionCreationDate());
+                assertNotNull(document.getVersionId());
+                assertNotNull(document.getBinder());
+                assertNotNull(document.getMajorVersionNumber());
+                assertNotNull(document.getMinorVersionNumber());
+
+            }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully retrieve document by ID")
     class TestRetrieveDocument {
         DocumentResponse response = null;
@@ -459,6 +504,9 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
+            DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
+
             QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
             docId = queryResponse.getData().get(0).getInteger("id");
             minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
@@ -600,6 +648,9 @@ public class DocumentRequestTest {
 
         @BeforeAll
         public void setup() {
+            DocumentsResponse response = vaultClient.newRequest(DocumentRequest.class)
+                    .retrieveAllDocuments();
+
             QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
             docId = queryResponse.getData().get(0).getInteger("id");
             minorVersion = queryResponse.getData().get(0).getInteger("minor_version_number__v");
@@ -652,8 +703,6 @@ public class DocumentRequestTest {
 
             response = vaultClient.newRequest(DocumentRequest.class)
                     .setInputPath(PATH_TEST_FILE)
-                    .setMigrationMode(true)
-                    .setNoTriggers(true)
                     .createSingleDocument(doc);
         }
 
@@ -910,8 +959,6 @@ public class DocumentRequestTest {
             doc.setId(id);
 
             response = vaultClient.newRequest(DocumentRequest.class)
-                    .setMigrationMode(true)
-                    .setNoTriggers(true)
                     .updateSingleDocument(doc);
 
             assertNotNull(response);
@@ -1050,12 +1097,6 @@ public class DocumentRequestTest {
             }
         }
 
-        @AfterAll
-        public void teardown() {
-          DocumentBulkResponse deleteDocsResponse = DocumentRequestHelper.deleteDocuments(vaultClient, docIds);
-          assertTrue(deleteDocsResponse.isSuccessful());
-        }
-
         @Test
         @Order(1)
         public void testRequest() {
@@ -1064,11 +1105,9 @@ public class DocumentRequestTest {
 
             doc.setId(id);
             doc.setLifecycle(DOC_LIFECYCLE_LABEL);
-            doc.setType(DOC_RECLASSIFY_TYPE_LABEL);
+            doc.setType(DOC_RECLASSIFY_TYPE_NAME);
 
             response = vaultClient.newRequest(DocumentRequest.class)
-                    .setMigrationMode(true)
-                    .setNoTriggers(true)
                     .reclassifySingleDocument(doc);
 
             assertNotNull(response);
@@ -1078,7 +1117,7 @@ public class DocumentRequestTest {
         @Order(2)
         public void testResponse() {
             assertTrue(response.isSuccessful());
-            assertNotNull(response.getDocument().getId());
+            assertNotNull(response.get("id"));
         }
     }
 
@@ -1113,8 +1152,6 @@ public class DocumentRequestTest {
         public void testRequest() {
             response = vaultClient.newRequest(DocumentRequest.class)
                     .setInputPath(PATH_RECLASSIFY_MULTIPLE_DOCUMENTS_CSV)
-                    .setMigrationMode(true)
-                    .setNoTriggers(true)
                     .reclassifyMultipleDocuments();
 
             assertNotNull(response);
@@ -1714,6 +1751,80 @@ public class DocumentRequestTest {
                 assertNotNull(response.getResponseStatus());
                 assertNotNull(response.getResponseMessage());
             }
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully export documents to file staging")
+    class TestExportDocuments {
+        JobCreateResponse response = null;
+        List<Integer> docIds = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
+            assertFalse(queryResponse.isFailure());
+            docIds.add(queryResponse.getData().get(0).getInteger("id"));
+
+            DocumentRequestHelper.writeToExportDocumentsFile(docIds);
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(PATH_EXPORT_DOCUMENTS_JSON)
+                    .exportDocuments(true, true, true, true);
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getUrl());
+        }
+    }
+
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("successfully export document versions to file staging")
+    class TestExportDocumentVersions {
+        JobCreateResponse response = null;
+        List<HashMap<String, Integer>> docVersions = new ArrayList<>();
+
+        @BeforeAll
+        public void setup() throws IOException {
+            QueryResponse queryResponse = DocumentRequestHelper.queryForDocId(vaultClient);
+            assertFalse(queryResponse.isFailure());
+            HashMap<String, Integer> docVersion = new HashMap();
+            docVersion.put("id", queryResponse.getData().get(0).getInteger("id"));
+            docVersion.put("major_version_number__v", queryResponse.getData().get(0).getInteger("major_version_number__v"));
+            docVersion.put("minor_version_number__v", queryResponse.getData().get(0).getInteger("minor_version_number__v"));
+            docVersions.add(docVersion);
+
+            DocumentRequestHelper.writeToExportDocumentVersionsFile(docVersions);
+        }
+
+        @Test
+        @Order(1)
+        public void testRequest() {
+            response = vaultClient.newRequest(DocumentRequest.class)
+                    .setInputPath(PATH_EXPORT_DOCUMENT_VERSIONS_JSON)
+                    .exportDocumentVersions(true, true, true);
+            assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getJobId());
+            assertNotNull(response.getUrl());
         }
     }
 }

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Object Record Attachment Field requests
  *
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields">https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#attachment-fields">https://developer.veevavault.com/api/25.3/#attachment-fields</a>
  */
 public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecordAttachmentFieldRequest>{
 
@@ -43,7 +43,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return VaultResponse
      * @vapil.api <pre>
      * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachment_fields/{attachment_field_name}/file</pre>
-     * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/download-attachment-field-file' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/download-attachment-field-file</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-attachment-field-file' target='_blank'>https://developer.veevavault.com/api/25.3/#download-attachment-field-file</a>
      * @vapil.request <pre>
      * <i>Example 1 - Download Binary Content</i>
      * VaultResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
@@ -83,7 +83,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return ObjectRecordAttachmentFieldExportResponse
      * @vapil.api <pre>
      * POST /api/{version}/vobjects/{object_name}/attachment_fields/actions/export</pre>
-     * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/export-attachment-field-files' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/export-attachment-field-files</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#export-attachment-field-files' target='_blank'>https://developer.veevavault.com/api/25.3/#export-attachment-field-files</a>
      * @vapil.request <pre>
      * <i>Example 1 - From Request String</i>
      * ObjectRecordAttachmentFieldExportResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
@@ -158,7 +158,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return ObjectRecordAttachmentFieldExportResultsResponse
      * @vapil.api <pre>
      * GET /api/{version}/vobjects/{object_name}/attachment_fields/actions/export/{job_id}/results</pre>
-     * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/retrieve-attachment-field-files-export-results' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/retrieve-attachment-field-files-export-results</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-attachment-field-files-export-results' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-attachment-field-files-export-results</a>
      * @vapil.request <pre>
      * ObjectRecordAttachmentFieldExportResultsResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
      *      .retrieveAttachmentFieldFilesExportResults(OBJECT_NAME, jobId);
@@ -195,7 +195,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return VaultResponse
      * @vapil.api <pre>
      * GET /api/{version}/vobjects/{object_name}/attachment_fields/files/{file_part_name}</pre>
-     * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/download-attachment-field-files-export' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/download-attachment-field-files-export</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-attachment-field-files-export' target='_blank'>https://developer.veevavault.com/api/25.3/#download-attachment-field-files-export</a>
      * @vapil.request <pre>
      * VaultResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
      *      .downloadAttachmentFieldFilesExport(OBJECT_NAME, filePartName);
@@ -228,7 +228,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return ObjectRecordBulkResponse
      * @vapil.api <pre>
      * POST /api/{version}/vobjects/{object_name}/{object_record_id}/attachment_fields/{attachment_field_name}/file</pre>
-     * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/update-attachment-field-file' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/update-attachment-field-file</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-attachment-field-file' target='_blank'>https://developer.veevavault.com/api/25.3/#update-attachment-field-file</a>
      * @vapil.request <pre>
      * <i>Example 1 - Upload from input path</i>
      * ObjectRecordBulkResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)
@@ -277,7 +277,7 @@ public class ObjectRecordAttachmentFieldRequest extends VaultRequest<ObjectRecor
      * @return VaultResponse
      * @vapil.api <pre>
      * GET /api/{version}/vobjects/{object_name}/{object_record_id}/attachment_fields/file</pre>
-     * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/download-all-attachment-field-files' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/vault-objects/object-attachment-fields/download-all-attachment-field-files</a>
+     * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-all-attachment-field-files' target='_blank'>https://developer.veevavault.com/api/25.3/#download-all-attachment-field-files</a>
      * @vapil.request <pre>
      * <i>Example 1 - Download Binary Content</i>
      * VaultResponse response = vaultClient.newRequest(ObjectRecordAttachmentFieldRequest.class)

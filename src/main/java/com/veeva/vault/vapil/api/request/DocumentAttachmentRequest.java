@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Document Attachment requests
  *
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments">https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#document-attachments">https://developer.veevavault.com/api/25.3/#document-attachments</a>
  */
 public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRequest> {
 
@@ -69,7 +69,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/attachments</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachments' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-attachments' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-attachments</a>
 	 */
 	public DocumentAttachmentResponse retrieveDocumentAttachments(int docId) {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENTS)
@@ -90,7 +90,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/attachments</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-version-attachments' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-version-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-version-attachments' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-version-attachments</a>
 	 * @vapil.request <pre>
 	 * DocumentAttachmentDeletionResponse response = vaultClient.newRequest(DocumentAttachmentRequest.class)
 	 * 		.setStartDate(startDate)
@@ -129,7 +129,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentVersionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}/versions</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachment-versions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachment-versions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-attachment-versions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-attachment-versions</a>
 	 */
 	public DocumentAttachmentVersionResponse retrieveDocumentAttachmentVersions(int docId, int attachmentId) {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENT_VERSIONS)
@@ -154,7 +154,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/attachments/{attachment_id}/versions</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-version-attachment-versions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-version-attachment-versions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-version-attachments-versions' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-version-attachments-versions</a>
 	 */
 	public DocumentAttachmentResponse retrieveDocumentVersionAttachmentVersions(int docId,
 																				int majorVersionNumber,
@@ -180,7 +180,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachment-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachment-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-attachment-metadata' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-attachment-metadata</a>
 	 */
 	public DocumentAttachmentResponse retrieveDocumentAttachmentMetadata(int docId, int attachmentId) {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENT)
@@ -230,7 +230,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}/versions/{attachment_version}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachment-version-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-attachment-version-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-document-attachment-version-metadata' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-document-attachment-version-metadata</a>
 	 */
 	public DocumentAttachmentResponse retrieveDocumentAttachmentVersionMetadata(int docId,
 																				int attachmentId,
@@ -257,7 +257,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/attachments/{attachment_id}/versions/{attachment_version}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-version-attachment-version-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-document-version-attachment-version-metadata</a>
+	 * @vapil.vaultlink (Undocumented Endpoint)
 	 */
 	public DocumentAttachmentResponse retrieveDocumentVersionAttachmentVersionMetadata(int docId,
 																					   int majorVersionNumber,
@@ -288,7 +288,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}/file</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-document-attachment' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-document-attachment</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-document-attachment' target='_blank'>https://developer.veevavault.com/api/25.3/#download-document-attachment</a>
 	 */
 	public VaultResponse downloadDocumentAttachment(int docId, int attachmentId) {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENT_FILE)
@@ -348,7 +348,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}/versions/{attachment_version}/file</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-document-attachment-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-document-attachment-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-document-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.3/#download-document-attachment-version</a>
 	 */
 	public VaultResponse downloadDocumentAttachmentVersion(int docId, int attachmentId, int attachVersionId) {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENT_VERSION_FILE)
@@ -377,7 +377,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/versions/{major_version}/{minor_version}/attachments/{attachment_id}/versions/{attachment_version}/file</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-document-version-attachment-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-document-version-attachment-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-document-version-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.3/#download-document-version-attachment-version</a>
 	 */
 	public VaultResponse downloadDocumentVersionAttachmentVersion(int docId,
 																  int majorVersionNumber,
@@ -408,7 +408,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/attachments/file</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-all-document-attachments' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-all-document-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-all-document-attachments' target='_blank'>https://developer.veevavault.com/api/25.3/#download-all-document-attachments</a>
 	 */
 	public VaultResponse downloadAllDocumentAttachments(int docId) {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENTS_FILE)
@@ -433,7 +433,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/documents/{doc_id}/{major_version}/{minor_version}/attachments/file</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-all-document-version-attachments' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/download-all-document-version-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-all-document-version-attachments' target='_blank'>https://developer.veevavault.com/api/25.3/#download-all-document-version-attachments</a>
 	 */
 	public VaultResponse downloadAllDocumentVersionAttachments(int docId,
 															   int majorVersionNumber,
@@ -461,7 +461,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/delete-single-document-attachment' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/delete-single-document-attachment</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-single-document-attachment' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-single-document-attachment</a>
 	 */
 	public VaultResponse deleteSingleDocumentAttachment(int docId,
 														int attachmentId) {
@@ -483,7 +483,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}/versions/{attachment_version}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/delete-single-document-attachment-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/delete-single-document-attachment-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-single-document-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-single-document-attachment-version</a>
 	 */
 	public VaultResponse deleteSingleDocumentAttachmentVersion(int docId,
 															   int attachmentId,
@@ -506,7 +506,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentBulkResponse
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/objects/documents/attachments/batch</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/delete-multiple-document-attachments' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/delete-multiple-document-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-multiple-document-attachments' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-multiple-document-attachments</a>
 	 */
 	public DocumentAttachmentBulkResponse deleteMultipleDocumentAttachments() {
 		return bulkAttachments(HttpMethod.DELETE);
@@ -522,7 +522,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}/attachments</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/create-document-attachment' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/create-document-attachment</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-document-attachment' target='_blank'>https://developer.veevavault.com/api/25.3/#create-document-attachment</a>
 	 */
 	public DocumentAttachmentResponse createDocumentAttachment(int docId) {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENTS)
@@ -555,7 +555,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentBulkResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/attachments/batch</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/create-multiple-document-attachments' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/create-multiple-document-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#create-multiple-document-attachments' target='_blank'>https://developer.veevavault.com/api/25.3/#create-multiple-document-attachments</a>
 	 */
 	public DocumentAttachmentBulkResponse createMultipleDocumentAttachments() {
 		return bulkAttachments(HttpMethod.POST);
@@ -571,7 +571,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentResponse
 	 * @vapil.api <pre>
 	 * POST /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}/versions/{attachment_version}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/restore-document-attachment-version' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/restore-document-attachment-version</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#restore-document-attachment-version' target='_blank'>https://developer.veevavault.com/api/25.3/#restore-document-attachment-version</a>
 	 */
 	public DocumentAttachmentResponse restoreDocumentAttachmentVersion(int docId,
 																	   int attachmentId,
@@ -597,7 +597,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return VaultResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/{doc_id}/attachments/{attachment_id}</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/update-document-attachment-description' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/update-document-attachment-description</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-document-attachment-description' target='_blank'>https://developer.veevavault.com/api/25.3/#update-document-attachment-description</a>
 	 */
 	public VaultResponse updateDocumentAttachmentDescription(int docId,
 															 int attachmentId,
@@ -624,7 +624,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentBulkResponse
 	 * @vapil.api <pre>
 	 * PUT /api/{version}/objects/documents/attachments/batch</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/update-multiple-document-attachment-descriptions' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/update-multiple-document-attachment-descriptions</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#update-multiple-document-attachment-descriptions' target='_blank'>https://developer.veevavault.com/api/25.3/#update-multiple-document-attachment-descriptions</a>
 	 */
 	public DocumentAttachmentBulkResponse updateMultipleDocumentAttachmentDescriptions() {
 		return bulkAttachments(HttpMethod.PUT);
@@ -636,7 +636,7 @@ public class DocumentAttachmentRequest extends VaultRequest<DocumentAttachmentRe
 	 * @return DocumentAttachmentDeletionResponse
 	 * @vapil.api <pre>
 	 * GET /api/{version}/objects/deletions/documents/attachments</pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-deleted-document-attachments' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/documents/document-attachments/retrieve-deleted-document-attachments</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-deleted-document-attachments' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-deleted-document-attachments</a>
 	 */
 	public DocumentAttachmentDeletionResponse retrieveDeletedDocumentAttachments() {
 		String url = vaultClient.getAPIEndpoint(URL_DOCUMENT_ATTACHMENTS_DELETIONS);

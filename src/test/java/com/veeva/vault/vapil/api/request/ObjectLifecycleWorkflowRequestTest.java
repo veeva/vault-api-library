@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Object Lifecycle Workflow Request should")
 class ObjectLifecycleWorkflowRequestTest {
 
-    static final String OBJECT_NAME = ObjectRecordRequestHelper.OBJECT_NAME;
+    static final String OBJECT_NAME = "vapil_test_object__c";
     static final String ENVELOPE__SYS = "envelope__sys";
     static final String MULTI_RECORD_WORKFLOW_NAME = "Objectworkflow.vapil_test_object_workflow__c";
     static final String WORKFLOW_ACTION_NAME = "Objectlifecyclestateuseraction.vapil_test_object__c.active_state__c.start_vapil_test_object_workflow_useract__c";
@@ -382,6 +382,71 @@ class ObjectLifecycleWorkflowRequestTest {
         @Order(2)
         public void testResponse() {
             assertTrue(response.isSuccessful());
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @DisplayName("retrieve workflow action details")
+    class TestRetrieveWorkflowActionDetails {
+
+        ObjectWorkflowActionDetailsResponse response = null;
+        List<String> recordIds = new ArrayList<>();
+        int workflowId;
+
+        @BeforeAll
+        public void setup() throws InterruptedException, IOException {
+//            Create Object record
+            ObjectRecordBulkResponse createResponse = ObjectRecordRequestHelper.createMultipleObjectRecords(vaultClient, 1);
+            assertTrue(createResponse.isSuccessful());
+
+            for (ObjectRecordResponse objectRecordResponse : createResponse.getData()) {
+                assertTrue(objectRecordResponse.isSuccessful());
+                recordIds.add(objectRecordResponse.getData().getId());
+            }
+            Thread.sleep(3000);
+
+//            Initiate Workflow on Object record
+            Map<String, Object> bodyParams = new HashMap<>();
+            bodyParams.put("contents__sys", String.format("Object:%s.%s", OBJECT_NAME, recordIds.get(0)));
+            bodyParams.put("description__sys", "Description for Test Workflow");
+
+            ObjectMultiRecordWorkflowInitiateResponse initiateWorkflowResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+                    .setBodyParams(bodyParams)
+                    .initiateMultiRecordWorkflow(MULTI_RECORD_WORKFLOW_NAME);
+            assertTrue(initiateWorkflowResponse.isSuccessful());
+            workflowId = Integer.parseInt(initiateWorkflowResponse.getData().getWorkflowId());
+            Thread.sleep(3000);
+        }
+
+        @AfterAll
+        public void teardown() throws IOException {
+//            Cancel Workflow
+            VaultResponse actionResponse = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+                    .initiateWorkflowAction(workflowId, "cancel");
+            assertTrue(actionResponse.isSuccessful());
+
+//            Delete Object record
+            ObjectRecordBulkResponse deleteResponse = ObjectRecordRequestHelper.deleteObjectRecords(vaultClient, recordIds);
+            assertTrue(deleteResponse.isSuccessful());
+        }
+
+        @Test
+        @Order(1)
+        void testRequest() {
+            response = vaultClient.newRequest(ObjectLifecycleWorkflowRequest.class)
+                    .retrieveWorkflowActionDetails(workflowId, "replaceworkflowowner");
+
+            Assertions.assertNotNull(response);
+        }
+
+        @Test
+        @Order(2)
+        public void testResponse() {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.getData());
+            assertNotNull(response.getData().getName());
         }
     }
 }

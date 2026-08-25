@@ -32,7 +32,7 @@ public class ObjectWorkflowActionDetailsResponse extends VaultResponse {
 		this.set("data", data);
 	}
 
-	public class WorkflowAction extends VaultModel {
+	public static class WorkflowAction extends VaultModel {
 
 		@JsonProperty("controls")
 		public List<Control> getControls() {
@@ -62,7 +62,7 @@ public class ObjectWorkflowActionDetailsResponse extends VaultResponse {
 		}
 	}
 
-	public class Control extends VaultModel {
+	public static class Control extends VaultModel {
 
 		@JsonProperty("label")
 		public String getLabel() {
@@ -101,7 +101,7 @@ public class ObjectWorkflowActionDetailsResponse extends VaultResponse {
 		}
 	}
 
-	public class Prompt extends VaultModel {
+	public static class Prompt extends VaultModel {
 
 		@JsonProperty("label")
 		public String getLabel() {
@@ -131,7 +131,7 @@ public class ObjectWorkflowActionDetailsResponse extends VaultResponse {
 		}
 	}
 
-	public class CurrentValue extends VaultModel {
+	public static class CurrentValue extends VaultModel {
 
 		@JsonProperty("document_id__v")
 		public String getDocumentId() {

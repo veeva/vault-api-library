@@ -94,7 +94,7 @@ public class BulkTranslationRequestTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully import bulk translation file")
-    class TestImportBulkTranslationFiles {
+    class TestImportBulkTranslationFile {
 
         private BulkTranslationJobResponse response = null;
 
@@ -113,7 +113,7 @@ public class BulkTranslationRequestTest {
         public void testRequest() {
             String fssFilePath = "/" + BULK_IMPORT_TRANSLATION_FILE_NAME;
             response = vaultClient.newRequest(BulkTranslationRequest.class)
-                    .importBulkTranslationFiles(MESSAGE_TYPE.SYSTEM_MESSAGES, fssFilePath);
+                    .importBulkTranslationFile(MESSAGE_TYPE.SYSTEM_MESSAGES, fssFilePath);
 
             assertTrue(response != null);
         }
@@ -149,7 +149,7 @@ public class BulkTranslationRequestTest {
 
             String fssFilePath = "/" + BULK_IMPORT_TRANSLATION_FILE_NAME;
             BulkTranslationJobResponse importResponse = vaultClient.newRequest(BulkTranslationRequest.class)
-                    .importBulkTranslationFiles(MESSAGE_TYPE.SYSTEM_MESSAGES, fssFilePath);
+                    .importBulkTranslationFile(MESSAGE_TYPE.SYSTEM_MESSAGES, fssFilePath);
 
             assertTrue(importResponse != null);
             assertTrue(importResponse.isSuccessful());
@@ -201,7 +201,7 @@ public class BulkTranslationRequestTest {
 
             String fssFilePath = "/" + BULK_IMPORT_TRANSLATION_FILE_NAME;
             BulkTranslationJobResponse importResponse = vaultClient.newRequest(BulkTranslationRequest.class)
-                    .importBulkTranslationFiles(MESSAGE_TYPE.SYSTEM_MESSAGES, fssFilePath);
+                    .importBulkTranslationFile(MESSAGE_TYPE.SYSTEM_MESSAGES, fssFilePath);
 
             assertTrue(importResponse != null);
             assertTrue(importResponse.isSuccessful());

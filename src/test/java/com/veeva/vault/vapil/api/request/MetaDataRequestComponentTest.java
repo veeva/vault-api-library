@@ -435,7 +435,7 @@ public class MetaDataRequestComponentTest {
 	@Nested
 	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	@DisplayName("successfully retrieve the content file for a Reportexceltemplate component record")
+	@DisplayName("successfully retrieve a content file")
 	class TestRetrieveContentFile {
 		ComponentContentResponse response = null;
 		String recordName;
@@ -473,6 +473,38 @@ public class MetaDataRequestComponentTest {
 				assertNotNull(content.getFormat());
 				assertNotNull(content.getName());
 				assertNotNull(content.getOriginalName());
+				assertNotNull(content.getSha1Checksum());
+				assertNotNull(content.getSize());
+			}
+		}
+	}
+
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+	@DisplayName("successfully upload a content file")
+	class TestUploadContentFile {
+		ComponentContentResponse response = null;
+
+		@Test
+		@Order(1)
+		public void testRequest() {
+			response = vaultClient.newRequest(MetaDataRequest.class)
+					.setInputPath(FileHelper.PATH_LOCAL_TEST_FILE)
+					.uploadContentFile();
+
+			assertNotNull(response);
+		}
+
+		@Test
+		@Order(2)
+		public void testResponse() {
+			assertTrue(response.isSuccessful());
+			List<ComponentContent> data = response.getData();
+			assertNotNull(data);
+			for (ComponentContent content : data) {
+				assertNotNull(content.getFormat());
+				assertNotNull(content.getName());
 				assertNotNull(content.getSha1Checksum());
 				assertNotNull(content.getSize());
 			}

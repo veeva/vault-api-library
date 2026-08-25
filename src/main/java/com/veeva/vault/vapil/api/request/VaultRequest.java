@@ -324,10 +324,8 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * @return The HTTP request with added Vault header parameters
 	 */
 	private HttpRequestConnector setVaultHeaderParams(HttpRequestConnector request) {
-		// Add the authorization header — Bearer token for API_ACCESS_TOKEN, raw session ID otherwise
-		if (vaultClient.hasApiAccessToken())
-			request.addHeaderParam(HTTP_HEADER_AUTHORIZATION, "Bearer " + vaultClient.getVaultApiAccessToken());
-		else if (vaultClient.hasSessionId())
+		// Add the Vault session id if it exists
+		if (vaultClient.hasSessionId())
 			request.addHeaderParam(HTTP_HEADER_AUTHORIZATION, vaultClient.getSessionId());
 
 		// Add the client id 
@@ -356,7 +354,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * This method is implemented for all Request classes. When set in the request, the
 	 * Reference ID is returned in the response headers of the returned Response class.
 	 *
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/references/response-headers' target='_blank'>https://general.veevavault.dev/vault-api/references/response-headers</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/docs/#reference-id' target='_blank'>https://developer.veevavault.com/docs/#reference-id</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DomainRequest.class)
 	 * 		.setHeaderReferenceId("test-reference-id")
@@ -379,7 +377,7 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * This method is implemented for all Request classes. When set on a request, it overrides
 	 * the client ID set on the Vault Client.
 	 *
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/references/client-id' target='_blank'>https://general.veevavault.dev/vault-api/references/client-id</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/docs/#client-id' target='_blank'>https://developer.veevavault.com/docs/#client-id</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(DomainRequest.class)
 	 * 		.setHeaderClientId("test-request-client-id")

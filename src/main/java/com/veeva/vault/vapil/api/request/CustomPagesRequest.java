@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Custom Pages Requests
+ * Direct Data Requests
  * <ul>
  * <li>Retrieve All Client Code Distribution Metadata</li>
  * <li>Retrieve Single Client Code Distribution Metadata</li>
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
  * <li>Delete Single Client Code Distribution</li>
  * </ul>
  *
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages">https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages</a>
+ * @vapil.apicoverage <a href="https://developer.veevavault.com/api/25.3/#direct-data">https://developer.veevavault.com/api/25.3/#direct-data</a>
  */
 
 public class CustomPagesRequest extends VaultRequest<CustomPagesRequest> {
@@ -43,7 +43,7 @@ public class CustomPagesRequest extends VaultRequest<CustomPagesRequest> {
 	 *
 	 * @return CustomPagesDistributionBulkResponse
 	 * @vapil.api <pre> GET /api/{version}/uicode/distributions </pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/retrieve-all-client-code-distribution-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/retrieve-all-client-code-distribution-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-all-client-code-distribution-metadata' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-all-client-code-distribution-metadata</a>
 	 * @vapil.request <pre>
 	 * CustomPagesDistributionBulkResponse response = vaultClient.newRequest(CustomPagesRequest.class)
 	 * 		.retrieveAllClientCodeDistributionMetadata();
@@ -72,7 +72,7 @@ public class CustomPagesRequest extends VaultRequest<CustomPagesRequest> {
 	 * @param distributionName The name attribute of the client code distribution to retrieve.
 	 * @return CustomPagesDistributionRetrieveResponse
 	 * @vapil.api <pre> GET /api/{version}/uicode/distributions/{distribution_name} </pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/retrieve-single-client-code-distribution-metadata' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/retrieve-single-client-code-distribution-metadata</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#retrieve-single-client-code-distribution-metadata' target='_blank'>https://developer.veevavault.com/api/25.3/#retrieve-single-client-code-distribution-metadata</a>
 	 * @vapil.request <pre>
 	 * CustomPagesDistributionRetrieveResponse response = vaultClient.newRequest(CustomPagesRequest.class)
 	 * 		.retrieveSingleClientCodeDistributionMetadata(distributionName);
@@ -99,7 +99,7 @@ public class CustomPagesRequest extends VaultRequest<CustomPagesRequest> {
 	 * @param distributionName The name attribute of the client code distribution to download.
 	 * @return VaultResponse
 	 * @vapil.api <pre> GET /api/{version}/uicode/distributions/{distribution_name}/code </pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/download-single-client-code-distribution' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/download-single-client-code-distribution</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#download-single-client-code-distribution' target='_blank'>https://developer.veevavault.com/api/25.3/#download-single-client-code-distribution</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - Binary</i>
 	 * VaultResponse response = vaultClient.newRequest(CustomPagesRequest.class)
@@ -141,7 +141,7 @@ public class CustomPagesRequest extends VaultRequest<CustomPagesRequest> {
 	 * @vapil.api <pre>
 	 * POST /api/{version}/uicode/distributions/
 	 * </pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/add-or-replace-single-client-code-distribution' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/add-or-replace-single-client-code-distribution</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#add-or-replace-single-client-code-distribution' target='_blank'>https://developer.veevavault.com/api/25.3/#add-or-replace-single-client-code-distribution</a>
 	 * @vapil.request <pre>
 	 * <i>Example 1 - CSV input</i>
 	 * CustomPagesDistributionResponse response = vaultClient.newRequest(CustomPagesRequest.class)
@@ -187,7 +187,7 @@ public class CustomPagesRequest extends VaultRequest<CustomPagesRequest> {
 	 * @vapil.api <pre>
 	 * DELETE /api/{version}/uicode/distributions/{distribution_name}
 	 * </pre>
-	 * @vapil.vaultlink <a href='https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/delete-single-client-code-distribution' target='_blank'>https://general.veevavault.dev/vault-api/api-reference/26.2/custom-pages/delete-single-client-code-distribution</a>
+	 * @vapil.vaultlink <a href='https://developer.veevavault.com/api/25.3/#delete-single-client-code-distribution' target='_blank'>https://developer.veevavault.com/api/25.3/#delete-single-client-code-distribution</a>
 	 * @vapil.request <pre>
 	 * VaultResponse response = vaultClient.newRequest(CustomPagesRequest.class)
 	 * 		.deleteSingleClientCodeDistribution(distName);

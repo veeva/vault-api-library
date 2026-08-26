@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
 import com.veeva.vault.vapil.api.model.response.OauthTokenResponse;
-import com.veeva.vault.vapil.api.model.response.VaultResponse;
-import com.veeva.vault.vapil.api.request.AuthenticationRequest;
 import com.veeva.vault.vapil.connector.HttpRequestConnector;
 import com.veeva.vault.vapil.connector.HttpResponseConnector;
 import com.veeva.vault.vapil.extension.AbstractVaultClientParameterResolver;
@@ -30,11 +28,8 @@ public class VaultClientTest {
     private static final String VAPIL_BASIC_SETTINGS_FILE_LR = "settings_vapil_basic_lr.json";
     private static final String VAPIL_SESSION_ID_SETTINGS_FILE_GR = "settings_vapil_session_id.json";
     private static final String VAPIL_SESSION_ID_SETTINGS_FILE_LR = "settings_vapil_session_id_lr.json";
-    private static final String VAPIL_API_ACCESS_TOKEN_SETTINGS_FILE_GR = "settings_vapil_api_access_token_id_gr.json";
-    private static final String VAPIL_API_ACCESS_TOKEN_SETTINGS_FILE_LR = "settings_vapil_api_access_token_id_lr.json";
     private static String vapilBasicSettingsFileName;
     private static String vapilSessionIdSettingsFileName;
-    private static String vapilApiAccessTokenSettingsFileName;
 
     @BeforeAll
     public static void setup() throws IOException {
@@ -42,11 +37,9 @@ public class VaultClientTest {
         if (vapilVersion.contains("BETA")) {
             vapilBasicSettingsFileName = VAPIL_BASIC_SETTINGS_FILE_LR;
             vapilSessionIdSettingsFileName = VAPIL_SESSION_ID_SETTINGS_FILE_LR;
-            vapilApiAccessTokenSettingsFileName = VAPIL_API_ACCESS_TOKEN_SETTINGS_FILE_LR;
         } else {
             vapilBasicSettingsFileName = VAPIL_BASIC_SETTINGS_FILE_GR;
             vapilSessionIdSettingsFileName = VAPIL_SESSION_ID_SETTINGS_FILE_GR;
-            vapilApiAccessTokenSettingsFileName = VAPIL_API_ACCESS_TOKEN_SETTINGS_FILE_GR;
         }
     }
 
@@ -332,73 +325,6 @@ public class VaultClientTest {
         public void testResponse() {
             assertEquals("SUCCESS", authResponse.getResponseStatus());
             assertNotNull(authResponse.getSessionId());
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully build a client with an API access token")
-    class TestAuthenticationTypeApiAccessToken {
-        private JsonNode apiAccessTokenSettingsNode;
-        private VaultResponse keepAliveResponse = null;
-
-        @BeforeAll
-        public void setup() {
-            File settingsFile = FileHelper.getSettingsFile(vapilApiAccessTokenSettingsFileName);
-            apiAccessTokenSettingsNode = FileHelper.readSettingsFile(settingsFile);
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            VaultClient testClient = VaultClient
-                    .newClientBuilder(VaultClient.AuthenticationType.API_ACCESS_TOKEN)
-                    .withVaultClientId(apiAccessTokenSettingsNode.get("vaultClientId").asText())
-                    .withVaultDNS(apiAccessTokenSettingsNode.get("vaultDNS").asText())
-                    .withVaultApiAccessToken(apiAccessTokenSettingsNode.get("vaultApiAccessToken").asText())
-                    .build();
-
-            assertTrue(testClient.hasApiAccessToken());
-            keepAliveResponse = testClient.newRequest(AuthenticationRequest.class)
-                .sessionKeepAlive();
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(keepAliveResponse.isSuccessful());
-        }
-    }
-
-    @Nested
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully build a client from an API access token settings file")
-    class TestAuthenticationTypeApiAccessTokenSettings {
-        private File apiAccessTokenSettingsFile = null;
-        private VaultResponse keepAliveResponse = null;
-
-        @BeforeAll
-        public void setup() {
-            apiAccessTokenSettingsFile = FileHelper.getSettingsFile(vapilApiAccessTokenSettingsFileName);
-        }
-
-        @Test
-        @Order(1)
-        public void testRequest() {
-            VaultClient testClient = VaultClient
-                    .newClientBuilderFromSettings(apiAccessTokenSettingsFile)
-                    .build();
-
-            assertTrue(testClient.hasApiAccessToken());
-            keepAliveResponse = testClient.newRequest(AuthenticationRequest.class).sessionKeepAlive();
-        }
-
-        @Test
-        @Order(2)
-        public void testResponse() {
-            assertTrue(keepAliveResponse.isSuccessful());
         }
     }
 

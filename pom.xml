@@ -5,7 +5,7 @@
 
     <groupId>com.veeva.vault</groupId>
     <artifactId>vapil</artifactId>
-    <version>26.2.0</version>
+    <version>26.1.2</version>
 
     <packaging>jar</packaging>
 

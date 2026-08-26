@@ -25,7 +25,7 @@ import com.veeva.vault.vapil.connector.HttpRequestConnector.HttpMethod;
  * See {@link #query(String)} for example request and response methods, including reading of the resulting
  * data and handling of the X-VaultAPI-DescribeQuery parameter.
  *
- * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.2/vault-query-language-vql">https://general.veevavault.dev/vault-api/api-reference/26.2/vault-query-language-vql</a>
+ * @vapil.apicoverage <a href="https://general.veevavault.dev/vault-api/api-reference/26.1/vault-query-language-vql">https://general.veevavault.dev/vault-api/api-reference/26.1/vault-query-language-vql</a>
  */
 public class QueryRequest extends VaultRequest<QueryRequest> {
 	private static Logger log = LoggerFactory.getLogger(QueryRequest.class);
@@ -40,18 +40,12 @@ public class QueryRequest extends VaultRequest<QueryRequest> {
 	 */
 	public static final String HTTP_HEADER_VAULT_RECORD_PROPERTIES = "X-VaultAPI-RecordProperties";
 
-	/**
-	 * <b>X-VaultAPI-DocumentProperties</b> If present, the response includes the document properties object.
-	 */
-	public static final String HTTP_HEADER_VAULT_DOCUMENT_PROPERTIES = "X-VaultAPI-DocumentProperties";
-
 	// API Endpoints
 	private static final String URL_QUERY = "/query";
 
 	// API Request parameters
 	private Boolean queryDescribe = false;
 	private RecordPropertyType recordPropertyType = null;
-	private DocumentPropertyType documentPropertyType = null;
 
 	private QueryRequest() {
 	}
@@ -139,9 +133,6 @@ public class QueryRequest extends VaultRequest<QueryRequest> {
 		if (recordPropertyType != null)
 			request.addHeaderParam(HTTP_HEADER_VAULT_RECORD_PROPERTIES, recordPropertyType.getValue());
 
-		if (documentPropertyType != null)
-			request.addHeaderParam(HTTP_HEADER_VAULT_DOCUMENT_PROPERTIES, documentPropertyType.getValue());
-
 		return send(HttpMethod.POST, request, QueryResponse.class);
 	}
 
@@ -180,23 +171,6 @@ public class QueryRequest extends VaultRequest<QueryRequest> {
 	 * Enums
 	 *
 	 */
-
-	/**
-	 * Property type for the X-VaultAPI-DocumentProperties header
-	 */
-	public enum DocumentPropertyType {
-		ALL("all");
-
-		private String value;
-
-		DocumentPropertyType(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
 
 	/**
 	 * Download option for Document Token
@@ -271,38 +245,6 @@ public class QueryRequest extends VaultRequest<QueryRequest> {
 	 */
 	public QueryRequest setRecordProperties(RecordPropertyType recordPropertyType) {
 		this.recordPropertyType = recordPropertyType;
-		return this;
-	}
-
-	/**
-	 * <b>X-VaultAPI-DocumentProperties</b>
-	 * <p>
-	 * If present, the response includes the document properties object.
-	 * The only possible value is all.
-	 * If omitted, the document properties object is not included in the response.
-	 * This header is only supported when querying documents or binders.
-	 *
-	 * @param documentPropertyType document property type
-	 * @return The Request
-	 * @vapil.response <i>Example results of document properties</i>
-	 * <pre>
-	 * if (response.getDocumentProperties() != null) {
-	 *   for (QueryResponse.DocumentProperty documentProperty : response.getDocumentProperties()) {
-	 *     System.out.println("\tId = " + documentProperty.getId());
-	 *     System.out.println("\tVersion Id = " + documentProperty.getVersionId());
-	 *     if (documentProperty.getFieldProperties() != null) {
-	 *       System.out.println("\tEdit = " + documentProperty.getFieldProperties().getEdit());
-	 *       System.out.println("\tRead-Only = " + documentProperty.getFieldProperties().getReadOnly());
-	 *     }
-	 *     if (documentProperty.getPermissions() != null) {
-	 *       System.out.println("\tView Content = " + documentProperty.getPermissions().getViewContent());
-	 *       System.out.println("\tEdit Fields = " + documentProperty.getPermissions().getEditFields());
-	 *     }
-	 *   }
-	 * }</pre>
-	 */
-	public QueryRequest setDocumentProperties(DocumentPropertyType documentPropertyType) {
-		this.documentPropertyType = documentPropertyType;
 		return this;
 	}
 }

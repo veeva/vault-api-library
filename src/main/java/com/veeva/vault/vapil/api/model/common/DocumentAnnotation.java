@@ -281,49 +281,14 @@ public class DocumentAnnotation extends VaultModel {
 			this.set("style__sys", style);
 		}
 
-		@JsonProperty("video_x_coordinate__sys")
-		public BigDecimal getVideoXCoordinate() {
-			return this.getBigDecimal("video_x_coordinate__sys");
-		}
-
-		public void setVideoXCoordinate(BigDecimal videoXCoordinate) {
-			this.set("video_x_coordinate__sys", videoXCoordinate);
-		}
-
-		@JsonProperty("video_y_coordinate__sys")
-		public BigDecimal getVideoYCoordinate() {
-			return this.getBigDecimal("video_y_coordinate__sys");
-		}
-
-		public void setVideoYCoordinate(BigDecimal videoYCoordinate) {
-			this.set("video_y_coordinate__sys", videoYCoordinate);
-		}
-
-		@JsonProperty("video_height__sys")
-		public BigDecimal getVideoHeight() {
-			return this.getBigDecimal("video_height__sys");
-		}
-
-		public void setVideoHeight(BigDecimal videoHeight) {
-			this.set("video_height__sys", videoHeight);
-		}
-
-		@JsonProperty("video_width__sys")
-		public BigDecimal getVideoWidth() {
-			return this.getBigDecimal("video_width__sys");
-		}
-
-		public void setVideoWidth(BigDecimal videoWidth) {
-			this.set("video_width__sys", videoWidth);
-		}
-
 		@JsonProperty("video_time_signature__sys")
-		public String getVideoTimeSignature() {
-			return this.getString("video_time_signature__sys");
+		public BigDecimal getVideoTimeSignature() {
+			return this.getBigDecimal("video_time_signature__sys");
 		}
 
-		public void setVideoTimeSignature(String videoTimeSignature) {
+		public void setVideoTimeSignature(BigDecimal videoTimeSignature) {
 			this.set("video_time_signature__sys", videoTimeSignature);
 		}
 	}
+
 }

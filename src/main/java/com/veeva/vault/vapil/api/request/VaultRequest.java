@@ -324,10 +324,8 @@ public abstract class VaultRequest<T extends VaultRequest<T>> {
 	 * @return The HTTP request with added Vault header parameters
 	 */
 	private HttpRequestConnector setVaultHeaderParams(HttpRequestConnector request) {
-		// Add the authorization header — Bearer token for API_ACCESS_TOKEN, raw session ID otherwise
-		if (vaultClient.hasApiAccessToken())
-			request.addHeaderParam(HTTP_HEADER_AUTHORIZATION, "Bearer " + vaultClient.getVaultApiAccessToken());
-		else if (vaultClient.hasSessionId())
+		// Add the Vault session id if it exists
+		if (vaultClient.hasSessionId())
 			request.addHeaderParam(HTTP_HEADER_AUTHORIZATION, vaultClient.getSessionId());
 
 		// Add the client id 

@@ -47,7 +47,7 @@ public class MetaDataRequest extends VaultRequest<MetaDataRequest> {
 	private static final String URL_MDL_EXECUTE_ASYNC = "mdl/execute_async";
 	private static final String URL_MDL_EXECUTE_ASYNC_CANCEL_DEPLOYMENT = "/metadata/vobjects/{object_name}/actions/canceldeployment";
 	private static final String URL_MDL_EXECUTE_ASYNC_JOB_STATUS = "mdl/execute_async/{job_id}/results";
-	private static final String URL_MDL_UPLOAD_CONTENT_FILE = "/api/mdl/files";
+	private static final String URL_MDL_UPLOAD_CONTENT_FILE = "mdl/files";
 	private static final String URL_CONFIGURATION_COMPONENT_RECORD = "/configuration/{component_type}.{record_name}";
 	private static final String URL_OBJECTS = "/metadata/vobjects";
 	private static final String URL_OBJECT_NAME = "/metadata/vobjects/{object_name}";
@@ -552,7 +552,7 @@ public class MetaDataRequest extends VaultRequest<MetaDataRequest> {
 		String url = vaultClient.getAPIEndpoint(URL_MDL_UPLOAD_CONTENT_FILE, false);
 
 		HttpRequestConnector request = new HttpRequestConnector(url);
-		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_PLAINTEXT);
+		request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_ACCEPT, HttpRequestConnector.HTTP_CONTENT_TYPE_JSON);
 
 		if (inputPath != null && !inputPath.isEmpty()) {
 			request.addHeaderParam(HttpRequestConnector.HTTP_HEADER_CONTENT_TYPE, HttpRequestConnector.HTTP_CONTENT_TYPE_MULTIPART_FORM);
@@ -564,8 +564,10 @@ public class MetaDataRequest extends VaultRequest<MetaDataRequest> {
 			request.addFileBinary("file", binaryFile.getBinaryContent(), binaryFile.getFileName());
 		}
 
+		ObjectMapper objectMapper = super.getBaseObjectMapper();
+		objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
-		return send(HttpMethod.POST, request, ComponentContentResponse.class);
+		return send(HttpMethod.POST, request, objectMapper, ComponentContentResponse.class);
 	}
 
 	/**

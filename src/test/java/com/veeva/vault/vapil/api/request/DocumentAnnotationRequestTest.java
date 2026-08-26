@@ -708,7 +708,7 @@ public class DocumentAnnotationRequestTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("successfully read annotations from a document by ID")
-    class TestReadAnnotationsByDocumentVersionAndTypePdf {
+    class TestReadAnnotationsByDocumentVersionAndType {
 
         DocumentAnnotationReadResponse readAnnotationsByDocumentVersionAndTypeResponse;
         Integer docId;
@@ -780,10 +780,10 @@ public class DocumentAnnotationRequestTest {
     @Tag("SmokeTest")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("successfully read annotations from a video document by ID")
+    @DisplayName("successfully read annotations from a video document")
     class TestReadAnnotationsByDocumentVersionAndTypeVideo {
 
-        DocumentAnnotationReadResponse readAnnotationsByDocumentVersionAndTypeResponse;
+        DocumentAnnotationReadResponse readAnnotationsByDocumentVersionAndTypeVideoResponse;
         Integer docId;
         Integer majorVersionNumber;
         Integer minorVersionNumber;
@@ -800,39 +800,41 @@ public class DocumentAnnotationRequestTest {
         @Test
         @Order(1)
         public void testRequest() {
-            readAnnotationsByDocumentVersionAndTypeResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
+            readAnnotationsByDocumentVersionAndTypeVideoResponse = vaultClient.newRequest(DocumentAnnotationRequest.class)
                     .readAnnotationsByDocumentVersionAndType(docId, majorVersionNumber, minorVersionNumber);
 
-            assertNotNull(readAnnotationsByDocumentVersionAndTypeResponse);
+            assertNotNull(readAnnotationsByDocumentVersionAndTypeVideoResponse);
         }
 
         @Test
         @Order(2)
         public void testResponse() {
-            assertTrue(readAnnotationsByDocumentVersionAndTypeResponse.isSuccessful());
-            DocumentAnnotation.ResponseDetails responseDetails = readAnnotationsByDocumentVersionAndTypeResponse.getResponseDetails();
+            assertTrue(readAnnotationsByDocumentVersionAndTypeVideoResponse.isSuccessful());
+            DocumentAnnotation.ResponseDetails responseDetails = readAnnotationsByDocumentVersionAndTypeVideoResponse.getResponseDetails();
             assertNotNull(responseDetails);
             assertNotNull(responseDetails.getLimit());
             assertNotNull(responseDetails.getOffset());
             assertNotNull(responseDetails.getSize());
             assertNotNull(responseDetails.getTotal());
 
-            List<DocumentAnnotation> data = readAnnotationsByDocumentVersionAndTypeResponse.getData();
+            List<DocumentAnnotation> data = readAnnotationsByDocumentVersionAndTypeVideoResponse.getData();
             assertNotNull(data);
             for (DocumentAnnotation annotation : data) {
                 assertNotNull(annotation.getDocumentVersionId());
                 assertNotNull(annotation.getModifiedByUser());
                 assertNotNull(annotation.getId());
                 assertNotNull(annotation.getCreatedByUser());
+                assertNotNull(annotation.getCreatedDateTime());
+                assertNotNull(annotation.getModifiedDateTime());
+                assertNotNull(annotation.getTitle());
+                assertNotNull(annotation.getType());
+                assertNotNull(annotation.getState());
+                assertNotNull(annotation.getColor());
 
                 DocumentAnnotation.Placemark placemark = annotation.getPlacemark();
                 assertNotNull(placemark);
-                assertNotNull(placemark.getVideoTimeSignature());
-                assertNotNull(placemark.getVideoWidth());
-                assertNotNull(placemark.getVideoHeight());
-                assertNotNull(placemark.getVideoXCoordinate());
-                assertNotNull(placemark.getVideoYCoordinate());
                 assertNotNull(placemark.getType());
+                assertNotNull(placemark.getVideoTimeSignature());
             }
         }
     }

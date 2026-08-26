@@ -1,7 +1,9 @@
 {
   "authenticationType": "BASIC",
   "idpOauthAccessToken": "",
-  "vaultApiAccessToken":  "veeva-vault-123456-789abc-defghijklm",
+  "idpOauthScope": "openid",
+  "idpUsername": "",
+  "idpPassword": "",
   "vaultUsername": "",
   "vaultPassword": "",
   "vaultDNS": "",

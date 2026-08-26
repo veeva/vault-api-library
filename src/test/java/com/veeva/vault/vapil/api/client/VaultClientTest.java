@@ -30,7 +30,7 @@ public class VaultClientTest {
     private static final String VAPIL_BASIC_SETTINGS_FILE_LR = "settings_vapil_basic_lr.json";
     private static final String VAPIL_SESSION_ID_SETTINGS_FILE_GR = "settings_vapil_session_id.json";
     private static final String VAPIL_SESSION_ID_SETTINGS_FILE_LR = "settings_vapil_session_id_lr.json";
-    private static final String VAPIL_API_ACCESS_TOKEN_SETTINGS_FILE_GR = "settings_vapil_api_access_token_id_gr.json";
+    private static final String VAPIL_API_ACCESS_TOKEN_SETTINGS_FILE_GR = "settings_vapil_api_access_token_id.json";
     private static final String VAPIL_API_ACCESS_TOKEN_SETTINGS_FILE_LR = "settings_vapil_api_access_token_id_lr.json";
     private static String vapilBasicSettingsFileName;
     private static String vapilSessionIdSettingsFileName;
